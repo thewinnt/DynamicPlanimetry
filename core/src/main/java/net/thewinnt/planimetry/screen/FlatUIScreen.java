@@ -140,6 +140,6 @@ public abstract class FlatUIScreen implements Screen {
     }
 
     public Color getFpsColor() {
-        return Color.WHITE;
+        return Color.BLACK;
     }
 }

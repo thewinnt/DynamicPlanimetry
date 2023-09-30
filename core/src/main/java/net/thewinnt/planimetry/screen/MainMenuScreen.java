@@ -19,7 +19,7 @@ public class MainMenuScreen extends FlatUIScreen {
 
     @Override
     public void addActorsBelowFps() {
-        LabelStyle style_title = new LabelStyle(app.getBoldFont(200, Color.WHITE), Color.WHITE);
+        LabelStyle style_title = new LabelStyle(app.getBoldFont(200, Color.BLACK), Color.BLACK);
 
         Table table = new Table();
         table.setFillParent(true);

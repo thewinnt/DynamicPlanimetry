@@ -23,14 +23,17 @@ import net.thewinnt.planimetry.ui.Notifications;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class DynamicPlanimetry extends Game {
+    // public constants
     public static final int MAIN_MENU = 0;
 
     // general stuff
     public final List<Screen> screenByIds = new ArrayList<>();
-    public boolean balance_loaded = false;
-    public static boolean IS_MOBILE = false;
     public String last_fps = "FPS: ..."; // the last reading of the fps counter
     public static final boolean DEBUG_MODE = true;
+
+    // settings
+    public byte displayPrecision = 6; // the precision of the displayed numbers, in digits
+    public double calculationPrecision = Math.pow(2, -20); // accounts for doubles not being precise enough
 
     // preloaded files
     // (there's none of them)
@@ -52,10 +55,10 @@ public class DynamicPlanimetry extends Game {
     }
 
     // colors
-    /** 12 */ public static final Color COLOR_MAIN = new Color(rgbColor(3, 209, 255));
-    /** 13 */ public static final Color COLOR_PRESSED = new Color(rgbColor(0, 156, 191));
-    /** 14 */ public static final Color COLOR_BUTTON = new Color(rgbColor(1, 175, 216));
-    /** 16 */ public static final Color COLOR_INACTIVE = new Color(rgbColor(45, 45, 45));
+    public static final Color COLOR_MAIN = new Color(rgbColor(255, 255, 255));
+    public static final Color COLOR_PRESSED = new Color(rgbColor(220, 220, 220));
+    public static final Color COLOR_BUTTON = new Color(rgbColor(240, 240, 240));
+    public static final Color COLOR_INACTIVE = new Color(rgbColor(45, 45, 45));
 
     // more font stuff
     public static final FontType BUTTON_ACTIVE = new FontType(85, Color.BLACK);
