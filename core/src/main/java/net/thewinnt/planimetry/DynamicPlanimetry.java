@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
+import net.thewinnt.planimetry.screen.EditorScreen;
 import net.thewinnt.planimetry.screen.FlatUIScreen;
 import net.thewinnt.planimetry.screen.MainMenuScreen;
 import net.thewinnt.planimetry.ui.Notifications;
@@ -25,6 +26,7 @@ import net.thewinnt.planimetry.ui.Notifications;
 public class DynamicPlanimetry extends Game {
     // public constants
     public static final int MAIN_MENU = 0;
+    public static final int EDITOR_SCREEN = 1;
 
     // general stuff
     public final List<Screen> screenByIds = new ArrayList<>();
@@ -40,6 +42,7 @@ public class DynamicPlanimetry extends Game {
 
     // screens
     public MainMenuScreen mainMenu;
+    public EditorScreen editorScreen;
 
     // font stuff
     private FreeTypeFontGenerator gen_default;
@@ -76,11 +79,6 @@ public class DynamicPlanimetry extends Game {
 
     public DynamicPlanimetry() {
         super();
-        if (DEBUG_MODE) {
-            Notifications.addNotification("App started in debug mode", 5000);
-        }
-        Notifications.addNotification("This is a test notification please ignore", 7000);
-        Notifications.addNotification("This is a test notification please ignore, except its another one loll", 7000);
     }
 
     @Override
@@ -91,7 +89,11 @@ public class DynamicPlanimetry extends Game {
         fonts_bold = new HashMap<>();
 
         mainMenu = registerScreen(new MainMenuScreen(this));
+        editorScreen = registerScreen(new EditorScreen(this));
         setScreen(MAIN_MENU);
+        if (DEBUG_MODE) {
+            Notifications.addNotification("Включён режим отладки", 5000);
+        }
     }
 
     private <T extends FlatUIScreen> T registerScreen(T screen) {

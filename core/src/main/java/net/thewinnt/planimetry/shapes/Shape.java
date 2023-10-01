@@ -14,7 +14,7 @@ public interface Shape {
      * @param drawer the {@link ShapeDrawer} to draw the shape with
      * @param selected whether the shape's selected
      * @param font the font to use for additional data
-     * @param scale the scale of the board, in units per pixel
+     * @param scale the scale of the board, in pixels per unit
      */
     void render(ShapeDrawer drawer, boolean selected, BitmapFont font, double scale, Vec2 offset);
 

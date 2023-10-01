@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 
 /** An immutable 2D vector */
 public class Vec2 {
+    public static final Vec2 ZERO = new Vec2(0, 0);
+
     public final double x;
     public final double y;
 

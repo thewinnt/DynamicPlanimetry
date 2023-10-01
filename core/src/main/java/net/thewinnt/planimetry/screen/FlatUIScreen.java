@@ -77,8 +77,10 @@ public abstract class FlatUIScreen implements Screen {
 
         addActorsBelowFps();
 
-        stage.addActor(fps);
-        stage.addActor(mem_usage);
+        if (DynamicPlanimetry.DEBUG_MODE) {
+            stage.addActor(fps);
+            stage.addActor(mem_usage);
+        }
 
         addActorsAboveFps();
 

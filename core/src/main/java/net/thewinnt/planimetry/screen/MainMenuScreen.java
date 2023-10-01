@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
-import net.thewinnt.planimetry.ui.Notifications;
 
 public class MainMenuScreen extends FlatUIScreen {
     public MainMenuScreen(DynamicPlanimetry app) {
@@ -27,17 +26,15 @@ public class MainMenuScreen extends FlatUIScreen {
         Table buttons = new Table();
 
         Label title = new Label("Dynamic Planimetry", style_title);
-        TextButton create = new TextButton("Create", style_inactive);
-        TextButton load = new TextButton("Load", style_inactive);
-        TextButton go_settings = new TextButton("Settings", style_inactive);
-        TextButton exit = new TextButton("Exit", style_active);
-        TextButton add_notification = new TextButton("New notification", style_active);
+        TextButton create = new TextButton("Создать", style_active);
+        TextButton load = new TextButton("Загрузить", style_inactive);
+        TextButton go_settings = new TextButton("Настройки", style_inactive);
+        TextButton exit = new TextButton("Выход", style_active);
 
         create.setSize(30, 70);
         load.setSize(300, 70);
         go_settings.setSize(300, 70);
         exit.setSize(300, 70);
-        add_notification.setSize(710, 70);
 
         exit.addListener(new ChangeListener() {
             @Override
@@ -46,10 +43,10 @@ public class MainMenuScreen extends FlatUIScreen {
             }
         });
 
-        add_notification.addListener(new ChangeListener() {
+        create.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Notifications.addNotification("New notification", 2000);
+                app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
             }
         });
 
@@ -58,8 +55,6 @@ public class MainMenuScreen extends FlatUIScreen {
         buttons.row();
         buttons.add(go_settings).uniform().prefWidth(300).padTop(5);
         buttons.add(exit).uniform().prefWidth(300).padTop(5).padLeft(5);
-        buttons.row();
-        buttons.add(add_notification).uniform().padTop(5);
 
         table.add(title).expandY();
         table.row();
