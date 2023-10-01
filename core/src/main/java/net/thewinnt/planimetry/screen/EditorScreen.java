@@ -1,6 +1,6 @@
 package net.thewinnt.planimetry.screen;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.Gdx;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.DrawingBoard;
@@ -14,16 +14,16 @@ public class EditorScreen extends FlatUIScreen {
 
     @Override
     public void addActorsBelowFps() {
-        Table table = new Table();
-        table.setFillParent(true);
-        table.setDebug(true);
-
         board = new DrawingBoard(drawer, app::getBoldFont);
-        
-        table.add(board).expand().fill();
-
-        stage.addActor(table);
+        stage.addActor(board);
         stage.setScrollFocus(board);
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        board.setPosition(0, 0);
+        board.setSize(Gdx.graphics.getWidth() - Gdx.graphics.getHeight() * 0.4f, Gdx.graphics.getHeight());
     }
 
     @Override public void customRender() {}

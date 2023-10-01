@@ -105,13 +105,15 @@ public abstract class FlatUIScreen implements Screen {
 
         ScreenUtils.clear(DynamicPlanimetry.COLOR_MAIN);
         customRender();
-        fps_timer += dt;
-        if (fps_timer > 0.5f) {
-            fps_timer = 0;
-            fps.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
+        if (DynamicPlanimetry.DEBUG_MODE) {
+            fps_timer += dt;
+            if (fps_timer > 0.5f) {
+                fps_timer = 0;
+                fps.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
+            }
+            Runtime runtime = Runtime.getRuntime();
+            mem_usage.setText("Mem: " + (runtime.totalMemory() - runtime.freeMemory()) / 1048576 + "/" + runtime.totalMemory() / 1048576 + " MB");
         }
-        Runtime runtime = Runtime.getRuntime();
-        mem_usage.setText("Mem: " + (runtime.totalMemory() - runtime.freeMemory()) / 1048576 + "/" + runtime.totalMemory() / 1048576 + " MB");
         stage.act(dt);
         stage.draw();
     }
