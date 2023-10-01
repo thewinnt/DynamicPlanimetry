@@ -1,6 +1,5 @@
 package net.thewinnt.planimetry.shapes.point;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
@@ -10,7 +9,7 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Point implements PointProvider {
-    public final Vec2 position;
+    private Vec2 position;
 
     public Point(Vec2 position) {
         this.position = position;
@@ -35,9 +34,6 @@ public class Point implements PointProvider {
     public void render(ShapeDrawer drawer, boolean selected, FontProvider font, DrawingBoard board) {
         Color color = selected ? DynamicPlanimetry.COLOR_POINT_SELECTED : DynamicPlanimetry.COLOR_POINT;
         drawer.filledCircle(board.boardToGlobal(position).toVector2f(), (float)Math.min(Math.max(2, board.getScale()), 8), color);
-        double mx = board.xb(Gdx.input.getX());
-        double my = board.yb(Gdx.input.getY());
-        font.getFont(20, Color.FOREST).draw(drawer.getBatch(), String.valueOf(position.distanceTo(mx, my)), board.bx(position.x) + 5, board.by(position.y) + 15);
     }
 
     @Override
@@ -48,5 +44,20 @@ public class Point implements PointProvider {
     @Override
     public boolean containsRough(double x, double y) {
         return position.distanceToSqr(x, y) <= 4;
+    }
+
+    @Override
+    public boolean canMove() {
+        return true;
+    }
+
+    @Override
+    public void move(Vec2 delta) {
+        position = position.add(delta);
+    }
+
+    @Override
+    public void move(double dx, double dy) {
+        position = position.add(dx, dy);
     }
 }

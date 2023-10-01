@@ -52,11 +52,12 @@ public class DrawingBoard extends Actor {
         });
         Random random = new Random();
         for (int i = 0; i < 10; i++) {
-            this.shapes.add(new Point(new Vec2(random.nextDouble(-100, 100), random.nextDouble(-100, 100))));
+            this.shapes.add(new Point(new Vec2(random.nextInt(-100, 100), random.nextInt(-100, 100))));
         }
-        for (int i = 0; i < 4; i++) {
-            this.shapes.add(new InfiniteLine(new Point(new Vec2(random.nextDouble(-100, 100), random.nextDouble(-100, 100))), new Point(new Vec2(random.nextDouble(-100, 100), random.nextDouble(-100, 100)))));
+        for (int i = 0; i < 10; i++) {
+            this.shapes.add(new InfiniteLine(new Point(new Vec2(random.nextInt(-100, 100), random.nextInt(-100, 100))), new Point(new Vec2(random.nextInt(-100, 100), random.nextInt(-100, 100)))));
         }
+        this.shapes.add(new InfiniteLine(new Point(new Vec2(-100, -50)), new Point(new Vec2(-100, 50))));
     }
 
     /** local space -> global (render) space */

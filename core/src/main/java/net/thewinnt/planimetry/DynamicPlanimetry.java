@@ -63,7 +63,7 @@ public class DynamicPlanimetry extends Game {
     public static final Color COLOR_BUTTON = new Color(rgbColor(240, 240, 240));
     public static final Color COLOR_INACTIVE = new Color(rgbColor(45, 45, 45));
     public static final Color COLOR_POINT = new Color(1, 0.5f, 0, 1);
-    public static final Color COLOR_POINT_SELECTED = new Color(1, 1, 0, 1);
+    public static final Color COLOR_POINT_SELECTED = new Color(1, 0.75f, 0, 1);
     public static final Color COLOR_SELECTION = new Color(0, 0.75f, 1, 1);
 
     // more font stuff
