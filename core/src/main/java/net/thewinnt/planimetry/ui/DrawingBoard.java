@@ -20,6 +20,7 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
 import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.point.Point;
+import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -30,8 +31,12 @@ public class DrawingBoard extends Actor {
     private double scale = Math.pow(1.5, 10); // pixels per unit
     private Vec2 offset = Vec2.ZERO;
     private Shape selection;
+    private boolean isPanning = false;
+    private boolean startedAtPoint = false;
     private String pan1 = "";
     private String pan2 = "";
+    private String pan3 = "";
+    private String pan4 = "";
 
     public DrawingBoard(ShapeDrawer drawer, FontProvider font) {
         this.drawer = drawer;
@@ -45,9 +50,22 @@ public class DrawingBoard extends Actor {
 
             @Override
             public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
+                int mx = Gdx.input.getX();
+                int my = Gdx.input.getY();
+                float movement = deltaX * deltaX + deltaY * deltaY;
+                if (!isPanning && selection != null) {
+                    startedAtPoint = selection.distanceToMouse(xb(mx), yb(my), DrawingBoard.this) <= movement * 2 / scale;
+                }
+                isPanning = true;
                 pan1 = "pan: " + x + ", " + y;
-                pan2 = "dpan: " + deltaX + ", " + deltaY;
-                offset = offset.add(-deltaX, -deltaY);
+                pan2 = "mpan: " + mx + ", " + my;
+                pan3 = "dpan: " + deltaX + ", " + deltaY;
+                pan4 = "md: " + movement;
+                if (selection != null && startedAtPoint && selection instanceof PointProvider point && point.canMove()) {
+                    point.move(deltaX / scale, deltaY / scale);
+                } else {
+                    offset = offset.add(-deltaX, -deltaY);
+                }
                 event.handle();
             }
 
@@ -55,16 +73,13 @@ public class DrawingBoard extends Actor {
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 int mx = Gdx.input.getX();
                 int my = Gdx.input.getY();
-                Shape hovered = null;
-                double minDistance = 8 / scale;
-                for (Shape i : shapes) {
-                    double distance = i.distanceToMouse(xb(mx), yb(my), DrawingBoard.this);
-                    if (distance <= minDistance) {
-                        hovered = i;
-                    }
-                }
-                selection = hovered;
+                selection = getHoveredShape(mx, my);
                 event.handle();
+            }
+
+            @Override
+            public void panStop(InputEvent event, float x, float y, int pointer, int button) {
+                isPanning = false;
             }
         });
         this.addListener(new InputListener() {
@@ -131,14 +146,7 @@ public class DrawingBoard extends Actor {
         drawer.setColor(0, 0, 0, 1);
         drawer.line(bx(-10), by(0), bx(10), by(0), 4);
         drawer.line(bx(-0), by(-10), bx(0), by(10), 4);
-        Shape hovered = null;
-        double minDistance = 8 / scale;
-        for (Shape i : shapes) {
-            double distance = i.distanceToMouse(xb(mx), yb(my), this);
-            if (distance <= minDistance) {
-                hovered = i;
-            }
-        }
+        Shape hovered = getHoveredShape(mx, my);
         for (Shape i : shapes) {
             if (selection == i) {
                 i.render(drawer, SelectionStatus.SELECTED, font, this);
@@ -158,6 +166,8 @@ public class DrawingBoard extends Actor {
             font.getFont(40, Color.FIREBRICK).draw(batch, "mxy: " + yb(my), x(5), y(getHeight() - 205));
             font.getFont(40, Color.FIREBRICK).draw(batch, pan1, x(5), y(getHeight() - 230));
             font.getFont(40, Color.FIREBRICK).draw(batch, pan2, x(5), y(getHeight() - 255));
+            font.getFont(40, Color.FIREBRICK).draw(batch, pan3, x(5), y(getHeight() - 280));
+            font.getFont(40, Color.FIREBRICK).draw(batch, pan4, x(5), y(getHeight() - 305));
         }
         if (selection != null) {
             font.getFont(40, Color.FIREBRICK).draw(batch, "Selected: " + selection, x(5), y(105));
@@ -195,5 +205,18 @@ public class DrawingBoard extends Actor {
 
     public Collection<Shape> getShapes() {
         return Collections.unmodifiableList(shapes);
+    }
+
+    public Shape getHoveredShape(double mx, double my) {
+        Shape hovered = null;
+        double minDistance = 8 / scale;
+        for (Shape i : shapes) {
+            double distance = i.distanceToMouse(xb(mx), yb(my), this);
+            if (distance <= minDistance) {
+                hovered = i;
+                minDistance = distance;
+            }
+        }
+        return hovered;
     }
 }
