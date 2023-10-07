@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
+import com.badlogic.gdx.utils.Align;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
@@ -152,6 +153,50 @@ public class DrawingBoard extends Actor {
                 i.render(drawer, SelectionStatus.SELECTED, font, this);
             } else {
                 i.render(drawer, hovered == i ? SelectionStatus.HOVERED : SelectionStatus.NONE, font, this);
+            }
+        }
+        double step = Math.abs(Math.max(getHeight(), getWidth()) / scale / 12); // detect full width
+        int j = 0;
+        if (step != 0 && Double.isFinite(step)) {
+            // scale to [1..10]
+            if (step > 10) {
+                while (step > 10) {
+                    step /= 10;
+                    j++;
+                }
+            } else if (step < 1) {
+                while (step < 1) {
+                    step *= 10;
+                    j--;
+                }
+            }
+            // create step
+            if (step < 1.5) {
+                step = 1;
+            } else if (step < 4) {
+                step = 2;
+            } else if (step < 8) {
+                step = 5;
+            } else {
+                step = 10;
+            }
+            // scale back
+            step *= Math.pow(10, j);
+            for (double i = xb(getX()) - xb(getX()) % step; i < xb(getX() + getWidth()); i += step) {
+                drawer.line(bx(i), getY(), bx(i), getY() + getHeight(), Color.GOLDENROD, 1);
+                if (Math.abs(i) % 1 == 0) {
+                    font.getFont(40, Color.GOLDENROD).draw(batch, String.valueOf((long)i), bx(i), y(40), 0, Align.center, false);
+                } else {
+                    String string = String.format("%.8f", i);
+                    int k = string.length() - 1;
+                    while (string.charAt(k) == '0') k--;
+                    string = string.substring(0, k + 1);
+                    if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
+                    font.getFont(40, Color.GOLDENROD).draw(batch, string, bx(i), y(40), 0, Align.center, false);
+                }
+            }
+            for (double i = yb(getY() + getHeight()) - yb(getY() + getHeight()) % step; i < yb(getY()); i += step) {
+                drawer.line(getX(), by(i), getX() + getWidth(), by(i), Color.GOLDENROD, 1);
             }
         }
         if (DynamicPlanimetry.DEBUG_MODE) {
