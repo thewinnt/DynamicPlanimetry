@@ -37,13 +37,13 @@ public class Point implements PointProvider {
     }
 
     @Override
-    public boolean containsRough(Vec2 point) {
-        return point.distanceToSqr(position) <= 4;
+    public boolean canSelect(Vec2 point, DrawingBoard board) {
+        return point.distanceToSqr(position) <= 8 / board.getScale();
     }
 
     @Override
-    public boolean containsRough(double x, double y) {
-        return position.distanceToSqr(x, y) <= 4;
+    public boolean canSelect(double x, double y, DrawingBoard board) {
+        return position.distanceToSqr(x, y) <= 8 / board.getScale();
     }
 
     @Override

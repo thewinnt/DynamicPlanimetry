@@ -24,7 +24,7 @@ public class DrawingBoard extends Actor {
     private final ShapeDrawer drawer;
     private final FontProvider font;
     private final List<Shape> shapes = new ArrayList<>();
-    private double scale = 1; // pixels per unit
+    private double scale = Math.pow(1.5, 10); // pixels per unit
     private Vec2 offset = Vec2.ZERO;
     private Shape selection;
 
@@ -102,18 +102,11 @@ public class DrawingBoard extends Actor {
         if (Double.isInfinite(scale)) scale = 1;
         int mx = Gdx.input.getX();
         int my = Gdx.input.getY();
-        if (DynamicPlanimetry.DEBUG_MODE) {
-            drawer.filledRectangle(getX(), getY(), getWidth(), getHeight(), new Color(0xEEEEEEFF));
-            drawer.setColor(0, 0, 0, 1);
-            drawer.line(bx(-10), by(0), bx(10), by(0), 4);
-            drawer.line(bx(-0), by(-10), bx(0), by(10), 4);
-            drawer.setColor(0, 1, 1, 1);
-            drawer.line(bx(-100), by(-70), bx(0), by(90), 2);
-            drawer.setColor(1, 0.5f, 0, 1);
-            drawer.line(bx(-80), by(70), bx(60), by(-30), 2);
-        }
+        drawer.setColor(0, 0, 0, 1);
+        drawer.line(bx(-10), by(0), bx(10), by(0), 4);
+        drawer.line(bx(-0), by(-10), bx(0), by(10), 4);
         for (Shape i : shapes) {
-            i.render(drawer, i.containsRough(xb(mx), yb(my)), font, this);
+            i.render(drawer, i.canSelect(xb(mx), yb(my), this), font, this);
         }
         if (DynamicPlanimetry.DEBUG_MODE) {
             font.getFont(40, Color.FIREBRICK).draw(batch, "scale: " + scale, x(5), y(getHeight() - 5));
@@ -128,6 +121,7 @@ public class DrawingBoard extends Actor {
         }
     }
 
+    /** The scale, in pixels per unit */
     public double getScale() {
         return scale;
     }

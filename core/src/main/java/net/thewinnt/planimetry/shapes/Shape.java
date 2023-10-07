@@ -8,8 +8,8 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public interface Shape {
     boolean contains(Vec2 point);
     boolean contains(double x, double y);
-    boolean containsRough(Vec2 point);
-    boolean containsRough(double x, double y);
+    boolean canSelect(Vec2 point, DrawingBoard board);
+    boolean canSelect(double x, double y, DrawingBoard board);
 
     /**
      * Renders the shape
