@@ -31,19 +31,32 @@ public class Point implements PointProvider {
     }
 
     @Override
-    public void render(ShapeDrawer drawer, boolean selected, FontProvider font, DrawingBoard board) {
-        Color color = selected ? DynamicPlanimetry.COLOR_POINT_SELECTED : DynamicPlanimetry.COLOR_POINT;
-        drawer.filledCircle(board.boardToGlobal(position).toVector2f(), (float)Math.min(Math.max(2, board.getScale()), 8), color);
+    public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
+        if (!board.getShapes().contains(this)) {
+            drawer.setColor(switch (selection) {
+                default -> DynamicPlanimetry.COLOR_UTIL_POINT;
+                case HOVERED -> DynamicPlanimetry.COLOR_UTIL_POINT_HOVER;
+                case SELECTED -> DynamicPlanimetry.COLOR_UTIL_POINT_SELECTED;
+            });
+            drawer.circle(board.bx(position.x), board.by(position.y), (float)Math.min(Math.max(2, board.getScale()), 8), 2);
+        } else {
+            Color color = switch (selection) {
+                default -> DynamicPlanimetry.COLOR_POINT;
+                case HOVERED -> DynamicPlanimetry.COLOR_POINT_HOVER;
+                case SELECTED -> DynamicPlanimetry.COLOR_POINT_SELECTED;
+            };
+            drawer.filledCircle(board.boardToGlobal(position).toVector2f(), (float)Math.min(Math.max(2, board.getScale()), 8), color);
+        }
     }
 
     @Override
-    public boolean canSelect(Vec2 point, DrawingBoard board) {
-        return point.distanceToSqr(position) <= 8 / board.getScale();
+    public double distanceToMouse(Vec2 point, DrawingBoard board) {
+        return point.distanceToSqr(position);
     }
 
     @Override
-    public boolean canSelect(double x, double y, DrawingBoard board) {
-        return position.distanceToSqr(x, y) <= 8 / board.getScale();
+    public double distanceToMouse(double x, double y, DrawingBoard board) {
+        return position.distanceToSqr(x, y);
     }
 
     @Override

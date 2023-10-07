@@ -1,6 +1,8 @@
 package net.thewinnt.planimetry.ui;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -15,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
 import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -27,6 +30,8 @@ public class DrawingBoard extends Actor {
     private double scale = Math.pow(1.5, 10); // pixels per unit
     private Vec2 offset = Vec2.ZERO;
     private Shape selection;
+    private String pan1 = "";
+    private String pan2 = "";
 
     public DrawingBoard(ShapeDrawer drawer, FontProvider font) {
         this.drawer = drawer;
@@ -40,13 +45,32 @@ public class DrawingBoard extends Actor {
 
             @Override
             public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
+                pan1 = "pan: " + x + ", " + y;
+                pan2 = "dpan: " + deltaX + ", " + deltaY;
                 offset = offset.add(-deltaX, -deltaY);
+                event.handle();
+            }
+
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                int mx = Gdx.input.getX();
+                int my = Gdx.input.getY();
+                Shape hovered = null;
+                double minDistance = 8 / scale;
+                for (Shape i : shapes) {
+                    double distance = i.distanceToMouse(xb(mx), yb(my), DrawingBoard.this);
+                    if (distance <= minDistance) {
+                        hovered = i;
+                    }
+                }
+                selection = hovered;
+                event.handle();
             }
         });
         this.addListener(new InputListener() {
             @Override
             public boolean scrolled(InputEvent event, float x, float y, float amountX, float amountY) {
-                scale /= Math.pow(1.5, amountY);
+                scale /= Math.pow(1.25, amountY);
                 return true;
             }
         });
@@ -57,7 +81,9 @@ public class DrawingBoard extends Actor {
         for (int i = 0; i < 10; i++) {
             this.shapes.add(new InfiniteLine(new Point(new Vec2(random.nextInt(-100, 100), random.nextInt(-100, 100))), new Point(new Vec2(random.nextInt(-100, 100), random.nextInt(-100, 100)))));
         }
-        this.shapes.add(new InfiniteLine(new Point(new Vec2(-100, -50)), new Point(new Vec2(-100, 50))));
+        Point a = new Point(new Vec2(-20, -20));
+        this.shapes.add(new InfiniteLine(a, new Point(new Vec2(30, 50))));
+        this.shapes.add(a);
     }
 
     /** local space -> global (render) space */
@@ -105,8 +131,20 @@ public class DrawingBoard extends Actor {
         drawer.setColor(0, 0, 0, 1);
         drawer.line(bx(-10), by(0), bx(10), by(0), 4);
         drawer.line(bx(-0), by(-10), bx(0), by(10), 4);
+        Shape hovered = null;
+        double minDistance = 8 / scale;
         for (Shape i : shapes) {
-            i.render(drawer, i.canSelect(xb(mx), yb(my), this), font, this);
+            double distance = i.distanceToMouse(xb(mx), yb(my), this);
+            if (distance <= minDistance) {
+                hovered = i;
+            }
+        }
+        for (Shape i : shapes) {
+            if (selection == i) {
+                i.render(drawer, SelectionStatus.SELECTED, font, this);
+            } else {
+                i.render(drawer, hovered == i ? SelectionStatus.HOVERED : SelectionStatus.NONE, font, this);
+            }
         }
         if (DynamicPlanimetry.DEBUG_MODE) {
             font.getFont(40, Color.FIREBRICK).draw(batch, "scale: " + scale, x(5), y(getHeight() - 5));
@@ -118,6 +156,11 @@ public class DrawingBoard extends Actor {
             font.getFont(40, Color.FIREBRICK).draw(batch, "my: " + my, x(5), y(getHeight() - 155));
             font.getFont(40, Color.FIREBRICK).draw(batch, "mxb: " + xb(mx), x(5), y(getHeight() - 180));
             font.getFont(40, Color.FIREBRICK).draw(batch, "mxy: " + yb(my), x(5), y(getHeight() - 205));
+            font.getFont(40, Color.FIREBRICK).draw(batch, pan1, x(5), y(getHeight() - 230));
+            font.getFont(40, Color.FIREBRICK).draw(batch, pan2, x(5), y(getHeight() - 255));
+        }
+        if (selection != null) {
+            font.getFont(40, Color.FIREBRICK).draw(batch, "Selected: " + selection, x(5), y(105));
         }
     }
 
@@ -148,5 +191,9 @@ public class DrawingBoard extends Actor {
 
     public Shape getSelection() {
         return selection;
+    }
+
+    public Collection<Shape> getShapes() {
+        return Collections.unmodifiableList(shapes);
     }
 }

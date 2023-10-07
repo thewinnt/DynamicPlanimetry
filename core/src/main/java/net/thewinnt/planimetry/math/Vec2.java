@@ -75,4 +75,9 @@ public class Vec2 {
     public Vector2 toVector2f() {
         return new Vector2((float)x, (float)y);
     }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
+    }
 }

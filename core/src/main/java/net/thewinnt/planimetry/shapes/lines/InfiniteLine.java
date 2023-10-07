@@ -47,45 +47,53 @@ public class InfiniteLine extends Line {
     }
 
     @Override
-    public boolean canSelect(Vec2 point, DrawingBoard board) {
+    public double distanceToMouse(Vec2 point, DrawingBoard board) {
         double slope = getSlope();
         if (Double.isNaN(slope)) {
-            return Math.abs(point.x - a.getPosition().x) <= 8 / board.getScale();
+            return Math.abs(point.x - a.getPosition().x);
         } else if (slope > 1) {
             double offset = compileFormula().apply(0);
             DoubleFunction<Double> xFromY = y -> (y - offset) / slope;
-            return Math.abs(xFromY.apply(point.y) - point.x) <= 8 / board.getScale() * slope;
+            return Math.abs(xFromY.apply(point.y) - point.x);
         }
-        return Math.abs(compileFormula().apply(point.x) - point.y) <= 8 / board.getScale();
+        return Math.abs(compileFormula().apply(point.x) - point.y);
     }
 
     @Override
-    public boolean canSelect(double x, double y, DrawingBoard board) {
+    public double distanceToMouse(double x, double y, DrawingBoard board) {
         double slope = getSlope();
         if (Double.isNaN(slope)) {
-            return Math.abs(x - a.getPosition().x) <= 8 / board.getScale();
+            return Math.abs(x - a.getPosition().x);
         } else if (slope > 1) {
             double offset = compileFormula().apply(0);
             DoubleFunction<Double> xFromY = yc -> (yc - offset) / slope;
-            return Math.abs(xFromY.apply(y) - x) <= 8 / board.getScale();
+            return Math.abs(xFromY.apply(y) - x);
         }
-        return Math.abs(compileFormula().apply(x) - y) <= 8 / board.getScale();
+        return Math.abs(compileFormula().apply(x) - y);
     }
 
     @Override
-    public void render(ShapeDrawer drawer, boolean selected, FontProvider font, DrawingBoard board) {
+    public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
         DoubleFunction<Double> formula = compileFormula();
-        Color lineColor = selected ? DynamicPlanimetry.COLOR_SELECTION : Color.BLACK;
+        Color lineColor = switch (selection) {
+            default -> DynamicPlanimetry.COLOR_SHAPE;
+            case HOVERED -> DynamicPlanimetry.COLOR_SHAPE_HOVER;
+            case SELECTED -> DynamicPlanimetry.COLOR_SHAPE_SELECTED;
+        };
         Vec2 a = this.a.getPosition();
         Vec2 b = this.b.getPosition();
         if (a.x == b.x) {
-            drawer.line(board.bx(a.x), board.getY(), board.bx(b.x), board.getY() + board.getHeight(), lineColor, (float)Math.min(Math.max(1, board.getScale()), 4));
+            drawer.line(board.bx(a.x), board.getY(), board.bx(b.x), board.getY() + board.getHeight(), lineColor, (float)Math.min(Math.max(1, board.getScale() / 2), 4));
         } else {
-            drawer.line(board.getX(), board.by(formula.apply(board.minX())), board.getX() + board.getWidth(), board.by(formula.apply(board.maxX())), lineColor, (float)Math.min(Math.max(1, board.getScale()), 4));
+            drawer.line(board.getX(), board.by(formula.apply(board.minX())), board.getX() + board.getWidth(), board.by(formula.apply(board.maxX())), lineColor, (float)Math.min(Math.max(1, board.getScale() / 2), 4));
         }
-        drawer.setColor(0, 0.5f, 1, 1);
-        drawer.circle(board.bx(a.x), board.by(a.y), (float)Math.min(Math.max(3, board.getScale()), 8), 2);
-        drawer.setColor(0.5f, 0.5f, 1, 1);
-        drawer.circle(board.bx(b.x), board.by(b.y), (float)Math.min(Math.max(3, board.getScale()), 8), 2);
+        if (selection == SelectionStatus.SELECTED) {
+            if (!board.getShapes().contains(this.a)) {
+                this.a.render(drawer, SelectionStatus.NONE, font, board);
+            }
+            if (!board.getShapes().contains(this.b)) {
+                this.b.render(drawer, SelectionStatus.NONE, font, board);
+            }
+        }
     }
 }
