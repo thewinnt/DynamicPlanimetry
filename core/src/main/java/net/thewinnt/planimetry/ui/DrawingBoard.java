@@ -29,7 +29,7 @@ public class DrawingBoard extends Actor {
     private final ShapeDrawer drawer;
     private final FontProvider font;
     private final List<Shape> shapes = new ArrayList<>();
-    private double scale = Math.pow(1.5, 10); // pixels per unit
+    private double scale = Math.pow(1.25, 15); // pixels per unit
     private Vec2 offset = Vec2.ZERO;
     private Shape selection;
     private boolean isPanning = false;
@@ -42,7 +42,7 @@ public class DrawingBoard extends Actor {
     public DrawingBoard(ShapeDrawer drawer, FontProvider font) {
         this.drawer = drawer;
         this.font = font;
-        this.addListener(new ActorGestureListener() {
+        this.addListener(new ActorGestureListener(DynamicPlanimetry.IS_MOBILE ? 20 : 2, 0.4f, 1.1f, Integer.MAX_VALUE) {
             @Override
             public void zoom(InputEvent event, float initialDistance, float distance) {
                 scale /= (distance / initialDistance);
@@ -51,17 +51,9 @@ public class DrawingBoard extends Actor {
 
             @Override
             public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
-                int mx = Gdx.input.getX();
-                int my = Gdx.input.getY();
-                float movement = deltaX * deltaX + deltaY * deltaY;
-                if (!isPanning && selection != null) {
-                    startedAtPoint = selection.distanceToMouse(xb(mx), yb(my), DrawingBoard.this) <= movement * 2 / scale;
-                }
                 isPanning = true;
                 pan1 = "pan: " + x + ", " + y;
-                pan2 = "mpan: " + mx + ", " + my;
                 pan3 = "dpan: " + deltaX + ", " + deltaY;
-                pan4 = "md: " + movement;
                 if (selection != null && startedAtPoint && selection instanceof PointProvider point && point.canMove()) {
                     point.move(deltaX / scale, deltaY / scale);
                 } else {
@@ -79,8 +71,18 @@ public class DrawingBoard extends Actor {
             }
 
             @Override
-            public void panStop(InputEvent event, float x, float y, int pointer, int button) {
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 isPanning = false;
+            }
+
+            @Override
+            public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                int mx = Gdx.input.getX();
+                int my = Gdx.input.getY();
+                pan2 = "touch: " + mx + ", " + my;
+                if (!isPanning && selection != null) {
+                    startedAtPoint = selection.distanceToMouse(xb(mx), yb(my), DrawingBoard.this) <= 16 / scale;
+                }
             }
         });
         this.addListener(new InputListener() {

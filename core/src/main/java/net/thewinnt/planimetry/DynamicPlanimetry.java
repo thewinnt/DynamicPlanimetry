@@ -32,6 +32,7 @@ public class DynamicPlanimetry extends Game {
     public final List<Screen> screenByIds = new ArrayList<>();
     public String last_fps = "FPS: ..."; // the last reading of the fps counter
     public static final boolean DEBUG_MODE = true;
+    public static boolean IS_MOBILE = false;
 
     // settings
     public byte displayPrecision = 6; // the precision of the displayed numbers, in digits
