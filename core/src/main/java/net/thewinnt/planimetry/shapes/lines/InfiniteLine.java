@@ -7,12 +7,17 @@ import com.badlogic.gdx.graphics.Color;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
+import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /** An infinite straight line, built using two points. */
 public class InfiniteLine extends Line {
+    public InfiniteLine(PointReference a, PointReference b) {
+        super(a, b);
+    }
+
     public InfiniteLine(PointProvider a, PointProvider b) {
         super(a, b);
     }

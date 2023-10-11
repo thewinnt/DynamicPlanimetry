@@ -32,7 +32,7 @@ public class Point implements PointProvider {
 
     @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
-        if (!board.getShapes().contains(this)) {
+        if (!board.hasShape(this)) {
             drawer.setColor(switch (selection) {
                 default -> DynamicPlanimetry.COLOR_UTIL_POINT;
                 case HOVERED -> DynamicPlanimetry.COLOR_UTIL_POINT_HOVER;

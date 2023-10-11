@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -19,9 +20,13 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
+import net.thewinnt.planimetry.shapes.factories.LineFactory;
+import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
+import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
+import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -32,6 +37,7 @@ public class DrawingBoard extends Actor {
     private double scale = Math.pow(1.25, 15); // pixels per unit
     private Vec2 offset = Vec2.ZERO;
     private Shape selection;
+    private ShapeFactory creatingShape;
     private boolean isPanning = false;
     private boolean startedAtPoint = false;
     private String pan1 = "";
@@ -54,7 +60,7 @@ public class DrawingBoard extends Actor {
                 isPanning = true;
                 pan1 = "pan: " + x + ", " + y;
                 pan3 = "dpan: " + deltaX + ", " + deltaY;
-                if (selection != null && startedAtPoint && selection instanceof PointProvider point && point.canMove()) {
+                if (creatingShape == null && selection != null && startedAtPoint && selection instanceof PointProvider point && point.canMove()) {
                     point.move(deltaX / scale, deltaY / scale);
                 } else {
                     offset = offset.add(-deltaX, -deltaY);
@@ -66,7 +72,11 @@ public class DrawingBoard extends Actor {
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 int mx = Gdx.input.getX();
                 int my = Gdx.input.getY();
-                selection = getHoveredShape(mx, my);
+                if (creatingShape == null) {
+                    selection = getHoveredShape(mx, my);
+                } else if (creatingShape.isDone() || creatingShape.click(event, xb(mx), yb(my))) {
+                    creatingShape = null;
+                }
                 event.handle();
             }
 
@@ -89,6 +99,19 @@ public class DrawingBoard extends Actor {
             @Override
             public boolean scrolled(InputEvent event, float x, float y, float amountX, float amountY) {
                 scale /= Math.pow(1.25, amountY);
+                return true;
+            }
+
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                System.out.println(keycode);
+                if (keycode == Keys.SPACE && creatingShape == null) {
+                    if (selection == null) {
+                        creatingShape = new LineFactory(DrawingBoard.this, LineType.INFINITE);
+                    } else if (selection instanceof PointProvider point) {
+                        creatingShape = new LineFactory(DrawingBoard.this, LineType.INFINITE, point);
+                    }
+                }
                 return true;
             }
         });
@@ -219,6 +242,9 @@ public class DrawingBoard extends Actor {
         if (selection != null) {
             font.getFont(40, Color.FIREBRICK).draw(batch, "Selected: " + selection, x(5), y(105));
         }
+        if (creatingShape != null) {
+            font.getFont(40, Color.FIREBRICK).draw(batch, "Creating a line" + creatingShape, x(5), y(130));
+        }
     }
 
     /** The scale, in pixels per unit */
@@ -265,5 +291,37 @@ public class DrawingBoard extends Actor {
             }
         }
         return hovered;
+    }
+
+    public PointProvider getNearestPoint(double mx, double my) {
+        PointProvider hovered = null;
+        double minDistance = Double.MAX_VALUE;
+        for (Shape i : shapes) {
+            if (i instanceof PointProvider point) {
+                double distance = point.distanceToMouse(xb(mx), yb(my), this);
+                if (distance <= minDistance) {
+                    hovered = point;
+                    minDistance = distance;
+                }
+            }
+        }
+        return hovered;
+    }
+
+    public void addShape(Shape shape) {
+        if (!this.shapes.contains(shape)) {
+            this.shapes.add(shape);
+        }
+    }
+
+    public boolean hasShape(Shape shape) {
+        for (Shape i : this.shapes) {
+            if (i instanceof PointReference point && point.getPoint() == shape) {
+                return true;
+            } else if (i == shape) {
+                return true;
+            }
+        }
+        return false;
     }
 }

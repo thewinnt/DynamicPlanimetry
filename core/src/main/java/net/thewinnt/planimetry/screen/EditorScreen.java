@@ -17,6 +17,7 @@ public class EditorScreen extends FlatUIScreen {
         board = new DrawingBoard(drawer, app::getBoldFont);
         stage.addActor(board);
         stage.setScrollFocus(board);
+        stage.setKeyboardFocus(board);
     }
 
     @Override
