@@ -1,10 +1,16 @@
 package net.thewinnt.planimetry.shapes.factories;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 
 public abstract class ShapeFactory {
+    private final List<Shape> addingShapes = new ArrayList<>();
     protected final DrawingBoard board;
 
     public ShapeFactory(DrawingBoard board) {
@@ -26,4 +32,16 @@ public abstract class ShapeFactory {
      * @return whether the shape has been added and this factory can be safely removed.
      */
     public abstract boolean isDone();
+
+    /**
+     * @return the shapes being added by this factory
+     */
+    public Collection<Shape> getSuggestedShapes() {
+        return addingShapes;
+    };
+
+    protected void addShape(Shape shape) {
+        this.board.addShape(shape);
+        this.addingShapes.add(shape);
+    }
 }

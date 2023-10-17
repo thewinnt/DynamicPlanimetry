@@ -67,6 +67,10 @@ public class Vec2 {
         return Math.sqrt((x - this.x) * (x - this.x) + (y - this.y) * (y - this.y));
     }
 
+    public Vec2 lerp(Vec2 other, double progress) {
+        return new Vec2(this.x + (other.x - this.x) * progress, this.y + (other.y - this.y) * progress);
+    }
+
     @Override
     public boolean equals(Object o) {
         return o != null && o instanceof Vec2 other && other.x == this.x && other.y == this.y;

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -15,16 +14,15 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Predicate;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
 import net.thewinnt.planimetry.shapes.factories.LineFactory;
-import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
-import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
-import net.thewinnt.planimetry.shapes.point.Point;
+import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -105,26 +103,23 @@ public class DrawingBoard extends Actor {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 System.out.println(keycode);
-                if (keycode == Keys.SPACE && creatingShape == null) {
-                    if (selection == null) {
-                        creatingShape = new LineFactory(DrawingBoard.this, LineType.INFINITE);
-                    } else if (selection instanceof PointProvider point) {
-                        creatingShape = new LineFactory(DrawingBoard.this, LineType.INFINITE, point);
+                if (creatingShape == null && (selection == null || selection instanceof PointProvider point)) {
+                    switch (keycode) {
+                        case Keys.L:
+                            creatingShape = new LineFactory(DrawingBoard.this, LineType.INFINITE, (PointProvider)selection);
+                            selection = null;
+                            break;
+                        case Keys.R:
+                            creatingShape = new LineFactory(DrawingBoard.this, LineType.RAY, (PointProvider)selection);
+                            selection = null;
+                            break;
+                        default:
+                            break;
                     }
                 }
                 return true;
             }
         });
-        Random random = new Random();
-        for (int i = 0; i < 10; i++) {
-            this.shapes.add(new Point(new Vec2(random.nextInt(-100, 100), random.nextInt(-100, 100))));
-        }
-        for (int i = 0; i < 10; i++) {
-            this.shapes.add(new InfiniteLine(new Point(new Vec2(random.nextInt(-100, 100), random.nextInt(-100, 100))), new Point(new Vec2(random.nextInt(-100, 100), random.nextInt(-100, 100)))));
-        }
-        Point a = new Point(new Vec2(-20, -20));
-        this.shapes.add(new InfiniteLine(a, new Point(new Vec2(30, 50))));
-        this.shapes.add(a);
     }
 
     /** local space -> global (render) space */
@@ -169,17 +164,6 @@ public class DrawingBoard extends Actor {
         if (Double.isInfinite(scale)) scale = 1;
         int mx = Gdx.input.getX();
         int my = Gdx.input.getY();
-        drawer.setColor(0, 0, 0, 1);
-        drawer.line(bx(-10), by(0), bx(10), by(0), 4);
-        drawer.line(bx(-0), by(-10), bx(0), by(10), 4);
-        Shape hovered = getHoveredShape(mx, my);
-        for (Shape i : shapes) {
-            if (selection == i) {
-                i.render(drawer, SelectionStatus.SELECTED, font, this);
-            } else {
-                i.render(drawer, hovered == i ? SelectionStatus.HOVERED : SelectionStatus.NONE, font, this);
-            }
-        }
         double step = Math.abs(Math.max(getHeight(), getWidth()) / scale / 12); // detect full width
         int j = 0;
         if (step != 0 && Double.isFinite(step)) {
@@ -222,6 +206,17 @@ public class DrawingBoard extends Actor {
             }
             for (double i = yb(getY() + getHeight()) - yb(getY() + getHeight()) % step; i < yb(getY()); i += step) {
                 drawer.line(getX(), by(i), getX() + getWidth(), by(i), Color.GOLDENROD, 1);
+            }
+        }
+        drawer.setColor(0, 0, 0, 1);
+        drawer.line(bx(-10), by(0), bx(10), by(0), 4);
+        drawer.line(bx(-0), by(-10), bx(0), by(10), 4);
+        Shape hovered = getHoveredShape(mx, my);
+        for (Shape i : shapes) {
+            if (selection == i) {
+                i.render(drawer, SelectionStatus.SELECTED, font, this);
+            } else {
+                i.render(drawer, hovered == i ? SelectionStatus.HOVERED : SelectionStatus.NONE, font, this);
             }
         }
         if (DynamicPlanimetry.DEBUG_MODE) {
@@ -283,7 +278,35 @@ public class DrawingBoard extends Actor {
     public Shape getHoveredShape(double mx, double my) {
         Shape hovered = null;
         double minDistance = 8 / scale;
+        Collection<Shape> ignore;
+        if (creatingShape != null) {
+            ignore = creatingShape.getSuggestedShapes();
+        } else {
+            ignore = List.of();
+        }
         for (Shape i : shapes) {
+            if (ignore.contains(i)) continue;
+            double distance = i.distanceToMouse(xb(mx), yb(my), this);
+            if (distance <= minDistance) {
+                hovered = i;
+                minDistance = distance;
+            }
+        }
+        return hovered;
+    }
+
+    public Shape getHoveredShape(double mx, double my, Predicate<Shape> predicate) {
+        Shape hovered = null;
+        double minDistance = 8 / scale;
+        Collection<Shape> ignore;
+        if (creatingShape != null) {
+            ignore = creatingShape.getSuggestedShapes();
+        } else {
+            ignore = List.of();
+        }
+        for (Shape i : shapes) {
+            if (ignore.contains(i)) continue;
+            if (!predicate.evaluate(i)) continue;
             double distance = i.distanceToMouse(xb(mx), yb(my), this);
             if (distance <= minDistance) {
                 hovered = i;
@@ -323,5 +346,13 @@ public class DrawingBoard extends Actor {
             }
         }
         return false;
+    }
+
+    public void setSelection(Shape shape) {
+        if (this.shapes.contains(shape)) {
+            selection = shape;
+        } else {
+            selection = null;
+        }
     }
 }
