@@ -24,9 +24,7 @@ public abstract class Line implements Shape {
     public double getSlope() {
         Vec2 a = this.a.getPosition();
         Vec2 b = this.b.getPosition();
-        if (a.x == b.x) return Double.NaN;
-        double k = (a.y - b.y) / (a.x - b.x);
-        return k;
+        return (a.y - b.y) / (a.x - b.x);
     }
 
     public DoubleFunction<Double> compileFormula() {

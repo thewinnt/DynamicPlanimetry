@@ -24,40 +24,26 @@ public class InfiniteLine extends Line {
 
     @Override
     public boolean contains(Vec2 point) {
-        if (Double.isNaN(getSlope())) return point.x == a.getPosition().x;
-        return compileFormula().apply(point.x) == point.y;
+        return a.getPosition().distanceTo(point) + b.getPosition().distanceTo(point) == a.getPosition().distanceTo(b.getPosition());
     }
 
     @Override
     public boolean contains(double x, double y) {
-        if (Double.isNaN(getSlope())) return x == a.getPosition().x;
-        return compileFormula().apply(x) == y;
+        return a.getPosition().distanceTo(x, y) + b.getPosition().distanceTo(x, y) == a.getPosition().distanceTo(b.getPosition());
     }
 
     @Override
     public double distanceToMouse(Vec2 point, DrawingBoard board) {
-        double slope = getSlope();
-        if (Double.isNaN(slope)) {
-            return Math.abs(point.x - a.getPosition().x);
-        } else if (slope > 1) {
-            double offset = compileFormula().apply(0);
-            DoubleFunction<Double> xFromY = y -> (y - offset) / slope;
-            return Math.abs(xFromY.apply(point.y) - point.x);
-        }
-        return Math.abs(compileFormula().apply(point.x) - point.y);
+        Vec2 a = this.a.getPosition();
+        Vec2 b = this.b.getPosition();
+        return Math.abs((b.x - a.x)*(a.y - point.y) - (a.x - point.x)*(b.y - a.y)) / a.distanceTo(b);
     }
 
     @Override
     public double distanceToMouse(double x, double y, DrawingBoard board) {
-        double slope = getSlope();
-        if (Double.isNaN(slope)) {
-            return Math.abs(x - a.getPosition().x);
-        } else if (slope > 1) {
-            double offset = compileFormula().apply(0);
-            DoubleFunction<Double> xFromY = yc -> (yc - offset) / slope;
-            return Math.abs(xFromY.apply(y) - x);
-        }
-        return Math.abs(compileFormula().apply(x) - y);
+        Vec2 a = this.a.getPosition();
+        Vec2 b = this.b.getPosition();
+        return Math.abs((b.x - a.x)*(a.y - y) - (a.x - x)*(b.y - a.y)) / a.distanceTo(b);
     }
 
     @Override

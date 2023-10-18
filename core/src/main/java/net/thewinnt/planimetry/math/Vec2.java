@@ -35,6 +35,14 @@ public class Vec2 {
         return new Vec2(x + this.x, y + this.y);
     }
 
+    public Vec2 subtract(Vec2 other) {
+        return new Vec2(x - other.x, y - other.y);
+    }
+
+    public Vec2 subtract(double x, double y) {
+        return new Vec2(x - this.x, y - this.y);
+    }
+
     public Vec2 mul(Vec2 other) {
         return new Vec2(x * other.x, y * other.y);
     }
@@ -67,8 +75,20 @@ public class Vec2 {
         return Math.sqrt((x - this.x) * (x - this.x) + (y - this.y) * (y - this.y));
     }
 
+    public double dot(Vec2 other) {
+        return this.x * other.x + this.y * other.y;
+    }
+
+    public double dot(double x, double y) {
+        return this.x * x + this.y * y;
+    }
+
     public Vec2 lerp(Vec2 other, double progress) {
         return new Vec2(this.x + (other.x - this.x) * progress, this.y + (other.y - this.y) * progress);
+    }
+
+    public Vec2 continueFromTan(double tan, double distance) {
+        return new Vec2(x + Math.cos(Math.atan(tan)) * distance, y + Math.sin(Math.atan(tan)) * distance);
     }
 
     @Override
