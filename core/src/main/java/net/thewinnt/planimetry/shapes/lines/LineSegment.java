@@ -3,6 +3,7 @@ package net.thewinnt.planimetry.shapes.lines;
 import com.badlogic.gdx.graphics.Color;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
@@ -34,8 +35,8 @@ public class LineSegment extends Line {
         Vec2 a = this.a.getPosition();
         Vec2 b = this.b.getPosition();
         double distance = Math.abs((b.x - a.x)*(a.y - point.y) - (a.x - point.x)*(b.y - a.y)) / a.distanceTo(b);
-        double slope = Math.tan(Math.atan(this.getSlope()) + Math.PI / 2);
-        if (!this.contains(point.continueFromTan(slope, distance)) && !this.contains(point.continueFromTan(slope, -distance))) {
+        double slope = this.getSlope();
+        if (!this.contains(MathHelper.perpendicular(point, slope, distance)) && !this.contains(MathHelper.perpendicular(point, slope, -distance))) {
             return Math.min(a.distanceTo(point), b.distanceTo(point));
         } else {
             return distance;

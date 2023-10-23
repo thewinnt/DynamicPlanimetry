@@ -87,10 +87,6 @@ public class Vec2 {
         return new Vec2(this.x + (other.x - this.x) * progress, this.y + (other.y - this.y) * progress);
     }
 
-    public Vec2 continueFromTan(double tan, double distance) {
-        return new Vec2(x + Math.cos(Math.atan(tan)) * distance, y + Math.sin(Math.atan(tan)) * distance);
-    }
-
     @Override
     public boolean equals(Object o) {
         return o != null && o instanceof Vec2 other && other.x == this.x && other.y == this.y;
