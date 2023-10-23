@@ -72,6 +72,8 @@ public class DynamicPlanimetry extends Game {
     public static final Color COLOR_UTIL_POINT = new Color(0x0080FFFF);
     public static final Color COLOR_UTIL_POINT_HOVER = new Color(0x00C4FFFF);
     public static final Color COLOR_UTIL_POINT_SELECTED = new Color(0x0055CCFF);
+    public static final Color COLOR_GRID = new Color(0xCCCCCCFF);
+    public static final Color COLOR_GRID_HINT = new Color(0xAAAAAAFF);
 
     // more font stuff
     public static final FontType BUTTON_ACTIVE = new FontType(85, Color.BLACK);

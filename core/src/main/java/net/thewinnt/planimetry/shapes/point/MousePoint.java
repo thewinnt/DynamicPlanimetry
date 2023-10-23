@@ -8,7 +8,7 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public class MousePoint implements PointProvider {
+public class MousePoint extends PointProvider {
     private final DrawingBoard board;
 
     public MousePoint(DrawingBoard board) {

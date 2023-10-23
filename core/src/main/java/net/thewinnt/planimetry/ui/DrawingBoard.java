@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Predicate;
 
+import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -113,6 +114,10 @@ public class DrawingBoard extends Actor {
                             creatingShape = new LineFactory(DrawingBoard.this, LineType.RAY, (PointProvider)selection);
                             selection = null;
                             break;
+                        case Keys.S:
+                            creatingShape = new LineFactory(DrawingBoard.this, LineType.SEGMENT, (PointProvider)selection);
+                            selection = null;
+                            break;
                         default:
                             break;
                     }
@@ -191,26 +196,64 @@ public class DrawingBoard extends Actor {
             }
             // scale back
             step *= Math.pow(10, j);
+            float hintX = by(0) - 5;
+            if (hintX > getY() + getHeight() - 20) {
+                hintX = getY() + getHeight() - 20;
+            } else if (hintX < getY() + 30) {
+                hintX = getY() + 30;
+            }
             for (double i = xb(getX()) - xb(getX()) % step; i < xb(getX() + getWidth()); i += step) {
-                drawer.line(bx(i), getY(), bx(i), getY() + getHeight(), Color.GOLDENROD, 1);
+                drawer.line(bx(i), getY(), bx(i), getY() + getHeight(), DynamicPlanimetry.COLOR_GRID, 1);
+                if (i == 0) continue;
                 if (Math.abs(i) % 1 == 0) {
-                    font.getFont(40, Color.GOLDENROD).draw(batch, String.valueOf((long)i), bx(i), y(40), 0, Align.center, false);
+                    font.getFont(40, DynamicPlanimetry.COLOR_GRID_HINT).draw(batch, String.valueOf((long)i), bx(i), hintX, 0, Align.center, false);
                 } else {
                     String string = String.format("%.8f", i);
                     int k = string.length() - 1;
                     while (string.charAt(k) == '0') k--;
                     string = string.substring(0, k + 1);
                     if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
-                    font.getFont(40, Color.GOLDENROD).draw(batch, string, bx(i), y(40), 0, Align.center, false);
+                    font.getFont(40, DynamicPlanimetry.COLOR_GRID_HINT).draw(batch, string, bx(i), hintX, 0, Align.center, false);
                 }
             }
             for (double i = yb(getY() + getHeight()) - yb(getY() + getHeight()) % step; i < yb(getY()); i += step) {
-                drawer.line(getX(), by(i), getX() + getWidth(), by(i), Color.GOLDENROD, 1);
+                drawer.line(getX(), by(i), getX() + getWidth(), by(i), DynamicPlanimetry.COLOR_GRID, 1);
+                if (Math.abs(i) < Math.pow(2, -16)) continue;
+                if (Math.abs(i) % 1 == 0) {
+                    float length = FontUtils.getTextLength(font.getFont(40, Color.BLACK), String.valueOf((long)i));
+                    float hintY = bx(0) + 5;
+                    int alignYH = Align.left;
+                    if (hintY >= getX() + getWidth() - length - 10) {
+                        hintY = getY() + getWidth() - 10;
+                        alignYH = Align.right;
+                    } else if (hintY <= getX() + 10) {
+                        hintY = getX() + 10;
+                        alignYH = Align.left;
+                    }
+                    font.getFont(40, DynamicPlanimetry.COLOR_GRID_HINT).draw(batch, String.valueOf((long)i), hintY, by(i) + 10, 0, alignYH, false);
+                } else {
+                    String string = String.format("%.8f", i);
+                    int k = string.length() - 1;
+                    while (string.charAt(k) == '0') k--;
+                    string = string.substring(0, k + 1);
+                    if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
+                    float length = FontUtils.getTextLength(font.getFont(40, Color.BLACK), string);
+                    float hintY = bx(0) + 5;
+                    int alignYH = Align.left;
+                    if (hintY >= getX() + getWidth() - length - 10) {
+                        hintY = getY() + getWidth() - 10;
+                        alignYH = Align.right;
+                    } else if (hintY <= getX() + length + 10) {
+                        hintY = getX() + 10;
+                        alignYH = Align.left;
+                    }
+                    font.getFont(40, DynamicPlanimetry.COLOR_GRID_HINT).draw(batch, string, hintY, by(i), 0, alignYH, false);
+                }
             }
         }
         drawer.setColor(0, 0, 0, 1);
-        drawer.line(bx(-10), by(0), bx(10), by(0), 4);
-        drawer.line(bx(-0), by(-10), bx(0), by(10), 4);
+        drawer.line(getX(), by(0), getX() + getWidth(), by(0), 2);
+        drawer.line(bx(0), getY(), bx(0), getY() + getHeight(), 2);
         Shape hovered = getHoveredShape(mx, my);
         for (Shape i : shapes) {
             if (selection == i) {

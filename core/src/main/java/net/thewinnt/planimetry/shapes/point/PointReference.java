@@ -7,7 +7,7 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public class PointReference implements PointProvider {
+public class PointReference extends PointProvider {
     private PointProvider point;
 
     public PointReference(PointProvider point) {

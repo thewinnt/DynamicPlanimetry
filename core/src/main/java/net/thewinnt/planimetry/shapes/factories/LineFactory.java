@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.Line;
+import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.lines.Ray;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.Point;
@@ -73,7 +74,8 @@ public class LineFactory extends ShapeFactory {
 
     public static enum LineType {
         INFINITE(InfiniteLine::new),
-        RAY(Ray::new);
+        RAY(Ray::new),
+        SEGMENT(LineSegment::new);
 
         public final BiFunction<PointProvider, PointProvider, Line> factory;
         private LineType(BiFunction<PointProvider, PointProvider, Line> factory) {

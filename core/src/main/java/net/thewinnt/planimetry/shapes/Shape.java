@@ -5,11 +5,14 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public interface Shape {
-    boolean contains(Vec2 point);
-    boolean contains(double x, double y);
-    double distanceToMouse(Vec2 point, DrawingBoard board);
-    double distanceToMouse(double x, double y, DrawingBoard board);
+public abstract class Shape {
+    private static long idCounter;
+    private final long id = idCounter++;
+
+    public abstract boolean contains(Vec2 point);
+    public abstract boolean contains(double x, double y);
+    public abstract double distanceToMouse(Vec2 point, DrawingBoard board);
+    public abstract double distanceToMouse(double x, double y, DrawingBoard board);
 
     /**
      * Renders the shape
@@ -18,10 +21,14 @@ public interface Shape {
      * @param font the font to use for additional data
      * @param board the board to gather data from (and perform coordinate conversions)
      */
-    void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board);
+    public abstract void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board);
 
-    default boolean shouldRender() {
+    public boolean shouldRender() {
         return true;
+    }
+
+    public final long getId() {
+        return id;
     }
 
     public static enum SelectionStatus {

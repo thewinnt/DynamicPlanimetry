@@ -8,7 +8,7 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public class Point implements PointProvider {
+public class Point extends PointProvider {
     private Vec2 position;
 
     public Point(Vec2 position) {
