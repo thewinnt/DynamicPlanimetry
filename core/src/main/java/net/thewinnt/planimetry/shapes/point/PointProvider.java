@@ -1,14 +1,20 @@
 package net.thewinnt.planimetry.shapes.point;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 
 public abstract class PointProvider extends Shape {
+    protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
     public abstract Vec2 getPosition();
     public abstract boolean canMove();
     public abstract void move(Vec2 delta);
     public abstract void move(double dx, double dy);
+
     public double getX() {
         return getPosition().x;
     }
@@ -34,5 +40,13 @@ public abstract class PointProvider extends Shape {
     @Override
     public double distanceToMouse(double x, double y, DrawingBoard board) {
         return getPosition().distanceTo(x, y);
+    }
+
+    public void addMovementListener(Consumer<Vec2> listener) {
+        this.movementListeners.add(listener);
+    }
+
+    public boolean removeMovementListener(Consumer<Vec2> listener) {
+        return this.movementListeners.remove(listener);
     }
 }

@@ -15,6 +15,7 @@ public class CircleFactory extends ShapeFactory {
     private boolean addCenter = true;
     private boolean addRadius;
     private boolean addSecondaryPoint;
+    private boolean keepRadius = true;
 
     public CircleFactory(DrawingBoard board) {
         super(board);
@@ -25,7 +26,7 @@ public class CircleFactory extends ShapeFactory {
         if (this.point == null) {
             this.point = new PointReference(new MousePoint(board));
             Point center = new Point(new Vec2(x, y));
-            this.addShape(new Circle(center, point));
+            this.addShape(new Circle(center, point, keepRadius));
             if (addCenter) this.addShape(center);
             if (addSecondaryPoint || addRadius) this.addShape(point);
             if (addRadius) this.addShape(new LineSegment(center, point));
@@ -65,6 +66,15 @@ public class CircleFactory extends ShapeFactory {
 
     public CircleFactory setAddSecondaryPoint(boolean addSecondaryPoint) {
         this.addSecondaryPoint = addSecondaryPoint;
+        return this;
+    }
+
+    public boolean getKeepRadius() {
+        return keepRadius;
+    }
+
+    public CircleFactory setKeepRadius(boolean keepRadius) {
+        this.keepRadius = keepRadius;
         return this;
     }
 }

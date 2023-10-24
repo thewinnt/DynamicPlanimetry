@@ -67,10 +67,12 @@ public class Point extends PointProvider {
     @Override
     public void move(Vec2 delta) {
         position = position.add(delta);
+        this.movementListeners.forEach(i -> i.accept(delta));
     }
 
     @Override
     public void move(double dx, double dy) {
         position = position.add(dx, dy);
+        this.movementListeners.forEach(i -> i.accept(new Vec2(dx, dy)));
     }
 }

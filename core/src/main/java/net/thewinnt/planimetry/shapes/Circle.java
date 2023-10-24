@@ -13,16 +13,20 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Circle extends Shape {
     public final PointProvider center;
+    private boolean keepRadius = false;
     public Supplier<Double> radius;
+    private PointProvider radiusPoint;
 
     public Circle(PointProvider center, double radius) {
         this.center = center;
         this.radius = () -> radius;
     }
 
-    public Circle(PointProvider center, PointProvider radius) {
+    public Circle(PointProvider center, PointProvider radius, boolean keepRadius) {
         this.center = center;
         this.radius = () -> radius.getPosition().distanceTo(center.getPosition());
+        this.keepRadius = keepRadius;
+        this.setRadiusPoint(radius);
     }
 
     @Override
@@ -55,5 +59,27 @@ public class Circle extends Shape {
         };
         drawer.setColor(lineColor);
         drawer.circle(board.bx(center.x), board.by(center.y), (float)(radius.get() * board.getScale()), getThickness(board.getScale()));
+    }
+
+    public void setRadiusPoint(PointProvider point) {
+        if (this.radiusPoint != null) this.center.removeMovementListener(this.radiusPoint::move);
+        if (this.keepRadius) this.center.addMovementListener(point::move);
+        this.radiusPoint = point;
+        this.radius = () -> point.getPosition().distanceTo(center.getPosition());
+    }
+
+    public boolean getKeepRadius() {
+        return keepRadius;
+    }
+
+    public void setKeepRadius(boolean keepRadius) {
+        if (this.keepRadius != keepRadius) {
+            if (keepRadius) {
+                this.center.addMovementListener(this.radiusPoint::move);
+            } else if (this.radiusPoint != null) {
+                this.center.removeMovementListener(this.radiusPoint::move);
+            }
+        }
+        this.keepRadius = keepRadius;
     }
 }
