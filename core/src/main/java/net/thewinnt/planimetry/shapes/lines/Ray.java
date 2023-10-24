@@ -92,11 +92,11 @@ public class Ray extends Line {
         if (a.x == b.x) {
             float startY = a.y < b.y ? board.by(a.y) : board.by(b.y);
             float targHeight = a.y < b.y ? board.getY() : board.getY() + board.getHeight();
-            drawer.line(board.bx(a.x), startY, board.bx(b.x), targHeight, lineColor, (float)Math.min(Math.max(1, board.getScale() / 2), 4));
+            drawer.line(board.bx(a.x), startY, board.bx(b.x), targHeight, lineColor, getThickness(board.getScale()));
         } else if (a.x < b.x) {
-            drawer.line(board.bx(a.x), board.by(a.y), board.getX() + board.getWidth(), board.by(formula.apply(board.maxX())), lineColor, (float)Math.min(Math.max(1, board.getScale() / 2), 4));
+            drawer.line(board.bx(a.x), board.by(a.y), board.getX() + board.getWidth(), board.by(formula.apply(board.maxX())), lineColor, getThickness(board.getScale()));
         } else {
-            drawer.line(board.getX(), board.by(formula.apply(board.minX())), board.bx(a.x), board.by(a.y), lineColor, (float)Math.min(Math.max(1, board.getScale() / 2), 4));
+            drawer.line(board.getX(), board.by(formula.apply(board.minX())), board.bx(a.x), board.by(a.y), lineColor, getThickness(board.getScale()));
         }
         if (selection == SelectionStatus.SELECTED) {
             if (!board.getShapes().contains(this.a)) {

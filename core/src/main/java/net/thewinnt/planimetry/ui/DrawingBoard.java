@@ -21,6 +21,7 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
+import net.thewinnt.planimetry.shapes.factories.CircleFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
@@ -118,6 +119,9 @@ public class DrawingBoard extends Actor {
                             creatingShape = new LineFactory(DrawingBoard.this, LineType.SEGMENT, (PointProvider)selection);
                             selection = null;
                             break;
+                        case Keys.C:
+                            creatingShape = new CircleFactory(DrawingBoard.this).setAddRadius(true);
+                            selection = null;
                         default:
                             break;
                     }

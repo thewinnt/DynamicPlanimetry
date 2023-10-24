@@ -57,9 +57,9 @@ public class InfiniteLine extends Line {
         Vec2 a = this.a.getPosition();
         Vec2 b = this.b.getPosition();
         if (a.x == b.x) {
-            drawer.line(board.bx(a.x), board.getY(), board.bx(b.x), board.getY() + board.getHeight(), lineColor, (float)Math.min(Math.max(1, board.getScale() / 2), 4));
+            drawer.line(board.bx(a.x), board.getY(), board.bx(b.x), board.getY() + board.getHeight(), lineColor, getThickness(board.getScale()));
         } else {
-            drawer.line(board.getX(), board.by(formula.apply(board.minX())), board.getX() + board.getWidth(), board.by(formula.apply(board.maxX())), lineColor, (float)Math.min(Math.max(1, board.getScale() / 2), 4));
+            drawer.line(board.getX(), board.by(formula.apply(board.minX())), board.getX() + board.getWidth(), board.by(formula.apply(board.maxX())), lineColor, getThickness(board.getScale()));
         }
         if (selection == SelectionStatus.SELECTED) {
             if (!board.getShapes().contains(this.a)) {

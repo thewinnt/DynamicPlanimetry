@@ -58,7 +58,7 @@ public class LineSegment extends Line {
         Vec2 a, b;
         a = this.a.getPosition();
         b = this.b.getPosition();
-        drawer.line(board.bx(a.x), board.by(a.y), board.bx(b.x), board.by(b.y), lineColor, (float)Math.min(Math.max(1, board.getScale() / 2), 4));
+        drawer.line(board.bx(a.x), board.by(a.y), board.bx(b.x), board.by(b.y), lineColor, getThickness(board.getScale()));
         if (selection == SelectionStatus.SELECTED) {
             if (!board.getShapes().contains(this.a)) {
                 this.a.render(drawer, SelectionStatus.NONE, font, board);

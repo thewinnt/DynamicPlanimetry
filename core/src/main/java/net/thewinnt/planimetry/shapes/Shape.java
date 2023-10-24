@@ -31,6 +31,10 @@ public abstract class Shape {
         return id;
     }
 
+    protected float getThickness(double scale) {
+        return (float)Math.min(Math.max(1, scale / 2), 4);
+    }
+
     public static enum SelectionStatus {
         NONE,
         HOVERED,
