@@ -62,6 +62,7 @@ public class DynamicPlanimetry extends Game {
     public static final Color COLOR_MAIN = new Color(rgbColor(255, 255, 255));
     public static final Color COLOR_PRESSED = new Color(rgbColor(220, 220, 220));
     public static final Color COLOR_BUTTON = new Color(rgbColor(240, 240, 240));
+    public static final Color COLOR_DELIMITER = new Color(0xC0C0C0FF);
     public static final Color COLOR_INACTIVE = new Color(rgbColor(45, 45, 45));
     public static final Color COLOR_SHAPE = Color.BLACK.cpy();
     public static final Color COLOR_SHAPE_HOVER = new Color(0, 0.75f, 1, 1);
@@ -104,7 +105,7 @@ public class DynamicPlanimetry extends Game {
         editorScreen = registerScreen(new EditorScreen(this));
         setScreen(MAIN_MENU);
         if (DEBUG_MODE) {
-            Notifications.addNotification("Включён режим отладки", 5000);
+            Notifications.addNotification("Включён режим отладки", 2000);
         }
     }
 
