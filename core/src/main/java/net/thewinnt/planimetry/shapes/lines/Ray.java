@@ -1,6 +1,5 @@
 package net.thewinnt.planimetry.shapes.lines;
 
-import java.util.Random;
 import java.util.function.DoubleFunction;
 
 import com.badlogic.gdx.graphics.Color;
@@ -15,7 +14,7 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Ray extends Line {
-    private boolean startFromA = new Random().nextBoolean();
+    private boolean startFromA = false;
 
     public Ray(PointReference a, PointReference b) {
         super(a, b);
@@ -106,5 +105,9 @@ public class Ray extends Line {
                 this.b.render(drawer, SelectionStatus.NONE, font, board);
             }
         }
+    }
+
+    public void invert() {
+        this.startFromA = !this.startFromA;
     }
 }

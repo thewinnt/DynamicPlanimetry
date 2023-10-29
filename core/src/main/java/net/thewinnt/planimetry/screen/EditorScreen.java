@@ -2,28 +2,45 @@ package net.thewinnt.planimetry.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox.SelectBoxStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.gdxutils.ColorUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.shapes.factories.CircleFactory;
+import net.thewinnt.planimetry.shapes.factories.LineFactory;
+import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.ShapeSettings;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.drawable.CheckboxDrawable;
 import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
-import net.thewinnt.planimetry.ui.parameters.DoubleParameter;
 
 public class EditorScreen extends FlatUIScreen {
     private DrawingBoard board;
     private ShapeSettings settings;
     private StyleSet styles;
+    
+    private Table creation;
+    private Table properties;
+    private Table functions;
+
+    private Label creationCategory;
+    private TextButton createLine;
+    private TextButton createRay;
+    private TextButton createLineSegment;
+    private TextButton createCircle;
 
     public EditorScreen(DynamicPlanimetry app) {
         super(app);
@@ -34,16 +51,73 @@ public class EditorScreen extends FlatUIScreen {
         this.styles = new StyleSet();
         updateStyles();
         board = new DrawingBoard(drawer, app::getBoldFont);
-        settings = new ShapeSettings(board, drawer, styles);
+
+        creation = new Table();
+        properties = new Table();
+        functions = new Table();
+        rebuildUI(board.getSelection());
+        settings = new ShapeSettings(drawer, creation, properties);
+
         stage.addActor(board);
-        // stage.setScrollFocus(board);
-        // stage.setKeyboardFocus(board);
+        stage.setScrollFocus(board);
+        stage.setKeyboardFocus(board);
+
         stage.addActor(settings);
-        DoubleParameter test = new DoubleParameter(styles, 0);
-        Table table = test.getActorSetup();
-        table.setPosition(800, 100);
-        table.setSize(100, 30);
-        stage.addActor(table);
+        stage.addActor(creation);
+        stage.addActor(properties);
+        stage.addActor(functions);
+    }
+
+    public void rebuildUI(Shape selection) {
+        // TABLES
+        creation.reset();
+        properties.reset();
+        functions.reset();
+
+        // ACTORS
+        creationCategory = new Label("Создание", styles.getLabelStyle());
+        createLine = new TextButton("Прямая", styles.getButtonStyle());
+        createRay = new TextButton("Луч", styles.getButtonStyle());
+        createLineSegment = new TextButton("Отрезок", styles.getButtonStyle());
+        createCircle = new TextButton("Окружность", styles.getButtonStyle());
+
+        // LISTENERS
+        createLine.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                board.startCreation(new LineFactory(board, LineType.INFINITE));
+            }
+        });
+
+        createRay.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                board.startCreation(new LineFactory(board, LineType.RAY));
+            }
+        });
+
+        createLineSegment.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                board.startCreation(new LineFactory(board, LineType.SEGMENT));
+            }
+        });
+        
+        createCircle.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                board.startCreation(new CircleFactory(board));
+            }
+        });
+
+        // ADDING TO TABLES
+        creation.add(creationCategory).expandX().fillX().pad(5, 5, 0, 5).row();
+        creation.add(createLine).expandX().fillX().pad(5, 5, 0, 5).row();
+        creation.add(createRay).expandX().fillX().pad(5, 5, 0, 5).row();
+        creation.add(createLineSegment).expandX().fillX().pad(5, 5, 0, 5).row();
+        creation.add(createCircle).expandX().fillX().pad(5, 5, 0, 5);
+
+        System.out.println("Rebuilding UI with selected shape: " + selection);
     }
 
     public void updateStyles() {
@@ -103,11 +177,27 @@ public class EditorScreen extends FlatUIScreen {
     @Override
     public void show() {
         super.show();
+        final float width = Gdx.graphics.getWidth();
+        final float height = Gdx.graphics.getHeight();
+        final float delimiter = width - height * 0.5f;
+
         board.setPosition(0, 0);
-        board.setSize(Gdx.graphics.getWidth() - Gdx.graphics.getHeight() * 0.5f, Gdx.graphics.getHeight());
-        settings.setPosition(Gdx.graphics.getWidth() - Gdx.graphics.getHeight() * 0.5f, 0);
-        settings.setSize(Gdx.graphics.getHeight() * 0.5f, Gdx.graphics.getHeight());
+        board.setSize(delimiter, height);
+
+        settings.setPosition(delimiter, 0);
+        settings.setSize(height * 0.5f, height);
+
         updateStyles();
+        rebuildUI(board.getSelection());
+
+        creation.setSize(width - delimiter, creation.getPrefHeight());
+        creation.setPosition(delimiter, height - creation.getHeight());
+
+        properties.setSize(width - delimiter, properties.getPrefHeight());
+        properties.setPosition(delimiter, height - creation.getHeight() - properties.getHeight());
+
+        functions.setSize(width - delimiter, functions.getPrefHeight());
+        functions.setPosition(delimiter, height - creation.getHeight() - properties.getHeight() - functions.getHeight());
     }
 
     @Override public void customRender() {}

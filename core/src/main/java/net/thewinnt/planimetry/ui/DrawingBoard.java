@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -34,16 +35,13 @@ public class DrawingBoard extends Actor {
     private final ShapeDrawer drawer;
     private final FontProvider font;
     private final List<Shape> shapes = new ArrayList<>();
+    private final List<Consumer<Shape>> selectionListeners = new ArrayList<>();
     private double scale = Math.pow(1.25, 15); // pixels per unit
     private Vec2 offset = Vec2.ZERO;
     private Shape selection;
     private ShapeFactory creatingShape;
     private boolean isPanning = false;
     private boolean startedAtPoint = false;
-    private String pan1 = "";
-    private String pan2 = "";
-    private String pan3 = "";
-    private String pan4 = "";
 
     public DrawingBoard(ShapeDrawer drawer, FontProvider font) {
         this.drawer = drawer;
@@ -58,8 +56,6 @@ public class DrawingBoard extends Actor {
             @Override
             public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
                 isPanning = true;
-                pan1 = "pan: " + x + ", " + y;
-                pan3 = "dpan: " + deltaX + ", " + deltaY;
                 if (creatingShape == null && selection != null && startedAtPoint && selection instanceof PointProvider point && point.canMove()) {
                     point.move(deltaX / scale, deltaY / scale);
                 } else {
@@ -89,7 +85,6 @@ public class DrawingBoard extends Actor {
             public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 int mx = Gdx.input.getX();
                 int my = Gdx.input.getY();
-                pan2 = "touch: " + mx + ", " + my;
                 if (!isPanning && selection != null) {
                     startedAtPoint = selection.distanceToMouse(xb(mx), yb(my), DrawingBoard.this) <= 16 / scale;
                 }
@@ -268,24 +263,16 @@ public class DrawingBoard extends Actor {
         }
         if (DynamicPlanimetry.DEBUG_MODE) {
             font.getFont(40, Color.FIREBRICK).draw(batch, "scale: " + scale, x(5), y(getHeight() - 5));
-            font.getFont(40, Color.FIREBRICK).draw(batch, "x: " + offset.x, x(5), y(getHeight() - 30));
-            font.getFont(40, Color.FIREBRICK).draw(batch, "y: " + offset.y, x(5), y(getHeight() - 55));
-            font.getFont(40, Color.FIREBRICK).draw(batch, "rx: " + bx(0), x(5), y(getHeight() - 80));
-            font.getFont(40, Color.FIREBRICK).draw(batch, "ry: " + by(0), x(5), y(getHeight() - 105));
             font.getFont(40, Color.FIREBRICK).draw(batch, "mx: " + mx, x(5), y(getHeight() - 130));
             font.getFont(40, Color.FIREBRICK).draw(batch, "my: " + my, x(5), y(getHeight() - 155));
             font.getFont(40, Color.FIREBRICK).draw(batch, "mxb: " + xb(mx), x(5), y(getHeight() - 180));
             font.getFont(40, Color.FIREBRICK).draw(batch, "mxy: " + yb(my), x(5), y(getHeight() - 205));
-            font.getFont(40, Color.FIREBRICK).draw(batch, pan1, x(5), y(getHeight() - 230));
-            font.getFont(40, Color.FIREBRICK).draw(batch, pan2, x(5), y(getHeight() - 255));
-            font.getFont(40, Color.FIREBRICK).draw(batch, pan3, x(5), y(getHeight() - 280));
-            font.getFont(40, Color.FIREBRICK).draw(batch, pan4, x(5), y(getHeight() - 305));
-        }
-        if (selection != null) {
-            font.getFont(40, Color.FIREBRICK).draw(batch, "Selected: " + selection, x(5), y(105));
-        }
-        if (creatingShape != null) {
-            font.getFont(40, Color.FIREBRICK).draw(batch, "Creating a line" + creatingShape, x(5), y(130));
+            if (selection != null) {
+                font.getFont(40, Color.FIREBRICK).draw(batch, "Selected: " + selection, x(5), y(105));
+            }
+            if (creatingShape != null) {
+                font.getFont(40, Color.FIREBRICK).draw(batch, "Creating: " + creatingShape, x(5), y(130));
+            }
         }
     }
 
@@ -401,5 +388,17 @@ public class DrawingBoard extends Actor {
         } else {
             selection = null;
         }
+        for (Consumer<Shape> i : this.selectionListeners) {
+            i.accept(selection);
+        }
+    }
+
+    public void startCreation(ShapeFactory factory) {
+        this.creatingShape = factory;
+        this.selection = null;
+    }
+
+    public void addSelectionListener(Consumer<Shape> listener) {
+        this.selectionListeners.add(listener);
     }
 }

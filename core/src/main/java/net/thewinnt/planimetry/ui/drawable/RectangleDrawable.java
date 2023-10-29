@@ -21,9 +21,9 @@ public class RectangleDrawable extends ShapeDrawerDrawable {
     }
 
     /**
-     * Sets the colors of the drawable
-     * @param in The inner color
-     * @param out The outline color
+     * Sets the colors of the drawable, mutating it in the process.
+     * @param in the inner color. May be null.
+     * @param out the outline color. May be null.
      * @return this instance for chaining
      */
     public RectangleDrawable withColors(Color in, Color out) {

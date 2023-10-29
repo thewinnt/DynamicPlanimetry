@@ -32,7 +32,7 @@ public abstract class Shape {
     }
 
     protected float getThickness(double scale) {
-        return (float)Math.min(Math.max(1, scale / 2), 4);
+        return (float)Math.min(Math.max(1, Math.cbrt(scale)), 4);
     }
 
     public static enum SelectionStatus {
