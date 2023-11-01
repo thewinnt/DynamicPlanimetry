@@ -2,8 +2,6 @@ package net.thewinnt.planimetry.ui.properties;
 
 import java.util.Map;
 
-import net.thewinnt.planimetry.ui.parameters.Parameter;
-
 public abstract class Property<T> {
     public final String name;
 
@@ -14,6 +12,8 @@ public abstract class Property<T> {
     public String getName() {
         return name;
     }
+
+    public abstract void addValueChangeListener(Runnable listener);
 
     public abstract Map<Parameter<?>, String> getParameters();
     public abstract T buildResult();

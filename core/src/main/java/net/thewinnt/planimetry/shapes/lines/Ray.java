@@ -1,6 +1,8 @@
 package net.thewinnt.planimetry.shapes.lines;
 
+import java.util.Collection;
 import java.util.function.DoubleFunction;
+import java.util.stream.Stream;
 
 import com.badlogic.gdx.graphics.Color;
 
@@ -10,11 +12,14 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.properties.BooleanProperty;
+import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Ray extends Line {
     private boolean startFromA = false;
+    private BooleanProperty startProperty = new BooleanProperty("Начать с первой точки");
 
     public Ray(PointReference a, PointReference b) {
         super(a, b);
@@ -109,5 +114,10 @@ public class Ray extends Line {
 
     public void invert() {
         this.startFromA = !this.startFromA;
+    }
+
+    @Override
+    public Collection<Property<?>> getProperties() {
+        return Stream.concat(super.getProperties().stream(), Stream.of(startProperty)).toList();
     }
 }

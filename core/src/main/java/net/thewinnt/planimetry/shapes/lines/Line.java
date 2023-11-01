@@ -1,11 +1,15 @@
 package net.thewinnt.planimetry.shapes.lines;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.DoubleFunction;
 
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
+import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
+import net.thewinnt.planimetry.ui.properties.Property;
 
 public abstract class Line extends Shape {
     public final PointReference a;
@@ -34,5 +38,13 @@ public abstract class Line extends Shape {
         if (a.x == b.x) return x -> Double.NaN;
         double k = (a.y - b.y) / (a.x - b.x);
         return x -> k * (x - a.x) + a.y;
+    }
+
+    @Override
+    public Collection<Property<?>> getProperties() {
+        return List.of(
+            new EnclosingProperty("1 точка", this.a.getProperties()),
+            new EnclosingProperty("2 точка", this.b.getProperties())
+        );
     }
 }

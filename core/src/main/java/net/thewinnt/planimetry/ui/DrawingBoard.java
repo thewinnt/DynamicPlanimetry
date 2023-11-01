@@ -69,7 +69,7 @@ public class DrawingBoard extends Actor {
                 int mx = Gdx.input.getX();
                 int my = Gdx.input.getY();
                 if (creatingShape == null) {
-                    selection = getHoveredShape(mx, my);
+                    setSelection(getHoveredShape(mx, my));
                 } else if (creatingShape.isDone() || creatingShape.click(event, xb(mx), yb(my))) {
                     creatingShape = null;
                 }

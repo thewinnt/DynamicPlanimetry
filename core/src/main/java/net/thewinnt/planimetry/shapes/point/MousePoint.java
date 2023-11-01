@@ -1,10 +1,14 @@
 package net.thewinnt.planimetry.shapes.point;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -32,4 +36,9 @@ public class MousePoint extends PointProvider {
 
     @Override public void move(Vec2 delta) {}
     @Override public void move(double dx, double dy) {}
+
+    @Override
+    public Collection<Property<?>> getProperties() {
+        return List.of();
+    }
 }

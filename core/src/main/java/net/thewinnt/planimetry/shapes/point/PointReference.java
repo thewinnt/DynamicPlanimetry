@@ -1,9 +1,11 @@
 package net.thewinnt.planimetry.shapes.point;
 
+import java.util.Collection;
 import java.util.Objects;
 
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -65,5 +67,10 @@ public class PointReference extends PointProvider {
 
     public PointProvider getPoint() {
         return point;
+    }
+
+    @Override
+    public Collection<Property<?>> getProperties() {
+        return this.point.getProperties();
     }
 }

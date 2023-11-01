@@ -1,18 +1,28 @@
 package net.thewinnt.planimetry.shapes.point;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.badlogic.gdx.graphics.Color;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.Vec2Property;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Point extends PointProvider {
     private Vec2 position;
+    private final Vec2Property property;
 
     public Point(Vec2 position) {
         this.position = position;
+        this.property = new Vec2Property("Координаты", position);
+        this.property.addValueChangeListener(() -> {
+            Point.this.position = property.buildResult();
+        });
     }
 
     @Override
@@ -74,5 +84,10 @@ public class Point extends PointProvider {
     public void move(double dx, double dy) {
         position = position.add(dx, dy);
         this.movementListeners.forEach(i -> i.accept(new Vec2(dx, dy)));
+    }
+
+    @Override
+    public Collection<Property<?>> getProperties() {
+        return List.of(property);
     }
 }

@@ -26,6 +26,7 @@ import net.thewinnt.planimetry.ui.ShapeSettings;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.drawable.CheckboxDrawable;
 import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
+import net.thewinnt.planimetry.ui.properties.Property;
 
 public class EditorScreen extends FlatUIScreen {
     private DrawingBoard board;
@@ -51,6 +52,7 @@ public class EditorScreen extends FlatUIScreen {
         this.styles = new StyleSet();
         updateStyles();
         board = new DrawingBoard(drawer, app::getBoldFont);
+        board.addSelectionListener(shape -> show());
 
         creation = new Table();
         properties = new Table();
@@ -116,6 +118,17 @@ public class EditorScreen extends FlatUIScreen {
         creation.add(createRay).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createLineSegment).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createCircle).expandX().fillX().pad(5, 5, 0, 5);
+
+        if (selection != null) {
+            for (Property<?> i : selection.getProperties()) {
+                properties.add(new Label(i.getName(), styles.getLabelStyle())).expand().fill().row();
+                for (var j : i.getParameters().entrySet()) {
+                    properties.add(new Label(j.getValue(), styles.getLabelStyle())).expand().fill();
+                    properties.add(j.getKey().getActorSetup(styles));
+                    properties.row();
+                }
+            }
+        }
 
         System.out.println("Rebuilding UI with selected shape: " + selection);
     }

@@ -1,5 +1,7 @@
 package net.thewinnt.planimetry.shapes;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.badlogic.gdx.graphics.Color;
@@ -8,6 +10,9 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.properties.DoubleProperty;
+import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
+import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -81,5 +86,19 @@ public class Circle extends Shape {
             }
         }
         this.keepRadius = keepRadius;
+    }
+
+    @Override
+    public Collection<Property<?>> getProperties() {
+        if (radiusPoint != null) {
+            return List.of(
+                new EnclosingProperty("Центр", this.center.getProperties()),
+                new EnclosingProperty("Точка радиуса", this.radiusPoint.getProperties())
+            );
+        } else {
+            DoubleProperty radius = new DoubleProperty("Радиус", this.radius.get());
+            radius.addValueChangeListener(r -> Circle.this.radius = () -> r);
+            return List.of(new EnclosingProperty("Центр", this.center.getProperties()), radius);
+        }
     }
 }

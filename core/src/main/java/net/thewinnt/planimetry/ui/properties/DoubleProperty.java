@@ -1,4 +1,9 @@
-package net.thewinnt.planimetry.ui.parameters;
+package net.thewinnt.planimetry.ui.properties;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -10,16 +15,43 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.StyleSet;
 
-public class DoubleParameter extends Parameter<Double> {
-    private final Table setup;
-    private final TextField doubleField;
+public class DoubleProperty extends Property<Double> implements Parameter<Double> {
+    private final List<Consumer<Double>> listeners = new ArrayList<>();
     private double prevValue;
     private double value;
 
-    public DoubleParameter(StyleSet styleSet) {
-        super(styleSet);
-        this.doubleField = new TextField("", styleSet.getTextFieldStyle());
-        this.doubleField.setTextFieldFilter((textField, character) -> {
+    public DoubleProperty() {
+        super("");
+    }
+
+    public DoubleProperty(double value) {
+        super("");
+        this.value = value;
+    }
+
+    public DoubleProperty(String name) {
+        super(name);
+    }
+
+    public DoubleProperty(String name, double value) {
+        super(name);
+        this.value = value;
+    }
+
+    @Override
+    public Double getValue() {
+        return value;
+    }
+
+    @Override
+    public Double buildResult() {
+        return value;
+    }
+
+    @Override
+    public Table getActorSetup(StyleSet styles) {
+        TextField doubleField = new TextField("", styles.getTextFieldStyle());
+        doubleField.setTextFieldFilter((textField, character) -> {
             if (character == 'e') return false;
             try {
                 String text = textField.getText();
@@ -35,15 +67,18 @@ public class DoubleParameter extends Parameter<Double> {
             }
             return true;
         });
-        this.doubleField.setTextFieldListener((textField, c) -> {
+        doubleField.setTextFieldListener((textField, c) -> {
             try {
                 prevValue = value;
                 value = Double.valueOf(textField.getText());
+                for (Consumer<Double> i : this.listeners) {
+                    i.accept(value);
+                }
             } catch (NumberFormatException e) {
                 if (DynamicPlanimetry.DEBUG_MODE) Notifications.addNotification("Couldn't filter number: " + e.getMessage(), 2500);
             }
         });
-        this.doubleField.addListener(new InputListener() {
+        doubleField.addListener(new InputListener() {
             private void unfocus() {
                 doubleField.getStage().setKeyboardFocus(null);
                 try {
@@ -73,28 +108,28 @@ public class DoubleParameter extends Parameter<Double> {
                 return false;
             }
         });
-        this.setup = new Table();
-        this.setup.add(doubleField).expand().fill();
-
-    }
-
-    public DoubleParameter(StyleSet styleSet, double value) {
-        this(styleSet);
-        this.value = value;
-    }
-
-    @Override
-    public Double getValue() {
-        return value;
-    }
-
-    @Override
-    public Table getActorSetup() {
+        Table setup = new Table();
+        setup.add(doubleField).expand().fill();
         return setup;
     }
 
     @Override
-    public void updateStyles() {
-        this.doubleField.setStyle(this.styleSet.getTextFieldStyle());
+    public void addValueChangeListener(Consumer<Double> listener) {
+        this.listeners.add(listener);
+    }
+    
+    /**
+     * @deprecated This property doubles as a parameter, use {@link #addValueChangeListener(Consumer)}
+     * whenever possible instead.
+     */
+    @Override
+    @Deprecated
+    public void addValueChangeListener(Runnable listener) {
+        this.listeners.add(ingore -> listener.run());
+    }
+
+    @Override
+    public Map<Parameter<?>, String> getParameters() {
+        return Map.of(this, name);
     }
 }

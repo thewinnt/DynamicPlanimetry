@@ -1,7 +1,10 @@
 package net.thewinnt.planimetry.shapes;
 
+import java.util.Collection;
+
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -23,10 +26,15 @@ public abstract class Shape {
      */
     public abstract void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board);
 
+    public abstract Collection<Property<?>> getProperties();
+
     public boolean shouldRender() {
         return true;
     }
 
+    /**
+     * Returns this shape's unique ID.
+     */
     public final long getId() {
         return id;
     }
