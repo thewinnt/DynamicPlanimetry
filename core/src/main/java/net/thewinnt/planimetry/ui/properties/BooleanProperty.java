@@ -2,7 +2,6 @@ package net.thewinnt.planimetry.ui.properties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -12,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.ui.StyleSet;
 
-public class BooleanProperty extends Property<Boolean> implements Parameter<Boolean> {
+public class BooleanProperty extends Property<Boolean> {
     private final List<Consumer<Boolean>> listeners = new ArrayList<>();
     private boolean value;
 
@@ -39,24 +38,14 @@ public class BooleanProperty extends Property<Boolean> implements Parameter<Bool
         this.listeners.add(listener);
     }
 
-    /**
-     * @deprecated This property doubles as a parameter, use {@link #addValueChangeListener(Consumer)}
-     * whenever possible instead.
-     */
-    @Override
-    @Deprecated
-    public void addValueChangeListener(Runnable listener) {
-        this.listeners.add(ingore -> listener.run());
-    }
-
-    @Override
-    public Boolean buildResult() {
-        return value;
-    }
-
     @Override
     public Boolean getValue() {
         return value;
+    }
+
+    @Override
+    public void setValue(Boolean value) {
+        this.value = value;
     }
 
     @Override
@@ -74,10 +63,5 @@ public class BooleanProperty extends Property<Boolean> implements Parameter<Bool
         });
         table.add(checkbox).expand().fill();
         return table;
-    }
-
-    @Override
-    public Map<Parameter<?>, String> getParameters() {
-        return Map.of(this, name);
     }
 }

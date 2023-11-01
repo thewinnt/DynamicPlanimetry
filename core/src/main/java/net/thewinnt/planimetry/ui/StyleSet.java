@@ -10,16 +10,18 @@ public class StyleSet {
     private TextButtonStyle buttonStyle;
     private TextFieldStyle textFieldStyle;
     private SelectBoxStyle listStyle;
-    private LabelStyle labelStyle;
+    private LabelStyle labelStyleLarge;
+    private LabelStyle labelStyleSmall;
     private ButtonStyle checkboxStyle;
 
     public StyleSet() {}
 
-    public StyleSet(TextButtonStyle buttonStyle, TextFieldStyle textFieldStyle, SelectBoxStyle listStyle, LabelStyle labelStyle, ButtonStyle checkboxStyle) {
+    public StyleSet(TextButtonStyle buttonStyle, TextFieldStyle textFieldStyle, SelectBoxStyle listStyle, LabelStyle labelStyleLarge, LabelStyle labelStyleSmall, ButtonStyle checkboxStyle) {
         this.buttonStyle = buttonStyle;
         this.textFieldStyle = textFieldStyle;
         this.listStyle = listStyle;
-        this.labelStyle = labelStyle;
+        this.labelStyleLarge = labelStyleLarge;
+        this.labelStyleSmall = labelStyleSmall;
         this.checkboxStyle = checkboxStyle;
     }
 
@@ -35,8 +37,12 @@ public class StyleSet {
         this.listStyle = listStyle;
     }
 
-    public void setLabelStyle(LabelStyle labelStyle) {
-        this.labelStyle = labelStyle;
+    public void setLabelStyleLarge(LabelStyle labelStyle) {
+        this.labelStyleLarge = labelStyle;
+    }
+
+    public void setLabelStyleSmall(LabelStyle labelStyle) {
+        this.labelStyleSmall = labelStyle;
     }
 
     public void setCheckboxStyle(ButtonStyle checkboxStyle) {
@@ -55,8 +61,12 @@ public class StyleSet {
         return listStyle;
     }
 
-    public LabelStyle getLabelStyle() {
-        return labelStyle;
+    public LabelStyle getLabelStyleLarge() {
+        return labelStyleLarge;
+    }
+
+    public LabelStyle getLabelStyleSmall() {
+        return labelStyleSmall;
     }
 
     public ButtonStyle getCheckboxStyle() {

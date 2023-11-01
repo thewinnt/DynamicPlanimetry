@@ -77,7 +77,7 @@ public class EditorScreen extends FlatUIScreen {
         functions.reset();
 
         // ACTORS
-        creationCategory = new Label("Создание", styles.getLabelStyle());
+        creationCategory = new Label("Создание", styles.getLabelStyleLarge());
         createLine = new TextButton("Прямая", styles.getButtonStyle());
         createRay = new TextButton("Луч", styles.getButtonStyle());
         createLineSegment = new TextButton("Отрезок", styles.getButtonStyle());
@@ -121,12 +121,8 @@ public class EditorScreen extends FlatUIScreen {
 
         if (selection != null) {
             for (Property<?> i : selection.getProperties()) {
-                properties.add(new Label(i.getName(), styles.getLabelStyle())).expand().fill().row();
-                for (var j : i.getParameters().entrySet()) {
-                    properties.add(new Label(j.getValue(), styles.getLabelStyle())).expand().fill();
-                    properties.add(j.getKey().getActorSetup(styles));
-                    properties.row();
-                }
+                properties.add(new Label(i.getName(), styles.getLabelStyleLarge())).expand().fill();
+                properties.add(i.getActorSetup(styles)).expand().fill().pad(5, 5, 0, 5).row();
             }
         }
 
@@ -177,8 +173,9 @@ public class EditorScreen extends FlatUIScreen {
         checkBoxStyle.over = over;
         this.styles.setCheckboxStyle(checkBoxStyle);
         
-        // label style
-        this.styles.setLabelStyle(new LabelStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorB, Color.BLACK), Color.BLACK));
+        // label styles
+        this.styles.setLabelStyleSmall(new LabelStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorA, Color.BLACK), Color.BLACK));
+        this.styles.setLabelStyleLarge(new LabelStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorB, Color.BLACK), Color.BLACK));
 
         // text button style
         TextButtonStyle textButtonStyle = new TextButtonStyle(normal, pressed, normal, app.getBoldFont(Gdx.graphics.getHeight()/ fontFactorA, Color.BLACK));

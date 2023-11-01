@@ -19,10 +19,11 @@ public class Point extends PointProvider {
 
     public Point(Vec2 position) {
         this.position = position;
-        this.property = new Vec2Property("Координаты", position);
-        this.property.addValueChangeListener(() -> {
-            Point.this.position = property.buildResult();
+        this.property = new Vec2Property("", position);
+        this.property.addValueChangeListener(pos -> {
+            Point.this.position = pos;
         });
+        this.addMovementListener(delta -> property.setValue(Point.this.position));
     }
 
     @Override

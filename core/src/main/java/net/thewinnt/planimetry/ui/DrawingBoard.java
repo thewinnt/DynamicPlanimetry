@@ -58,6 +58,9 @@ public class DrawingBoard extends Actor {
                 isPanning = true;
                 if (creatingShape == null && selection != null && startedAtPoint && selection instanceof PointProvider point && point.canMove()) {
                     point.move(deltaX / scale, deltaY / scale);
+                    for (Consumer<Shape> i : selectionListeners) {
+                        i.accept(selection);
+                    }
                 } else {
                     offset = offset.add(-deltaX, -deltaY);
                 }

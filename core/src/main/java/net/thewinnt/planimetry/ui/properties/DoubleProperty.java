@@ -2,7 +2,6 @@ package net.thewinnt.planimetry.ui.properties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.Input.Keys;
@@ -15,7 +14,7 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.StyleSet;
 
-public class DoubleProperty extends Property<Double> implements Parameter<Double> {
+public class DoubleProperty extends Property<Double> {
     private final List<Consumer<Double>> listeners = new ArrayList<>();
     private double prevValue;
     private double value;
@@ -44,13 +43,13 @@ public class DoubleProperty extends Property<Double> implements Parameter<Double
     }
 
     @Override
-    public Double buildResult() {
-        return value;
+    public void setValue(Double value) {
+        this.value = value;
     }
 
     @Override
     public Table getActorSetup(StyleSet styles) {
-        TextField doubleField = new TextField("", styles.getTextFieldStyle());
+        TextField doubleField = new TextField(Double.toString(value), styles.getTextFieldStyle());
         doubleField.setTextFieldFilter((textField, character) -> {
             if (character == 'e') return false;
             try {
@@ -116,20 +115,5 @@ public class DoubleProperty extends Property<Double> implements Parameter<Double
     @Override
     public void addValueChangeListener(Consumer<Double> listener) {
         this.listeners.add(listener);
-    }
-    
-    /**
-     * @deprecated This property doubles as a parameter, use {@link #addValueChangeListener(Consumer)}
-     * whenever possible instead.
-     */
-    @Override
-    @Deprecated
-    public void addValueChangeListener(Runnable listener) {
-        this.listeners.add(ingore -> listener.run());
-    }
-
-    @Override
-    public Map<Parameter<?>, String> getParameters() {
-        return Map.of(this, name);
     }
 }

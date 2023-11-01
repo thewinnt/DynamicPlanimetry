@@ -1,6 +1,10 @@
 package net.thewinnt.planimetry.ui.properties;
 
-import java.util.Map;
+import java.util.function.Consumer;
+
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+
+import net.thewinnt.planimetry.ui.StyleSet;
 
 public abstract class Property<T> {
     public final String name;
@@ -13,8 +17,8 @@ public abstract class Property<T> {
         return name;
     }
 
-    public abstract void addValueChangeListener(Runnable listener);
-
-    public abstract Map<Parameter<?>, String> getParameters();
-    public abstract T buildResult();
+    public abstract void addValueChangeListener(Consumer<T> listener);
+    public abstract WidgetGroup getActorSetup(StyleSet styles);
+    public abstract T getValue();
+    public abstract void setValue(T value);
 }
