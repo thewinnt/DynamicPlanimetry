@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
+import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.shapes.point.Point;
+import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 
 public abstract class ShapeFactory {
@@ -34,6 +38,11 @@ public abstract class ShapeFactory {
     public abstract boolean isDone();
 
     /**
+     * Executed upon finishing the shape creation, once isDone() turns true.
+     */
+    public void onFinish() {}
+
+    /**
      * @return the shapes being added by this factory
      */
     public Collection<Shape> getSuggestedShapes() {
@@ -43,5 +52,14 @@ public abstract class ShapeFactory {
     protected void addShape(Shape shape) {
         this.board.addShape(shape);
         this.addingShapes.add(shape);
+    }
+
+    protected PointProvider getOrCreatePoint(double x, double y) {
+        PointProvider p1 = (PointProvider) board.getHoveredShape(Gdx.input.getX(), Gdx.input.getY(), shape -> shape instanceof PointProvider);
+        if (p1 != null) {
+            return p1;
+        } else {
+            return new Point(new Vec2(x, y));
+        }
     }
 }

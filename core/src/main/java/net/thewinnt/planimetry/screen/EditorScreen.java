@@ -20,9 +20,10 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.CircleFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory;
+import net.thewinnt.planimetry.shapes.factories.PolygonFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.ShapeSettings;
+import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.drawable.CheckboxDrawable;
 import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
@@ -30,7 +31,7 @@ import net.thewinnt.planimetry.ui.properties.Property;
 
 public class EditorScreen extends FlatUIScreen {
     private DrawingBoard board;
-    private ShapeSettings settings;
+    private ShapeSettingsBackground settings;
     private StyleSet styles;
     
     private Table creation;
@@ -42,6 +43,7 @@ public class EditorScreen extends FlatUIScreen {
     private TextButton createRay;
     private TextButton createLineSegment;
     private TextButton createCircle;
+    private TextButton createPolygon;
 
     public EditorScreen(DynamicPlanimetry app) {
         super(app);
@@ -58,7 +60,7 @@ public class EditorScreen extends FlatUIScreen {
         properties = new Table();
         functions = new Table();
         rebuildUI(board.getSelection());
-        settings = new ShapeSettings(drawer, creation, properties);
+        settings = new ShapeSettingsBackground(drawer, creation, properties);
 
         stage.addActor(board);
         stage.setScrollFocus(board);
@@ -82,6 +84,7 @@ public class EditorScreen extends FlatUIScreen {
         createRay = new TextButton("Луч", styles.getButtonStyle());
         createLineSegment = new TextButton("Отрезок", styles.getButtonStyle());
         createCircle = new TextButton("Окружность", styles.getButtonStyle());
+        createPolygon = new TextButton("Многоугольник", styles.getButtonStyle());
 
         // LISTENERS
         createLine.addListener(new ChangeListener() {
@@ -111,13 +114,21 @@ public class EditorScreen extends FlatUIScreen {
                 board.startCreation(new CircleFactory(board));
             }
         });
+        
+        createPolygon.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                board.startCreation(new PolygonFactory(board));
+            }
+        });
 
         // ADDING TO TABLES
         creation.add(creationCategory).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createLine).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createRay).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createLineSegment).expandX().fillX().pad(5, 5, 0, 5).row();
-        creation.add(createCircle).expandX().fillX().pad(5, 5, 0, 5);
+        creation.add(createCircle).expandX().fillX().pad(5, 5, 0, 5).row();
+        creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5);
 
         if (selection != null) {
             for (Property<?> i : selection.getProperties()) {
@@ -202,12 +213,12 @@ public class EditorScreen extends FlatUIScreen {
 
         creation.setSize(width - delimiter, creation.getPrefHeight());
         creation.setPosition(delimiter, height - creation.getHeight());
-
+        
         properties.setSize(width - delimiter, properties.getPrefHeight());
-        properties.setPosition(delimiter, height - creation.getHeight() - properties.getHeight());
-
+        properties.setPosition(delimiter, height - creation.getHeight() - properties.getHeight() - 10);
+        
         functions.setSize(width - delimiter, functions.getPrefHeight());
-        functions.setPosition(delimiter, height - creation.getHeight() - properties.getHeight() - functions.getHeight());
+        functions.setPosition(delimiter, height - creation.getHeight() - properties.getHeight() - functions.getHeight() - 10);
     }
 
     @Override public void customRender() {}

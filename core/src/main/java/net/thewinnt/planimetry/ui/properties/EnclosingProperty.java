@@ -51,4 +51,12 @@ public class EnclosingProperty extends Property<Property<?>> {
         }
         return table;
     }
+
+    public void addProperty(Property<?> property) {
+        this.properties.add(property);
+    }
+
+    public void addProperties(Collection<Property<?>> properties) {
+        this.properties.addAll(properties);
+    }
 }

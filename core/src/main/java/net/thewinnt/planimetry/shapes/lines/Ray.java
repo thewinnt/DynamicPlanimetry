@@ -18,15 +18,17 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Ray extends Line {
-    private boolean startFromA = false;
+    private boolean startFromA = true;
     private BooleanProperty startProperty = new BooleanProperty("Начать с первой точки");
 
     public Ray(PointReference a, PointReference b) {
         super(a, b);
+        startProperty.addValueChangeListener(value -> startFromA = value);
     }
 
     public Ray(PointProvider a, PointProvider b) {
         super(a, b);
+        startProperty.addValueChangeListener(value -> startFromA = value);
     }
 
     @Override

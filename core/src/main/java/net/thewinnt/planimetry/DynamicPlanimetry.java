@@ -35,8 +35,8 @@ public class DynamicPlanimetry extends Game {
     public static boolean IS_MOBILE = false;
 
     // settings
-    public byte displayPrecision = 6; // the precision of the displayed numbers, in digits
-    public double calculationPrecision = Math.pow(2, -20); // accounts for doubles not being precise enough
+    static byte displayPrecision = 6; // the precision of the displayed numbers, in digits
+    static byte calculationPrecision = -23; // accounts for doubles not being precise enough
 
     // preloaded files
     // (there's none of them)
@@ -172,5 +172,13 @@ public class DynamicPlanimetry extends Game {
 
     public void setScreen(int id) {
         this.setScreen(screenByIds.get(id));
+    }
+
+    public static double getPrecisionFactor() {
+        return Math.pow(2, calculationPrecision);
+    }
+
+    public static byte getDisplayPresicion() {
+        return displayPrecision;
     }
 }

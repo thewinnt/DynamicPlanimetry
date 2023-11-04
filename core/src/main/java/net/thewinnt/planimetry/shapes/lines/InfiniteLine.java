@@ -24,12 +24,12 @@ public class InfiniteLine extends Line {
 
     @Override
     public boolean contains(Vec2 point) {
-        return a.getPosition().distanceTo(point) + b.getPosition().distanceTo(point) == a.getPosition().distanceTo(b.getPosition());
+        return a.getPosition().distanceTo(point) + b.getPosition().distanceTo(point) - a.getPosition().distanceTo(b.getPosition()) <= Math.pow(2, -23);
     }
 
     @Override
     public boolean contains(double x, double y) {
-        return a.getPosition().distanceTo(x, y) + b.getPosition().distanceTo(x, y) == a.getPosition().distanceTo(b.getPosition());
+        return a.getPosition().distanceTo(x, y) + b.getPosition().distanceTo(x, y) - a.getPosition().distanceTo(b.getPosition()) <= Math.pow(2, -23);
     }
 
     @Override

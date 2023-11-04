@@ -74,6 +74,7 @@ public class DrawingBoard extends Actor {
                 if (creatingShape == null) {
                     setSelection(getHoveredShape(mx, my));
                 } else if (creatingShape.isDone() || creatingShape.click(event, xb(mx), yb(my))) {
+                    creatingShape.onFinish();
                     creatingShape = null;
                 }
                 event.handle();
@@ -403,5 +404,13 @@ public class DrawingBoard extends Actor {
 
     public void addSelectionListener(Consumer<Shape> listener) {
         this.selectionListeners.add(listener);
+    }
+
+    public void replaceShape(Shape old, Shape neo) {
+        this.shapes.set(this.shapes.indexOf(old), neo);
+    }
+
+    public void removeShape(Shape shape) {
+        this.shapes.remove(shape);
     }
 }
