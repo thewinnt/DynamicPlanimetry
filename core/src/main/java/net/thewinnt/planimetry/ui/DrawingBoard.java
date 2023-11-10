@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -22,9 +21,6 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
-import net.thewinnt.planimetry.shapes.factories.CircleFactory;
-import net.thewinnt.planimetry.shapes.factories.LineFactory;
-import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
@@ -35,6 +31,7 @@ public class DrawingBoard extends Actor {
     private final ShapeDrawer drawer;
     private final FontProvider font;
     private final List<Shape> shapes = new ArrayList<>();
+    private final List<PointProvider> points = new ArrayList<>();
     private final List<Consumer<Shape>> selectionListeners = new ArrayList<>();
     private double scale = Math.pow(1.25, 15); // pixels per unit
     private Vec2 offset = Vec2.ZERO;
@@ -98,33 +95,6 @@ public class DrawingBoard extends Actor {
             @Override
             public boolean scrolled(InputEvent event, float x, float y, float amountX, float amountY) {
                 scale /= Math.pow(1.25, amountY);
-                return true;
-            }
-
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                System.out.println(keycode);
-                if (creatingShape == null && (selection == null || selection instanceof PointProvider point)) {
-                    switch (keycode) {
-                        case Keys.L:
-                            creatingShape = new LineFactory(DrawingBoard.this, LineType.INFINITE, (PointProvider)selection);
-                            selection = null;
-                            break;
-                        case Keys.R:
-                            creatingShape = new LineFactory(DrawingBoard.this, LineType.RAY, (PointProvider)selection);
-                            selection = null;
-                            break;
-                        case Keys.S:
-                            creatingShape = new LineFactory(DrawingBoard.this, LineType.SEGMENT, (PointProvider)selection);
-                            selection = null;
-                            break;
-                        case Keys.C:
-                            creatingShape = new CircleFactory(DrawingBoard.this).setAddRadius(true);
-                            selection = null;
-                        default:
-                            break;
-                    }
-                }
                 return true;
             }
         });
@@ -265,6 +235,13 @@ public class DrawingBoard extends Actor {
                 i.render(drawer, hovered == i ? SelectionStatus.HOVERED : SelectionStatus.NONE, font, this);
             }
         }
+        for (PointProvider i : points) {
+            if (selection == i) {
+                i.render(drawer, SelectionStatus.SELECTED, font, this);
+            } else {
+                i.render(drawer, hovered == i ? SelectionStatus.HOVERED : SelectionStatus.NONE, font, this);
+            }
+        }
         if (DynamicPlanimetry.DEBUG_MODE) {
             font.getFont(40, Color.FIREBRICK).draw(batch, "scale: " + scale, x(5), y(getHeight() - 5));
             font.getFont(40, Color.FIREBRICK).draw(batch, "mx: " + mx, x(5), y(getHeight() - 130));
@@ -322,6 +299,15 @@ public class DrawingBoard extends Actor {
         } else {
             ignore = List.of();
         }
+        for (PointProvider i : points) {
+            if (ignore.contains(i)) continue;
+            double distance = i.distanceToMouse(xb(mx), yb(my), this);
+            if (distance <= minDistance) {
+                hovered = i;
+                minDistance = distance;
+            }
+        }
+        if (hovered != null) return hovered;
         for (Shape i : shapes) {
             if (ignore.contains(i)) continue;
             double distance = i.distanceToMouse(xb(mx), yb(my), this);
@@ -342,6 +328,16 @@ public class DrawingBoard extends Actor {
         } else {
             ignore = List.of();
         }
+        for (PointProvider i : points) {
+            if (ignore.contains(i)) continue;
+            if (!predicate.evaluate(i)) continue;
+            double distance = i.distanceToMouse(xb(mx), yb(my), this);
+            if (distance <= minDistance) {
+                hovered = i;
+                minDistance = distance;
+            }
+        }
+        if (hovered != null) return hovered;
         for (Shape i : shapes) {
             if (ignore.contains(i)) continue;
             if (!predicate.evaluate(i)) continue;
@@ -370,24 +366,35 @@ public class DrawingBoard extends Actor {
     }
 
     public void addShape(Shape shape) {
-        if (!this.shapes.contains(shape)) {
+        if (shape instanceof PointProvider point) {
+            if (!this.points.contains(point)) {
+                this.points.add(point);
+            }
+        } else if (!this.shapes.contains(shape)) {
             this.shapes.add(shape);
         }
     }
 
     public boolean hasShape(Shape shape) {
         for (Shape i : this.shapes) {
-            if (i instanceof PointReference point && point.getPoint() == shape) {
+            if (i == shape) {
                 return true;
-            } else if (i == shape) {
-                return true;
+            }
+        }
+        if (shape instanceof PointProvider) {
+            for (Shape i : this.points) {
+                if (i instanceof PointReference point && point.getPoint() == shape) {
+                    return true;
+                } else if (i == shape) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     public void setSelection(Shape shape) {
-        if (this.shapes.contains(shape)) {
+        if (this.shapes.contains(shape) || (shape instanceof PointProvider && this.points.contains(shape))) {
             selection = shape;
         } else {
             selection = null;
@@ -412,5 +419,6 @@ public class DrawingBoard extends Actor {
 
     public void removeShape(Shape shape) {
         this.shapes.remove(shape);
+        this.points.remove(shape);
     }
 }

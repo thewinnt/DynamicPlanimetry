@@ -1,4 +1,4 @@
-package net.thewinnt.planimetry.shapes;
+package net.thewinnt.planimetry.shapes.polygons;
 
 import java.util.Collection;
 

@@ -136,8 +136,6 @@ public class EditorScreen extends FlatUIScreen {
                 properties.add(i.getActorSetup(styles)).expand().fill().pad(5, 5, 0, 5).row();
             }
         }
-
-        System.out.println("Rebuilding UI with selected shape: " + selection);
     }
 
     public void updateStyles() {

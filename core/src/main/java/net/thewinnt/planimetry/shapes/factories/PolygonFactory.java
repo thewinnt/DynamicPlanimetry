@@ -2,11 +2,11 @@ package net.thewinnt.planimetry.shapes.factories;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
-import net.thewinnt.planimetry.shapes.Polygon;
 import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
+import net.thewinnt.planimetry.shapes.polygons.Polygon;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 
 public class PolygonFactory extends ShapeFactory {
