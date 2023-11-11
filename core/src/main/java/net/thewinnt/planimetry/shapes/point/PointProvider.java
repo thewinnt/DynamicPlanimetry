@@ -7,9 +7,13 @@ import java.util.function.Consumer;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.NameComponent;
 
 public abstract class PointProvider extends Shape {
     protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
+    private static int nameCounter;
+    protected NameComponent name = shouldAutoAssingnName() ? new NameComponent((byte)(nameCounter++ % 26), nameCounter / 26, (short)0) : null;
+
     public abstract Vec2 getPosition();
     public abstract boolean canMove();
     public abstract void move(Vec2 delta);
@@ -49,4 +53,20 @@ public abstract class PointProvider extends Shape {
     public boolean removeMovementListener(Consumer<Vec2> listener) {
         return this.movementListeners.remove(listener);
     }
+
+    @Override
+    public String getName() {
+        return name == null ? "" : name.toString();
+    }
+
+    @Override
+    public String getTypeName() {
+        return "Точка";
+    }
+
+    public void setName(NameComponent name) {
+        this.name = name;
+    }
+
+    protected abstract boolean shouldAutoAssingnName();
 }

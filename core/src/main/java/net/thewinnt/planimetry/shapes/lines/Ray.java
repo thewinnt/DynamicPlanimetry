@@ -122,4 +122,9 @@ public class Ray extends Line {
     public Collection<Property<?>> getProperties() {
         return Stream.concat(super.getProperties().stream(), Stream.of(startProperty)).toList();
     }
+
+    @Override
+    public String getTypeName() {
+        return "Луч";
+    }
 }

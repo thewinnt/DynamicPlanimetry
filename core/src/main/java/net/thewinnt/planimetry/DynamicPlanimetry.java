@@ -139,7 +139,7 @@ public class DynamicPlanimetry extends Game {
     }
 
     public BitmapFont getFont(FontType type) {
-        if (type.size == 0) return getFont(FPS);
+        if (type.size <= 1) return getFont(FPS);
         BitmapFont out = fonts_default.get(type);
         if (out == null) {
             FreeTypeFontParameter param = new FreeTypeFontParameter();
@@ -157,7 +157,7 @@ public class DynamicPlanimetry extends Game {
     }
 
     public BitmapFont getBoldFont(FontType type) {
-        if (type.size == 0) return getBoldFont(FPS);
+        if (type.size <= 1) return getBoldFont(FPS);
         BitmapFont out = fonts_bold.get(type);
         if (out == null) {
             FreeTypeFontParameter param = new FreeTypeFontParameter();

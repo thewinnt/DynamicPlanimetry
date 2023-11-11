@@ -68,4 +68,9 @@ public class LineSegment extends Line {
             }
         }
     }
+
+    @Override
+    public String getTypeName() {
+        return "Отрезок";
+    }
 }

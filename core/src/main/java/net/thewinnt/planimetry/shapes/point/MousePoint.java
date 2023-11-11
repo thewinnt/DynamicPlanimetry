@@ -41,4 +41,9 @@ public class MousePoint extends PointProvider {
     public Collection<Property<?>> getProperties() {
         return List.of();
     }
+
+    @Override
+    protected boolean shouldAutoAssingnName() {
+        return false;
+    }
 }

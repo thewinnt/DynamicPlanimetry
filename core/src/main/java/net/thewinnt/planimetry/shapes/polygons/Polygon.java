@@ -87,4 +87,9 @@ public class Polygon extends MultiPointLine {
         b = points.get(points.size() - 1).getPosition();
         drawer.line(board.bx(a.x), board.by(a.y), board.bx(b.x), board.by(b.y), lineColor, getThickness(board.getScale()));
     }
+
+    @Override
+    public String getTypeName() {
+        return "Многоугольник";
+    }
 }

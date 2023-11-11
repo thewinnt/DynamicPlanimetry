@@ -91,4 +91,9 @@ public class Point extends PointProvider {
     public Collection<Property<?>> getProperties() {
         return List.of(property);
     }
+
+    @Override
+    protected boolean shouldAutoAssingnName() {
+        return true;
+    }
 }

@@ -123,4 +123,18 @@ public class MultiPointLine extends Shape {
     public boolean validArrangement(List<PointProvider> points) {
         return true;
     }
+
+    @Override
+    public String getName() {
+        StringBuilder builder = new StringBuilder();
+        for (PointProvider i : this.points) {
+            builder.append(i.getName());
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public String getTypeName() {
+        return "Ломаная";
+    }
 }

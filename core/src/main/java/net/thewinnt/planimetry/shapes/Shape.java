@@ -28,6 +28,9 @@ public abstract class Shape {
 
     public abstract Collection<Property<?>> getProperties();
 
+    public abstract String getName();
+    public abstract String getTypeName();
+
     public boolean shouldRender() {
         return true;
     }

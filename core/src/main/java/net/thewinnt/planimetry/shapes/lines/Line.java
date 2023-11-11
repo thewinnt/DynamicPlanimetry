@@ -14,6 +14,7 @@ import net.thewinnt.planimetry.ui.properties.Property;
 public abstract class Line extends Shape {
     public final PointReference a;
     public final PointReference b;
+    protected String nameOverride = null;
 
     public Line(PointReference a, PointReference b) {
         this.a = a;
@@ -46,5 +47,15 @@ public abstract class Line extends Shape {
             new EnclosingProperty("1 точка", this.a.getProperties()),
             new EnclosingProperty("2 точка", this.b.getProperties())
         );
+    }
+
+    @Override
+    public String getName() {
+        if (nameOverride != null) return nameOverride;
+        return this.a.getName() + this.b.getName();
+    }
+
+    public void setName(String name) {
+        this.nameOverride = name;
     }
 }

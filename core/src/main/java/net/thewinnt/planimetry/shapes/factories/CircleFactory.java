@@ -2,11 +2,11 @@ package net.thewinnt.planimetry.shapes.factories;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
-import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Circle;
 import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.Point;
+import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 
@@ -25,14 +25,14 @@ public class CircleFactory extends ShapeFactory {
     public boolean click(InputEvent event, double x, double y) {
         if (this.point == null) {
             this.point = new PointReference(new MousePoint(board));
-            Point center = new Point(new Vec2(x, y));
+            PointProvider center = getOrCreatePoint(x, y);
             this.addShape(new Circle(center, point, keepRadius));
             if (addCenter) this.addShape(center);
             if (addSecondaryPoint || addRadius) this.addShape(point);
             if (addRadius) this.addShape(new LineSegment(center, point));
             return false;
         } else if (this.point.getPoint() instanceof MousePoint) {
-            this.point.setPoint(new Point(new Vec2(x, y)));
+            this.point.setPoint(getOrCreatePoint(x, y));
         }
         return true;
     }

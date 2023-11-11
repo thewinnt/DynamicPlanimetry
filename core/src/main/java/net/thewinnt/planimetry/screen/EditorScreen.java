@@ -131,6 +131,7 @@ public class EditorScreen extends FlatUIScreen {
         creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5);
 
         if (selection != null) {
+            properties.add(new Label(selection.getTypeName() + " " + selection.getName(), styles.getLabelStyleLarge())).colspan(9999).expand().fill().row();
             for (Property<?> i : selection.getProperties()) {
                 properties.add(new Label(i.getName(), styles.getLabelStyleLarge())).expand().fill();
                 properties.add(i.getActorSetup(styles)).expand().fill().pad(5, 5, 0, 5).row();
@@ -209,13 +210,13 @@ public class EditorScreen extends FlatUIScreen {
         updateStyles();
         rebuildUI(board.getSelection());
 
-        creation.setSize(width - delimiter, creation.getPrefHeight());
+        creation.setSize(height * 0.5f, creation.getPrefHeight());
         creation.setPosition(delimiter, height - creation.getHeight());
         
-        properties.setSize(width - delimiter, properties.getPrefHeight());
+        properties.setSize(height * 0.5f, properties.getPrefHeight());
         properties.setPosition(delimiter, height - creation.getHeight() - properties.getHeight() - 10);
         
-        functions.setSize(width - delimiter, functions.getPrefHeight());
+        functions.setSize(height * 0.5f, functions.getPrefHeight());
         functions.setPosition(delimiter, height - creation.getHeight() - properties.getHeight() - functions.getHeight() - 10);
     }
 

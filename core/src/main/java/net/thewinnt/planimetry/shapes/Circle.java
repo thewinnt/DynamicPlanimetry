@@ -101,4 +101,14 @@ public class Circle extends Shape {
             return List.of(new EnclosingProperty("Центр", this.center.getProperties()), radius);
         }
     }
+
+    @Override
+    public String getName() {
+        return this.center.getName();
+    }
+
+    @Override
+    public String getTypeName() {
+        return "Окружность";
+    }
 }

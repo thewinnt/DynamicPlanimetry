@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.NameComponent;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -72,5 +73,20 @@ public class PointReference extends PointProvider {
     @Override
     public Collection<Property<?>> getProperties() {
         return this.point.getProperties();
+    }
+
+    @Override
+    public String getName() {
+        return this.point.getName();
+    }
+
+    @Override
+    public void setName(NameComponent name) {
+        this.point.setName(name);
+    }
+
+    @Override
+    protected boolean shouldAutoAssingnName() {
+        return false;
     }
 }
