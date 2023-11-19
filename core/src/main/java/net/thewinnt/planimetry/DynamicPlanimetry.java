@@ -17,16 +17,25 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
+import dev.dewy.nbt.Nbt;
+import dev.dewy.nbt.tags.collection.CompoundTag;
+import dev.dewy.nbt.tags.collection.ListTag;
 import net.thewinnt.planimetry.screen.EditorScreen;
 import net.thewinnt.planimetry.screen.FlatUIScreen;
 import net.thewinnt.planimetry.screen.MainMenuScreen;
+import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.Notifications;
+import net.thewinnt.planimetry.util.FontProvider;
+import net.thewinnt.planimetry.util.LoadingContext;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class DynamicPlanimetry extends Game {
     // public constants
     public static final int MAIN_MENU = 0;
     public static final int EDITOR_SCREEN = 1;
+    public static final Nbt NBT = new Nbt();
 
     // general stuff
     public final List<Screen> screenByIds = new ArrayList<>();
@@ -38,8 +47,9 @@ public class DynamicPlanimetry extends Game {
     static byte displayPrecision = 6; // the precision of the displayed numbers, in digits
     static byte calculationPrecision = -23; // accounts for doubles not being precise enough
 
-    // preloaded files
-    // (there's none of them)
+    // data
+    public final List<Shape> shapes = new ArrayList<>();
+    public final List<PointProvider> points = new ArrayList<>();
 
     // screens
     public MainMenuScreen mainMenu;
@@ -180,5 +190,36 @@ public class DynamicPlanimetry extends Game {
 
     public static byte getDisplayPresicion() {
         return displayPrecision;
+    }
+
+    // ======== SAVING AND LOADING ==============
+    public CompoundTag dataToNbt() {
+        CompoundTag output = new CompoundTag();
+        ListTag<CompoundTag> shapes = new ListTag<>();
+        for (Shape i : this.shapes) {
+            shapes.add(i.toNbt());
+        }
+        for (PointProvider i : this.points) {
+            shapes.add(i.toNbt());
+        }
+        output.put("shapes", shapes);
+        return output;
+    }
+    
+    public void loadData(ShapeDrawer drawer, FontProvider font, CompoundTag nbt) {
+        ListTag<CompoundTag> listTag = nbt.getList("shapes");
+        LoadingContext context = new LoadingContext(listTag);
+        for (Shape i : context.load()) {
+            this.addShape(i);
+        }
+        // TODO something useful - a saving UI, a file manager and stuff
+    }
+
+    private void addShape(Shape shape) {
+        if (shape instanceof PointProvider point) {
+            this.points.add(point);
+        } else {
+            this.shapes.add(shape);
+        }
     }
 }

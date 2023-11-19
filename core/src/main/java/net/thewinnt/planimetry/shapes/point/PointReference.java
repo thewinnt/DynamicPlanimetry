@@ -3,11 +3,14 @@ package net.thewinnt.planimetry.shapes.point;
 import java.util.Collection;
 import java.util.Objects;
 
+import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.NameComponent;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
+import net.thewinnt.planimetry.util.LoadingContext;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class PointReference extends PointProvider {
@@ -88,5 +91,21 @@ public class PointReference extends PointProvider {
     @Override
     protected boolean shouldAutoAssingnName() {
         return false;
+    }
+
+    @Override
+    public ShapeDeserializer<PointReference> getDeserializer() {
+        return ShapeData.POINT_REFERENCE;
+    }
+
+    @Override
+    public CompoundTag writeNbt() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.put("point", this.point.toNbt());
+        return nbt;
+    }
+
+    public static PointReference readNbt(CompoundTag nbt, LoadingContext context) {
+        return new PointReference((PointProvider)context.resolveShape(nbt.getLong("id").getValue()));
     }
 }

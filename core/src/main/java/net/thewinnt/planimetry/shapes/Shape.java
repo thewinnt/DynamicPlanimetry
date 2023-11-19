@@ -2,15 +2,18 @@ package net.thewinnt.planimetry.shapes;
 
 import java.util.Collection;
 
+import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
+import net.thewinnt.planimetry.util.LoadingContext;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public abstract class Shape {
     private static long idCounter;
-    private final long id = idCounter++;
+    private long id = idCounter++;
 
     public abstract boolean contains(Vec2 point);
     public abstract boolean contains(double x, double y);
@@ -31,6 +34,10 @@ public abstract class Shape {
     public abstract String getName();
     public abstract String getTypeName();
 
+    /** @deprecated use {@link #toNbt()} instead, as this provides incomplete data */
+    @Deprecated public abstract CompoundTag writeNbt();
+    public abstract ShapeDeserializer<?> getDeserializer();
+
     public boolean shouldRender() {
         return true;
     }
@@ -46,9 +53,33 @@ public abstract class Shape {
         return (float)Math.min(Math.max(1, Math.cbrt(scale)), 4);
     }
 
+    private final void setId(long id) {
+        this.id = id;
+    }
+
+    public static Shape fromNbt(CompoundTag nbt, LoadingContext context) {
+        String type = nbt.getString("type").getValue();
+        long id = nbt.getLong("id").getValue();
+        Shape shape = ShapeData.getDeserializer(type).deserialize(nbt, context);
+        shape.setId(id);
+        return shape;
+    }
+
+    public final CompoundTag toNbt() {
+        CompoundTag nbt = this.writeNbt();
+        nbt.putLong("id", this.id);
+        nbt.putString("type", ShapeData.getShapeType(this.getDeserializer()));
+        return nbt;
+    }
+
     public static enum SelectionStatus {
         NONE,
         HOVERED,
         SELECTED
+    }
+
+    @FunctionalInterface
+    public static interface ShapeDeserializer<T extends Shape> {
+        T deserialize(CompoundTag nbt, LoadingContext context);
     }
 }

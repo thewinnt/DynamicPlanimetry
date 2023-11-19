@@ -71,6 +71,8 @@ public abstract class FlatUIScreen implements Screen {
         style_inactive = new TextButtonStyle(disabled, disabled, disabled, app.getFont(DynamicPlanimetry.BUTTON_INACTIVE));
         LabelStyle style_fps = new LabelStyle(app.getBoldFont(DynamicPlanimetry.FPS), getFpsColor());
 
+        if (notifications != null) notifications.dispose();
+
         fps = new Label(app.last_fps, style_fps);
         mem_usage = new Label("Mem: N/A", style_fps);
         notifications = new Notifications(drawer, app::getBoldFont);
@@ -141,6 +143,7 @@ public abstract class FlatUIScreen implements Screen {
     public void dispose() {
         texture.dispose();
         stage.dispose();
+        notifications.dispose();
     }
 
     public Color getFpsColor() {

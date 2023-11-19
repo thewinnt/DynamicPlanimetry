@@ -6,7 +6,10 @@ import java.util.List;
 
 import com.badlogic.gdx.graphics.Color;
 
+import dev.dewy.nbt.tags.array.LongArrayTag;
+import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -15,6 +18,7 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
+import net.thewinnt.planimetry.util.LoadingContext;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class MultiPointLine extends Shape {
@@ -136,5 +140,34 @@ public class MultiPointLine extends Shape {
     @Override
     public String getTypeName() {
         return "Ломаная";
+    }
+
+    @Override
+    public ShapeDeserializer<?> getDeserializer() {
+        return ShapeData.POLYGONAL_CHAIN;
+    }
+
+    @Override
+    public CompoundTag writeNbt() {
+        CompoundTag nbt = new CompoundTag();
+        LongArrayTag points = new LongArrayTag();
+        for (PointProvider i : this.points) {
+            points.add(i.getId());
+        }
+        nbt.put("points", points);
+        return nbt;
+    }
+
+    protected static List<PointProvider> pointsFromNbt(CompoundTag nbt, LoadingContext context) {
+        LongArrayTag points = nbt.getLongArray("points");
+        List<PointProvider> output = new ArrayList<>();
+        for (long i : points) {
+            output.add((PointProvider)context.resolveShape(i));
+        }
+        return output;
+    }
+
+    public static MultiPointLine readNbt(CompoundTag nbt, LoadingContext context) {
+        return new MultiPointLine(pointsFromNbt(nbt, context));
     }
 }

@@ -5,12 +5,15 @@ import java.util.List;
 
 import com.badlogic.gdx.graphics.Color;
 
+import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.Vec2Property;
 import net.thewinnt.planimetry.util.FontProvider;
+import net.thewinnt.planimetry.util.LoadingContext;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Point extends PointProvider {
@@ -95,5 +98,23 @@ public class Point extends PointProvider {
     @Override
     protected boolean shouldAutoAssingnName() {
         return true;
+    }
+    @Override
+    public ShapeDeserializer<Point> getDeserializer() {
+        return ShapeData.POINT_SIMPLE;
+    }
+
+    @Override
+    public CompoundTag writeNbt() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putDouble("x", this.position.x);
+        nbt.putDouble("y", this.position.y);
+        return nbt;
+    }
+
+    public static Point readNbt(CompoundTag nbt, LoadingContext context) {
+        double x = nbt.getDouble("x").getValue();
+        double y = nbt.getDouble("y").getValue();
+        return new Point(new Vec2(x, y));
     }
 }

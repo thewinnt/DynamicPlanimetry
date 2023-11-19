@@ -52,6 +52,7 @@ public class BooleanProperty extends Property<Boolean> {
     public Table getActorSetup(StyleSet styles) {
         Table table = new Table();
         Button checkbox = new Button(styles.getCheckboxStyle());
+        checkbox.setChecked(value);
         checkbox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

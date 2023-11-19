@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.DoubleFunction;
 
+import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
@@ -57,5 +58,13 @@ public abstract class Line extends Shape {
 
     public void setName(String name) {
         this.nameOverride = name;
+    }
+
+    @Override
+    public CompoundTag writeNbt() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putLong("a", this.a.getId());
+        nbt.putLong("b", this.b.getId());
+        return nbt;
     }
 }

@@ -6,14 +6,18 @@ import java.util.function.Supplier;
 
 import com.badlogic.gdx.graphics.Color;
 
+import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.properties.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.DoubleProperty;
 import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
+import net.thewinnt.planimetry.util.LoadingContext;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Circle extends Shape {
@@ -93,7 +97,8 @@ public class Circle extends Shape {
         if (radiusPoint != null) {
             return List.of(
                 new EnclosingProperty("Центр", this.center.getProperties()),
-                new EnclosingProperty("Точка радиуса", this.radiusPoint.getProperties())
+                new EnclosingProperty("Точка радиуса", this.radiusPoint.getProperties()),
+                new BooleanProperty("Сохранять радиус", keepRadius)
             );
         } else {
             DoubleProperty radius = new DoubleProperty("Радиус", this.radius.get());
@@ -110,5 +115,35 @@ public class Circle extends Shape {
     @Override
     public String getTypeName() {
         return "Окружность";
+    }
+
+    @Override
+    public ShapeDeserializer<?> getDeserializer() {
+        return ShapeData.CIRCLE;
+    }
+
+    @Override
+    public CompoundTag writeNbt() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putLong("center", this.center.getId());
+        if (this.radiusPoint == null) {
+            nbt.putDouble("radius", this.radius.get());
+        } else {
+            nbt.putLong("radius", this.radiusPoint.getId());
+            nbt.putByte("keep_radius", this.keepRadius ? (byte)1 : (byte)0);
+        }
+        return nbt;
+    }
+
+    public static Circle readNbt(CompoundTag nbt, LoadingContext context) {
+        PointProvider center = (PointProvider)context.resolveShape(nbt.getLong("center").getValue());
+        if (nbt.containsLong("radius")) {
+            PointProvider radius = (PointProvider)context.resolveShape(nbt.getLong("radius").getValue());
+            boolean keepRadius = nbt.getByte("keep_radius").getValue() > 0;
+            return new Circle(center, radius, keepRadius);
+        } else {
+            double radius = nbt.getDouble("radius").getValue();
+            return new Circle(center, radius);
+        }
     }
 }

@@ -20,8 +20,8 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.CircleFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory;
-import net.thewinnt.planimetry.shapes.factories.PolygonFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
+import net.thewinnt.planimetry.shapes.factories.PolygonFactory;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.StyleSet;
@@ -53,7 +53,7 @@ public class EditorScreen extends FlatUIScreen {
     public void addActorsBelowFps() {
         this.styles = new StyleSet();
         updateStyles();
-        board = new DrawingBoard(drawer, app::getBoldFont);
+        board = new DrawingBoard(drawer, app::getBoldFont, app.shapes, app.points);
         board.addSelectionListener(shape -> show());
 
         creation = new Table();
@@ -222,4 +222,8 @@ public class EditorScreen extends FlatUIScreen {
 
     @Override public void customRender() {}
     @Override public void addActorsAboveFps() {}
+    
+    public DrawingBoard getBoard() {
+        return board;
+    }
 }

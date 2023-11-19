@@ -30,8 +30,8 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public class DrawingBoard extends Actor {
     private final ShapeDrawer drawer;
     private final FontProvider font;
-    private final List<Shape> shapes = new ArrayList<>();
-    private final List<PointProvider> points = new ArrayList<>();
+    private final List<Shape> shapes;
+    private final List<PointProvider> points;
     private final List<Consumer<Shape>> selectionListeners = new ArrayList<>();
     private double scale = Math.pow(1.25, 15); // pixels per unit
     private Vec2 offset = Vec2.ZERO;
@@ -40,9 +40,11 @@ public class DrawingBoard extends Actor {
     private boolean isPanning = false;
     private boolean startedAtPoint = false;
 
-    public DrawingBoard(ShapeDrawer drawer, FontProvider font) {
+    public DrawingBoard(ShapeDrawer drawer, FontProvider font, List<Shape> shapes, List<PointProvider> points) {
         this.drawer = drawer;
         this.font = font;
+        this.shapes = shapes;
+        this.points = points;
         this.addListener(new ActorGestureListener(DynamicPlanimetry.IS_MOBILE ? 20 : 2, 0.4f, 1.1f, Integer.MAX_VALUE) {
             @Override
             public void zoom(InputEvent event, float initialDistance, float distance) {

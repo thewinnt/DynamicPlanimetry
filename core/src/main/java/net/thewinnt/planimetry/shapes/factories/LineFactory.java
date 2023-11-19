@@ -24,7 +24,7 @@ public class LineFactory extends ShapeFactory {
 
     public LineFactory(DrawingBoard board, LineType type) {
         super(board);
-        this.point1 = new PointReference(new MousePoint(board));
+        this.point1 = new PointReference(new MousePoint());
         this.type = type;
         this.addedPoint1 = false;
     }
@@ -33,11 +33,11 @@ public class LineFactory extends ShapeFactory {
         super(board);
         this.type = type;
         if (point1 == null) {
-            this.point1 = new PointReference(new MousePoint(board));
+            this.point1 = new PointReference(new MousePoint());
             this.addedPoint1 = false;
         } else {
             this.point1 = new PointReference(point1);
-            this.point2 = new PointReference(new MousePoint(board));
+            this.point2 = new PointReference(new MousePoint());
             this.addShape(this.type.create(new PointReference(point1), point2));
             this.addedPoint1 = true;
         }
@@ -53,7 +53,7 @@ public class LineFactory extends ShapeFactory {
             } else {
                 this.point1.setPoint(new Point(new Vec2(x, y)));
             }
-            this.point2 = new PointReference(new MousePoint(board));
+            this.point2 = new PointReference(new MousePoint());
         } else if (point2.getPoint() instanceof MousePoint) {
             PointProvider p2 = (PointProvider) board.getHoveredShape(Gdx.input.getX(), Gdx.input.getY(), shape -> shape instanceof PointProvider);
             if (p2 != null) {
