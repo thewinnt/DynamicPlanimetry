@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox.SelectBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 
 public class StyleSet {
     private TextButtonStyle buttonStyle;
@@ -13,6 +14,7 @@ public class StyleSet {
     private LabelStyle labelStyleLarge;
     private LabelStyle labelStyleSmall;
     private ButtonStyle checkboxStyle;
+    private WindowStyle windowStyle;
 
     public StyleSet() {}
 
@@ -49,6 +51,10 @@ public class StyleSet {
         this.checkboxStyle = checkboxStyle;
     }
 
+    public void setWindowStyle(WindowStyle windowStyle) {
+        this.windowStyle = windowStyle;
+    }
+
     public TextButtonStyle getButtonStyle() {
         return buttonStyle;
     }
@@ -71,5 +77,9 @@ public class StyleSet {
 
     public ButtonStyle getCheckboxStyle() {
         return checkboxStyle;
+    }
+
+    public WindowStyle getWindowStyle() {
+        return windowStyle;
     }
 }

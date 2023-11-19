@@ -26,7 +26,7 @@ public class MainMenuScreen extends FlatUIScreen {
         Table buttons = new Table();
 
         Label title = new Label("Dynamic Planimetry", style_title);
-        TextButton create = new TextButton("Создать", style_active);
+        TextButton create = new TextButton(app.getDrawing() == null ? "Создать" : "Продолжить", style_active);
         TextButton load = new TextButton("Загрузить", style_inactive);
         TextButton go_settings = new TextButton("Настройки", style_inactive);
         TextButton exit = new TextButton("Выход", style_active);

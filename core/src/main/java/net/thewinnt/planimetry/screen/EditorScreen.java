@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
@@ -11,12 +13,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox.SelectBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.gdxutils.ColorUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.CircleFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory;
@@ -37,6 +43,8 @@ public class EditorScreen extends FlatUIScreen {
     private Table creation;
     private Table properties;
     private Table functions;
+    private Table actions;
+    private Container<Window> saveOverlay;
 
     private Label creationCategory;
     private TextButton createLine;
@@ -44,6 +52,10 @@ public class EditorScreen extends FlatUIScreen {
     private TextButton createLineSegment;
     private TextButton createCircle;
     private TextButton createPolygon;
+
+    private TextButton exitToMenu;
+    private TextButton save;
+    private Window saveDialog;
 
     public EditorScreen(DynamicPlanimetry app) {
         super(app);
@@ -53,12 +65,17 @@ public class EditorScreen extends FlatUIScreen {
     public void addActorsBelowFps() {
         this.styles = new StyleSet();
         updateStyles();
-        board = new DrawingBoard(drawer, app::getBoldFont, app.shapes, app.points);
+        if (app.getDrawing() == null) {
+            app.setDrawing(new Drawing(), false);
+        }
+        board = new DrawingBoard(drawer, app::getBoldFont, app.getDrawing());
         board.addSelectionListener(shape -> show());
 
         creation = new Table();
         properties = new Table();
         functions = new Table();
+        actions = new Table();
+        saveOverlay = new Container<>();
         rebuildUI(board.getSelection());
         settings = new ShapeSettingsBackground(drawer, creation, properties);
 
@@ -70,6 +87,8 @@ public class EditorScreen extends FlatUIScreen {
         stage.addActor(creation);
         stage.addActor(properties);
         stage.addActor(functions);
+        stage.addActor(actions);
+        stage.addActor(saveOverlay);
     }
 
     public void rebuildUI(Shape selection) {
@@ -77,6 +96,7 @@ public class EditorScreen extends FlatUIScreen {
         creation.reset();
         properties.reset();
         functions.reset();
+        actions.reset();
 
         // ACTORS
         creationCategory = new Label("Создание", styles.getLabelStyleLarge());
@@ -85,6 +105,9 @@ public class EditorScreen extends FlatUIScreen {
         createLineSegment = new TextButton("Отрезок", styles.getButtonStyle());
         createCircle = new TextButton("Окружность", styles.getButtonStyle());
         createPolygon = new TextButton("Многоугольник", styles.getButtonStyle());
+
+        exitToMenu = new TextButton("В меню", styles.getButtonStyle());
+        save = new TextButton("Сохранить", styles.getButtonStyle());
 
         // LISTENERS
         createLine.addListener(new ChangeListener() {
@@ -122,6 +145,44 @@ public class EditorScreen extends FlatUIScreen {
             }
         });
 
+        exitToMenu.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                app.setScreen(DynamicPlanimetry.MAIN_MENU);
+            }
+        });
+
+        save.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                saveDialog = new Window("Сохранение", styles.getWindowStyle());
+                saveDialog.getTitleLabel().getStyle().background = pressed;
+                saveDialog.row().row();
+                Label filename = new Label("Будет сохранён в " + app.getDrawing().withFilename(app.getDrawing().getName(), false).getFilename(), styles.getLabelStyleSmall());
+                TextField namePicker = new TextField(app.getDrawing().getName(), styles.getTextFieldStyle());
+                namePicker.setTextFieldListener((textField, c) -> {
+                    filename.setText("Будет сохранён в " + app.getDrawing().withFilename(namePicker.getText(), false).getFilename());
+                });
+                TextButton save = new TextButton("Сохранить", styles.getButtonStyle());
+                save.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        app.getDrawing().setName(namePicker.getText());
+                        app.getDrawing().save(namePicker.getText(), false);
+                        saveOverlay.setActor(null);
+                    }
+                });
+
+                saveDialog.add(new Label("Имя чертежа", styles.getLabelStyleLarge())).pad(Gdx.graphics.getHeight() / 40, 5, 0, 5);
+                saveDialog.add(namePicker).expand().fill().pad(Gdx.graphics.getHeight() / 40 + 5, 5, 0, 5).row();;
+                saveDialog.add(filename).colspan(2).pad(5).row();
+                saveDialog.add(save).colspan(2).pad(5);
+                saveOverlay.setActor(saveDialog);
+                // TODO fix unadded shapes not saving (e.g. point reference targets)
+                // TODO fix points references still writing full data (after previous)
+            }
+        });
+
         // ADDING TO TABLES
         creation.add(creationCategory).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createLine).expandX().fillX().pad(5, 5, 0, 5).row();
@@ -137,6 +198,9 @@ public class EditorScreen extends FlatUIScreen {
                 properties.add(i.getActorSetup(styles)).expand().fill().pad(5, 5, 0, 5).row();
             }
         }
+
+        actions.add(exitToMenu).expand().fill().pad(5, 5, 5, 0);
+        actions.add(save).expand().fill().pad(5);
     }
 
     public void updateStyles() {
@@ -192,6 +256,10 @@ public class EditorScreen extends FlatUIScreen {
         textButtonStyle.over = over;
         textButtonStyle.checkedOver = over;
         this.styles.setButtonStyle(textButtonStyle);
+
+        // window style
+        WindowStyle windowStyle = new WindowStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorB, Color.BLACK), Color.BLACK, normal);
+        this.styles.setWindowStyle(windowStyle);
     }
 
     @Override
@@ -218,6 +286,13 @@ public class EditorScreen extends FlatUIScreen {
         
         functions.setSize(height * 0.5f, functions.getPrefHeight());
         functions.setPosition(delimiter, height - creation.getHeight() - properties.getHeight() - functions.getHeight() - 10);
+
+        actions.setSize(height * 0.5f, actions.getPrefHeight());
+        actions.setPosition(delimiter, 0);
+        
+        saveOverlay.setSize(width, height);
+        saveOverlay.setPosition(0, 0);
+        saveOverlay.center().fill(false);
     }
 
     @Override public void customRender() {}

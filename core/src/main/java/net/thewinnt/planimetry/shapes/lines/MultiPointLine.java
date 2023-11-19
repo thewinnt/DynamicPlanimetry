@@ -150,11 +150,12 @@ public class MultiPointLine extends Shape {
     @Override
     public CompoundTag writeNbt() {
         CompoundTag nbt = new CompoundTag();
-        LongArrayTag points = new LongArrayTag();
-        for (PointProvider i : this.points) {
-            points.add(i.getId());
+        long[] points = new long[this.points.size()];
+        for (int i = 0; i < points.length; i++) {
+            points[i] = this.points.get(i).getId();
         }
-        nbt.put("points", points);
+        LongArrayTag pointsTag = new LongArrayTag(points);
+        nbt.put("points", pointsTag);
         return nbt;
     }
 
