@@ -4,11 +4,12 @@ import java.util.Collection;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
-import net.thewinnt.planimetry.util.LoadingContext;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public abstract class Shape {
@@ -35,7 +36,7 @@ public abstract class Shape {
     public abstract String getTypeName();
 
     /** @deprecated use {@link #toNbt()} instead, as this provides incomplete data */
-    @Deprecated public abstract CompoundTag writeNbt();
+    @Deprecated public abstract CompoundTag writeNbt(SavingContext context);
     public abstract ShapeDeserializer<?> getDeserializer();
 
     public boolean shouldRender() {
@@ -65,8 +66,8 @@ public abstract class Shape {
         return shape;
     }
 
-    public final CompoundTag toNbt() {
-        CompoundTag nbt = this.writeNbt();
+    public final CompoundTag toNbt(SavingContext context) {
+        CompoundTag nbt = this.writeNbt(context);
         nbt.putLong("id", this.id);
         nbt.putString("type", ShapeData.getShapeType(this.getDeserializer()));
         return nbt;

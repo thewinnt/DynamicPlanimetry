@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox.SelectBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
@@ -178,8 +177,6 @@ public class EditorScreen extends FlatUIScreen {
                 saveDialog.add(filename).colspan(2).pad(5).row();
                 saveDialog.add(save).colspan(2).pad(5);
                 saveOverlay.setActor(saveDialog);
-                // TODO fix unadded shapes not saving (e.g. point reference targets)
-                // TODO fix points references still writing full data (after previous)
             }
         });
 

@@ -1,4 +1,4 @@
-package net.thewinnt.planimetry.util;
+package net.thewinnt.planimetry.data;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.math.Vec2;

@@ -2,6 +2,7 @@ package net.thewinnt.planimetry;
 
 import static net.thewinnt.gdxutils.ColorUtils.rgbColor;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Map;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -20,6 +22,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import dev.dewy.nbt.Nbt;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.screen.EditorScreen;
+import net.thewinnt.planimetry.screen.FileSelectionScreen;
 import net.thewinnt.planimetry.screen.FlatUIScreen;
 import net.thewinnt.planimetry.screen.MainMenuScreen;
 import net.thewinnt.planimetry.ui.Notifications;
@@ -29,6 +32,7 @@ public class DynamicPlanimetry extends Game {
     // public constants
     public static final int MAIN_MENU = 0;
     public static final int EDITOR_SCREEN = 1;
+    public static final int FILE_SELECTION_SCREEN = 2;
     public static final Nbt NBT = new Nbt();
 
     // general stuff
@@ -43,10 +47,12 @@ public class DynamicPlanimetry extends Game {
 
     // data
     private Drawing currentDrawing;
+    private List<Drawing> allDrawings;
 
     // screens
     public MainMenuScreen mainMenu;
     public EditorScreen editorScreen;
+    public FileSelectionScreen fileSelectionScreen;
 
     // font stuff
     private FreeTypeFontGenerator gen_default;
@@ -106,6 +112,7 @@ public class DynamicPlanimetry extends Game {
 
         mainMenu = registerScreen(new MainMenuScreen(this));
         editorScreen = registerScreen(new EditorScreen(this));
+        fileSelectionScreen = registerScreen(new FileSelectionScreen(this));
         setScreen(MAIN_MENU);
         if (DEBUG_MODE) {
             Notifications.addNotification("Включён режим отладки", 2000);
@@ -193,7 +200,7 @@ public class DynamicPlanimetry extends Game {
     }
 
     public void setDrawing(Drawing drawing, boolean saveOld) {
-        if (saveOld && this.currentDrawing != null) {
+        if (saveOld && this.currentDrawing != null && this.currentDrawing.hasChanged()) {
             currentDrawing.save();
         }
         this.currentDrawing = drawing;
@@ -201,5 +208,22 @@ public class DynamicPlanimetry extends Game {
 
     public Drawing getDrawing() {
         return currentDrawing;
+    }
+
+    public void preloadDrawings(String folder) {
+        ArrayList<Drawing> drawings = new ArrayList<>();
+        for (FileHandle i : Gdx.files.absolute(folder).list()) {
+            try {
+                drawings.add(Drawing.load(i.path()));
+            } catch (Exception e) {
+                Notifications.addNotification("Ошибка при загрузке файла (" + i.nameWithoutExtension() + "):  " + e.getMessage(), 5000);
+                e.printStackTrace();
+            }
+        }
+        this.allDrawings = drawings;
+    }
+
+    public List<Drawing> getAllDrawings() {
+        return allDrawings;
     }
 }

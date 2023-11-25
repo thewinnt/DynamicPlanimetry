@@ -8,12 +8,13 @@ import com.badlogic.gdx.graphics.Color;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.Vec2Property;
 import net.thewinnt.planimetry.util.FontProvider;
-import net.thewinnt.planimetry.util.LoadingContext;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Point extends PointProvider {
@@ -105,7 +106,7 @@ public class Point extends PointProvider {
     }
 
     @Override
-    public CompoundTag writeNbt() {
+    public CompoundTag writeNbt(SavingContext context) {
         CompoundTag nbt = new CompoundTag();
         nbt.putDouble("x", this.position.x);
         nbt.putDouble("y", this.position.y);

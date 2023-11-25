@@ -5,12 +5,13 @@ import java.util.Objects;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.NameComponent;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
-import net.thewinnt.planimetry.util.LoadingContext;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class PointReference extends PointProvider {
@@ -99,13 +100,14 @@ public class PointReference extends PointProvider {
     }
 
     @Override
-    public CompoundTag writeNbt() {
+    public CompoundTag writeNbt(SavingContext context) {
         CompoundTag nbt = new CompoundTag();
-        nbt.put("point", this.point.toNbt());
+        nbt.putLong("point", this.point.getId());
+        context.addShape(this.point);
         return nbt;
     }
 
     public static PointReference readNbt(CompoundTag nbt, LoadingContext context) {
-        return new PointReference((PointProvider)context.resolveShape(nbt.getLong("id").getValue()));
+        return new PointReference((PointProvider)context.resolveShape(nbt.getLong("point").getValue()));
     }
 }

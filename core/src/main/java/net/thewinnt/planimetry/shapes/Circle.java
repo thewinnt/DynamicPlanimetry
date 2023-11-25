@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.Color;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
@@ -17,7 +19,6 @@ import net.thewinnt.planimetry.ui.properties.DoubleProperty;
 import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
-import net.thewinnt.planimetry.util.LoadingContext;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Circle extends Shape {
@@ -123,13 +124,15 @@ public class Circle extends Shape {
     }
 
     @Override
-    public CompoundTag writeNbt() {
+    public CompoundTag writeNbt(SavingContext context) {
         CompoundTag nbt = new CompoundTag();
         nbt.putLong("center", this.center.getId());
+        context.addShape(this.center);
         if (this.radiusPoint == null) {
             nbt.putDouble("radius", this.radius.get());
         } else {
             nbt.putLong("radius", this.radiusPoint.getId());
+            context.addShape(this.radiusPoint);
             nbt.putByte("keep_radius", this.keepRadius ? (byte)1 : (byte)0);
         }
         return nbt;

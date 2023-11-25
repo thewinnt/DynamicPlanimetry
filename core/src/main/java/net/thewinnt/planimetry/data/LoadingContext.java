@@ -1,4 +1,4 @@
-package net.thewinnt.planimetry.util;
+package net.thewinnt.planimetry.data;
 
 import java.util.Collection;
 import java.util.HashMap;

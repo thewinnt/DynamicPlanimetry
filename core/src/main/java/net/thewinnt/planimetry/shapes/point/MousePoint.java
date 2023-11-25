@@ -8,11 +8,12 @@ import com.badlogic.gdx.Gdx;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
-import net.thewinnt.planimetry.util.LoadingContext;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class MousePoint extends PointProvider {
@@ -51,7 +52,7 @@ public class MousePoint extends PointProvider {
     }
 
     @Override
-    public CompoundTag writeNbt() {
+    public CompoundTag writeNbt(SavingContext context) {
         return new CompoundTag();
     }
 

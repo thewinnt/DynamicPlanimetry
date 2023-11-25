@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -16,7 +17,6 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.Notifications;
-import net.thewinnt.planimetry.util.LoadingContext;
 
 public class Drawing {
     public final List<Shape> shapes;
@@ -26,6 +26,7 @@ public class Drawing {
     private String name;
     private long creationTime;
     private long lastEditTime;
+    private boolean changed = false;
 
     public Drawing() {
         this.shapes = new ArrayList<>();
@@ -104,6 +105,11 @@ public class Drawing {
 
     public void update() {
         lastEditTime = System.currentTimeMillis();
+        changed = true;
+    }
+
+    public boolean hasChanged() {
+        return changed;
     }
 
     public Drawing withFilename(String filename, boolean isAbsolute) {
@@ -139,12 +145,8 @@ public class Drawing {
     public CompoundTag toNbt() {
         CompoundTag output = new CompoundTag();
         ListTag<CompoundTag> shapes = new ListTag<>();
-        for (Shape i : this.shapes) {
-            shapes.add(i.toNbt());
-        }
-        for (PointProvider i : this.points) {
-            shapes.add(i.toNbt());
-        }
+        SavingContext context = new SavingContext(Stream.concat(this.shapes.stream(), this.points.stream()).toList());
+        shapes = new ListTag<>("shapes", new ArrayList<>(context.save()));
         output.put("shapes", shapes);
         output.putString("name", name);
         output.putLong("creation_time", creationTime);
@@ -180,10 +182,10 @@ public class Drawing {
         }
     }
 
-    public static Drawing load(byte[] data) {
+    public static Drawing load(String filenameAbsolute) {
         try {
-            CompoundTag nbt = DynamicPlanimetry.NBT.fromByteArray(data);
-            return Drawing.fromNbt(nbt);
+            CompoundTag nbt = DynamicPlanimetry.NBT.fromFile(Gdx.files.absolute(filenameAbsolute).file());
+            return Drawing.fromNbt(nbt).withFilename(filenameAbsolute, true);
         } catch (IOException e) {
             Notifications.addNotification("Error loading file: " + e.getMessage(), 5000);
             return null;

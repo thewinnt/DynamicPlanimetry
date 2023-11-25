@@ -27,7 +27,7 @@ public class MainMenuScreen extends FlatUIScreen {
 
         Label title = new Label("Dynamic Planimetry", style_title);
         TextButton create = new TextButton(app.getDrawing() == null ? "Создать" : "Продолжить", style_active);
-        TextButton load = new TextButton("Загрузить", style_inactive);
+        TextButton load = new TextButton("Загрузить", style_active);
         TextButton go_settings = new TextButton("Настройки", style_inactive);
         TextButton exit = new TextButton("Выход", style_active);
 
@@ -40,6 +40,14 @@ public class MainMenuScreen extends FlatUIScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.exit();
+            }
+        });
+
+        load.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // app.preloadDrawings(Gdx.files.getLocalStoragePath() + "drawings");
+                app.setScreen(DynamicPlanimetry.FILE_SELECTION_SCREEN);
             }
         });
 
