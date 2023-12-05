@@ -24,4 +24,14 @@ public class MathHelper {
     public static double distanceToLine(Vec2 a, Vec2 b, Vec2 point) {
         return Math.abs((b.x - a.x)*(a.y - point.y) - (a.x - point.x)*(b.y - a.y)) / a.distanceTo(b);
     }
+
+    public static double distanceToSegment(Vec2 a, Vec2 b, Vec2 point) {
+        double distance = Math.abs((b.x - a.x)*(a.y - point.y) - (a.x - point.x)*(b.y - a.y)) / a.distanceTo(b);
+        double slope = (a.y - b.y) / (a.x - b.x);
+        if (!isPointOnSegment(a, b, perpendicular(point, slope, distance)) && !isPointOnSegment(a, b, perpendicular(point, slope, -distance))) {
+            return Math.min(a.distanceTo(point), b.distanceTo(point));
+        } else {
+            return distance;
+        }
+    }
 }

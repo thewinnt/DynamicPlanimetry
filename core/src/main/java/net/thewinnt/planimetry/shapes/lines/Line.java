@@ -10,6 +10,7 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
+import net.thewinnt.planimetry.ui.NameComponent;
 import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.Property;
 
@@ -55,6 +56,11 @@ public abstract class Line extends Shape {
     public String getName() {
         if (nameOverride != null) return nameOverride;
         return this.a.getName() + this.b.getName();
+    }
+
+    @Override
+    public List<NameComponent> getFullName() {
+        return List.of(this.a.getNameComponent(), this.b.getNameComponent());
     }
 
     public void setName(String name) {

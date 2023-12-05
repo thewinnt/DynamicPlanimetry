@@ -17,6 +17,7 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.NameComponent;
 import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -136,6 +137,15 @@ public class MultiPointLine extends Shape {
             builder.append(i.getName());
         }
         return builder.toString();
+    }
+
+    @Override
+    public List<NameComponent> getFullName() {
+        List<NameComponent> output = new ArrayList<>();
+        for (PointProvider i : this.points) {
+            output.add(i.getNameComponent());
+        }
+        return output;
     }
 
     @Override

@@ -6,15 +6,12 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox.SelectBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -24,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 
 import net.thewinnt.gdxutils.ColorUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
@@ -31,28 +29,34 @@ import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.SaveEntry;
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.drawable.CheckboxDrawable;
 import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
 
 public class FileSelectionScreen extends FlatUIScreen {
     private StyleSet styles;
     private ScrollPaneStyle paneStyle;
+    private TextButtonStyle selectedItemStyle;
     // top row
     private Label linkBack;
     private Label title;
     // file list
     private ScrollPane pane;
-    private VerticalGroup files;
+    private Table files;
     // control buttons
     private Table controlPanel;
     private TextButton openSaveFolder;
     private TextButton rename;
     private TextButton delete;
     private TextButton update;
+    private TextButton open;
     // renaming mini-screen
     private TextField nameField;
     private TextButton setName;
     private TextButton cancelRename;
+    // selection stuff
+    private boolean isRenaming;
+    private Drawing selection;
+    private SaveEntry selectionUI;
+    private long lastClickTime;
 
     public FileSelectionScreen(DynamicPlanimetry app) {
         super(app);
@@ -66,17 +70,18 @@ public class FileSelectionScreen extends FlatUIScreen {
         // ==========================
         // ACTOR DEFINITIONS
         // ==========================
-        this.files = new VerticalGroup().pad(5);
+        this.files = new Table().align(Align.top);
         this.controlPanel = new Table();
 
         this.linkBack = new Label("< Назад", styles.getLabelStyleLarge());
-        this.title = new Label("Загрузка файлов", styles.getLabelStyleLarge());
+        this.title = new Label("Открыть чертёж", styles.getLabelStyleLarge());
         this.pane = new ScrollPane(files, paneStyle);
         
         this.openSaveFolder = new TextButton("Открыть папку", styles.getButtonStyle());
         this.rename = new TextButton("Переименовать", styles.getButtonStyleInactive());
         this.delete = new TextButton("Удалить", styles.getButtonStyleInactive());
         this.update = new TextButton("Обновить", styles.buttonStyle);
+        this.open = new TextButton("Открыть", styles.buttonStyleInactive);
 
         this.nameField = new TextField("", styles.textFieldStyle);
         this.setName = new TextButton("Готово", styles.buttonStyle);
@@ -97,7 +102,7 @@ public class FileSelectionScreen extends FlatUIScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 try {
-                    java.awt.Desktop.getDesktop().open(new File(Gdx.files.getLocalStoragePath()));
+                    java.awt.Desktop.getDesktop().open(new File(Gdx.files.getLocalStoragePath() + "drawings"));
                 } catch (IOException e) {
                     Notifications.addNotification("Error opening folder: " + e.getMessage(), 5000);
                 }
@@ -113,6 +118,47 @@ public class FileSelectionScreen extends FlatUIScreen {
             }
         });
 
+        this.open.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (open.getStyle() != styles.buttonStyleInactive) {
+                    app.setDrawing(selection, true);
+                    app.editorScreen.hide();
+                    app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
+                }
+            }
+        });
+
+        this.rename.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                isRenaming = true;
+                rename.setStyle(styles.buttonStyleInactive);
+                show();
+            }
+        });
+
+        this.setName.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (!nameField.getText().isEmpty()) {
+                    isRenaming = false;
+                    selection.setName(nameField.getText());
+                    selection.save();
+                    refillFiles();
+                    show();
+                }
+            }
+        });
+
+        this.cancelRename.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                isRenaming = false;
+                nameField.setText(selection.getName());
+            }
+        });
+
         // ==========================
         // STAGE ADDING
         // ==========================
@@ -120,6 +166,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         stage.addActor(title);
         stage.addActor(pane);
         stage.addActor(controlPanel);
+        stage.setScrollFocus(pane);
     }
 
     @Override
@@ -129,7 +176,13 @@ public class FileSelectionScreen extends FlatUIScreen {
         final int height = Gdx.graphics.getHeight();
         controlPanel.reset();
         controlPanel.add(openSaveFolder).expand().fill().pad(5);
+        controlPanel.add(open).expand().fill().pad(5);
         controlPanel.add(rename).expand().fill().pad(5);
+        if (isRenaming) {
+            controlPanel.add(nameField).expand().fill().pad(5);
+            controlPanel.add(setName).expand().fill().pad(5);
+            controlPanel.add(cancelRename).expand().fill().pad(5);
+        }
         controlPanel.add(delete).expand().fill().pad(5);
         controlPanel.add(update).expand().fill().pad(5);
 
@@ -141,6 +194,18 @@ public class FileSelectionScreen extends FlatUIScreen {
 
         pane.setPosition(5, controlPanel.getHeight() + 10);
         pane.setSize(width - 10, height - pane.getY() - title.getHeight() - 10);
+
+        if (selection == null) {
+            rename.setDisabled(true);
+            delete.setDisabled(true);
+            rename.setStyle(styles.buttonStyleInactive);
+            delete.setStyle(styles.buttonStyleInactive);
+        } else {
+            rename.setDisabled(false);
+            delete.setDisabled(false);
+            rename.setStyle(styles.buttonStyle);
+            delete.setStyle(styles.buttonStyle);
+        }
     }
 
     private void refillFiles() {
@@ -150,7 +215,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         List<Drawing> drawings = app.getAllDrawings();
         files.clear();
         if (drawings == null || drawings.isEmpty()) {
-            files.addActor(new Label("Тут ничего нет...", styles.labelStyleLarge));
+            files.add(new Label("Тут ничего нет...", styles.labelStyleLarge)).fill().center();
         } else {
             for (Drawing i : drawings) {
                 if (i == null) {
@@ -161,13 +226,23 @@ public class FileSelectionScreen extends FlatUIScreen {
                 file.addListener(new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
-                        app.setDrawing(i, true);
-                        app.editorScreen.hide();
-                        app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
-                        // TODO property changing
+                        if (System.currentTimeMillis() - lastClickTime < 300) {
+                            app.setDrawing(i, true);
+                            app.editorScreen.hide();
+                            app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
+                        }
+                        if (selectionUI != null) {
+                            selectionUI.setStyle(styles.buttonStyle);
+                        }
+                        selection = i;
+                        selectionUI = file;
+                        lastClickTime = System.currentTimeMillis();
+                        file.setStyle(selectedItemStyle);
+                        nameField.setText(i.getName());
+                        show();
                     }
                 });
-                files.addActor(file);
+                files.add(file).expandX().fillX().pad(5).row();
             }
         }
     }
@@ -209,6 +284,9 @@ public class FileSelectionScreen extends FlatUIScreen {
 
         TextButtonStyle textButtonStyleInactive = new TextButtonStyle(disabled, disabled, disabled, app.getBoldFont(Gdx.graphics.getHeight()/ fontFactorA, DynamicPlanimetry.COLOR_INACTIVE));
         this.styles.setButtonStyleInactive(textButtonStyleInactive);
+
+        this.selectedItemStyle = new TextButtonStyle(pressed, pressed, pressed, app.getBoldFont(Gdx.graphics.getHeight()/ fontFactorA, Color.BLACK));
+        
 
         // window style
         WindowStyle windowStyle = new WindowStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorB, Color.BLACK), Color.BLACK, normal);

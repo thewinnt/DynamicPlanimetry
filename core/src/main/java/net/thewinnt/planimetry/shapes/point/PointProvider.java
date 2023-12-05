@@ -60,6 +60,15 @@ public abstract class PointProvider extends Shape {
     }
 
     @Override
+    public List<NameComponent> getFullName() {
+        return List.of(name);
+    }
+
+    public NameComponent getNameComponent() {
+        return name;
+    }
+
+    @Override
     public String getTypeName() {
         return "Точка";
     }
@@ -69,4 +78,8 @@ public abstract class PointProvider extends Shape {
     }
 
     protected abstract boolean shouldAutoAssingnName();
+
+    public static void resetAutoAssignCounter() {
+        nameCounter = 0;
+    }
 }

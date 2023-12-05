@@ -28,6 +28,7 @@ import net.thewinnt.planimetry.shapes.factories.LineFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.factories.PolygonFactory;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.NameSequence;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.drawable.CheckboxDrawable;
@@ -190,6 +191,8 @@ public class EditorScreen extends FlatUIScreen {
 
         if (selection != null) {
             properties.add(new Label(selection.getTypeName() + " " + selection.getName(), styles.getLabelStyleLarge())).colspan(9999).expand().fill().row();
+            // TODO debug 
+            // properties.add(new NameSequence(selection.getFullName(), app::getBoldFont, Gdx.graphics.getHeight() / 14)).colspan(9999).expand().fill().row();
             for (Property<?> i : selection.getProperties()) {
                 properties.add(new Label(i.getName(), styles.getLabelStyleLarge())).expand().fill();
                 properties.add(i.getActorSetup(styles)).expand().fill().pad(5, 5, 0, 5).row();
@@ -201,8 +204,8 @@ public class EditorScreen extends FlatUIScreen {
     }
 
     public void updateStyles() {
-        final int fontFactorA = 26;
-        final int fontFactorB = 20;
+        final int fontFactorA = 24;
+        final int fontFactorB = 18;
 
         // text field style
         RectangleDrawable field = new RectangleDrawable(drawer);

@@ -2,7 +2,6 @@ package net.thewinnt.planimetry;
 
 import static net.thewinnt.gdxutils.ColorUtils.rgbColor;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

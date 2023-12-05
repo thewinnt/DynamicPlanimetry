@@ -49,12 +49,12 @@ public class Polygon extends MultiPointLine {
     public double distanceToMouse(Vec2 point, DrawingBoard board) {
         double minDist = Double.MAX_VALUE;
         for (int i = 0; i < points.size() - 1; i++) {
-            double cache = MathHelper.distanceToLine(points.get(i).getPosition(), points.get(i + 1).getPosition(), point);
+            double cache = MathHelper.distanceToSegment(points.get(i).getPosition(), points.get(i + 1).getPosition(), point);
             if (cache < minDist) {
                 minDist = cache;
             }
         }
-        double cache = MathHelper.distanceToLine(points.get(0).getPosition(), points.get(points.size() - 1).getPosition(), point);
+        double cache = MathHelper.distanceToSegment(points.get(0).getPosition(), points.get(points.size() - 1).getPosition(), point);
         if (cache < minDist) {
             minDist = cache;
         }
@@ -65,12 +65,12 @@ public class Polygon extends MultiPointLine {
     public double distanceToMouse(double x, double y, DrawingBoard board) {
         double minDist = Double.MAX_VALUE;
         for (int i = 0; i < points.size() - 1; i++) {
-            double cache = MathHelper.distanceToLine(points.get(i).getPosition(), points.get(i + 1).getPosition(), new Vec2(x, y));
+            double cache = MathHelper.distanceToSegment(points.get(i).getPosition(), points.get(i + 1).getPosition(), new Vec2(x, y));
             if (cache < minDist) {
                 minDist = cache;
             }
         }
-        double cache = MathHelper.distanceToLine(points.get(0).getPosition(), points.get(points.size() - 1).getPosition(), new Vec2(x, y));
+        double cache = MathHelper.distanceToSegment(points.get(0).getPosition(), points.get(points.size() - 1).getPosition(), new Vec2(x, y));
         if (cache < minDist) {
             minDist = cache;
         }
