@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -49,7 +50,14 @@ public class DoubleProperty extends Property<Double> {
 
     @Override
     public Table getActorSetup(StyleSet styles) {
-        TextField doubleField = new TextField(Double.toString(value), styles.getTextFieldStyle());
+        TextField doubleField = new TextField(Double.toString(value), styles.getTextFieldStyle()) {
+            @Override
+            public float getPrefWidth() {
+                // return Gdx.graphics.getHeight() / 30;
+                return super.getPrefWidth();
+                // TODO proper UI
+            }
+        };
         doubleField.setTextFieldFilter((textField, character) -> {
             if (character == 'e') return false;
             try {

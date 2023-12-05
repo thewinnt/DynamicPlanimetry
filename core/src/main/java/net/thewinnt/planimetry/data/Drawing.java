@@ -3,6 +3,7 @@ package net.thewinnt.planimetry.data;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -170,6 +171,9 @@ public class Drawing {
     public void save() {
         CompoundTag nbt = this.toNbt();
         FileHandle file;
+        if (filename == null) {
+            filename = "autosave " + DynamicPlanimetry.AUTOSAVE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
+        }
         if (isFileAbsolute) {
             file = Gdx.files.absolute(filename);
         } else {

@@ -44,7 +44,7 @@ public class Vec2Property extends Property<Vec2> {
     @Override
     public WidgetGroup getActorSetup(StyleSet styles) {
         Table table = new Table();
-        table.add(x.getActorSetup(styles)).expand().fill().padLeft(5);
+        table.add(x.getActorSetup(styles)).expand().fill();
         table.add(y.getActorSetup(styles)).expand().fill().padLeft(5);
         return table;
     }

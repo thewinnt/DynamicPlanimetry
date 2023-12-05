@@ -45,7 +45,7 @@ public class EnclosingProperty extends Property<Property<?>> {
     public WidgetGroup getActorSetup(StyleSet styles) {
         Table table = new Table();
         for (Property<?> i : this.properties) {
-            table.add(new Label(i.name, styles.getLabelStyleSmall())).expand().fillX();
+            table.add(new Label(i.name, styles.getLabelStyleSmall())).expandY();
             table.add(i.getActorSetup(styles)).expand().fillX().row();
             table.row();
         }

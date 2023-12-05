@@ -230,6 +230,7 @@ public class FileSelectionScreen extends FlatUIScreen {
                             app.setDrawing(i, true);
                             app.editorScreen.hide();
                             app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
+                            return;
                         }
                         if (selectionUI != null) {
                             selectionUI.setStyle(styles.buttonStyle);

@@ -96,10 +96,12 @@ public class Circle extends Shape {
     @Override
     public Collection<Property<?>> getProperties() {
         if (radiusPoint != null) {
+            BooleanProperty keep = new BooleanProperty("Сохранять радиус", keepRadius);
+            keep.addValueChangeListener(result -> Circle.this.setKeepRadius(result));
             return List.of(
                 new EnclosingProperty("Центр", this.center.getProperties()),
                 new EnclosingProperty("Точка радиуса", this.radiusPoint.getProperties()),
-                new BooleanProperty("Сохранять радиус", keepRadius)
+                keep
             );
         } else {
             DoubleProperty radius = new DoubleProperty("Радиус", this.radius.get());

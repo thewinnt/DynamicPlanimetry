@@ -24,6 +24,7 @@ import net.thewinnt.planimetry.screen.EditorScreen;
 import net.thewinnt.planimetry.screen.FileSelectionScreen;
 import net.thewinnt.planimetry.screen.FlatUIScreen;
 import net.thewinnt.planimetry.screen.MainMenuScreen;
+import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.Notifications;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -97,6 +98,7 @@ public class DynamicPlanimetry extends Game {
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
     public static final DateFormat TIME_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     public static final DateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
+    public static final DateFormat AUTOSAVE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss.SSS");
 
     public DynamicPlanimetry() {
         super();
@@ -203,6 +205,7 @@ public class DynamicPlanimetry extends Game {
             currentDrawing.save();
         }
         this.currentDrawing = drawing;
+        PointProvider.resetAutoAssignCounter();
     }
 
     public Drawing getDrawing() {

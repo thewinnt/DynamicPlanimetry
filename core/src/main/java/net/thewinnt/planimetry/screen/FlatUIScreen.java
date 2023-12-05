@@ -134,9 +134,11 @@ public abstract class FlatUIScreen implements Screen {
 
     @Override
     public void hide() {
+        if (!hiddenBefore) {
+            dispose();
+        }
         app.last_fps = fps.getText().toString();
         hiddenBefore = true;
-        dispose();
     }
 
     @Override

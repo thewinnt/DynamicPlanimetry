@@ -40,6 +40,6 @@ public record NameComponent(byte letter, int index, short dashes) {
         float w2 = cache.addText(String.valueOf(index), 0, 0).width;
         cache.clear();
         GlyphLayout dashLayout = cache.addText("'".repeat(dashes), 0, 0);
-        return new Vec2(w1 + Math.max(w2, dashLayout.width) + 2, dashLayout.height + fontMain.getLineHeight() / 2);
+        return new Vec2(w1 + Math.max(w2, dashLayout.width) + 2, fontMain.getLineHeight());
     }
 }

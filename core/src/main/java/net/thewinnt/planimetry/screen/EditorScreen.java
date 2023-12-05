@@ -1,5 +1,7 @@
 package net.thewinnt.planimetry.screen;
 
+import java.util.Collection;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -55,6 +57,7 @@ public class EditorScreen extends FlatUIScreen {
 
     private TextButton exitToMenu;
     private TextButton save;
+    private TextButton debug_dumpAllShapes;
     private Window saveDialog;
 
     public EditorScreen(DynamicPlanimetry app) {
@@ -108,6 +111,7 @@ public class EditorScreen extends FlatUIScreen {
 
         exitToMenu = new TextButton("В меню", styles.getButtonStyle());
         save = new TextButton("Сохранить", styles.getButtonStyle());
+        debug_dumpAllShapes = new TextButton("Фигуры", styles.buttonStyle);
 
         // LISTENERS
         createLine.addListener(new ChangeListener() {
@@ -181,6 +185,21 @@ public class EditorScreen extends FlatUIScreen {
             }
         });
 
+        debug_dumpAllShapes.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Collection<Shape> allShapes = board.getShapes();
+                System.out.println("[DEBUG] Shapes in this drawing:");
+                for (Shape i : allShapes) {
+                    System.out.println("[DEBUG] " + i.toString() + " (#" + i.getId() + "): " + i.getTypeName() + " \"" + i.getName() + "\"");
+                }
+                System.out.println("[DEBUG] All shapes ever:");
+                for (Shape i : Shape.getAllShapes()) {
+                    System.out.println("[DEBUG] " + i.toString() + " (#" + i.getId() + "): " + i.getTypeName() + " \"" + i.getName() + "\"");
+                }
+            }
+        });
+
         // ADDING TO TABLES
         creation.add(creationCategory).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createLine).expandX().fillX().pad(5, 5, 0, 5).row();
@@ -190,9 +209,10 @@ public class EditorScreen extends FlatUIScreen {
         creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5);
 
         if (selection != null) {
-            properties.add(new Label(selection.getTypeName() + " " + selection.getName(), styles.getLabelStyleLarge())).colspan(9999).expand().fill().row();
+            // properties.add(new Label(selection.getTypeName() /* + " " + selection.getName() */, styles.getLabelStyleLarge())).expand().fill();
             // TODO debug 
-            // properties.add(new NameSequence(selection.getFullName(), app::getBoldFont, Gdx.graphics.getHeight() / 14)).colspan(9999).expand().fill().row();
+            properties.setDebug(true, true);
+            properties.add(new NameSequence(selection.getTypeName(), selection.getFullName(), app::getBoldFont, Gdx.graphics.getHeight() / 18)).colspan(9999).expand().fill().row();
             for (Property<?> i : selection.getProperties()) {
                 properties.add(new Label(i.getName(), styles.getLabelStyleLarge())).expand().fill();
                 properties.add(i.getActorSetup(styles)).expand().fill().pad(5, 5, 0, 5).row();
@@ -201,6 +221,9 @@ public class EditorScreen extends FlatUIScreen {
 
         actions.add(exitToMenu).expand().fill().pad(5, 5, 5, 0);
         actions.add(save).expand().fill().pad(5);
+        if (DynamicPlanimetry.DEBUG_MODE) {
+            actions.add(debug_dumpAllShapes).expand().fill().pad(5);
+        }
     }
 
     public void updateStyles() {

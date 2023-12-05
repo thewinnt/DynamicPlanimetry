@@ -1,7 +1,10 @@
 package net.thewinnt.planimetry.shapes;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
@@ -15,8 +18,15 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public abstract class Shape {
+    private static final List<Shape> ALL_SHAPES_EVER = new ArrayList<>();
     private static long idCounter;
-    private long id = idCounter++;
+    private long id = new Supplier<Long>() { // ensures constructor call
+        @Override
+        public Long get() {
+            ALL_SHAPES_EVER.add(Shape.this);
+            return idCounter++;
+        }
+    }.get();
 
     public abstract boolean contains(Vec2 point);
     public abstract boolean contains(double x, double y);
@@ -76,6 +86,10 @@ public abstract class Shape {
         nbt.putLong("id", this.id);
         nbt.putString("type", ShapeData.getShapeType(this.getDeserializer()));
         return nbt;
+    }
+
+    public static Collection<Shape> getAllShapes() {
+        return Collections.unmodifiableCollection(ALL_SHAPES_EVER);
     }
 
     public static enum SelectionStatus {
