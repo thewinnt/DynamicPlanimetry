@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 
 public class BooleanProperty extends Property<Boolean> {
     private final List<Consumer<Boolean>> listeners = new ArrayList<>();
@@ -51,7 +52,7 @@ public class BooleanProperty extends Property<Boolean> {
     @Override
     public Table getActorSetup(StyleSet styles) {
         Table table = new Table();
-        Button checkbox = new Button(styles.getCheckboxStyle());
+        Button checkbox = new Button(styles.getCheckboxStyle(Size.SMALL, true));
         checkbox.setChecked(value);
         checkbox.addListener(new ChangeListener() {
             @Override

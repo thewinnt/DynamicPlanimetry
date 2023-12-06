@@ -10,26 +10,31 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 
 public class MainMenuScreen extends FlatUIScreen {
+    private StyleSet stylesThin;
+
     public MainMenuScreen(DynamicPlanimetry app) {
         super(app);
     }
 
     @Override
     public void addActorsBelowFps() {
-        LabelStyle style_title = new LabelStyle(app.getBoldFont(200, Color.BLACK), Color.BLACK);
-
         Table table = new Table();
         table.setFillParent(true);
 
         Table buttons = new Table();
-
+        
+        stylesThin = new StyleSet(drawer, app::getFont);
+        LabelStyle style_title = new LabelStyle(app.getBoldFont(200, Color.BLACK), Color.BLACK);
         Label title = new Label("Dynamic Planimetry", style_title);
-        TextButton create = new TextButton(app.getDrawing() == null ? "Создать" : "Продолжить", style_active);
-        TextButton load = new TextButton("Загрузить", style_active);
-        TextButton go_settings = new TextButton("Настройки", style_inactive);
-        TextButton exit = new TextButton("Выход", style_active);
+
+        TextButton create = new TextButton(app.getDrawing() == null ? "Создать" : "Продолжить", stylesThin.getButtonStyle(Size.VERY_LARGE, true));
+        TextButton load = new TextButton("Загрузить", stylesThin.getButtonStyle(Size.VERY_LARGE, true));
+        TextButton go_settings = new TextButton("Настройки", stylesThin.getButtonStyle(Size.VERY_LARGE, false));
+        TextButton exit = new TextButton("Выход", stylesThin.getButtonStyle(Size.VERY_LARGE, true));
 
         create.setSize(30, 70);
         load.setSize(300, 70);
@@ -69,6 +74,11 @@ public class MainMenuScreen extends FlatUIScreen {
         table.add(buttons).expandY().top();
 
         stage.addActor(table);
+    }
+
+    @Override
+    public void show() {
+        super.show();
     }
 
     @Override public void customRender() {}

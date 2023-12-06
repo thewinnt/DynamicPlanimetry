@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 
 public class EnclosingProperty extends Property<Property<?>> {
     private final List<Property<?>> properties = new ArrayList<>();
@@ -45,7 +46,7 @@ public class EnclosingProperty extends Property<Property<?>> {
     public WidgetGroup getActorSetup(StyleSet styles) {
         Table table = new Table();
         for (Property<?> i : this.properties) {
-            table.add(new Label(i.name, styles.getLabelStyleSmall())).expandY();
+            table.add(new Label(i.name, styles.getLabelStyle(Size.SMALL))).expandY();
             table.add(i.getActorSetup(styles)).expand().fillX().row();
             table.row();
         }

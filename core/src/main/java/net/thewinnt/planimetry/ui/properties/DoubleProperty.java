@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 
 public class DoubleProperty extends Property<Double> {
     private final List<Consumer<Double>> listeners = new ArrayList<>();
@@ -50,7 +51,7 @@ public class DoubleProperty extends Property<Double> {
 
     @Override
     public Table getActorSetup(StyleSet styles) {
-        TextField doubleField = new TextField(Double.toString(value), styles.getTextFieldStyle()) {
+        TextField doubleField = new TextField(Double.toString(value), styles.getTextFieldStyle(Size.SMALL, true)) {
             @Override
             public float getPrefWidth() {
                 // return Gdx.graphics.getHeight() / 30;

@@ -11,14 +11,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Notifications;
-import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
+import net.thewinnt.planimetry.ui.StyleSet;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public abstract class FlatUIScreen implements Screen {
@@ -26,19 +25,12 @@ public abstract class FlatUIScreen implements Screen {
     protected Stage stage;
     private Texture texture;
     protected ShapeDrawer drawer;
-
-    protected TextButtonStyle style_inactive;
-    protected TextButtonStyle style_active;
+    protected StyleSet styles;
 
     private Label fps;
     private Label mem_usage;
     private Notifications notifications;
     private float fps_timer;
-    
-    protected RectangleDrawable normal;
-    protected RectangleDrawable pressed;
-    protected RectangleDrawable over;
-    protected RectangleDrawable disabled;
 
     private boolean hiddenBefore;
 
@@ -52,7 +44,7 @@ public abstract class FlatUIScreen implements Screen {
     public abstract void addActorsAboveFps();
 
     public void initActors() {
-        stage = new Stage(new ScreenViewport(), new PolygonSpriteBatch());
+        this.stage = new Stage(new ScreenViewport(), new PolygonSpriteBatch());
 
         Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
@@ -60,16 +52,10 @@ public abstract class FlatUIScreen implements Screen {
         texture = new Texture(pixmap);
         pixmap.dispose();
         TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
-        drawer = new ShapeDrawer(stage.getBatch(), region);
-        normal = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_BUTTON, Color.BLACK);
-        pressed = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_PRESSED, Color.BLACK);
-        over = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_MAIN, Color.BLACK);
-        disabled = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_PRESSED, DynamicPlanimetry.COLOR_INACTIVE);
-        style_active = new TextButtonStyle(normal, pressed, normal, app.getFont(DynamicPlanimetry.BUTTON_ACTIVE));
-        style_active.over = over;
-        style_active.checkedOver = over;
-        style_inactive = new TextButtonStyle(disabled, disabled, disabled, app.getFont(DynamicPlanimetry.BUTTON_INACTIVE));
+        this.drawer = new ShapeDrawer(stage.getBatch(), region);
+
         LabelStyle style_fps = new LabelStyle(app.getBoldFont(DynamicPlanimetry.FPS), getFpsColor());
+        this.styles = new StyleSet(drawer, app::getBoldFont);
 
         if (notifications != null) notifications.dispose();
 
@@ -99,6 +85,7 @@ public abstract class FlatUIScreen implements Screen {
         notifications.setPosition(0, 0);
         notifications.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         notifications.updateCaches();
+        styles.rebuild();
     }
 
     @Override

@@ -9,30 +9,23 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
-import net.thewinnt.gdxutils.ColorUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.SaveEntry;
-import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 
 public class FileSelectionScreen extends FlatUIScreen {
-    private StyleSet styles;
     private ScrollPaneStyle paneStyle;
     private TextButtonStyle selectedItemStyle;
     // top row
@@ -65,7 +58,6 @@ public class FileSelectionScreen extends FlatUIScreen {
     @Override
     public void addActorsBelowFps() {
         app.preloadDrawings(Gdx.files.getLocalStoragePath() + "drawings");
-        this.styles = new StyleSet();
         updateStyles();
         // ==========================
         // ACTOR DEFINITIONS
@@ -73,19 +65,19 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.files = new Table().align(Align.top);
         this.controlPanel = new Table();
 
-        this.linkBack = new Label("< Назад", styles.getLabelStyleLarge());
-        this.title = new Label("Открыть чертёж", styles.getLabelStyleLarge());
+        this.linkBack = new Label("< Назад", styles.getLabelStyle(Size.LARGE));
+        this.title = new Label("Открыть чертёж", styles.getLabelStyle(Size.LARGE));
         this.pane = new ScrollPane(files, paneStyle);
         
-        this.openSaveFolder = new TextButton("Открыть папку", styles.getButtonStyle());
-        this.rename = new TextButton("Переименовать", styles.getButtonStyleInactive());
-        this.delete = new TextButton("Удалить", styles.getButtonStyleInactive());
-        this.update = new TextButton("Обновить", styles.buttonStyle);
-        this.open = new TextButton("Открыть", styles.buttonStyleInactive);
+        this.openSaveFolder = new TextButton("Открыть папку", styles.getButtonStyle(Size.MEDIUM, true));
+        this.rename = new TextButton("Переименовать", styles.getButtonStyle(Size.MEDIUM, false));
+        this.delete = new TextButton("Удалить", styles.getButtonStyle(Size.MEDIUM, false));
+        this.update = new TextButton("Обновить", styles.getButtonStyle(Size.MEDIUM, true));
+        this.open = new TextButton("Открыть", styles.getButtonStyle(Size.MEDIUM, true));
 
-        this.nameField = new TextField("", styles.textFieldStyle);
-        this.setName = new TextButton("Готово", styles.buttonStyle);
-        this.cancelRename = new TextButton("Отмена", styles.buttonStyle);
+        this.nameField = new TextField("", styles.getTextFieldStyle(Size.MEDIUM, true));
+        this.setName = new TextButton("Готово", styles.getButtonStyle(Size.MEDIUM, true));
+        this.cancelRename = new TextButton("Отмена", styles.getButtonStyle(Size.MEDIUM, true));
 
         refillFiles();
 
@@ -121,7 +113,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.open.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (open.getStyle() != styles.buttonStyleInactive) {
+                if (open.getStyle() != styles.getButtonStyle(Size.MEDIUM, isRenaming)) {
                     app.setDrawing(selection, true);
                     app.editorScreen.hide();
                     app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
@@ -133,7 +125,7 @@ public class FileSelectionScreen extends FlatUIScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 isRenaming = true;
-                rename.setStyle(styles.buttonStyleInactive);
+                rename.setStyle(styles.getButtonStyle(Size.MEDIUM, isRenaming));
                 show();
             }
         });
@@ -172,8 +164,29 @@ public class FileSelectionScreen extends FlatUIScreen {
     @Override
     public void show() {
         super.show();
+        updateStyles();
         final int width = Gdx.graphics.getWidth();
         final int height = Gdx.graphics.getHeight();
+        
+        this.linkBack.setStyle(styles.getLabelStyle(Size.LARGE));
+        this.title.setStyle(styles.getLabelStyle(Size.LARGE));
+        this.pane.setStyle(paneStyle);
+        
+        this.openSaveFolder.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
+        this.update.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
+        this.open.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
+
+        this.nameField.setStyle(styles.getTextFieldStyle(Size.MEDIUM, true));
+        this.setName.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
+        this.cancelRename.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
+        
+        rename.setDisabled(selection == null);
+        delete.setDisabled(selection == null);
+        this.rename.setStyle(styles.getButtonStyle(Size.MEDIUM, selection != null));
+        this.delete.setStyle(styles.getButtonStyle(Size.MEDIUM, selection != null));
+
+        refillFiles();
+
         controlPanel.reset();
         controlPanel.add(openSaveFolder).expand().fill().pad(5);
         controlPanel.add(open).expand().fill().pad(5);
@@ -195,17 +208,12 @@ public class FileSelectionScreen extends FlatUIScreen {
         pane.setPosition(5, controlPanel.getHeight() + 10);
         pane.setSize(width - 10, height - pane.getY() - title.getHeight() - 10);
 
-        if (selection == null) {
-            rename.setDisabled(true);
-            delete.setDisabled(true);
-            rename.setStyle(styles.buttonStyleInactive);
-            delete.setStyle(styles.buttonStyleInactive);
-        } else {
-            rename.setDisabled(false);
-            delete.setDisabled(false);
-            rename.setStyle(styles.buttonStyle);
-            delete.setStyle(styles.buttonStyle);
-        }
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        selection = null;
     }
 
     private void refillFiles() {
@@ -215,7 +223,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         List<Drawing> drawings = app.getAllDrawings();
         files.clear();
         if (drawings == null || drawings.isEmpty()) {
-            files.add(new Label("Тут ничего нет...", styles.labelStyleLarge)).fill().center();
+            files.add(new Label("Тут ничего нет...", styles.getLabelStyle(Size.LARGE))).fill().center();
         } else {
             for (Drawing i : drawings) {
                 if (i == null) {
@@ -233,7 +241,7 @@ public class FileSelectionScreen extends FlatUIScreen {
                             return;
                         }
                         if (selectionUI != null) {
-                            selectionUI.setStyle(styles.buttonStyle);
+                            selectionUI.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
                         }
                         selection = i;
                         selectionUI = file;
@@ -252,45 +260,7 @@ public class FileSelectionScreen extends FlatUIScreen {
     @Override public void customRender() {}
 
     public void updateStyles() {
-        final int fontFactorA = 20;
-        final int fontFactorB = 14;
-
-        // text field style
-        RectangleDrawable field = new RectangleDrawable(drawer);
-        RectangleDrawable cursor = new RectangleDrawable(drawer);
-        RectangleDrawable selection = new RectangleDrawable(drawer);
-        field.withColors(Color.WHITE, Color.BLACK);
-        cursor.withColors(Color.BLACK, Color.BLACK);
-        selection.withColors(Color.BLUE, Color.BLUE);
-        TextFieldStyle textFieldStyle = new TextFieldStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorA, Color.BLACK), Color.BLACK, cursor, selection, field);
-        textFieldStyle.messageFontColor = ColorUtils.rgbColor(127, 127, 127);
-        textFieldStyle.messageFont = app.getBoldFont(Gdx.graphics.getHeight()/fontFactorA, ColorUtils.rgbColor(127, 127, 127));
-        this.styles.setTextFieldStyle(textFieldStyle);
-
-        // scroll pane style
-        RectangleDrawable paneBg = new RectangleDrawable(drawer).withColors(Color.WHITE, Color.WHITE);
-        RectangleDrawable fillBlack = new RectangleDrawable(drawer).withColors(Color.BLACK, Color.BLACK);
-        ScrollPaneStyle paneStyle = new ScrollPaneStyle(pressed, paneBg, fillBlack, paneBg, fillBlack);
-        this.paneStyle = paneStyle;
-        
-        // label styles
-        this.styles.setLabelStyleSmall(new LabelStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorA, Color.BLACK), Color.BLACK));
-        this.styles.setLabelStyleLarge(new LabelStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorB, Color.BLACK), Color.BLACK));
-
-        // text button styles
-        TextButtonStyle textButtonStyle = new TextButtonStyle(normal, pressed, normal, app.getBoldFont(Gdx.graphics.getHeight()/ fontFactorA, Color.BLACK));
-        textButtonStyle.over = over;
-        textButtonStyle.checkedOver = over;
-        this.styles.setButtonStyle(textButtonStyle);
-
-        TextButtonStyle textButtonStyleInactive = new TextButtonStyle(disabled, disabled, disabled, app.getBoldFont(Gdx.graphics.getHeight()/ fontFactorA, DynamicPlanimetry.COLOR_INACTIVE));
-        this.styles.setButtonStyleInactive(textButtonStyleInactive);
-
-        this.selectedItemStyle = new TextButtonStyle(pressed, pressed, pressed, app.getBoldFont(Gdx.graphics.getHeight()/ fontFactorA, Color.BLACK));
-        
-
-        // window style
-        WindowStyle windowStyle = new WindowStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorB, Color.BLACK), Color.BLACK, normal);
-        this.styles.setWindowStyle(windowStyle);
+        this.paneStyle = new ScrollPaneStyle(styles.pressed, styles.fullWhite, styles.fullBlack, styles.fullWhite, styles.fullBlack);
+        this.selectedItemStyle = new TextButtonStyle(styles.pressed, styles.pressed, styles.pressed, app.getBoldFont(Gdx.graphics.getHeight() / Size.MEDIUM.factor, Color.BLACK));
     }
 }

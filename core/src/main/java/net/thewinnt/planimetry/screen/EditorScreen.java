@@ -3,25 +3,15 @@ package net.thewinnt.planimetry.screen;
 import java.util.Collection;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox.SelectBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
-import net.thewinnt.gdxutils.ColorUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -32,15 +22,12 @@ import net.thewinnt.planimetry.shapes.factories.PolygonFactory;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.NameSequence;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
-import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.drawable.CheckboxDrawable;
-import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.properties.Property;
 
 public class EditorScreen extends FlatUIScreen {
     private DrawingBoard board;
     private ShapeSettingsBackground settings;
-    private StyleSet styles;
     
     private Table creation;
     private Table properties;
@@ -66,8 +53,6 @@ public class EditorScreen extends FlatUIScreen {
 
     @Override
     public void addActorsBelowFps() {
-        this.styles = new StyleSet();
-        updateStyles();
         if (app.getDrawing() == null) {
             app.setDrawing(new Drawing(), false);
         }
@@ -102,16 +87,16 @@ public class EditorScreen extends FlatUIScreen {
         actions.reset();
 
         // ACTORS
-        creationCategory = new Label("Создание", styles.getLabelStyleLarge());
-        createLine = new TextButton("Прямая", styles.getButtonStyle());
-        createRay = new TextButton("Луч", styles.getButtonStyle());
-        createLineSegment = new TextButton("Отрезок", styles.getButtonStyle());
-        createCircle = new TextButton("Окружность", styles.getButtonStyle());
-        createPolygon = new TextButton("Многоугольник", styles.getButtonStyle());
+        creationCategory = new Label("Создание", styles.getLabelStyle(Size.MEDIUM));
+        createLine = new TextButton("Прямая", styles.getButtonStyle(Size.SMALL, true));
+        createRay = new TextButton("Луч", styles.getButtonStyle(Size.SMALL, true));
+        createLineSegment = new TextButton("Отрезок", styles.getButtonStyle(Size.SMALL, true));
+        createCircle = new TextButton("Окружность", styles.getButtonStyle(Size.SMALL, true));
+        createPolygon = new TextButton("Многоугольник", styles.getButtonStyle(Size.SMALL, true));
 
-        exitToMenu = new TextButton("В меню", styles.getButtonStyle());
-        save = new TextButton("Сохранить", styles.getButtonStyle());
-        debug_dumpAllShapes = new TextButton("Фигуры", styles.buttonStyle);
+        exitToMenu = new TextButton("В меню", styles.getButtonStyle(Size.SMALL, true));
+        save = new TextButton("Сохранить", styles.getButtonStyle(Size.SMALL, true));
+        debug_dumpAllShapes = new TextButton("Фигуры", styles.getButtonStyle(Size.SMALL, true));
 
         // LISTENERS
         createLine.addListener(new ChangeListener() {
@@ -159,15 +144,15 @@ public class EditorScreen extends FlatUIScreen {
         save.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                saveDialog = new Window("Сохранение", styles.getWindowStyle());
-                saveDialog.getTitleLabel().getStyle().background = pressed;
+                saveDialog = new Window("Сохранение", styles.getWindowStyle(Size.MEDIUM));
+                saveDialog.getTitleLabel().getStyle().background = styles.pressed;
                 saveDialog.row().row();
-                Label filename = new Label("Будет сохранён в " + app.getDrawing().withFilename(app.getDrawing().getName(), false).getFilename(), styles.getLabelStyleSmall());
-                TextField namePicker = new TextField(app.getDrawing().getName(), styles.getTextFieldStyle());
+                Label filename = new Label("Будет сохранён в " + app.getDrawing().withFilename(app.getDrawing().getName(), false).getFilename(), styles.getLabelStyle(Size.SMALL));
+                TextField namePicker = new TextField(app.getDrawing().getName(), styles.getTextFieldStyle(Size.SMALL, true));
                 namePicker.setTextFieldListener((textField, c) -> {
                     filename.setText("Будет сохранён в " + app.getDrawing().withFilename(namePicker.getText(), false).getFilename());
                 });
-                TextButton save = new TextButton("Сохранить", styles.getButtonStyle());
+                TextButton save = new TextButton("Сохранить", styles.getButtonStyle(Size.SMALL, true));
                 save.addListener(new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
@@ -177,7 +162,7 @@ public class EditorScreen extends FlatUIScreen {
                     }
                 });
 
-                saveDialog.add(new Label("Имя чертежа", styles.getLabelStyleLarge())).pad(Gdx.graphics.getHeight() / 40, 5, 0, 5);
+                saveDialog.add(new Label("Имя чертежа", styles.getLabelStyle(Size.SMALL))).pad(Gdx.graphics.getHeight() / 40, 5, 0, 5);
                 saveDialog.add(namePicker).expand().fill().pad(Gdx.graphics.getHeight() / 40 + 5, 5, 0, 5).row();;
                 saveDialog.add(filename).colspan(2).pad(5).row();
                 saveDialog.add(save).colspan(2).pad(5);
@@ -209,12 +194,9 @@ public class EditorScreen extends FlatUIScreen {
         creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5);
 
         if (selection != null) {
-            // properties.add(new Label(selection.getTypeName() /* + " " + selection.getName() */, styles.getLabelStyleLarge())).expand().fill();
-            // TODO debug 
-            properties.setDebug(true, true);
-            properties.add(new NameSequence(selection.getTypeName(), selection.getFullName(), app::getBoldFont, Gdx.graphics.getHeight() / 18)).colspan(9999).expand().fill().row();
+            properties.add(new NameSequence(selection.getTypeName(), selection.getFullName(), app::getBoldFont, Gdx.graphics.getHeight() / Size.MEDIUM.factor)).colspan(9999).expand().fill().row();
             for (Property<?> i : selection.getProperties()) {
-                properties.add(new Label(i.getName(), styles.getLabelStyleLarge())).expand().fill();
+                properties.add(new Label(i.getName(), styles.getLabelStyle(Size.SMALL))).expand().fill();
                 properties.add(i.getActorSetup(styles)).expand().fill().pad(5, 5, 0, 5).row();
             }
         }
@@ -224,65 +206,6 @@ public class EditorScreen extends FlatUIScreen {
         if (DynamicPlanimetry.DEBUG_MODE) {
             actions.add(debug_dumpAllShapes).expand().fill().pad(5);
         }
-    }
-
-    public void updateStyles() {
-        final int fontFactorA = 24;
-        final int fontFactorB = 18;
-
-        // text field style
-        RectangleDrawable field = new RectangleDrawable(drawer);
-        RectangleDrawable cursor = new RectangleDrawable(drawer);
-        RectangleDrawable selection = new RectangleDrawable(drawer);
-        field.withColors(Color.WHITE, Color.BLACK);
-        cursor.withColors(Color.BLACK, Color.BLACK);
-        selection.withColors(Color.BLUE, Color.BLUE);
-        TextFieldStyle textFieldStyle = new TextFieldStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorA, Color.BLACK), Color.BLACK, cursor, selection, field);
-        textFieldStyle.messageFontColor = ColorUtils.rgbColor(127, 127, 127);
-        textFieldStyle.messageFont = app.getBoldFont(Gdx.graphics.getHeight()/fontFactorA, ColorUtils.rgbColor(127, 127, 127));
-        this.styles.setTextFieldStyle(textFieldStyle);
-
-        // selection list style
-        RectangleDrawable paneBg = new RectangleDrawable(drawer).withColors(Color.WHITE, Color.WHITE);
-        RectangleDrawable selectionOver = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_MAIN, null);
-        RectangleDrawable fillBlack = new RectangleDrawable(drawer).withColors(Color.BLACK, Color.BLACK);
-        ScrollPaneStyle paneStyle = new ScrollPaneStyle(fillBlack, fillBlack, paneBg, fillBlack, paneBg);
-        ListStyle innerStyle = new ListStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorA, Color.BLACK), Color.BLACK, DynamicPlanimetry.COLOR_INACTIVE, selectionOver);
-        innerStyle.over = selectionOver;
-        innerStyle.background = normal;
-        innerStyle.down = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_PRESSED, null);
-        SelectBoxStyle listStyle = new SelectBoxStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorA, Color.BLACK), Color.BLACK, normal, paneStyle, innerStyle);
-        listStyle.backgroundOver = over;
-        listStyle.backgroundDisabled = disabled;
-        listStyle.backgroundOpen = pressed;
-        this.styles.setListStyle(listStyle);
-
-        // checkbox style
-        RectangleDrawable enabledNormal = new CheckboxDrawable(drawer).withColors(DynamicPlanimetry.COLOR_BUTTON, Color.BLACK);
-        RectangleDrawable enabledOver = new CheckboxDrawable(drawer).withColors(DynamicPlanimetry.COLOR_MAIN, Color.BLACK);
-        RectangleDrawable enabledPressed = new CheckboxDrawable(drawer).withColors(DynamicPlanimetry.COLOR_PRESSED, Color.BLACK);
-        RectangleDrawable normal = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_BUTTON, Color.BLACK);
-        RectangleDrawable pressed = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_PRESSED, Color.BLACK);
-        RectangleDrawable over = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_MAIN, Color.BLACK);
-        ButtonStyle checkBoxStyle = new ButtonStyle(normal, pressed, enabledNormal);
-        checkBoxStyle.checkedDown = enabledPressed;
-        checkBoxStyle.checkedOver = enabledOver;
-        checkBoxStyle.over = over;
-        this.styles.setCheckboxStyle(checkBoxStyle);
-        
-        // label styles
-        this.styles.setLabelStyleSmall(new LabelStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorA, Color.BLACK), Color.BLACK));
-        this.styles.setLabelStyleLarge(new LabelStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorB, Color.BLACK), Color.BLACK));
-
-        // text button style
-        TextButtonStyle textButtonStyle = new TextButtonStyle(normal, pressed, normal, app.getBoldFont(Gdx.graphics.getHeight()/ fontFactorA, Color.BLACK));
-        textButtonStyle.over = over;
-        textButtonStyle.checkedOver = over;
-        this.styles.setButtonStyle(textButtonStyle);
-
-        // window style
-        WindowStyle windowStyle = new WindowStyle(app.getBoldFont(Gdx.graphics.getHeight()/fontFactorB, Color.BLACK), Color.BLACK, normal);
-        this.styles.setWindowStyle(windowStyle);
     }
 
     @Override
@@ -298,7 +221,6 @@ public class EditorScreen extends FlatUIScreen {
         settings.setPosition(delimiter, 0);
         settings.setSize(height * 0.5f, height);
 
-        updateStyles();
         rebuildUI(board.getSelection());
 
         creation.setSize(height * 0.5f, creation.getPrefHeight());

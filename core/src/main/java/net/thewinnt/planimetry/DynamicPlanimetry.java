@@ -129,6 +129,7 @@ public class DynamicPlanimetry extends Game {
 
     private <T extends FlatUIScreen> T registerScreen(T screen) {
         this.screenByIds.add(screen);
+        screen.hide();
         return screen;
     }
 
