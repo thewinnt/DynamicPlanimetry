@@ -36,7 +36,7 @@ public class Drawing {
     private long creationTime;
     private long lastEditTime;
     private boolean changed = false;
-    private boolean isLoading = true;
+    boolean isLoading = false;
 
     public Drawing() {
         this.shapes = new ArrayList<>();
@@ -61,7 +61,6 @@ public class Drawing {
         if (maxIdUponLoad - minIdUponLoad < 1000000) {
             shapeIdCounter = maxIdUponLoad + 1;
         }
-        isLoading = false;
     }
 
     public Drawing(Collection<Shape> shapes, String name, long creationTime, long lastEditTime) {
@@ -76,7 +75,6 @@ public class Drawing {
         if (maxIdUponLoad - minIdUponLoad < 1000000) {
             shapeIdCounter = maxIdUponLoad + 1;
         }
-        isLoading = false;
     }
     
     public void addShape(Shape shape) {

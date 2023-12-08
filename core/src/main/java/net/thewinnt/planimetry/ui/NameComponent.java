@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
+import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.util.FontProvider;
 
@@ -24,14 +25,15 @@ public record NameComponent(byte letter, int index, short dashes) {
         BitmapFont fontAdditional = font.getFont(fontSize / 2, color);
         GlyphLayout layoutMain = fontMain.draw(batch, ALLOWED_NAMES[letter], x, y);
         float x2 = layoutMain.width + 2;
-        GlyphLayout indexLayout;
+        float indexLength;
         if (index != 0) {
-            indexLayout = fontAdditional.draw(batch, String.valueOf(index), x + x2, y - fontMain.getLineHeight() / 4);
+            fontAdditional.draw(batch, String.valueOf(index), x + x2, y - fontMain.getLineHeight() / 4);
+            indexLength = FontUtils.getTextLength(fontAdditional, String.valueOf(index));
         } else {
-            indexLayout = new GlyphLayout();
+            indexLength = 0;
         }
         GlyphLayout dashLayout = fontAdditional.draw(batch, "'".repeat(dashes), x + x2, y + fontMain.getLineHeight() / 2);
-        return new Vec2(x2 + Math.max(indexLayout.width, dashLayout.width) + 2, dashLayout.height + fontMain.getLineHeight() / 2);
+        return new Vec2(x2 + Math.max(indexLength, FontUtils.getTextLength(fontAdditional, "'".repeat(dashes))), dashLayout.height + fontMain.getLineHeight() / 2);
     }
 
     public Vec2 getSize(FontProvider font, int fontSize) {

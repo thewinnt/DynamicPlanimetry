@@ -25,12 +25,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public class Ray extends Line {
     private boolean startFromA = true;
     private BooleanProperty startProperty = new BooleanProperty("Начать с первой точки", startFromA);
-
-    public Ray(Drawing drawing, PointReference a, PointReference b) {
-        super(drawing, a, b);
-        startProperty.addValueChangeListener(value -> startFromA = value);
-    }
-
+    
     public Ray(Drawing drawing, PointProvider a, PointProvider b) {
         super(drawing, a, b);
         startProperty.addValueChangeListener(value -> startFromA = value);

@@ -219,6 +219,9 @@ public class DynamicPlanimetry extends Game {
             } catch (Exception e) {
                 Notifications.addNotification("Ошибка при загрузке файла (" + i.nameWithoutExtension() + "):  " + e.getMessage(), 5000);
                 e.printStackTrace();
+            } catch (StackOverflowError e) {
+                Notifications.addNotification("Ошибка при загрузке файла (" + i.nameWithoutExtension() + "):  " + e.getMessage(), 5000);
+                e.printStackTrace();
             }
         }
         this.allDrawings = drawings;

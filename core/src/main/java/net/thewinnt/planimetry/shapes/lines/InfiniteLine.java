@@ -18,10 +18,6 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /** An infinite straight line, built using two points. */
 public class InfiniteLine extends Line {
-    public InfiniteLine(Drawing drawing, PointReference a, PointReference b) {
-        super(drawing, a, b);
-    }
-
     public InfiniteLine(Drawing drawing, PointProvider a, PointProvider b) {
         super(drawing, a, b);
     }

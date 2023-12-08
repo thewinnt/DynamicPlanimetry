@@ -16,10 +16,6 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class LineSegment extends Line {
-    public LineSegment(Drawing drawing, PointReference a, PointReference b) {
-        super(drawing, a, b);
-    }
-
     public LineSegment(Drawing drawing, PointProvider a, PointProvider b) {
         super(drawing, a, b);
     }

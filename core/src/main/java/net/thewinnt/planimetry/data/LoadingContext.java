@@ -14,6 +14,7 @@ public class LoadingContext {
 
     public LoadingContext(Iterable<CompoundTag> saveData) {
         this.drawing = new Drawing();
+        this.drawing.isLoading = true;
         for (CompoundTag i : saveData) {
             this.saveData.put(i.getLong("id").getValue(), i);
         }

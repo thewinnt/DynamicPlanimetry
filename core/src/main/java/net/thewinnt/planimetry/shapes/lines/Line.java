@@ -20,16 +20,18 @@ public abstract class Line extends Shape {
     public final PointReference b;
     protected String nameOverride = null;
 
-    public Line(Drawing drawing, PointReference a, PointReference b) {
-        super(drawing);
-        this.a = a;
-        this.b = b;
-    }
-
     public Line(Drawing drawing, PointProvider a, PointProvider b) {
         super(drawing);
-        this.a = new PointReference(a);
-        this.b = new PointReference(b);
+        if (a instanceof PointReference point) {
+            this.a = point;
+        } else {
+            this.a = new PointReference(a);
+        }
+        if (b instanceof PointReference point) {
+            this.b = point;
+        } else {
+            this.b = new PointReference(b);
+        }
     }
 
     public double getSlope() {
