@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
@@ -17,12 +18,12 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /** An infinite straight line, built using two points. */
 public class InfiniteLine extends Line {
-    public InfiniteLine(PointReference a, PointReference b) {
-        super(a, b);
+    public InfiniteLine(Drawing drawing, PointReference a, PointReference b) {
+        super(drawing, a, b);
     }
 
-    public InfiniteLine(PointProvider a, PointProvider b) {
-        super(a, b);
+    public InfiniteLine(Drawing drawing, PointProvider a, PointProvider b) {
+        super(drawing, a, b);
     }
 
     @Override
@@ -87,6 +88,6 @@ public class InfiniteLine extends Line {
     public static InfiniteLine readNbt(CompoundTag nbt, LoadingContext context) {
         PointReference a = (PointReference)context.resolveShape(nbt.getLong("a").getValue());
         PointReference b = (PointReference)context.resolveShape(nbt.getLong("b").getValue());
-        return new InfiniteLine(a, b);
+        return new InfiniteLine(context.getDrawing(), a, b);
     }
 }

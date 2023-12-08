@@ -23,8 +23,8 @@ public class PolygonFactory extends ShapeFactory {
     public boolean click(InputEvent event, double x, double y) {
         if (point1 == null) {
             this.point1 = getOrCreatePoint(x, y);
-            this.nextPoint = new PointReference(new MousePoint());
-            this.line = new MultiPointLine(point1, nextPoint);
+            this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
+            this.line = new MultiPointLine(board.getDrawing(), point1, nextPoint);
             board.addShape(point1);
             this.addShape(nextPoint);
             this.addShape(line);
@@ -36,7 +36,7 @@ public class PolygonFactory extends ShapeFactory {
                 return line.getPoints().size() >= 3;
             }
             this.nextPoint.setPoint(next);
-            this.nextPoint = new PointReference(new MousePoint());
+            this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
             this.addShape(this.nextPoint);
             this.line.addPoint(this.nextPoint);
             return false;
@@ -52,7 +52,7 @@ public class PolygonFactory extends ShapeFactory {
     public void onFinish() {
         var points = this.line.getPoints();
         points.remove(this.nextPoint);
-        board.replaceShape(this.line, new Polygon(points));
+        board.replaceShape(this.line, new Polygon(board.getDrawing(), points));
         board.removeShape(this.nextPoint);
     }
 }

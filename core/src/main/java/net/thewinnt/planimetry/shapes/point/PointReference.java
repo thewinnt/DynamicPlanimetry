@@ -19,6 +19,7 @@ public class PointReference extends PointProvider {
     private PointProvider point;
 
     public PointReference(PointProvider point) {
+        super(point.getDrawing());
         this.point = point;
     }
 

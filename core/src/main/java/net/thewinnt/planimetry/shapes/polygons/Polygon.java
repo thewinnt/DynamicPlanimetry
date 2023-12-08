@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
@@ -17,12 +18,12 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Polygon extends MultiPointLine {
-    public Polygon(PointProvider... points) {
-        super(points);
+    public Polygon(Drawing drawing, PointProvider... points) {
+        super(drawing, points);
     }
 
-    public Polygon(Collection<PointProvider> points) {
-        super(points);
+    public Polygon(Drawing drawing, Collection<PointProvider> points) {
+        super(drawing, points);
     }
 
     @Override
@@ -102,6 +103,6 @@ public class Polygon extends MultiPointLine {
     }
 
     public static Polygon readNbt(CompoundTag nbt, LoadingContext context) {
-        return new Polygon(pointsFromNbt(nbt, context));
+        return new Polygon(context.getDrawing(), pointsFromNbt(nbt, context));
     }
 }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
@@ -17,6 +18,10 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class MousePoint extends PointProvider {
+    public MousePoint(Drawing drawing) {
+        super(drawing);
+    }
+
     @Override
     public Vec2 getPosition() {
         DrawingBoard board = ((DynamicPlanimetry)Gdx.app.getApplicationListener()).editorScreen.getBoard();
@@ -57,6 +62,6 @@ public class MousePoint extends PointProvider {
     }
 
     public static MousePoint readNbt(CompoundTag nbt, LoadingContext context) {
-        return new MousePoint();
+        return new MousePoint(context.getDrawing());
     }
 }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
@@ -21,7 +22,8 @@ public class Point extends PointProvider {
     private Vec2 position;
     private final Vec2Property property;
 
-    public Point(Vec2 position) {
+    public Point(Drawing drawing, Vec2 position) {
+        super(drawing);
         this.position = position;
         this.property = new Vec2Property("", position);
         this.property.addValueChangeListener(pos -> {
@@ -116,6 +118,6 @@ public class Point extends PointProvider {
     public static Point readNbt(CompoundTag nbt, LoadingContext context) {
         double x = nbt.getDouble("x").getValue();
         double y = nbt.getDouble("y").getValue();
-        return new Point(new Vec2(x, y));
+        return new Point(context.getDrawing(), new Vec2(x, y));
     }
 }

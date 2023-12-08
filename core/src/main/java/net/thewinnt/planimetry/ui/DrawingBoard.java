@@ -400,4 +400,8 @@ public class DrawingBoard extends Actor {
     public void removeShape(Shape shape) {
         this.drawing.removeShape(shape);
     }
+
+    public Drawing getDrawing() {
+        return drawing;
+    }
 }

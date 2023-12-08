@@ -24,7 +24,6 @@ import net.thewinnt.planimetry.screen.EditorScreen;
 import net.thewinnt.planimetry.screen.FileSelectionScreen;
 import net.thewinnt.planimetry.screen.FlatUIScreen;
 import net.thewinnt.planimetry.screen.MainMenuScreen;
-import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.Notifications;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -206,7 +205,6 @@ public class DynamicPlanimetry extends Game {
             currentDrawing.save();
         }
         this.currentDrawing = drawing;
-        PointProvider.resetAutoAssignCounter();
     }
 
     public Drawing getDrawing() {

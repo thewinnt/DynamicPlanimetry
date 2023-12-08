@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
@@ -15,12 +16,12 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class LineSegment extends Line {
-    public LineSegment(PointReference a, PointReference b) {
-        super(a, b);
+    public LineSegment(Drawing drawing, PointReference a, PointReference b) {
+        super(drawing, a, b);
     }
 
-    public LineSegment(PointProvider a, PointProvider b) {
-        super(a, b);
+    public LineSegment(Drawing drawing, PointProvider a, PointProvider b) {
+        super(drawing, a, b);
     }
 
     @Override
@@ -85,6 +86,6 @@ public class LineSegment extends Line {
     public static LineSegment readNbt(CompoundTag nbt, LoadingContext context) {
         PointReference a = (PointReference)context.resolveShape(nbt.getLong("a").getValue());
         PointReference b = (PointReference)context.resolveShape(nbt.getLong("b").getValue());
-        return new LineSegment(a, b);
+        return new LineSegment(context.getDrawing(), a, b);
     }
 }

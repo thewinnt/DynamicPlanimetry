@@ -8,10 +8,12 @@ import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.shapes.Shape;
 
 public class LoadingContext {
+    private final Drawing drawing;
     private final Map<Long, CompoundTag> saveData = new HashMap<>();
     private final Map<Long, Shape> resolvedShapes = new HashMap<>();
 
     public LoadingContext(Iterable<CompoundTag> saveData) {
+        this.drawing = new Drawing();
         for (CompoundTag i : saveData) {
             this.saveData.put(i.getLong("id").getValue(), i);
         }
@@ -34,5 +36,9 @@ public class LoadingContext {
             }
         }
         return resolvedShapes.values();
+    }
+
+    public Drawing getDrawing() {
+        return drawing;
     }
 }

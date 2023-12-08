@@ -1,7 +1,5 @@
 package net.thewinnt.planimetry.screen;
 
-import java.util.Collection;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
@@ -44,7 +42,6 @@ public class EditorScreen extends FlatUIScreen {
 
     private TextButton exitToMenu;
     private TextButton save;
-    private TextButton debug_dumpAllShapes;
     private Window saveDialog;
 
     public EditorScreen(DynamicPlanimetry app) {
@@ -96,7 +93,6 @@ public class EditorScreen extends FlatUIScreen {
 
         exitToMenu = new TextButton("В меню", styles.getButtonStyle(Size.SMALL, true));
         save = new TextButton("Сохранить", styles.getButtonStyle(Size.SMALL, true));
-        debug_dumpAllShapes = new TextButton("Фигуры", styles.getButtonStyle(Size.SMALL, true));
 
         // LISTENERS
         createLine.addListener(new ChangeListener() {
@@ -169,22 +165,6 @@ public class EditorScreen extends FlatUIScreen {
                 saveOverlay.setActor(saveDialog);
             }
         });
-
-        debug_dumpAllShapes.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Collection<Shape> allShapes = board.getShapes();
-                System.out.println("[DEBUG] Shapes in this drawing:");
-                for (Shape i : allShapes) {
-                    System.out.println("[DEBUG] " + i.toString() + " (#" + i.getId() + "): " + i.getTypeName() + " \"" + i.getName() + "\"");
-                }
-                System.out.println("[DEBUG] All shapes ever:");
-                for (Shape i : Shape.getAllShapes()) {
-                    System.out.println("[DEBUG] " + i.toString() + " (#" + i.getId() + "): " + i.getTypeName() + " \"" + i.getName() + "\"");
-                }
-            }
-        });
-
         // ADDING TO TABLES
         creation.add(creationCategory).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createLine).expandX().fillX().pad(5, 5, 0, 5).row();
@@ -203,9 +183,6 @@ public class EditorScreen extends FlatUIScreen {
 
         actions.add(exitToMenu).expand().fill().pad(5, 5, 5, 0);
         actions.add(save).expand().fill().pad(5);
-        if (DynamicPlanimetry.DEBUG_MODE) {
-            actions.add(debug_dumpAllShapes).expand().fill().pad(5);
-        }
     }
 
     @Override

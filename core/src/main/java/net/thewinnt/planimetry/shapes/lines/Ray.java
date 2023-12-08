@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
@@ -23,15 +24,15 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Ray extends Line {
     private boolean startFromA = true;
-    private BooleanProperty startProperty = new BooleanProperty("Начать с первой точки");
+    private BooleanProperty startProperty = new BooleanProperty("Начать с первой точки", startFromA);
 
-    public Ray(PointReference a, PointReference b) {
-        super(a, b);
+    public Ray(Drawing drawing, PointReference a, PointReference b) {
+        super(drawing, a, b);
         startProperty.addValueChangeListener(value -> startFromA = value);
     }
 
-    public Ray(PointProvider a, PointProvider b) {
-        super(a, b);
+    public Ray(Drawing drawing, PointProvider a, PointProvider b) {
+        super(drawing, a, b);
         startProperty.addValueChangeListener(value -> startFromA = value);
     }
 
@@ -148,7 +149,7 @@ public class Ray extends Line {
         PointReference a = (PointReference)context.resolveShape(nbt.getLong("a").getValue());
         PointReference b = (PointReference)context.resolveShape(nbt.getLong("b").getValue());
         boolean startFromA = nbt.getByte("start_from_a").getValue() > 0;
-        Ray output = new Ray(a, b);
+        Ray output = new Ray(context.getDrawing(), a, b);
         output.startFromA = startFromA;
         return output;
     }

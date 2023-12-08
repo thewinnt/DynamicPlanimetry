@@ -10,6 +10,7 @@ import dev.dewy.nbt.tags.array.LongArrayTag;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
@@ -26,14 +27,16 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public class MultiPointLine extends Shape {
     public final List<PointProvider> points;
 
-    public MultiPointLine(PointProvider... points) {
+    public MultiPointLine(Drawing drawing, PointProvider... points) {
+        super(drawing);
         this.points = new ArrayList<>(points.length);
         for (PointProvider i : points) {
             this.points.add(i);
         }
     }
 
-    public MultiPointLine(Collection<PointProvider> points) {
+    public MultiPointLine(Drawing drawing, Collection<PointProvider> points) {
+        super(drawing);
         this.points = new ArrayList<>(points);
     }
 
@@ -181,6 +184,6 @@ public class MultiPointLine extends Shape {
     }
 
     public static MultiPointLine readNbt(CompoundTag nbt, LoadingContext context) {
-        return new MultiPointLine(pointsFromNbt(nbt, context));
+        return new MultiPointLine(context.getDrawing(), pointsFromNbt(nbt, context));
     }
 }

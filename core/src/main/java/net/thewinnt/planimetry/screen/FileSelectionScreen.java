@@ -114,7 +114,7 @@ public class FileSelectionScreen extends FlatUIScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (open.getStyle() != styles.getButtonStyle(Size.MEDIUM, isRenaming)) {
-                    app.setDrawing(selection, true);
+                    app.setDrawing(selection, false);
                     app.editorScreen.hide();
                     app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
                 }

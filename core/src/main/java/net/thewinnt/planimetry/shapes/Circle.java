@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
@@ -27,12 +28,14 @@ public class Circle extends Shape {
     public Supplier<Double> radius;
     private PointProvider radiusPoint;
 
-    public Circle(PointProvider center, double radius) {
+    public Circle(Drawing drawing, PointProvider center, double radius) {
+        super(drawing);
         this.center = center;
         this.radius = () -> radius;
     }
 
-    public Circle(PointProvider center, PointProvider radius, boolean keepRadius) {
+    public Circle(Drawing drawing, PointProvider center, PointProvider radius, boolean keepRadius) {
+        super(drawing);
         this.center = center;
         this.radius = () -> radius.getPosition().distanceTo(center.getPosition());
         this.keepRadius = keepRadius;
@@ -145,10 +148,10 @@ public class Circle extends Shape {
         if (nbt.containsLong("radius")) {
             PointProvider radius = (PointProvider)context.resolveShape(nbt.getLong("radius").getValue());
             boolean keepRadius = nbt.getByte("keep_radius").getValue() > 0;
-            return new Circle(center, radius, keepRadius);
+            return new Circle(context.getDrawing(), center, radius, keepRadius);
         } else {
             double radius = nbt.getDouble("radius").getValue();
-            return new Circle(center, radius);
+            return new Circle(context.getDrawing(), center, radius);
         }
     }
 }

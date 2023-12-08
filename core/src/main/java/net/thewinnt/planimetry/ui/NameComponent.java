@@ -31,7 +31,7 @@ public record NameComponent(byte letter, int index, short dashes) {
             indexLayout = new GlyphLayout();
         }
         GlyphLayout dashLayout = fontAdditional.draw(batch, "'".repeat(dashes), x + x2, y + fontMain.getLineHeight() / 2);
-        return new Vec2(x2 + Math.max(indexLayout.width, dashLayout.width) + 10, dashLayout.height + fontMain.getLineHeight() / 2);
+        return new Vec2(x2 + Math.max(indexLayout.width, dashLayout.width) + 2, dashLayout.height + fontMain.getLineHeight() / 2);
     }
 
     public Vec2 getSize(FontProvider font, int fontSize) {

@@ -17,22 +17,31 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
+import net.thewinnt.planimetry.ui.NameComponent;
 import net.thewinnt.planimetry.ui.Notifications;
+import net.thewinnt.planimetry.util.HashBiMap;
 
 public class Drawing {
+    public final HashBiMap<Long, Shape> shapeIds = new HashBiMap<>();
     public final List<Shape> shapes;
     public final List<PointProvider> points;
+    private long shapeIdCounter;
+    private int pointNameCounter;
+    private long minIdUponLoad;
+    private long maxIdUponLoad;
     private String filename;
     private boolean isFileAbsolute;
     private String name;
+    private boolean useDashesForNaming;
     private long creationTime;
     private long lastEditTime;
     private boolean changed = false;
+    private boolean isLoading = true;
 
     public Drawing() {
         this.shapes = new ArrayList<>();
         this.points = new ArrayList<>();
-        this.name = "Новый чертёж";
+        this.name = "Безымянный";
         this.creationTime = System.currentTimeMillis();
         this.lastEditTime = creationTime;
     }
@@ -43,6 +52,16 @@ public class Drawing {
         this.name = name;
         this.creationTime = creationTime;
         this.lastEditTime = lastEditTime;
+        for (Shape i : shapes) {
+            updateIdRange(i.getId());
+        }
+        for (PointProvider i : points) {
+            updateIdRange(i.getId());
+        }
+        if (maxIdUponLoad - minIdUponLoad < 1000000) {
+            shapeIdCounter = maxIdUponLoad + 1;
+        }
+        isLoading = false;
     }
 
     public Drawing(Collection<Shape> shapes, String name, long creationTime, long lastEditTime) {
@@ -54,6 +73,10 @@ public class Drawing {
         for (Shape i : shapes) {
             this.addShapeQuick(i);
         }
+        if (maxIdUponLoad - minIdUponLoad < 1000000) {
+            shapeIdCounter = maxIdUponLoad + 1;
+        }
+        isLoading = false;
     }
     
     public void addShape(Shape shape) {
@@ -65,6 +88,7 @@ public class Drawing {
         } else if (!this.shapes.contains(shape)) {
             this.shapes.add(shape);
         }
+        this.shapeIds.put(shape.getId(), shape);
     }
 
     private void addShapeQuick(Shape shape) {
@@ -73,6 +97,8 @@ public class Drawing {
         } else {
             this.shapes.add(shape);
         }
+        this.shapeIds.put(shape.getId(), shape);
+        updateIdRange(shape.getId());
     }
 
     public boolean hasShape(Shape shape) {
@@ -104,6 +130,35 @@ public class Drawing {
         this.points.remove(shape);
     }
 
+    public long getId(Shape shape) {
+        if (isLoading) return 0;
+        if (this.shapeIds.containsValue(shape)) {
+            return this.shapeIds.getKey(shape);
+        } else {
+            // this is the first time ever i use the do-while loop
+            do {
+                shapeIdCounter++;
+            } while (this.shapeIds.containsKey(shapeIdCounter));
+            return shapeIdCounter;
+        }
+    }
+
+    public NameComponent generateName(boolean useDashesNotDigits) {
+        if (useDashesNotDigits) {
+            return new NameComponent((byte)(pointNameCounter % 26), 0, (short)(pointNameCounter++ / 26));
+        } else {
+            return new NameComponent((byte)(pointNameCounter % 26), pointNameCounter++ / 26, (short)0);
+        }
+    }
+
+    private void updateIdRange(long newId) {
+        if (newId < minIdUponLoad) {
+            minIdUponLoad = newId;
+        } else if (newId > maxIdUponLoad) {
+            maxIdUponLoad = newId;
+        }
+    }
+
     public void update() {
         lastEditTime = System.currentTimeMillis();
         changed = true;
@@ -125,6 +180,14 @@ public class Drawing {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean shouldUseDashesForNaming() {
+        return useDashesForNaming;
+    }
+
+    public void setUseDashesForNaming(boolean useDashesForNaming) {
+        this.useDashesForNaming = useDashesForNaming;
     }
 
     public long getCreationTime() {
@@ -161,7 +224,15 @@ public class Drawing {
         long lastEditTime = nbt.getLong("last_edit_time").getValue();
         ListTag<CompoundTag> shapes = nbt.getList("shapes");
         LoadingContext context = new LoadingContext(shapes);
-        return new Drawing(context.load(), name, creationTime, lastEditTime);
+        Drawing output = context.getDrawing();
+        output.setName(name);
+        output.creationTime = creationTime;
+        output.lastEditTime = lastEditTime;
+        for (Shape i : context.load()) {
+            output.addShapeQuick(i);
+        }
+        output.isLoading = false;
+        return output;
     }
 
     public void save(String filename, boolean isAbsolute) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
@@ -11,8 +12,14 @@ import net.thewinnt.planimetry.ui.NameComponent;
 
 public abstract class PointProvider extends Shape {
     protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
-    private static int nameCounter;
-    protected NameComponent name = shouldAutoAssingnName() ? new NameComponent((byte)(nameCounter % 26), nameCounter++ / 26, (short)0) : null;
+    protected NameComponent name;
+
+    public PointProvider(Drawing drawing) {
+        super(drawing);
+        if (this.shouldAutoAssingnName()) {
+            this.name = drawing.generateName(drawing.shouldUseDashesForNaming());
+        }
+    }
 
     public abstract Vec2 getPosition();
     public abstract boolean canMove();
@@ -78,8 +85,4 @@ public abstract class PointProvider extends Shape {
     }
 
     protected abstract boolean shouldAutoAssingnName();
-
-    public static void resetAutoAssignCounter() {
-        nameCounter = 0;
-    }
 }

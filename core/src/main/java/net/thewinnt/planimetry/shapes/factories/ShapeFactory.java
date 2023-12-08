@@ -59,7 +59,7 @@ public abstract class ShapeFactory {
         if (p1 != null) {
             return p1;
         } else {
-            return new Point(new Vec2(x, y));
+            return new Point(board.getDrawing(), new Vec2(x, y));
         }
     }
 }

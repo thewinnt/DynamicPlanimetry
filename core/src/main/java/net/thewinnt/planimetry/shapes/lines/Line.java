@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.DoubleFunction;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -19,12 +20,14 @@ public abstract class Line extends Shape {
     public final PointReference b;
     protected String nameOverride = null;
 
-    public Line(PointReference a, PointReference b) {
+    public Line(Drawing drawing, PointReference a, PointReference b) {
+        super(drawing);
         this.a = a;
         this.b = b;
     }
 
-    public Line(PointProvider a, PointProvider b) {
+    public Line(Drawing drawing, PointProvider a, PointProvider b) {
+        super(drawing);
         this.a = new PointReference(a);
         this.b = new PointReference(b);
     }

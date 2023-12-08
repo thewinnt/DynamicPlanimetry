@@ -1,13 +1,11 @@
 package net.thewinnt.planimetry.shapes;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
@@ -18,15 +16,13 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public abstract class Shape {
-    private static final List<Shape> ALL_SHAPES_EVER = new ArrayList<>();
-    private static long idCounter;
-    private long id = new Supplier<Long>() { // ensures constructor call
-        @Override
-        public Long get() {
-            ALL_SHAPES_EVER.add(Shape.this);
-            return idCounter++;
-        }
-    }.get();
+    protected final Drawing drawing;
+    private long id;
+
+    public Shape(Drawing drawing) {
+        this.drawing = drawing;
+        this.id = drawing.getId(this);
+    }
 
     public abstract boolean contains(Vec2 point);
     public abstract boolean contains(double x, double y);
@@ -50,7 +46,7 @@ public abstract class Shape {
     }
     public abstract String getTypeName();
 
-    /** @deprecated use {@link #toNbt()} instead, as this provides incomplete data */
+    /** @deprecated use {@link #toNbt()} for saving instead, as this provides incomplete data */
     @Deprecated public abstract CompoundTag writeNbt(SavingContext context);
     public abstract ShapeDeserializer<?> getDeserializer();
 
@@ -63,6 +59,10 @@ public abstract class Shape {
      */
     public final long getId() {
         return id;
+    }
+
+    public Drawing getDrawing() {
+        return drawing;
     }
 
     protected float getThickness(double scale) {
@@ -86,10 +86,6 @@ public abstract class Shape {
         nbt.putLong("id", this.id);
         nbt.putString("type", ShapeData.getShapeType(this.getDeserializer()));
         return nbt;
-    }
-
-    public static Collection<Shape> getAllShapes() {
-        return Collections.unmodifiableCollection(ALL_SHAPES_EVER);
     }
 
     public static enum SelectionStatus {
