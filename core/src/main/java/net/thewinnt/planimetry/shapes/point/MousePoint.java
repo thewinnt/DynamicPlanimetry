@@ -13,6 +13,7 @@ import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -35,7 +36,7 @@ public class MousePoint extends PointProvider {
 
     @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
-        drawer.filledCircle(board.boardToGlobal(getPosition()).toVector2f(), (float)Math.min(Math.max(2, board.getScale()), 8), DynamicPlanimetry.COLOR_POINT_SELECTED);
+        drawer.filledCircle(board.boardToGlobal(getPosition()).toVector2f(), this.getThickness(board.getScale()) * 2, Theme.current().pointSelected());
     }
 
     @Override public void move(Vec2 delta) {}

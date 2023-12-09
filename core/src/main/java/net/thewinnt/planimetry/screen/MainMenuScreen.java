@@ -1,21 +1,18 @@
 package net.thewinnt.planimetry.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
-import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Theme;
 
 public class MainMenuScreen extends FlatUIScreen {
-    private StyleSet stylesThin;
-
     public MainMenuScreen(DynamicPlanimetry app) {
         super(app);
     }
@@ -27,14 +24,14 @@ public class MainMenuScreen extends FlatUIScreen {
 
         Table buttons = new Table();
         
-        stylesThin = new StyleSet(drawer, app::getFont);
-        LabelStyle style_title = new LabelStyle(app.getBoldFont(200, Color.BLACK), Color.BLACK);
+        LabelStyle style_title = new LabelStyle(app.getBoldFont(200, Theme.current().textUI()), Theme.current().textUI());
         Label title = new Label("Dynamic Planimetry", style_title);
 
-        TextButton create = new TextButton(app.getDrawing() == null ? "Создать" : "Продолжить", stylesThin.getButtonStyle(Size.VERY_LARGE, true));
-        TextButton load = new TextButton("Загрузить", stylesThin.getButtonStyle(Size.VERY_LARGE, true));
-        TextButton go_settings = new TextButton("Настройки", stylesThin.getButtonStyle(Size.VERY_LARGE, false));
-        TextButton exit = new TextButton("Выход", stylesThin.getButtonStyle(Size.VERY_LARGE, true));
+        TextButtonStyle buttonStyle = styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true);
+        TextButton create = new TextButton(app.getDrawing() == null ? "Создать" : "Продолжить", buttonStyle);
+        TextButton load = new TextButton("Загрузить", buttonStyle);
+        TextButton go_settings = new TextButton("Настройки", styles.createButtonStyle(app.getFont(85, Theme.current().inactive()), false));
+        TextButton exit = new TextButton("Выход", buttonStyle);
 
         create.setSize(30, 70);
         load.setSize(300, 70);

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -24,6 +23,7 @@ import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.SaveEntry;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Theme;
 
 public class FileSelectionScreen extends FlatUIScreen {
     private ScrollPaneStyle paneStyle;
@@ -261,6 +261,6 @@ public class FileSelectionScreen extends FlatUIScreen {
 
     public void updateStyles() {
         this.paneStyle = new ScrollPaneStyle(styles.pressed, styles.fullWhite, styles.fullBlack, styles.fullWhite, styles.fullBlack);
-        this.selectedItemStyle = new TextButtonStyle(styles.pressed, styles.pressed, styles.pressed, app.getBoldFont(Gdx.graphics.getHeight() / Size.MEDIUM.factor, Color.BLACK));
+        this.selectedItemStyle = new TextButtonStyle(styles.pressed, styles.pressed, styles.pressed, app.getBoldFont(Gdx.graphics.getHeight() / Size.MEDIUM.factor, Theme.current().textButton()));
     }
 }

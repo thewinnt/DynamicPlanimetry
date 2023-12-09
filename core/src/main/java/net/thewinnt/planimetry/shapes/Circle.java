@@ -7,14 +7,16 @@ import java.util.function.Supplier;
 import com.badlogic.gdx.graphics.Color;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
-import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
+import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.NameComponent;
+import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.DoubleProperty;
 import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
@@ -44,12 +46,12 @@ public class Circle extends Shape {
 
     @Override
     public boolean contains(double x, double y) {
-        return center.getPosition().distanceTo(x, y) < Math.pow(2, -23);
+        return MathHelper.roughlyEquals(center.getPosition().distanceTo(x, y), this.radius.get());
     }
 
     @Override
     public boolean contains(Vec2 point) {
-        return center.getPosition().distanceTo(point) < Math.pow(2, -23);
+        return MathHelper.roughlyEquals(center.getPosition().distanceTo(point), this.radius.get());
     }
 
     @Override
@@ -66,12 +68,20 @@ public class Circle extends Shape {
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
         Vec2 center = this.center.getPosition();
         Color lineColor = switch (selection) {
-            default -> DynamicPlanimetry.COLOR_SHAPE;
-            case HOVERED -> DynamicPlanimetry.COLOR_SHAPE_HOVER;
-            case SELECTED -> DynamicPlanimetry.COLOR_SHAPE_SELECTED;
+            default -> Theme.current().shape();
+            case HOVERED -> Theme.current().shapeHovered();
+            case SELECTED -> Theme.current().shapeSelected();
         };
         drawer.setColor(lineColor);
         drawer.circle(board.bx(center.x), board.by(center.y), (float)(radius.get() * board.getScale()), getThickness(board.getScale()));
+        if (selection == SelectionStatus.SELECTED) {
+            if (!this.drawing.hasShape(this.center)) {
+                this.center.render(drawer, SelectionStatus.NONE, font, board);
+            }
+            if (!this.drawing.hasShape(this.radiusPoint)) {
+                this.radiusPoint.render(drawer, SelectionStatus.NONE, font, board);
+            }
+        }
     }
 
     public void setRadiusPoint(PointProvider point) {
@@ -83,6 +93,10 @@ public class Circle extends Shape {
 
     public boolean getKeepRadius() {
         return keepRadius;
+    }
+
+    public double getRadius() {
+        return this.radius.get();
     }
 
     public void setKeepRadius(boolean keepRadius) {
@@ -116,6 +130,11 @@ public class Circle extends Shape {
     @Override
     public String getName() {
         return this.center.getName();
+    }
+
+    @Override
+    public List<NameComponent> getFullName() {
+        return List.of(this.center.getNameComponent());
     }
 
     @Override

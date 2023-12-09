@@ -186,24 +186,24 @@ public class DrawingBoard extends Actor {
                 hintX = getY() + 30;
             }
             for (double i = xb(getX()) - xb(getX()) % step; i < xb(getX() + getWidth()); i += step) {
-                drawer.line(bx(i), getY(), bx(i), getY() + getHeight(), DynamicPlanimetry.COLOR_GRID, 1);
+                drawer.line(bx(i), getY(), bx(i), getY() + getHeight(), Theme.current().gridLine(), 1);
                 if (i == 0) continue;
                 if (Math.abs(i) % 1 == 0) {
-                    font.getFont(40, DynamicPlanimetry.COLOR_GRID_HINT).draw(batch, String.valueOf((long)i), bx(i), hintX, 0, Align.center, false);
+                    font.getFont(40, Theme.current().gridHint()).draw(batch, String.valueOf((long)i), bx(i), hintX, 0, Align.center, false);
                 } else {
                     String string = String.format("%.8f", i);
                     int k = string.length() - 1;
                     while (string.charAt(k) == '0') k--;
                     string = string.substring(0, k + 1);
                     if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
-                    font.getFont(40, DynamicPlanimetry.COLOR_GRID_HINT).draw(batch, string, bx(i), hintX, 0, Align.center, false);
+                    font.getFont(40, Theme.current().gridHint()).draw(batch, string, bx(i), hintX, 0, Align.center, false);
                 }
             }
             for (double i = yb(getY() + getHeight()) - yb(getY() + getHeight()) % step; i < yb(getY()); i += step) {
-                drawer.line(getX(), by(i), getX() + getWidth(), by(i), DynamicPlanimetry.COLOR_GRID, 1);
+                drawer.line(getX(), by(i), getX() + getWidth(), by(i), Theme.current().gridLine(), 1);
                 if (Math.abs(i) < Math.pow(2, -16)) continue;
                 if (Math.abs(i) % 1 == 0) {
-                    float length = FontUtils.getTextLength(font.getFont(40, Color.BLACK), String.valueOf((long)i));
+                    float length = FontUtils.getTextLength(font.getFont(40, Theme.current().gridCenter()), String.valueOf((long)i));
                     float hintY = bx(0) + 5;
                     int alignYH = Align.left;
                     if (hintY >= getX() + getWidth() - length - 10) {
@@ -213,14 +213,14 @@ public class DrawingBoard extends Actor {
                         hintY = getX() + 10;
                         alignYH = Align.left;
                     }
-                    font.getFont(40, DynamicPlanimetry.COLOR_GRID_HINT).draw(batch, String.valueOf((long)i), hintY, by(i) + 10, 0, alignYH, false);
+                    font.getFont(40, Theme.current().gridHint()).draw(batch, String.valueOf((long)i), hintY, by(i) + 10, 0, alignYH, false);
                 } else {
                     String string = String.format("%.8f", i);
                     int k = string.length() - 1;
                     while (string.charAt(k) == '0') k--;
                     string = string.substring(0, k + 1);
                     if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
-                    float length = FontUtils.getTextLength(font.getFont(40, Color.BLACK), string);
+                    float length = FontUtils.getTextLength(font.getFont(40, Theme.current().gridCenter()), string);
                     float hintY = bx(0) + 5;
                     int alignYH = Align.left;
                     if (hintY >= getX() + getWidth() - length - 10) {
@@ -230,7 +230,7 @@ public class DrawingBoard extends Actor {
                         hintY = getX() + 10;
                         alignYH = Align.left;
                     }
-                    font.getFont(40, DynamicPlanimetry.COLOR_GRID_HINT).draw(batch, string, hintY, by(i), 0, alignYH, false);
+                    font.getFont(40, Theme.current().gridHint()).draw(batch, string, hintY, by(i), 0, alignYH, false);
                 }
             }
         }

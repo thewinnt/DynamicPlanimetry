@@ -1,7 +1,5 @@
 package net.thewinnt.planimetry;
 
-import static net.thewinnt.gdxutils.ColorUtils.rgbColor;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,6 +23,7 @@ import net.thewinnt.planimetry.screen.FileSelectionScreen;
 import net.thewinnt.planimetry.screen.FlatUIScreen;
 import net.thewinnt.planimetry.screen.MainMenuScreen;
 import net.thewinnt.planimetry.ui.Notifications;
+import net.thewinnt.planimetry.ui.Theme;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class DynamicPlanimetry extends Game {
@@ -33,6 +32,55 @@ public class DynamicPlanimetry extends Game {
     public static final int EDITOR_SCREEN = 1;
     public static final int FILE_SELECTION_SCREEN = 2;
     public static final Nbt NBT = new Nbt();
+    public static final Theme THEME_LIGHT = new Theme(
+        new Color(0xFFFFFFFF), // main
+        new Color(0xDCDCDCFF), // pressed
+        new Color(0xF0F0F0FF), // button
+        new Color(0x000000FF), // outlines
+        new Color(0x000000FF), // text (button)
+        new Color(0x000000FF), // text (ui)
+        new Color(0x2D2D2DFF), // inactive text
+        new Color(0xFFFFFFFF), // text field
+        new Color(0xC0C0C0FF), // delimiter
+        new Color(0x2D2D2DFF), // inactive
+        new Color(0x000000FF), // shape
+        new Color(0x00C0FFFF), // shape hovered
+        new Color(0x0080FFFF), // shape selected
+        new Color(0xFF8000FF), // point
+        new Color(0xFFC84CFF), // point hovered
+        new Color(0xCC5500FF), // point selected
+        new Color(0x0080FFFF), // utility point
+        new Color(0x00C4FFFF), // utility point hovered
+        new Color(0x0055CCFF), // utility point selected
+        new Color(0xCCCCCCFF), // grid line
+        new Color(0xAAAAAAFF), // grid hint
+        new Color(0x000000FF)  // grid center
+    );
+    
+    public static final Theme THEME_DARK = new Theme(
+        new Color(0x1F1F1FFF), // main
+        new Color(0x000000FF), // pressed
+        new Color(0x0F0F0FFF), // button
+        new Color(0xA0A0A0FF), // outlines
+        new Color(0xD0D0D0FF), // text (button)
+        new Color(0xEEEEEEFF), // text (ui)
+        new Color(0x2D2D2DFF), // inactive text
+        new Color(0x000000FF), // text field
+        new Color(0x303030FF), // delimiter
+        new Color(0x2D2D2DFF), // inactive
+        new Color(0xEEEEEEFF), // shape
+        new Color(0x00C0FFFF), // shape hovered
+        new Color(0x0080FFFF), // shape selected
+        new Color(0xFF8000FF), // point
+        new Color(0xFFC84CFF), // point hovered
+        new Color(0xCC5500FF), // point selected
+        new Color(0x0080FFFF), // utility point
+        new Color(0x00C4FFFF), // utility point hovered
+        new Color(0x0055CCFF), // utility point selected
+        new Color(0x404040FF), // grid line
+        new Color(0x505050FF), // grid hint
+        new Color(0x000000FF)  // grid center
+    );
 
     // general stuff
     public final List<Screen> screenByIds = new ArrayList<>();
@@ -41,8 +89,7 @@ public class DynamicPlanimetry extends Game {
     public static boolean IS_MOBILE = false;
 
     // settings
-    static byte displayPrecision = 6; // the precision of the displayed numbers, in digits
-    static byte calculationPrecision = -23; // accounts for doubles not being precise enough
+    public static final Settings SETTINGS = new Settings();
 
     // data
     private Drawing currentDrawing;
@@ -66,27 +113,9 @@ public class DynamicPlanimetry extends Game {
         characters = chars.toString();
     }
 
-    // colors
-    public static final Color COLOR_MAIN = new Color(rgbColor(255, 255, 255));
-    public static final Color COLOR_PRESSED = new Color(rgbColor(220, 220, 220));
-    public static final Color COLOR_BUTTON = new Color(rgbColor(240, 240, 240));
-    public static final Color COLOR_DELIMITER = new Color(0xC0C0C0FF);
-    public static final Color COLOR_INACTIVE = new Color(rgbColor(45, 45, 45));
-    public static final Color COLOR_SHAPE = Color.BLACK.cpy();
-    public static final Color COLOR_SHAPE_HOVER = new Color(0, 0.75f, 1, 1);
-    public static final Color COLOR_SHAPE_SELECTED = new Color(0, 0.5f, 1, 1);
-    public static final Color COLOR_POINT = new Color(1, 0.5f, 0, 1);
-    public static final Color COLOR_POINT_HOVER = new Color(0xFFC84CFF);
-    public static final Color COLOR_POINT_SELECTED = new Color(0xCC5500FF);
-    public static final Color COLOR_UTIL_POINT = new Color(0x0080FFFF);
-    public static final Color COLOR_UTIL_POINT_HOVER = new Color(0x00C4FFFF);
-    public static final Color COLOR_UTIL_POINT_SELECTED = new Color(0x0055CCFF);
-    public static final Color COLOR_GRID = new Color(0xCCCCCCFF);
-    public static final Color COLOR_GRID_HINT = new Color(0xAAAAAAFF);
-
     // more font stuff
-    public static final FontType BUTTON_ACTIVE = new FontType(85, Color.BLACK);
-    public static final FontType BUTTON_INACTIVE = new FontType(85, COLOR_INACTIVE);
+    public static final FontType BUTTON_ACTIVE = new FontType(85, THEME_LIGHT.textButton());
+    public static final FontType BUTTON_INACTIVE = new FontType(85, THEME_LIGHT.textInactive());
     public static final FontType FPS = new FontType(50, Color.WHITE);
 
     public static record FontType(int size, Color color) {}
@@ -190,14 +219,6 @@ public class DynamicPlanimetry extends Game {
 
     public void setScreen(int id) {
         this.setScreen(screenByIds.get(id));
-    }
-
-    public static double getPrecisionFactor() {
-        return Math.pow(2, calculationPrecision);
-    }
-
-    public static byte getDisplayPresicion() {
-        return displayPrecision;
     }
 
     public void setDrawing(Drawing drawing, boolean saveOld) {

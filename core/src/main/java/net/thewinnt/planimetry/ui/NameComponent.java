@@ -37,8 +37,8 @@ public record NameComponent(byte letter, int index, short dashes) {
     }
 
     public Vec2 getSize(FontProvider font, int fontSize) {
-        BitmapFont fontMain = font.getFont(fontSize, Color.BLACK);
-        BitmapFont fontAdditional = font.getFont(fontSize / 2, Color.BLACK);
+        BitmapFont fontMain = font.getFont(fontSize, Theme.current().textButton());
+        BitmapFont fontAdditional = font.getFont(fontSize / 2, Theme.current().textButton());
         BitmapFontCache cache = fontMain.getCache();
         cache.clear();
         float w1 = cache.addText(ALLOWED_NAMES[letter], 0, 0).width + 2;

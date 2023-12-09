@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
@@ -14,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 
-import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.drawable.CheckboxDrawable;
 import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -31,6 +31,7 @@ public class StyleSet {
     public final RectangleDrawable fullBlack;
     public final RectangleDrawable selection;
     public final RectangleDrawable fieldInactive;
+    public final RectangleDrawable cursor;
     public final RectangleDrawable cursorInactive;
     public final RectangleDrawable selectionInactive;
     public final RectangleDrawable fullWhite;
@@ -51,20 +52,21 @@ public class StyleSet {
         this.font = font;
         this.fullBlack = new RectangleDrawable(drawer).withColors(Color.BLACK, Color.BLACK);
         this.fullWhite = new RectangleDrawable(drawer).withColors(Color.WHITE, Color.WHITE);
-        this.normal = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_BUTTON, Color.BLACK);
-        this.pressed = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_PRESSED, Color.BLACK);
-        this.over = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_MAIN, Color.BLACK);
-        this.disabled = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_PRESSED, DynamicPlanimetry.COLOR_INACTIVE);
-        this.field = new RectangleDrawable(drawer).withColors(Color.WHITE, Color.BLACK);
+        this.normal = new RectangleDrawable(drawer).withColors(Theme.current().button(), Theme.current().outline());
+        this.pressed = new RectangleDrawable(drawer).withColors(Theme.current().pressed(), Theme.current().outline());
+        this.over = new RectangleDrawable(drawer).withColors(Theme.current().main(), Theme.current().outline());
+        this.disabled = new RectangleDrawable(drawer).withColors(Theme.current().pressed(), Theme.current().inactive());
+        this.field = new RectangleDrawable(drawer).withColors(Theme.current().textField(), Theme.current().outline());
         this.selection = new RectangleDrawable(drawer).withColors(Color.BLUE, Color.BLUE);
-        this.fieldInactive = new RectangleDrawable(drawer).withColors(Color.WHITE, DynamicPlanimetry.COLOR_INACTIVE);
-        this.cursorInactive = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_INACTIVE, DynamicPlanimetry.COLOR_INACTIVE);
+        this.fieldInactive = new RectangleDrawable(drawer).withColors(Theme.current().main(), Theme.current().inactive());
+        this.cursor = new RectangleDrawable(drawer).withColors(Theme.current().textUI(), Theme.current().textUI());
+        this.cursorInactive = new RectangleDrawable(drawer).withColors(Theme.current().inactive(), Theme.current().inactive());
         this.selectionInactive = new RectangleDrawable(drawer).withColors(Color.DARK_GRAY, Color.DARK_GRAY);
-        this.selectionOver = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_MAIN, null);
-        this.checkboxNormal = new CheckboxDrawable(drawer).withColors(DynamicPlanimetry.COLOR_BUTTON, Color.BLACK);
-        this.checkboxOver = new CheckboxDrawable(drawer).withColors(DynamicPlanimetry.COLOR_MAIN, Color.BLACK);
-        this.checkboxPressed = new CheckboxDrawable(drawer).withColors(DynamicPlanimetry.COLOR_PRESSED, Color.BLACK);
-        this.checkboxDisabled = new CheckboxDrawable(drawer).withColors(DynamicPlanimetry.COLOR_PRESSED, DynamicPlanimetry.COLOR_INACTIVE);
+        this.selectionOver = new RectangleDrawable(drawer).withColors(Theme.current().main(), null);
+        this.checkboxNormal = new CheckboxDrawable(drawer).withColors(Theme.current().button(), Theme.current().outline());
+        this.checkboxOver = new CheckboxDrawable(drawer).withColors(Theme.current().main(), Theme.current().outline());
+        this.checkboxPressed = new CheckboxDrawable(drawer).withColors(Theme.current().pressed(), Theme.current().outline());
+        this.checkboxDisabled = new CheckboxDrawable(drawer).withColors(Theme.current().pressed(), Theme.current().inactive());
         rebuild();
     }
 
@@ -81,37 +83,37 @@ public class StyleSet {
         windowStyles.clear();
         for (Size size : Size.values()) {
             // text button styles
-            TextButtonStyle textButtonStyle = new TextButtonStyle(normal, pressed, normal, font.getFont(height / size.factor, Color.BLACK));
+            TextButtonStyle textButtonStyle = new TextButtonStyle(normal, pressed, normal, font.getFont(height / size.factor, Theme.current().textButton()));
             textButtonStyle.over = over;
             textButtonStyle.checkedOver = over;
             buttonStyles.put(new StyleType(size, true), textButtonStyle);
-            textButtonStyle = new TextButtonStyle(disabled, disabled, disabled, font.getFont(height / size.factor, DynamicPlanimetry.COLOR_INACTIVE));
+            textButtonStyle = new TextButtonStyle(disabled, disabled, disabled, font.getFont(height / size.factor, Theme.current().textInactive()));
             buttonStyles.put(new StyleType(size, false), textButtonStyle);
 
             // text field styles
-            TextFieldStyle textFieldStyle = new TextFieldStyle(font.getFont(height / size.factor, Color.BLACK), Color.BLACK, fullBlack, selection, field);
+            TextFieldStyle textFieldStyle = new TextFieldStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), cursor, selection, field);
             textFieldStyle.messageFontColor = Color.GRAY;
             textFieldStyle.messageFont = font.getFont(height / size.factor, Color.GRAY);
             textFieldStyles.put(new StyleType(size, true), textFieldStyle);
-            textFieldStyle = new TextFieldStyle(font.getFont(height / size.factor, DynamicPlanimetry.COLOR_INACTIVE), DynamicPlanimetry.COLOR_INACTIVE, cursorInactive, selectionInactive, fieldInactive);
+            textFieldStyle = new TextFieldStyle(font.getFont(height / size.factor, Theme.current().inactive()), Theme.current().inactive(), cursorInactive, selectionInactive, fieldInactive);
             textFieldStyle.messageFontColor = Color.GRAY;
             textFieldStyle.messageFont = font.getFont(height / size.factor, Color.GRAY);
             textFieldStyles.put(new StyleType(size, false), textFieldStyle);
 
             // list styles
             ScrollPaneStyle paneStyle = new ScrollPaneStyle(fullBlack, fullBlack, fullWhite, fullBlack, fullWhite);
-            ListStyle innerStyle = new ListStyle(font.getFont(height / size.factor, Color.BLACK), Color.BLACK, DynamicPlanimetry.COLOR_INACTIVE, selectionOver);
+            ListStyle innerStyle = new ListStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), Theme.current().inactive(), selectionOver);
             innerStyle.over = selectionOver;
             innerStyle.background = normal;
-            innerStyle.down = new RectangleDrawable(drawer).withColors(DynamicPlanimetry.COLOR_PRESSED, null);
-            SelectBoxStyle listStyle = new SelectBoxStyle(font.getFont(height / size.factor, Color.BLACK), Color.BLACK, normal, paneStyle, innerStyle);
+            innerStyle.down = new RectangleDrawable(drawer).withColors(Theme.current().pressed(), null);
+            SelectBoxStyle listStyle = new SelectBoxStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), normal, paneStyle, innerStyle);
             listStyle.backgroundOver = over;
             listStyle.backgroundDisabled = disabled;
             listStyle.backgroundOpen = pressed;
             listStyles.put(size, listStyle);
 
             // label styles
-            labelStyles.put(size, new LabelStyle(font.getFont(height / size.factor, Color.BLACK), null));
+            labelStyles.put(size, new LabelStyle(font.getFont(height / size.factor, Theme.current().textUI()), null));
 
             // checkbox styles
             ButtonStyle checkBoxStyle = new ButtonStyle(normal, pressed, checkboxNormal);
@@ -123,7 +125,7 @@ public class StyleSet {
             checkboxStyles.put(new StyleType(size, false), checkBoxStyle);
 
             // window styles
-            this.windowStyles.put(size, new WindowStyle(font.getFont(height / size.factor, Color.BLACK), Color.BLACK, normal));
+            this.windowStyles.put(size, new WindowStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), normal));
         }
     }
 
@@ -149,6 +151,16 @@ public class StyleSet {
 
     public WindowStyle getWindowStyle(Size size) {
         return windowStyles.get(size);
+    }
+
+    public TextButtonStyle createButtonStyle(BitmapFont font, boolean isActive) {
+        if (isActive) {
+            TextButtonStyle textButtonStyle = new TextButtonStyle(normal, pressed, normal, font);
+            textButtonStyle.over = over;
+            textButtonStyle.checkedOver = over;
+            return textButtonStyle;
+        }
+        return new TextButtonStyle(disabled, disabled, disabled, font);
     }
 
     public static record StyleType(Size size, boolean isActive) {}

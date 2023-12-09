@@ -61,17 +61,17 @@ public class Notifications extends Actor implements Disposable {
                 y = targ_y;
             }
             cache.cache.setPosition(0, y - cache.y);
-            drawer.setColor(Color.BLACK);
+            drawer.setColor(Theme.current().outline());
             // drawer.filledRectangle(10, y - cache.height - 15, x2 + 5, cache.height + 20, DynamicPlanimetry.COLOR_BUTTON);
-            drawer.sector(x1, y, 10, (float)Math.toRadians(90), (float)Math.toRadians(90), DynamicPlanimetry.COLOR_BUTTON, DynamicPlanimetry.COLOR_BUTTON);
-            drawer.sector(x2, y, 10, 0, (float)Math.toRadians(90), DynamicPlanimetry.COLOR_BUTTON, DynamicPlanimetry.COLOR_BUTTON);
-            drawer.sector(x1, y - cache.height - 10, 10, (float)Math.toRadians(180), (float)Math.toRadians(90), DynamicPlanimetry.COLOR_BUTTON, DynamicPlanimetry.COLOR_BUTTON);
-            drawer.sector(x2, y - cache.height - 10, 10, (float)Math.toRadians(270), (float)Math.toRadians(90), DynamicPlanimetry.COLOR_BUTTON, DynamicPlanimetry.COLOR_BUTTON);
-            drawer.filledRectangle(x1 - 10, y - cache.height - 10, 10, cache.height + 10, DynamicPlanimetry.COLOR_BUTTON);
-            drawer.filledRectangle(x2, y - cache.height - 10, 10, cache.height + 10, DynamicPlanimetry.COLOR_BUTTON);
-            drawer.filledRectangle(x1, y, x2 - x1, 10, DynamicPlanimetry.COLOR_BUTTON);
-            drawer.filledRectangle(x1, y - cache.height - 20, x2 - x1, 10, DynamicPlanimetry.COLOR_BUTTON);
-            drawer.filledRectangle(x1, y - cache.height - 10, x2 - x1, cache.height + 10, DynamicPlanimetry.COLOR_BUTTON);
+            drawer.sector(x1, y, 10, (float)Math.toRadians(90), (float)Math.toRadians(90), Theme.current().button(), Theme.current().button());
+            drawer.sector(x2, y, 10, 0, (float)Math.toRadians(90), Theme.current().button(), Theme.current().button());
+            drawer.sector(x1, y - cache.height - 10, 10, (float)Math.toRadians(180), (float)Math.toRadians(90), Theme.current().button(), Theme.current().button());
+            drawer.sector(x2, y - cache.height - 10, 10, (float)Math.toRadians(270), (float)Math.toRadians(90), Theme.current().button(), Theme.current().button());
+            drawer.filledRectangle(x1 - 10, y - cache.height - 10, 10, cache.height + 10, Theme.current().button());
+            drawer.filledRectangle(x2, y - cache.height - 10, 10, cache.height + 10, Theme.current().button());
+            drawer.filledRectangle(x1, y, x2 - x1, 10, Theme.current().button());
+            drawer.filledRectangle(x1, y - cache.height - 20, x2 - x1, 10, Theme.current().button());
+            drawer.filledRectangle(x1, y - cache.height - 10, x2 - x1, cache.height + 10, Theme.current().button());
             drawer.arc(x1, y, 10, (float)Math.toRadians(90), (float)Math.toRadians(90), 4);
             drawer.arc(x2, y, 10, 0, (float)Math.toRadians(90), 4);
             drawer.arc(x1, y - cache.height - 10, 10, (float)Math.toRadians(180), (float)Math.toRadians(90), 4);
@@ -98,9 +98,9 @@ public class Notifications extends Actor implements Disposable {
     public void updateCaches() {
         caches.clear();
         float y = Gdx.graphics.getHeight() - 20;
-        BitmapFont font = this.font.getFont(Gdx.graphics.getHeight() / 20, Color.BLACK);
+        BitmapFont font = this.font.getFont(Gdx.graphics.getHeight() / 20, Theme.current().textButton());
         for (Notification i : NOTIFICATIONS) {
-            this.layout.setText(font, i.entry, 0, i.entry.length(), Color.BLACK, getWidth() - 40, Align.center, true, null);
+            this.layout.setText(font, i.entry, 0, i.entry.length(), Theme.current().textButton(), getWidth() - 40, Align.center, true, null);
             BitmapFontCache cache = font.newFontCache();
             cache.setText(layout, 20, y);
             this.caches.add(new PositionedText(cache, y, layout.height));

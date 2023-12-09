@@ -3,7 +3,6 @@ package net.thewinnt.planimetry.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
@@ -22,12 +21,12 @@ public class NameSequence extends Widget {
         this.typeName = typeName;
         this.font = font;
         this.fontSize = fontSize;
-        this.setColor(Color.BLACK);
+        this.setColor(Theme.current().textButton());
     }
 
     @Override
     public float getPrefWidth() {
-        BitmapFont fontMain = font.getFont(fontSize, Color.BLACK);
+        BitmapFont fontMain = font.getFont(fontSize, Theme.current().textButton());
         BitmapFontCache cache = fontMain.getCache();
         cache.clear();
         float output = cache.addText(typeName + " ", 0, 0).width;

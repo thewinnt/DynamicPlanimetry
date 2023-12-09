@@ -3,7 +3,6 @@ package net.thewinnt.planimetry.shapes.lines;
 import com.badlogic.gdx.graphics.Color;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
-import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -12,6 +11,7 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -51,9 +51,9 @@ public class LineSegment extends Line {
     @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
         Color lineColor = switch (selection) {
-            default -> DynamicPlanimetry.COLOR_SHAPE;
-            case HOVERED -> DynamicPlanimetry.COLOR_SHAPE_HOVER;
-            case SELECTED -> DynamicPlanimetry.COLOR_SHAPE_SELECTED;
+            default -> Theme.current().shape();
+            case HOVERED -> Theme.current().shapeHovered();
+            case SELECTED -> Theme.current().shapeSelected();
         };
         Vec2 a, b;
         a = this.a.getPosition();
