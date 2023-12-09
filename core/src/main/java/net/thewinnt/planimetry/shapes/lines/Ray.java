@@ -96,8 +96,8 @@ public class Ray extends Line {
             b = this.a.getPosition();
         }
         if (a.x == b.x) {
-            float startY = a.y < b.y ? board.by(a.y) : board.by(b.y);
-            float targHeight = a.y < b.y ? board.getY() : board.getY() + board.getHeight();
+            float startY = board.by(a.y);
+            float targHeight = a.y < b.y ? board.getY() + board.getHeight() : board.getY();
             drawer.line(board.bx(a.x), startY, board.bx(b.x), targHeight, lineColor, getThickness(board.getScale()));
         } else if (a.x < b.x) {
             drawer.line(board.bx(a.x), board.by(a.y), board.getX() + board.getWidth(), board.by(formula.apply(board.maxX())), lineColor, getThickness(board.getScale()));

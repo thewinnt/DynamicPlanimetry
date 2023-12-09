@@ -46,7 +46,12 @@ public class DrawingBoard extends Actor {
         this.addListener(new ActorGestureListener(DynamicPlanimetry.IS_MOBILE ? 20 : 2, 0.4f, 1.1f, Integer.MAX_VALUE) {
             @Override
             public void zoom(InputEvent event, float initialDistance, float distance) {
+                int mx = Gdx.input.getX();
+                int my = Gdx.input.getY();
+                Vec2 distanceOld = offset.subtract(xb(mx), yb(my));
                 scale /= (distance / initialDistance);
+                Vec2 distanceNew = offset.subtract(xb(mx), yb(my));
+                offset = offset.add(distanceNew.subtract(distanceOld).mul(scale));
                 event.handle();
             }
 
@@ -94,7 +99,12 @@ public class DrawingBoard extends Actor {
         this.addListener(new InputListener() {
             @Override
             public boolean scrolled(InputEvent event, float x, float y, float amountX, float amountY) {
+                int mx = Gdx.input.getX();
+                int my = Gdx.input.getY();
+                Vec2 distanceOld = offset.subtract(xb(mx), yb(my));
                 scale /= Math.pow(1.25, amountY);
+                Vec2 distanceNew = offset.subtract(xb(mx), yb(my));
+                offset = offset.subtract(distanceNew.subtract(distanceOld).mul(scale));
                 return true;
             }
         });
@@ -244,16 +254,12 @@ public class DrawingBoard extends Actor {
         }
         if (DynamicPlanimetry.DEBUG_MODE) {
             font.getFont(40, Color.FIREBRICK).draw(batch, "scale: " + scale, x(5), y(getHeight() - 5));
-            font.getFont(40, Color.FIREBRICK).draw(batch, "mx: " + mx, x(5), y(getHeight() - 130));
-            font.getFont(40, Color.FIREBRICK).draw(batch, "my: " + my, x(5), y(getHeight() - 155));
-            font.getFont(40, Color.FIREBRICK).draw(batch, "mxb: " + xb(mx), x(5), y(getHeight() - 180));
-            font.getFont(40, Color.FIREBRICK).draw(batch, "mxy: " + yb(my), x(5), y(getHeight() - 205));
-            if (selection != null) {
-                font.getFont(40, Color.FIREBRICK).draw(batch, "Selected: " + selection, x(5), y(105));
-            }
-            if (creatingShape != null) {
-                font.getFont(40, Color.FIREBRICK).draw(batch, "Creating: " + creatingShape, x(5), y(130));
-            }
+            font.getFont(40, Color.FIREBRICK).draw(batch, "offx: " + offset.x, x(5), y(getHeight() - 30));
+            font.getFont(40, Color.FIREBRICK).draw(batch, "offy: " + offset.y, x(5), y(getHeight() - 55));
+            font.getFont(40, Color.FIREBRICK).draw(batch, "mx: " + mx, x(5), y(getHeight() - 80));
+            font.getFont(40, Color.FIREBRICK).draw(batch, "my: " + my, x(5), y(getHeight() - 105));
+            font.getFont(40, Color.FIREBRICK).draw(batch, "mxb: " + xb(mx), x(5), y(getHeight() - 130));
+            font.getFont(40, Color.FIREBRICK).draw(batch, "mxy: " + yb(my), x(5), y(getHeight() - 155));
         }
     }
 
