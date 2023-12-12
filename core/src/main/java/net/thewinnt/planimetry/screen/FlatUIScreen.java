@@ -139,4 +139,8 @@ public abstract class FlatUIScreen implements Screen {
     public Color getFpsColor() {
         return Theme.current().textButton();
     }
+
+    public ShapeDrawer getDrawer() {
+        return drawer;
+    }
 }

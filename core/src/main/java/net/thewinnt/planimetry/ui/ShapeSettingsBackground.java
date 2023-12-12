@@ -2,6 +2,7 @@ package net.thewinnt.planimetry.ui;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -9,9 +10,9 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public class ShapeSettingsBackground extends Actor {
     public final ShapeDrawer drawer;
     public final Table creation;
-    public final Table properties;
+    public final ScrollPane properties;
 
-    public ShapeSettingsBackground(ShapeDrawer drawer, Table creation, Table properties) {
+    public ShapeSettingsBackground(ShapeDrawer drawer, Table creation, ScrollPane properties) {
         this.drawer = drawer;
         this.creation = creation;
         this.properties = properties;

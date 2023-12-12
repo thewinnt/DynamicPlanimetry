@@ -24,6 +24,7 @@ import net.thewinnt.planimetry.screen.FlatUIScreen;
 import net.thewinnt.planimetry.screen.MainMenuScreen;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.Theme;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class DynamicPlanimetry extends Game {
@@ -250,5 +251,13 @@ public class DynamicPlanimetry extends Game {
 
     public List<Drawing> getAllDrawings() {
         return allDrawings;
+    }
+
+    /**
+     * @deprecated not recommended - always pass shape drawers to your actors!
+     */
+    @Deprecated
+    public ShapeDrawer getCurrentShapeDrawer() {
+        return ((FlatUIScreen)this.screen).getDrawer();
     }
 }

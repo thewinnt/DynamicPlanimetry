@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -18,17 +19,16 @@ import net.thewinnt.planimetry.shapes.factories.LineFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.factories.PolygonFactory;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.NameSequence;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
-import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 
 public class EditorScreen extends FlatUIScreen {
     private DrawingBoard board;
     private ShapeSettingsBackground settings;
     
     private Table creation;
-    private Table properties;
+    private ScrollPane properties;
     private Table functions;
     private Table actions;
     private Container<Window> saveOverlay;
@@ -57,7 +57,7 @@ public class EditorScreen extends FlatUIScreen {
         board.addSelectionListener(shape -> show());
 
         creation = new Table();
-        properties = new Table();
+        properties = new ScrollPane(null);
         functions = new Table();
         actions = new Table();
         saveOverlay = new Container<>();
@@ -79,7 +79,6 @@ public class EditorScreen extends FlatUIScreen {
     public void rebuildUI(Shape selection) {
         // TABLES
         creation.reset();
-        properties.reset();
         functions.reset();
         actions.reset();
 
@@ -174,11 +173,9 @@ public class EditorScreen extends FlatUIScreen {
         creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5);
 
         if (selection != null) {
-            properties.add(new NameSequence(selection.getTypeName(), selection.getFullName(), app::getBoldFont, Gdx.graphics.getHeight() / Size.MEDIUM.factor)).colspan(9999).expand().fill().row();
-            for (Property<?> i : selection.getProperties()) {
-                properties.add(new Label(i.getName(), styles.getLabelStyle(Size.SMALL))).expand().fill();
-                properties.add(i.getActorSetup(styles)).expand().fill().pad(5, 5, 0, 5).row();
-            }
+            properties.setActor(new PropertyLayout(selection.getProperties(), styles /* , new NameSequence(selection.getTypeName(), selection.getFullName(), app::getBoldFont, Gdx.graphics.getHeight() / 18) */));
+        } else {
+            properties.setActor(null);
         }
 
         actions.add(exitToMenu).expand().fill().pad(5, 5, 5, 0);
@@ -203,7 +200,7 @@ public class EditorScreen extends FlatUIScreen {
         creation.setSize(height * 0.5f, creation.getPrefHeight());
         creation.setPosition(delimiter, height - creation.getHeight());
         
-        properties.setSize(height * 0.5f, properties.getPrefHeight());
+        properties.setSize(height * 0.5f, Math.min(properties.getPrefHeight(), height * 0.5f));
         properties.setPosition(delimiter, height - creation.getHeight() - properties.getHeight() - 10);
         
         functions.setSize(height * 0.5f, functions.getPrefHeight());

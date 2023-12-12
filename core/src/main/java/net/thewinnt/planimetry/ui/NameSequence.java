@@ -3,6 +3,7 @@ package net.thewinnt.planimetry.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
@@ -38,7 +39,7 @@ public class NameSequence extends Widget {
 
     @Override
     public float getPrefHeight() {
-        float output = 0;
+        float output = font.getFont(fontSize, Color.BLACK).getLineHeight(); // account for type name
         for (NameComponent i : this.components) {
             float j = (float)i.getSize(font, fontSize).y;
             if (j > output) {

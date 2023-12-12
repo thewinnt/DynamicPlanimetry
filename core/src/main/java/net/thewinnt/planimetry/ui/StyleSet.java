@@ -40,12 +40,15 @@ public class StyleSet {
     public final RectangleDrawable checkboxPressed;
     public final RectangleDrawable checkboxOver;
     public final RectangleDrawable checkboxDisabled;
+    public final RectangleDrawable fullOutline;
+    public final RectangleDrawable fullMain;
     private final Map<StyleType, TextButtonStyle> buttonStyles = new HashMap<>();
     private final Map<StyleType, TextFieldStyle> textFieldStyles = new HashMap<>();
     private final Map<Size, SelectBoxStyle> listStyles = new HashMap<>();
     private final Map<Size, LabelStyle> labelStyles = new HashMap<>();
     private final Map<StyleType, ButtonStyle> checkboxStyles = new HashMap<>();
     private final Map<Size, WindowStyle> windowStyles = new HashMap<>();
+    private ScrollPaneStyle scrollPaneStyleNoBg;
 
     public StyleSet(ShapeDrawer drawer, FontProvider font) {
         this.drawer = drawer;
@@ -67,6 +70,8 @@ public class StyleSet {
         this.checkboxOver = new CheckboxDrawable(drawer).withColors(Theme.current().main(), Theme.current().outline());
         this.checkboxPressed = new CheckboxDrawable(drawer).withColors(Theme.current().pressed(), Theme.current().outline());
         this.checkboxDisabled = new CheckboxDrawable(drawer).withColors(Theme.current().pressed(), Theme.current().inactive());
+        this.fullOutline = new CheckboxDrawable(drawer).withColors(Theme.current().outline(), Theme.current().outline());
+        this.fullMain = new CheckboxDrawable(drawer).withColors(Theme.current().main(), Theme.current().main());
         rebuild();
     }
 
@@ -127,6 +132,8 @@ public class StyleSet {
             // window styles
             this.windowStyles.put(size, new WindowStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), normal));
         }
+        // scroll pane style
+        this.scrollPaneStyleNoBg = new ScrollPaneStyle(null, fullOutline, fullMain, fullOutline, fullMain);
     }
 
     public TextButtonStyle getButtonStyle(Size size, boolean isActive) {
@@ -151,6 +158,10 @@ public class StyleSet {
 
     public WindowStyle getWindowStyle(Size size) {
         return windowStyles.get(size);
+    }
+
+    public ScrollPaneStyle getScrollPaneStyleNoBg() {
+        return scrollPaneStyleNoBg;
     }
 
     public TextButtonStyle createButtonStyle(BitmapFont font, boolean isActive) {
