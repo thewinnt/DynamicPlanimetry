@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Notifications;
+import net.thewinnt.planimetry.ui.ScrollManager;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Theme;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -31,6 +32,7 @@ public abstract class FlatUIScreen implements Screen {
     private Label fps;
     private Label mem_usage;
     private Notifications notifications;
+    private ScrollManager scrollManager;
     private float fps_timer;
 
     private boolean hiddenBefore;
@@ -63,6 +65,7 @@ public abstract class FlatUIScreen implements Screen {
         fps = new Label(app.last_fps, style_fps);
         mem_usage = new Label("Mem: N/A", style_fps);
         notifications = new Notifications(drawer, app::getBoldFont);
+        scrollManager = new ScrollManager();
 
         addActorsBelowFps();
 
@@ -74,6 +77,7 @@ public abstract class FlatUIScreen implements Screen {
         addActorsAboveFps();
 
         stage.addActor(notifications);
+        stage.addActor(scrollManager);
     }
 
     @Override
@@ -104,6 +108,7 @@ public abstract class FlatUIScreen implements Screen {
             Runtime runtime = Runtime.getRuntime();
             mem_usage.setText("Mem: " + (runtime.totalMemory() - runtime.freeMemory()) / 1048576 + "/" + runtime.totalMemory() / 1048576 + " MB");
         }
+        stage.setScrollFocus(scrollManager);
         stage.act(dt);
         stage.draw();
     }

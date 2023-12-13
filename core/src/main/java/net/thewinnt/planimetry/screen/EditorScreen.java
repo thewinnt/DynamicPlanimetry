@@ -68,7 +68,6 @@ public class EditorScreen extends FlatUIScreen {
         settings = new ShapeSettingsBackground(drawer, creation, properties);
 
         stage.addActor(board);
-        stage.setScrollFocus(board);
         stage.setKeyboardFocus(board);
 
         stage.addActor(settings);
