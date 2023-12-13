@@ -19,6 +19,7 @@ import net.thewinnt.planimetry.shapes.factories.LineFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.factories.PolygonFactory;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.NameSequence;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
@@ -28,6 +29,7 @@ public class EditorScreen extends FlatUIScreen {
     private ShapeSettingsBackground settings;
     
     private Table creation;
+    private ScrollPane selectedShapeName;
     private ScrollPane properties;
     private Table functions;
     private Table actions;
@@ -57,6 +59,7 @@ public class EditorScreen extends FlatUIScreen {
         board.addSelectionListener(shape -> show());
 
         creation = new Table();
+        selectedShapeName = new ScrollPane(null);
         properties = new ScrollPane(null);
         functions = new Table();
         actions = new Table();
@@ -70,6 +73,7 @@ public class EditorScreen extends FlatUIScreen {
 
         stage.addActor(settings);
         stage.addActor(creation);
+        stage.addActor(selectedShapeName);
         stage.addActor(properties);
         stage.addActor(functions);
         stage.addActor(actions);
@@ -173,8 +177,10 @@ public class EditorScreen extends FlatUIScreen {
         creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5);
 
         if (selection != null) {
-            properties.setActor(new PropertyLayout(selection.getProperties(), styles /* , new NameSequence(selection.getTypeName(), selection.getFullName(), app::getBoldFont, Gdx.graphics.getHeight() / 18) */));
+            selectedShapeName.setActor(new NameSequence(selection.getTypeName(), selection.getFullName(), app::getBoldFont, Gdx.graphics.getHeight() / 18));
+            properties.setActor(new PropertyLayout(selection.getProperties(), styles));
         } else {
+            selectedShapeName.setActor(null);
             properties.setActor(null);
         }
 
@@ -199,12 +205,15 @@ public class EditorScreen extends FlatUIScreen {
 
         creation.setSize(height * 0.5f, creation.getPrefHeight());
         creation.setPosition(delimiter, height - creation.getHeight());
+
+        selectedShapeName.setSize(height * 0.5f - 10, selectedShapeName.getPrefHeight());
+        selectedShapeName.setPosition(delimiter + 5, height - creation.getHeight() - selectedShapeName.getHeight() - 10);
         
         properties.setSize(height * 0.5f, Math.min(properties.getPrefHeight(), height * 0.5f));
-        properties.setPosition(delimiter, height - creation.getHeight() - properties.getHeight() - 10);
+        properties.setPosition(delimiter, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - 10);
         
         functions.setSize(height * 0.5f, functions.getPrefHeight());
-        functions.setPosition(delimiter, height - creation.getHeight() - properties.getHeight() - functions.getHeight() - 10);
+        functions.setPosition(delimiter, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - functions.getHeight() - 10);
 
         actions.setSize(height * 0.5f, actions.getPrefHeight());
         actions.setPosition(delimiter, 0);

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.Locale;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -51,7 +52,12 @@ public class DoubleProperty extends Property<Double> {
 
     @Override
     public Table getActorSetup(StyleSet styles) {
-        TextField doubleField = new TextField(String.format((Locale)null, "%." + DynamicPlanimetry.SETTINGS.getDisplayPresicion() + "f", value), styles.getTextFieldStyle(Size.SMALL, true));
+        TextField doubleField = new TextField(String.format((Locale)null, "%." + DynamicPlanimetry.SETTINGS.getDisplayPresicion() + "f", value), styles.getTextFieldStyle(Size.SMALL, true)) {
+            @Override
+            public float getPrefWidth() {
+                return Gdx.graphics.getHeight() / 30;
+            }
+        };
         doubleField.setTextFieldFilter((textField, character) -> {
             if (character == 'e') return false;
             try {
