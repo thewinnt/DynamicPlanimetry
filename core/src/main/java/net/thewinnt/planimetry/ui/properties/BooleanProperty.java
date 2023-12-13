@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.properties.ui.CustomLayout;
+import net.thewinnt.planimetry.ui.properties.ui.SquareLayout;
 
 public class BooleanProperty extends Property<Boolean> {
     private final List<Consumer<Boolean>> listeners = new ArrayList<>();
@@ -65,5 +67,10 @@ public class BooleanProperty extends Property<Boolean> {
         });
         table.add(checkbox).expand().fill();
         return table;
+    }
+
+    @Override
+    public CustomLayout getLayout() {
+        return SquareLayout.INSTANCE;
     }
 }

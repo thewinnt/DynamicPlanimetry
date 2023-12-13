@@ -17,7 +17,7 @@ public class PropertyLayout extends ScrollPane {
         
         setupOverscroll(Gdx.graphics.getHeight() / 18 * 1.1f, 10, 200);
         
-        this.propertyList = new VerticalGroup().left().expand().fill().pad(2, 5, 1, 5);
+        this.propertyList = new VerticalGroup().left().expand().fill().pad(2, 5, 2, 5);
         this.propertyList.setFillParent(true);
         for (Property<?> i : properties) {
             this.propertyList.addActor(new Entry(i, i.name, styles));

@@ -36,9 +36,13 @@ public class Entry extends WidgetGroup {
     @Override
     public void layout() {
         this.name.setBounds(0, 0, name.getPrefWidth(), getHeight());
-        this.propertySetup.setBounds((int)Math.ceil(name.getPrefWidth() / 25) * 25, 0, getWidth() - (int)Math.ceil(name.getPrefWidth() / 25) * 25, getHeight());
+        this.property.getLayout().layout(this.propertySetup, this);
         // TODO try aligning to a table
         // TODO fix wide checkboxes
         // TODO fix text field scrolling
+    }
+
+    public Label getNameLabel() {
+        return name;
     }
 }
