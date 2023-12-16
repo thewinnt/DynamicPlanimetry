@@ -89,6 +89,8 @@ public class DynamicPlanimetry extends Game {
         new Color(0x000000FF)  // grid center
     );
 
+    public static final Theme[] BUILT_IN_THEMES = new Theme[]{THEME_LIGHT, THEME_DARK};
+
     // general stuff
     public final List<Screen> screenByIds = new ArrayList<>();
     public String last_fps = "FPS: ..."; // the last reading of the fps counter

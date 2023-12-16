@@ -13,8 +13,9 @@ import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.properties.Property;
-import net.thewinnt.planimetry.ui.properties.Vec2Property;
+import net.thewinnt.planimetry.ui.properties.types.Property;
+import net.thewinnt.planimetry.ui.properties.types.Vec2Property;
+import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -25,7 +26,7 @@ public class Point extends PointProvider {
     public Point(Drawing drawing, Vec2 position) {
         super(drawing);
         this.position = position;
-        this.property = new Vec2Property("", position);
+        this.property = new Vec2Property(Component.empty(), position);
         this.property.addValueChangeListener(pos -> {
             Point.this.position = pos;
         });

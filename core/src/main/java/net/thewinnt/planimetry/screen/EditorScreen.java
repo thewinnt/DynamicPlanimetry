@@ -19,7 +19,7 @@ import net.thewinnt.planimetry.shapes.factories.LineFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.factories.PolygonFactory;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.NameSequence;
+import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
@@ -186,7 +186,7 @@ public class EditorScreen extends FlatUIScreen {
         creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5);
 
         if (selection != null) {
-            selectedShapeName.setActor(new NameSequence(selection.getTypeName(), selection.getFullName(), app::getBoldFont, Gdx.graphics.getHeight() / 18));
+            selectedShapeName.setActor(new ComponentLabel(selection.getName(), app::getBoldFont, Gdx.graphics.getHeight() / 18));
             properties.setActor(new PropertyLayout(selection.getProperties(), styles));
         } else {
             selectedShapeName.setActor(null);

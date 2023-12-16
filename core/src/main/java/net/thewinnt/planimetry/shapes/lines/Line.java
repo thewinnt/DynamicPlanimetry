@@ -11,14 +11,14 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
-import net.thewinnt.planimetry.ui.NameComponent;
-import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
-import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
+import net.thewinnt.planimetry.ui.properties.types.Property;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public abstract class Line extends Shape {
     public final PointReference a;
     public final PointReference b;
-    protected String nameOverride = null;
+    protected Component nameOverride = null;
 
     public Line(Drawing drawing, PointProvider a, PointProvider b) {
         super(drawing);
@@ -52,23 +52,18 @@ public abstract class Line extends Shape {
     @Override
     public Collection<Property<?>> getProperties() {
         return List.of(
-            new EnclosingProperty("1 точка", this.a.getProperties()),
-            new EnclosingProperty("2 точка", this.b.getProperties())
+            new EnclosingProperty(this.a.getName(), this.a.getProperties()),
+            new EnclosingProperty(this.b.getName(), this.b.getProperties())
         );
     }
 
     @Override
-    public String getName() {
-        if (nameOverride != null) return nameOverride;
-        return this.a.getName() + this.b.getName();
+    public Component getName() {
+        if (nameOverride != null) return Component.of(Component.literal(getTypeName()), nameOverride);
+        return Component.of(Component.literal(getTypeName()), this.a.getName(), this.b.getName());
     }
 
-    @Override
-    public List<NameComponent> getFullName() {
-        return List.of(this.a.getNameComponent(), this.b.getNameComponent());
-    }
-
-    public void setName(String name) {
+    public void setName(Component name) {
         this.nameOverride = name;
     }
 

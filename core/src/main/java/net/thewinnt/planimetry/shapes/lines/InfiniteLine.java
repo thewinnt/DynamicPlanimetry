@@ -73,7 +73,7 @@ public class InfiniteLine extends Line {
 
     @Override
     public String getTypeName() {
-        return "Прямая";
+        return "Прямая ";
     }
 
     @Override

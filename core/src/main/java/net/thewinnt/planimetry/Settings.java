@@ -12,12 +12,13 @@ import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.properties.BooleanProperty;
-import net.thewinnt.planimetry.ui.properties.NumberProperty;
+import net.thewinnt.planimetry.ui.properties.Entry;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
-import net.thewinnt.planimetry.ui.properties.SelectionProperty;
-import net.thewinnt.planimetry.ui.properties.ui.CustomLayout;
-import net.thewinnt.planimetry.ui.properties.ui.Entry;
+import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
+import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
+import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
+import net.thewinnt.planimetry.ui.properties.types.SelectionProperty;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class Settings {
     public static final CustomLayout PROPERTY_LAYOUT = new CustomLayout() {
@@ -26,9 +27,9 @@ public class Settings {
             actor.setBounds((Gdx.graphics.getWidth() - 20) * 3 / 4, 2, (Gdx.graphics.getWidth() - 20) / 4 - 10, entry.getHeight() - 4);
         }
     };
-    private SelectionProperty<Theme> theme = new SelectionProperty<>(DynamicPlanimetry.THEME_LIGHT, "Тема", new Theme[]{DynamicPlanimetry.THEME_LIGHT, DynamicPlanimetry.THEME_DARK});
-    private NumberProperty displayPresicion = new NumberProperty("Точность отображения чисел", 3).withMin(OptionalDouble.of(1)).withMax(OptionalDouble.of(127)).requireWholeNumbers(true);
-    private BooleanProperty showGrid = new BooleanProperty("Показывать сетку", true);
+    private SelectionProperty<Theme> theme = new SelectionProperty<>(DynamicPlanimetry.THEME_LIGHT, Component.literal("Тема"), DynamicPlanimetry.BUILT_IN_THEMES);
+    private NumberProperty displayPresicion = new NumberProperty(Component.literal("Точность отображения чисел"), 3).withMin(OptionalDouble.of(1)).withMax(OptionalDouble.of(127)).requireWholeNumbers(true);
+    private BooleanProperty showGrid = new BooleanProperty(Component.literal("Показывать сетку"), true);
     private byte mathPrecision = -23;
 
     public Settings() {

@@ -1,6 +1,8 @@
-package net.thewinnt.planimetry.ui.properties.ui;
+package net.thewinnt.planimetry.ui.properties.layout;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+
+import net.thewinnt.planimetry.ui.properties.Entry;
 
 public class BasicLayout implements CustomLayout {
     public static final BasicLayout INSTANCE = new BasicLayout();

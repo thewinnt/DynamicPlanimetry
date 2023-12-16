@@ -15,12 +15,12 @@ import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.NameComponent;
 import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.properties.BooleanProperty;
-import net.thewinnt.planimetry.ui.properties.NumberProperty;
-import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
-import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
+import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
+import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
+import net.thewinnt.planimetry.ui.properties.types.Property;
+import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -113,33 +113,28 @@ public class Circle extends Shape {
     @Override
     public Collection<Property<?>> getProperties() {
         if (radiusPoint != null) {
-            BooleanProperty keep = new BooleanProperty("Сохранять радиус", keepRadius);
+            BooleanProperty keep = new BooleanProperty(Component.literal("Сохранять радиус"), keepRadius);
             keep.addValueChangeListener(result -> Circle.this.setKeepRadius(result));
             return List.of(
-                new EnclosingProperty("Центр", this.center.getProperties()),
-                new EnclosingProperty("Точка радиуса", this.radiusPoint.getProperties()),
+                new EnclosingProperty(Component.literal("Центр"), this.center.getProperties()),
+                new EnclosingProperty(Component.literal("Точка радиуса"), this.radiusPoint.getProperties()),
                 keep
             );
         } else {
-            NumberProperty radius = new NumberProperty("Радиус", this.radius.get());
+            NumberProperty radius = new NumberProperty(Component.literal("Радиус"), this.radius.get());
             radius.addValueChangeListener(r -> Circle.this.radius = () -> r);
-            return List.of(new EnclosingProperty("Центр", this.center.getProperties()), radius);
+            return List.of(new EnclosingProperty(Component.literal("Центр"), this.center.getProperties()), radius);
         }
     }
 
     @Override
-    public String getName() {
-        return this.center.getName();
-    }
-
-    @Override
-    public List<NameComponent> getFullName() {
-        return List.of(this.center.getNameComponent());
+    public Component getName() {
+        return Component.of(Component.literal(getTypeName()), this.center.getName());
     }
 
     @Override
     public String getTypeName() {
-        return "Окружность";
+        return "Окружность ";
     }
 
     @Override

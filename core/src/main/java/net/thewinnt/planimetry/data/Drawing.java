@@ -17,8 +17,8 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
-import net.thewinnt.planimetry.ui.NameComponent;
 import net.thewinnt.planimetry.ui.Notifications;
+import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.HashBiMap;
 
 public class Drawing {

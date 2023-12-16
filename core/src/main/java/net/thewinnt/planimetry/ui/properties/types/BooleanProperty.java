@@ -1,4 +1,4 @@
-package net.thewinnt.planimetry.ui.properties;
+package net.thewinnt.planimetry.ui.properties.types;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,15 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
-import net.thewinnt.planimetry.ui.properties.ui.CustomLayout;
-import net.thewinnt.planimetry.ui.properties.ui.SquareLayout;
+import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
+import net.thewinnt.planimetry.ui.properties.layout.SquareLayout;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class BooleanProperty extends Property<Boolean> {
     private final List<Consumer<Boolean>> listeners = new ArrayList<>();
     private boolean value;
 
     public BooleanProperty() {
-        super("");
+        super(Component.empty());
     }
 
     public BooleanProperty(boolean value) {
@@ -27,11 +28,11 @@ public class BooleanProperty extends Property<Boolean> {
         this.value = value;
     }
 
-    public BooleanProperty(String name) {
+    public BooleanProperty(Component name) {
         super(name);
     }
 
-    public BooleanProperty(String name, boolean value) {
+    public BooleanProperty(Component name, boolean value) {
         super(name);
         this.value = value;
     }

@@ -1,22 +1,23 @@
-package net.thewinnt.planimetry.ui.properties;
+package net.thewinnt.planimetry.ui.properties.types;
 
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.properties.ui.BasicLayout;
-import net.thewinnt.planimetry.ui.properties.ui.CustomLayout;
+import net.thewinnt.planimetry.ui.properties.layout.BasicLayout;
+import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public abstract class Property<T> {
-    public final String name;
+    public final Component name;
     public CustomLayout layoutOverride;
 
-    public Property(String name) {
+    public Property(Component name) {
         this.name = name;
     }
 
-    public String getName() {
+    public Component getName() {
         return name;
     }
 

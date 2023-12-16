@@ -8,7 +8,8 @@ import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.NameComponent;
+import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.NameComponent;
 
 public abstract class PointProvider extends Shape {
     protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
@@ -62,13 +63,8 @@ public abstract class PointProvider extends Shape {
     }
 
     @Override
-    public String getName() {
-        return name == null ? "" : name.toString();
-    }
-
-    @Override
-    public List<NameComponent> getFullName() {
-        return List.of(name);
+    public Component getName() {
+        return Component.of(Component.literal(getTypeName()), name);
     }
 
     public NameComponent getNameComponent() {
@@ -77,7 +73,7 @@ public abstract class PointProvider extends Shape {
 
     @Override
     public String getTypeName() {
-        return "Точка";
+        return "Точка ";
     }
 
     public void setName(NameComponent name) {

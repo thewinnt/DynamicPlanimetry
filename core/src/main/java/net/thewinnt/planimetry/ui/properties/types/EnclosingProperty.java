@@ -1,4 +1,4 @@
-package net.thewinnt.planimetry.ui.properties;
+package net.thewinnt.planimetry.ui.properties.types;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,18 +8,20 @@ import java.util.function.Consumer;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.properties.PropertyLayout;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class EnclosingProperty extends Property<Property<?>> {
     private final List<Property<?>> properties = new ArrayList<>();
 
-    public EnclosingProperty(String name, Property<?>... properties) {
+    public EnclosingProperty(Component name, Property<?>... properties) {
         super(name);
         for (Property<?> i : properties) {
             this.properties.add(i);
         }
     }
 
-    public EnclosingProperty(String name, Collection<Property<?>> properties) {
+    public EnclosingProperty(Component name, Collection<Property<?>> properties) {
         super(name);
         this.properties.addAll(properties);
     }

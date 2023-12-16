@@ -94,7 +94,7 @@ public class Polygon extends MultiPointLine {
 
     @Override
     public String getTypeName() {
-        return "Многоугольник";
+        return "Многоугольник ";
     }
 
     @Override

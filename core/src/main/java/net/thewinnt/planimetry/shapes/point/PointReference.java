@@ -1,7 +1,6 @@
 package net.thewinnt.planimetry.shapes.point;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
@@ -10,8 +9,9 @@ import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.NameComponent;
-import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.Property;
+import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -82,7 +82,7 @@ public class PointReference extends PointProvider {
     }
 
     @Override
-    public String getName() {
+    public Component getName() {
         return this.point.getName();
     }
 
@@ -94,11 +94,6 @@ public class PointReference extends PointProvider {
     @Override
     protected boolean shouldAutoAssingnName() {
         return false;
-    }
-
-    @Override
-    public List<NameComponent> getFullName() {
-        return this.point.getFullName();
     }
 
     @Override

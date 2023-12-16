@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.properties.ui.Entry;
+import net.thewinnt.planimetry.ui.properties.types.Property;
 
 public class PropertyLayout extends ScrollPane {
     private final VerticalGroup propertyList;
@@ -20,7 +20,7 @@ public class PropertyLayout extends ScrollPane {
         this.propertyList = new VerticalGroup().left().expand().fill().pad(2, 5, 2, 5);
         this.propertyList.setFillParent(true);
         for (Property<?> i : properties) {
-            this.propertyList.addActor(new Entry(i, i.name, styles));
+            this.propertyList.addActor(new Entry(i, styles));
         }
         this.setActor(propertyList);
     }

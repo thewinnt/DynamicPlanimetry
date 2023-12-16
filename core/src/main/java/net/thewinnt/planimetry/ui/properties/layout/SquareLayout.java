@@ -1,6 +1,8 @@
-package net.thewinnt.planimetry.ui.properties.ui;
+package net.thewinnt.planimetry.ui.properties.layout;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+
+import net.thewinnt.planimetry.ui.properties.Entry;
 
 public class SquareLayout implements CustomLayout {
     public static final SquareLayout INSTANCE = new SquareLayout();
@@ -8,6 +10,6 @@ public class SquareLayout implements CustomLayout {
     @Deprecated public SquareLayout() {}
     @Override
     public void layout(Actor actor, Entry entry) {
-        actor.setBounds(entry.getWidth() - entry.getHeight(), 2, entry.getHeight(), entry.getHeight() - 4);
+        actor.setBounds(entry.getWidth() - entry.getHeight() + 4, 2, entry.getHeight() - 4, entry.getHeight() - 4);
     }
 }

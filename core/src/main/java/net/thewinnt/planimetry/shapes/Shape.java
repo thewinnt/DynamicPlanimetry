@@ -1,7 +1,6 @@
 package net.thewinnt.planimetry.shapes;
 
 import java.util.Collection;
-import java.util.List;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
@@ -10,8 +9,8 @@ import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.NameComponent;
-import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.Property;
+import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -40,10 +39,7 @@ public abstract class Shape {
 
     public abstract Collection<Property<?>> getProperties();
 
-    public abstract String getName();
-    public List<NameComponent> getFullName() {
-        return List.of();
-    }
+    public abstract Component getName();
     public abstract String getTypeName();
 
     /** @deprecated use {@link #toNbt()} for saving instead, as this provides incomplete data */

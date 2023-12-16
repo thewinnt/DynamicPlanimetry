@@ -1,4 +1,4 @@
-package net.thewinnt.planimetry.ui.properties;
+package net.thewinnt.planimetry.ui.properties.types;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,18 +12,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class SelectionProperty<T> extends Property<T> {
     private final List<Consumer<T>> listeners = new ArrayList<>();
     private T[] options;
     private T selected;
 
-    public SelectionProperty(String name, T[] options) {
+    public SelectionProperty(Component name, T[] options) {
         super(name);
         this.options = options;
     }
 
-    public SelectionProperty(T selected, String name, T[] options) {
+    public SelectionProperty(T selected, Component name, T[] options) {
         this(name, options);
         this.selected = selected;
     }

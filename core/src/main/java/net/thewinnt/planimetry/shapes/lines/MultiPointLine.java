@@ -17,10 +17,11 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.NameComponent;
 import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
-import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
+import net.thewinnt.planimetry.ui.properties.types.Property;
+import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.MultiComponent;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -95,8 +96,8 @@ public class MultiPointLine extends Shape {
     @Override
     public Collection<Property<?>> getProperties() {
         List<Property<?>> properties = new ArrayList<>();
-        for (int i = 0; i < points.size(); i++) {
-            properties.add(new EnclosingProperty("Точка " + i, points.get(i).getProperties()));
+        for (PointProvider i : points) {
+            properties.add(new EnclosingProperty(i.getName(), i.getProperties()));
         }
         return properties;
     }
@@ -134,26 +135,18 @@ public class MultiPointLine extends Shape {
     }
 
     @Override
-    public String getName() {
-        StringBuilder builder = new StringBuilder();
-        for (PointProvider i : this.points) {
-            builder.append(i.getName());
-        }
-        return builder.toString();
-    }
-
-    @Override
-    public List<NameComponent> getFullName() {
-        List<NameComponent> output = new ArrayList<>();
+    public Component getName() {
+        ArrayList<Component> output = new ArrayList<>();
+        output.add(Component.literal(getTypeName()));
         for (PointProvider i : this.points) {
             output.add(i.getNameComponent());
         }
-        return output;
+        return new MultiComponent(output);
     }
 
     @Override
     public String getTypeName() {
-        return "Ломаная";
+        return "Ломаная ";
     }
 
     @Override

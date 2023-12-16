@@ -157,3 +157,5 @@ Thumbs.db
 /.vscode/
 /assets/drawings/
 /drawings/
+settings.dat
+/assets/settings.dat

@@ -17,14 +17,15 @@ import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.properties.BooleanProperty;
-import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
+import net.thewinnt.planimetry.ui.properties.types.Property;
+import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Ray extends Line {
     private boolean startFromA = true;
-    private BooleanProperty startProperty = new BooleanProperty("Начать с первой точки", startFromA);
+    private BooleanProperty startProperty = new BooleanProperty(Component.literal("Начать с первой точки"), startFromA);
     
     public Ray(Drawing drawing, PointProvider a, PointProvider b) {
         super(drawing, a, b);
@@ -125,7 +126,7 @@ public class Ray extends Line {
 
     @Override
     public String getTypeName() {
-        return "Луч";
+        return "Луч ";
     }
 
     @Override

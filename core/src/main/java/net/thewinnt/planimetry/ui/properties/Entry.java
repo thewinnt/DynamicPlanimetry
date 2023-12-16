@@ -1,24 +1,25 @@
-package net.thewinnt.planimetry.ui.properties.ui;
+package net.thewinnt.planimetry.ui.properties;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
+import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
-import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.Property;
 
 public class Entry extends WidgetGroup {
     private Property<?> property;
-    private Label name;
+    private ComponentLabel name;
     private StyleSet styles;
     private Actor propertySetup;
 
-    public Entry(Property<?> property, String name, StyleSet styles) {
+    public Entry(Property<?> property, StyleSet styles) {
         this.property = property;
-        this.name = new Label(name, styles.getLabelStyle(Size.MEDIUM));
+        this.name = new ComponentLabel(property.getName(), styles.font, (int)Gdx.graphics.getHeight() / 18);
         this.styles = styles;
         this.propertySetup = property.getActorSetup(styles);
+        super.setDebug(true, true);
         super.addActor(this.name);
         super.addActor(this.propertySetup);
     }
@@ -41,7 +42,7 @@ public class Entry extends WidgetGroup {
         // TODO fix text field scrolling
     }
 
-    public Label getNameLabel() {
+    public ComponentLabel getNameLabel() {
         return name;
     }
 }

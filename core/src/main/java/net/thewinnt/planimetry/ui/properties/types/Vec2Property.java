@@ -1,4 +1,4 @@
-package net.thewinnt.planimetry.ui.properties;
+package net.thewinnt.planimetry.ui.properties.types;
 
 import java.util.function.Consumer;
 
@@ -7,21 +7,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class Vec2Property extends Property<Vec2> {
     private final NumberProperty x;
     private final NumberProperty y;
 
-    public Vec2Property(String name) {
+    public Vec2Property(Component name) {
         super(name);
-        this.x = new NumberProperty("X");
-        this.y = new NumberProperty("Y");
+        this.x = new NumberProperty(Component.literal("X"));
+        this.y = new NumberProperty(Component.literal("Y"));
     }
 
-    public Vec2Property(String name, Vec2 value) {
+    public Vec2Property(Component name, Vec2 value) {
         super(name);
-        this.x = new NumberProperty("X", value.x);
-        this.y = new NumberProperty("Y", value.y);
+        this.x = new NumberProperty(Component.literal("X"), value.x);
+        this.y = new NumberProperty(Component.literal("Y"), value.y);
     }
 
     @Override

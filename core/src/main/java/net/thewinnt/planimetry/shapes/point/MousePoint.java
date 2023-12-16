@@ -14,7 +14,7 @@ import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.Property;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 

@@ -22,7 +22,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class StyleSet {
     private final ShapeDrawer drawer;
-    private final FontProvider font;
+    public final FontProvider font;
     public final RectangleDrawable normal;
     public final RectangleDrawable pressed;
     public final RectangleDrawable over;
