@@ -30,15 +30,14 @@ public class Entry extends WidgetGroup {
 
     @Override
     public float getPrefHeight() {
-        return Math.max(name.getPrefHeight(), this.property.getActorSetup(styles).getPrefHeight());
+        return Math.max(name.getPrefHeight(), this.property.getActorSetup(styles).getPrefHeight()) + 4;
     }
     
     @Override
     public void layout() {
-        this.name.setBounds(0, 0, name.getPrefWidth(), getHeight());
+        this.name.setBounds(0, 2, name.getPrefWidth(), getHeight() - 4);
         this.property.getLayout().layout(this.propertySetup, this);
         // TODO try aligning to a table
-        // TODO fix wide checkboxes
         // TODO fix text field scrolling
     }
 

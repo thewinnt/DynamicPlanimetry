@@ -30,7 +30,7 @@ public class MainMenuScreen extends FlatUIScreen {
         TextButtonStyle buttonStyle = styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true);
         TextButton create = new TextButton(app.getDrawing() == null ? "Создать" : "Продолжить", buttonStyle);
         TextButton load = new TextButton("Загрузить", buttonStyle);
-        TextButton go_settings = new TextButton("Настройки", styles.createButtonStyle(app.getFont(85, Theme.current().inactive()), false));
+        TextButton go_settings = new TextButton("Настройки", styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true));
         TextButton exit = new TextButton("Выход", buttonStyle);
 
         create.setSize(30, 70);
@@ -53,6 +53,14 @@ public class MainMenuScreen extends FlatUIScreen {
             }
         });
 
+        go_settings.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                app.settingsScreen.setFrom(MainMenuScreen.this);
+                app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
+            }
+        });
+
         create.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -60,6 +68,18 @@ public class MainMenuScreen extends FlatUIScreen {
             }
         });
 
+        if (app.getDrawing() != null) {
+            TextButton newDrawing = new TextButton("Новый рисунок", buttonStyle);
+            newDrawing.setSize(605, 70);
+            newDrawing.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    app.setDrawing(null, true);
+                    app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
+                }
+            });
+            buttons.add(newDrawing).uniform().prefWidth(605).colspan(2).padBottom(5).row();
+        }
         buttons.add(create).uniform().prefWidth(300);
         buttons.add(load).uniform().prefWidth(300).padLeft(5);
         buttons.row();

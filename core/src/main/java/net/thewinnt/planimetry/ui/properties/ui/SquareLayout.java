@@ -8,6 +8,6 @@ public class SquareLayout implements CustomLayout {
     @Deprecated public SquareLayout() {}
     @Override
     public void layout(Actor actor, Entry entry) {
-        actor.setBounds(entry.getWidth() - entry.getHeight(), 0, entry.getHeight(), entry.getHeight());
+        actor.setBounds(entry.getWidth() - entry.getHeight(), 2, entry.getHeight(), entry.getHeight() - 4);
     }
 }

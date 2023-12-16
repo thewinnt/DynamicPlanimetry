@@ -9,6 +9,6 @@ public class BasicLayout implements CustomLayout {
 
     @Override
     public void layout(Actor actor, Entry entry) {
-        actor.setBounds((int)Math.ceil(entry.getNameLabel().getPrefWidth() / 25) * 25, 0, entry.getWidth() - (int)Math.ceil(entry.getNameLabel().getPrefWidth() / 25) * 25, entry.getHeight());
+        actor.setBounds((int)Math.ceil(entry.getNameLabel().getPrefWidth() / 25) * 25, 2, entry.getWidth() - (int)Math.ceil(entry.getNameLabel().getPrefWidth() / 25) * 25, entry.getHeight() - 4);
     }
 }

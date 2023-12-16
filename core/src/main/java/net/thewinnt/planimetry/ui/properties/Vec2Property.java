@@ -9,19 +9,19 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.StyleSet;
 
 public class Vec2Property extends Property<Vec2> {
-    private final DoubleProperty x;
-    private final DoubleProperty y;
+    private final NumberProperty x;
+    private final NumberProperty y;
 
     public Vec2Property(String name) {
         super(name);
-        this.x = new DoubleProperty("X");
-        this.y = new DoubleProperty("Y");
+        this.x = new NumberProperty("X");
+        this.y = new NumberProperty("Y");
     }
 
     public Vec2Property(String name, Vec2 value) {
         super(name);
-        this.x = new DoubleProperty("X", value.x);
-        this.y = new DoubleProperty("Y", value.y);
+        this.x = new NumberProperty("X", value.x);
+        this.y = new NumberProperty("Y", value.y);
     }
 
     @Override

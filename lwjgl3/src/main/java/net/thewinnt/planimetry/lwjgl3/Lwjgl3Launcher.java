@@ -1,18 +1,38 @@
 package net.thewinnt.planimetry.lwjgl3;
 
+import java.io.File;
+import java.io.IOException;
+
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+
+import dev.dewy.nbt.Nbt;
+import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.ui.Notifications;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
         if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
-        createApplication();
+
+        // load settings (it's easier on native platforms)
+        File settingsFile = new File("./settings.dat");
+        CompoundTag nbt = null;
+        if (settingsFile.exists() && settingsFile.canRead()) {
+            try {
+                nbt = new Nbt().fromFile(settingsFile);
+            } catch (IOException e) {
+                Notifications.addNotification("Couldn't load settings: " + e.getMessage(), 5000);
+                e.printStackTrace();
+            }
+        }
+
+        createApplication(nbt);
     }
 
-    private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new DynamicPlanimetry(), getDefaultConfiguration());
+    private static Lwjgl3Application createApplication(CompoundTag settings) {
+        return new Lwjgl3Application(new DynamicPlanimetry(settings, () -> new File("./settings.dat")), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

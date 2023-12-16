@@ -18,7 +18,7 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.NameComponent;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.BooleanProperty;
-import net.thewinnt.planimetry.ui.properties.DoubleProperty;
+import net.thewinnt.planimetry.ui.properties.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -121,7 +121,7 @@ public class Circle extends Shape {
                 keep
             );
         } else {
-            DoubleProperty radius = new DoubleProperty("Радиус", this.radius.get());
+            NumberProperty radius = new NumberProperty("Радиус", this.radius.get());
             radius.addValueChangeListener(r -> Circle.this.radius = () -> r);
             return List.of(new EnclosingProperty("Центр", this.center.getProperties()), radius);
         }

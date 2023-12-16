@@ -17,11 +17,14 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 import dev.dewy.nbt.Nbt;
+import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.data.Drawing;
+import net.thewinnt.planimetry.data.SettingsIO;
 import net.thewinnt.planimetry.screen.EditorScreen;
 import net.thewinnt.planimetry.screen.FileSelectionScreen;
 import net.thewinnt.planimetry.screen.FlatUIScreen;
 import net.thewinnt.planimetry.screen.MainMenuScreen;
+import net.thewinnt.planimetry.screen.SettingsScreen;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.Theme;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -32,8 +35,10 @@ public class DynamicPlanimetry extends Game {
     public static final int MAIN_MENU = 0;
     public static final int EDITOR_SCREEN = 1;
     public static final int FILE_SELECTION_SCREEN = 2;
+    public static final int SETTINGS_SCREEN = 3;
     public static final Nbt NBT = new Nbt();
     public static final Theme THEME_LIGHT = new Theme(
+        "Светлая",
         new Color(0xFFFFFFFF), // main
         new Color(0xDCDCDCFF), // pressed
         new Color(0xF0F0F0FF), // button
@@ -59,6 +64,7 @@ public class DynamicPlanimetry extends Game {
     );
     
     public static final Theme THEME_DARK = new Theme(
+        "Тёмная",
         new Color(0x1F1F1FFF), // main
         new Color(0x000000FF), // pressed
         new Color(0x0F0F0FFF), // button
@@ -91,6 +97,7 @@ public class DynamicPlanimetry extends Game {
 
     // settings
     public static final Settings SETTINGS = new Settings();
+    private final SettingsIO settingsFile;
 
     // data
     private Drawing currentDrawing;
@@ -100,6 +107,7 @@ public class DynamicPlanimetry extends Game {
     public MainMenuScreen mainMenu;
     public EditorScreen editorScreen;
     public FileSelectionScreen fileSelectionScreen;
+    public SettingsScreen settingsScreen;
 
     // font stuff
     private FreeTypeFontGenerator gen_default;
@@ -129,8 +137,10 @@ public class DynamicPlanimetry extends Game {
     public static final DateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
     public static final DateFormat AUTOSAVE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss.SSS");
 
-    public DynamicPlanimetry() {
+    public DynamicPlanimetry(CompoundTag settings, SettingsIO io) {
         super();
+        SETTINGS.fromNbt(settings);
+        this.settingsFile = io;
     }
 
     @Override
@@ -143,6 +153,8 @@ public class DynamicPlanimetry extends Game {
         mainMenu = registerScreen(new MainMenuScreen(this));
         editorScreen = registerScreen(new EditorScreen(this));
         fileSelectionScreen = registerScreen(new FileSelectionScreen(this));
+        settingsScreen = registerScreen(new SettingsScreen(this));
+        setDrawing(null, false);
         setScreen(MAIN_MENU);
         if (DEBUG_MODE) {
             Notifications.addNotification("Включён режим отладки", 2000);
@@ -175,6 +187,7 @@ public class DynamicPlanimetry extends Game {
         for (BitmapFont i : fonts_bold.values()) {
             i.dispose();
         }
+        SETTINGS.toNbt(settingsFile.getSettingsFile());
     }
 
     @Override

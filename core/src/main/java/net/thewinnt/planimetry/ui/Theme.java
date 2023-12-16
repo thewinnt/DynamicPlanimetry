@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 
 public record Theme(
+    String name,
     Color main,
     Color pressed,
     Color button,
@@ -30,5 +31,10 @@ public record Theme(
 ) {
     public static Theme current() {
         return DynamicPlanimetry.SETTINGS.getTheme();
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

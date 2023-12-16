@@ -43,6 +43,7 @@ public class EditorScreen extends FlatUIScreen {
     private TextButton createPolygon;
 
     private TextButton exitToMenu;
+    private TextButton goSettings;
     private TextButton save;
     private Window saveDialog;
 
@@ -53,7 +54,7 @@ public class EditorScreen extends FlatUIScreen {
     @Override
     public void addActorsBelowFps() {
         if (app.getDrawing() == null) {
-            app.setDrawing(new Drawing(), false);
+            app.setDrawing(new Drawing(), true);
         }
         board = new DrawingBoard(drawer, app::getBoldFont, app.getDrawing());
         board.addSelectionListener(shape -> show());
@@ -94,6 +95,7 @@ public class EditorScreen extends FlatUIScreen {
         createPolygon = new TextButton("Многоугольник", styles.getButtonStyle(Size.SMALL, true));
 
         exitToMenu = new TextButton("В меню", styles.getButtonStyle(Size.SMALL, true));
+        goSettings = new TextButton("Настройки", styles.getButtonStyle(Size.SMALL, true));
         save = new TextButton("Сохранить", styles.getButtonStyle(Size.SMALL, true));
 
         // LISTENERS
@@ -136,6 +138,14 @@ public class EditorScreen extends FlatUIScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 app.setScreen(DynamicPlanimetry.MAIN_MENU);
+            }
+        });
+
+        goSettings.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                app.settingsScreen.setFrom(EditorScreen.this);
+                app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
             }
         });
 
@@ -184,6 +194,7 @@ public class EditorScreen extends FlatUIScreen {
         }
 
         actions.add(exitToMenu).expand().fill().pad(5, 5, 5, 0);
+        actions.add(goSettings).expand().fill().pad(5, 5, 5, 0);
         actions.add(save).expand().fill().pad(5);
     }
 

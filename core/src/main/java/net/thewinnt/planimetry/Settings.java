@@ -1,28 +1,60 @@
 package net.thewinnt.planimetry;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.OptionalDouble;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+
+import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.thewinnt.planimetry.ui.Notifications;
+import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.properties.BooleanProperty;
+import net.thewinnt.planimetry.ui.properties.NumberProperty;
+import net.thewinnt.planimetry.ui.properties.PropertyLayout;
+import net.thewinnt.planimetry.ui.properties.SelectionProperty;
+import net.thewinnt.planimetry.ui.properties.ui.CustomLayout;
+import net.thewinnt.planimetry.ui.properties.ui.Entry;
 
 public class Settings {
-    private Theme theme = DynamicPlanimetry.THEME_LIGHT;
-    private byte displayPresicion = 6;
+    public static final CustomLayout PROPERTY_LAYOUT = new CustomLayout() {
+        @Override
+        public void layout(Actor actor, Entry entry) {
+            actor.setBounds((Gdx.graphics.getWidth() - 20) * 3 / 4, 2, (Gdx.graphics.getWidth() - 20) / 4 - 10, entry.getHeight() - 4);
+        }
+    };
+    private SelectionProperty<Theme> theme = new SelectionProperty<>(DynamicPlanimetry.THEME_LIGHT, "Тема", new Theme[]{DynamicPlanimetry.THEME_LIGHT, DynamicPlanimetry.THEME_DARK});
+    private NumberProperty displayPresicion = new NumberProperty("Точность отображения чисел", 3).withMin(OptionalDouble.of(1)).withMax(OptionalDouble.of(127)).requireWholeNumbers(true);
+    private BooleanProperty showGrid = new BooleanProperty("Показывать сетку", true);
     private byte mathPrecision = -23;
 
+    public Settings() {
+        theme.layoutOverride = PROPERTY_LAYOUT;
+        displayPresicion.layoutOverride = PROPERTY_LAYOUT;
+        theme.addValueChangeListener(theme -> {
+            DynamicPlanimetry app = (DynamicPlanimetry)Gdx.app.getApplicationListener();
+            app.setScreen(DynamicPlanimetry.MAIN_MENU);
+            app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
+        });
+    }
+
     public Theme getTheme() {
-        return theme;
+        return theme.getValue();
     }
 
     public void setTheme(Theme theme) {
-        this.theme = theme;
+        this.theme.setValue(theme);
     }
 
     public byte getDisplayPresicion() {
-        return displayPresicion;
+        return (byte)(double)displayPresicion.getValue();
     }
 
     public void setDisplayPresicion(byte displayPresicion) {
-        if (displayPresicion > 0) {
-            this.displayPresicion = displayPresicion;
-        }
+        this.displayPresicion.setValue((double)displayPresicion);
     }
 
     public byte getMathPrecision() {
@@ -32,6 +64,40 @@ public class Settings {
     public void setMathPrecision(byte mathPrecision) {
         if (mathPrecision < 0) {
             this.mathPrecision = mathPrecision;
+        }
+    }
+
+    public boolean shouldShowGrid() {
+        return showGrid.getValue();
+    }
+
+    public void setShowGrid(boolean value) {
+        showGrid.setValue(value);
+    }
+
+    public PropertyLayout getLayout(StyleSet styles) {
+        return new PropertyLayout(List.of(theme, displayPresicion, showGrid), styles);
+    }
+
+    public void fromNbt(CompoundTag nbt) {
+        if (nbt == null) return;
+        this.theme.setValue(nbt.getInt("theme").intValue() == 1 ? DynamicPlanimetry.THEME_DARK : DynamicPlanimetry.THEME_LIGHT);
+        this.displayPresicion.setValue(nbt.getByte("display_precision").doubleValue());
+        this.mathPrecision = nbt.getByte("math_precision").byteValue();
+        this.showGrid.setValue(nbt.getByte("show_grid").byteValue() == 1);
+    }
+
+    public void toNbt(File file) {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putInt("theme", this.theme.getValue() == DynamicPlanimetry.THEME_DARK ? 1 : 0);
+        nbt.putByte("display_precision", displayPresicion.getValue().byteValue());
+        nbt.putByte("math_precision", mathPrecision);
+        nbt.putByte("show_grid", showGrid.getValue() ? (byte)1 : (byte)0);
+        try {
+            DynamicPlanimetry.NBT.toFile(nbt, file);
+        } catch (IOException e) {
+            Notifications.addNotification("Error saving settings: " + e.getMessage(), 5000);
+            e.printStackTrace();
         }
     }
 }

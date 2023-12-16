@@ -10,6 +10,7 @@ import net.thewinnt.planimetry.ui.properties.ui.CustomLayout;
 
 public abstract class Property<T> {
     public final String name;
+    public CustomLayout layoutOverride;
 
     public Property(String name) {
         this.name = name;
@@ -20,6 +21,7 @@ public abstract class Property<T> {
     }
 
     public CustomLayout getLayout() {
+        if (layoutOverride != null) return layoutOverride;
         return BasicLayout.INSTANCE;
     }
 

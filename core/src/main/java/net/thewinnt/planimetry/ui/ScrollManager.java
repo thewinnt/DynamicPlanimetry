@@ -15,7 +15,9 @@ public class ScrollManager extends Actor {
                 Stage stage = getStage();
                 if (stage != null) {
                     Vector2 coords = stage.screenToStageCoordinates(new Vector2(x, y));
-                    return stage.hit(coords.x, coords.y, true).fire(event);
+                    Actor actor = stage.hit(coords.x, coords.y, true);
+                    if (actor == null) return false;
+                    return actor.fire(event);
                 }
                 return false;
             }

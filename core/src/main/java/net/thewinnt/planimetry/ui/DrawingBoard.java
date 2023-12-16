@@ -152,91 +152,93 @@ public class DrawingBoard extends Actor {
         if (Double.isInfinite(scale)) scale = 1;
         int mx = Gdx.input.getX();
         int my = Gdx.input.getY();
-        double step = Math.abs(Math.max(getHeight(), getWidth()) / scale / 12); // detect full width
-        int j = 0;
-        if (step != 0 && Double.isFinite(step)) {
-            // scale to [1..10]
-            if (step > 10) {
-                while (step > 10) {
-                    step /= 10;
-                    j++;
-                }
-            } else if (step < 1) {
-                while (step < 1) {
-                    step *= 10;
-                    j--;
-                }
-            }
-            // create step
-            if (step < 1.5) {
-                step = 1;
-            } else if (step < 4) {
-                step = 2;
-            } else if (step < 8) {
-                step = 5;
-            } else {
-                step = 10;
-            }
-            // scale back
-            step *= Math.pow(10, j);
-            float hintX = by(0) - 5;
-            if (hintX > getY() + getHeight() - 20) {
-                hintX = getY() + getHeight() - 20;
-            } else if (hintX < getY() + 30) {
-                hintX = getY() + 30;
-            }
-            for (double i = xb(getX()) - xb(getX()) % step; i < xb(getX() + getWidth()); i += step) {
-                drawer.line(bx(i), getY(), bx(i), getY() + getHeight(), Theme.current().gridLine(), 1);
-                if (i == 0) continue;
-                if (Math.abs(i) % 1 == 0) {
-                    font.getFont(40, Theme.current().gridHint()).draw(batch, String.valueOf((long)i), bx(i), hintX, 0, Align.center, false);
-                } else {
-                    String string = String.format("%.8f", i);
-                    int k = string.length() - 1;
-                    while (string.charAt(k) == '0') k--;
-                    string = string.substring(0, k + 1);
-                    if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
-                    font.getFont(40, Theme.current().gridHint()).draw(batch, string, bx(i), hintX, 0, Align.center, false);
-                }
-            }
-            for (double i = yb(getY() + getHeight()) - yb(getY() + getHeight()) % step; i < yb(getY()); i += step) {
-                drawer.line(getX(), by(i), getX() + getWidth(), by(i), Theme.current().gridLine(), 1);
-                if (Math.abs(i) < Math.pow(2, -16)) continue;
-                if (Math.abs(i) % 1 == 0) {
-                    float length = FontUtils.getTextLength(font.getFont(40, Theme.current().gridCenter()), String.valueOf((long)i));
-                    float hintY = bx(0) + 5;
-                    int alignYH = Align.left;
-                    if (hintY >= getX() + getWidth() - length - 10) {
-                        hintY = getY() + getWidth() - 10;
-                        alignYH = Align.right;
-                    } else if (hintY <= getX() + 10) {
-                        hintY = getX() + 10;
-                        alignYH = Align.left;
+        if (DynamicPlanimetry.SETTINGS.shouldShowGrid()) {
+            double step = Math.abs(Math.max(getHeight(), getWidth()) / scale / 12); // detect full width
+            int j = 0;
+            if (step != 0 && Double.isFinite(step)) {
+                // scale to [1..10]
+                if (step > 10) {
+                    while (step > 10) {
+                        step /= 10;
+                        j++;
                     }
-                    font.getFont(40, Theme.current().gridHint()).draw(batch, String.valueOf((long)i), hintY, by(i) + 10, 0, alignYH, false);
-                } else {
-                    String string = String.format("%.8f", i);
-                    int k = string.length() - 1;
-                    while (string.charAt(k) == '0') k--;
-                    string = string.substring(0, k + 1);
-                    if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
-                    float length = FontUtils.getTextLength(font.getFont(40, Theme.current().gridCenter()), string);
-                    float hintY = bx(0) + 5;
-                    int alignYH = Align.left;
-                    if (hintY >= getX() + getWidth() - length - 10) {
-                        hintY = getY() + getWidth() - 10;
-                        alignYH = Align.right;
-                    } else if (hintY <= getX() + length + 10) {
-                        hintY = getX() + 10;
-                        alignYH = Align.left;
+                } else if (step < 1) {
+                    while (step < 1) {
+                        step *= 10;
+                        j--;
                     }
-                    font.getFont(40, Theme.current().gridHint()).draw(batch, string, hintY, by(i), 0, alignYH, false);
+                }
+                // create step
+                if (step < 1.5) {
+                    step = 1;
+                } else if (step < 4) {
+                    step = 2;
+                } else if (step < 8) {
+                    step = 5;
+                } else {
+                    step = 10;
+                }
+                // scale back
+                step *= Math.pow(10, j);
+                float hintX = by(0) - 5;
+                if (hintX > getY() + getHeight() - 20) {
+                    hintX = getY() + getHeight() - 20;
+                } else if (hintX < getY() + 30) {
+                    hintX = getY() + 30;
+                }
+                for (double i = xb(getX()) - xb(getX()) % step; i < xb(getX() + getWidth()); i += step) {
+                    drawer.line(bx(i), getY(), bx(i), getY() + getHeight(), Theme.current().gridLine(), 1);
+                    if (i == 0) continue;
+                    if (Math.abs(i) % 1 == 0) {
+                        font.getFont(40, Theme.current().gridHint()).draw(batch, String.valueOf((long)i), bx(i), hintX, 0, Align.center, false);
+                    } else {
+                        String string = String.format("%.8f", i);
+                        int k = string.length() - 1;
+                        while (string.charAt(k) == '0') k--;
+                        string = string.substring(0, k + 1);
+                        if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
+                        font.getFont(40, Theme.current().gridHint()).draw(batch, string, bx(i), hintX, 0, Align.center, false);
+                    }
+                }
+                for (double i = yb(getY() + getHeight()) - yb(getY() + getHeight()) % step; i < yb(getY()); i += step) {
+                    drawer.line(getX(), by(i), getX() + getWidth(), by(i), Theme.current().gridLine(), 1);
+                    if (Math.abs(i) < Math.pow(2, -16)) continue;
+                    if (Math.abs(i) % 1 == 0) {
+                        float length = FontUtils.getTextLength(font.getFont(40, Theme.current().gridCenter()), String.valueOf((long)i));
+                        float hintY = bx(0) + 5;
+                        int alignYH = Align.left;
+                        if (hintY >= getX() + getWidth() - length - 10) {
+                            hintY = getY() + getWidth() - 10;
+                            alignYH = Align.right;
+                        } else if (hintY <= getX() + 10) {
+                            hintY = getX() + 10;
+                            alignYH = Align.left;
+                        }
+                        font.getFont(40, Theme.current().gridHint()).draw(batch, String.valueOf((long)i), hintY, by(i) + 10, 0, alignYH, false);
+                    } else {
+                        String string = String.format("%.8f", i);
+                        int k = string.length() - 1;
+                        while (string.charAt(k) == '0') k--;
+                        string = string.substring(0, k + 1);
+                        if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
+                        float length = FontUtils.getTextLength(font.getFont(40, Theme.current().gridCenter()), string);
+                        float hintY = bx(0) + 5;
+                        int alignYH = Align.left;
+                        if (hintY >= getX() + getWidth() - length - 10) {
+                            hintY = getY() + getWidth() - 10;
+                            alignYH = Align.right;
+                        } else if (hintY <= getX() + length + 10) {
+                            hintY = getX() + 10;
+                            alignYH = Align.left;
+                        }
+                        font.getFont(40, Theme.current().gridHint()).draw(batch, string, hintY, by(i), 0, alignYH, false);
+                    }
                 }
             }
+            drawer.setColor(0, 0, 0, 1);
+            drawer.line(getX(), by(0), getX() + getWidth(), by(0), 2);
+            drawer.line(bx(0), getY(), bx(0), getY() + getHeight(), 2);
         }
-        drawer.setColor(0, 0, 0, 1);
-        drawer.line(getX(), by(0), getX() + getWidth(), by(0), 2);
-        drawer.line(bx(0), getY(), bx(0), getY() + getHeight(), 2);
         Shape hovered = getHoveredShape(mx, my);
         for (Shape i : this.drawing.shapes) {
             if (selection == i) {
