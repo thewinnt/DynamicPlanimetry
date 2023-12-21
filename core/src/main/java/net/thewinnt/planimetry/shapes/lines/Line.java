@@ -9,10 +9,13 @@ import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
+import net.thewinnt.planimetry.ui.functions.Function;
+import net.thewinnt.planimetry.ui.functions.LineTypeConversion;
+import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
-import net.thewinnt.planimetry.ui.properties.types.Property;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public abstract class Line extends Shape {
@@ -52,15 +55,20 @@ public abstract class Line extends Shape {
     @Override
     public Collection<Property<?>> getProperties() {
         return List.of(
-            new EnclosingProperty(this.a.getNameComponent(), this.a.getProperties()),
-            new EnclosingProperty(this.b.getNameComponent(), this.b.getProperties())
+            new EnclosingProperty(this.a.getName(), this.a.getProperties()),
+            new EnclosingProperty(this.b.getName(), this.b.getProperties())
         );
+    }
+
+    @Override
+    public Collection<Function<?>> getFunctions() {
+        return List.of(new LineTypeConversion(drawing, this));
     }
 
     @Override
     public Component getName() {
         if (nameOverride != null) return Component.of(Component.literal(getTypeName()), nameOverride);
-        return Component.of(Component.literal(getTypeName()), this.a.getName(), this.b.getName());
+        return Component.of(Component.literal(getTypeName()), this.a.getNameComponent(), this.b.getNameComponent());
     }
 
     public void setName(Component name) {
@@ -76,4 +84,6 @@ public abstract class Line extends Shape {
         context.addShape(this.b);
         return nbt;
     }
+
+    public abstract LineType getType();
 }

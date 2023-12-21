@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
+import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.Theme;
@@ -53,5 +54,20 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
         float w3 = FontUtils.getTextLength(fontAdditional, "'".repeat(dashes));
         float h3 = dashes == 0 ? 0 : fontAdditional.getLineHeight();
         return new Vec2(w1 + Math.max(w2, w3), fontMain.getLineHeight() / 2 + h3);
+    }
+
+    public CompoundTag toNbt() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putByte("letterId", letter);
+        nbt.putInt("index", index);
+        nbt.putShort("dashes", dashes);
+        return nbt;
+    }
+
+    public static NameComponent fromNbt(CompoundTag nbt) {
+        byte letter = nbt.getByte("letterId").byteValue();
+        int index = nbt.getInt("index").intValue();
+        short dashes = nbt.getShort("dashes").shortValue();
+        return new NameComponent(letter, index, dashes);
     }
 }

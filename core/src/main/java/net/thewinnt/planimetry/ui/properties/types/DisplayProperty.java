@@ -9,6 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.ui.DynamicComponentLabel;
 import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
 import net.thewinnt.planimetry.ui.properties.layout.RightAlignedLayout;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -39,7 +41,7 @@ public class DisplayProperty extends Property<Component> {
 
     @Override
     public WidgetGroup getActorSetup(StyleSet styles) {
-        return new Container<>(new DynamicComponentLabel(data, styles.font, Gdx.graphics.getHeight() / 18)).fill();
+        return new Container<>(new DynamicComponentLabel(data, styles.font, Gdx.graphics.getHeight() / Size.MEDIUM.factor)).fill();
     }
 
     @Override

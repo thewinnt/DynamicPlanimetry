@@ -1,0 +1,206 @@
+package net.thewinnt.planimetry.ui.properties.types;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+
+import net.thewinnt.planimetry.ui.Notifications;
+import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.NameComponent;
+
+public class NameComponentProperty extends Property<NameComponent> {
+    private final List<Consumer<NameComponent>> listeners = new ArrayList<>();
+    private byte letter;
+    private int index;
+    private short dashes;
+    private int prevIndex;
+    private short prevDashes;
+
+    public NameComponentProperty(Component name, NameComponent value) {
+        super(name);
+        this.letter = value.letter();
+        this.index = value.index();
+        this.dashes = value.dashes();
+    }
+
+    @Override
+    public void addValueChangeListener(Consumer<NameComponent> listener) {
+        this.listeners.add(listener);
+    }
+
+    @Override
+    public NameComponent getValue() {
+        return new NameComponent(letter, index, dashes);
+    }
+
+    @Override
+    public void setValue(NameComponent value) {
+        this.letter = value.letter();
+        this.index = value.index();
+        this.dashes = value.dashes();
+    }
+
+    private void update() {
+        NameComponent data = new NameComponent(letter, index, dashes);
+        for (Consumer<NameComponent> i : this.listeners) {
+            i.accept(data);
+        }
+    }
+
+    @Override
+    public WidgetGroup getActorSetup(StyleSet styles) {
+        Table output = new Table();
+        Table col1 = new Table();
+        Table col2 = new Table();
+        SelectBox<String> selector = new SelectBox<>(styles.getListStyle(Size.LARGE));
+        selector.setItems(NameComponent.ALLOWED_NAMES);
+        selector.setSelectedIndex(letter);
+        selector.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                letter = (byte)selector.getSelectedIndex();
+                update();
+            }
+        });
+        TextField indexField = new TextField(Integer.toString(index), styles.getTextFieldStyle(Size.SMALL, true)) {
+            @Override
+            public float getPrefWidth() {
+                return Gdx.graphics.getHeight() / 30;
+            }
+        };
+        indexField.setTextFieldFilter((textField, character) -> {
+            try {
+                String text = textField.getText();
+                int cursor = textField.getCursorPosition();
+                if (cursor > text.length()) cursor = text.length();
+                Integer.parseInt(text.substring(0, cursor) + character + text.substring(cursor) + '0');
+            } catch (NumberFormatException e) {
+                return false;
+            } catch (StringIndexOutOfBoundsException e) {
+                return false;
+            }
+            return true;
+        });
+        indexField.setTextFieldListener((textField, c) -> {
+            try {
+                prevIndex = index;
+                int result = Integer.valueOf(indexField.getText());
+                index = result;
+                update();
+            } catch (NumberFormatException e) {}
+        });
+        indexField.addListener(new InputListener() {
+            private void unfocus() {
+                indexField.getStage().setKeyboardFocus(null);
+                try {
+                    int result = Integer.valueOf(indexField.getText());
+                    index = result;
+                } catch (NumberFormatException e) {
+                    index = prevIndex;
+                    Notifications.addNotification("Invalid number: " + indexField.getText(), 1000);
+                }
+                indexField.setText(Integer.toString(index));
+            }
+
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
+                    unfocus();
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (x < indexField.getX() || y < indexField.getY() || x > indexField.getX() + indexField.getWidth() || y > indexField.getY() + indexField.getHeight()) {
+                    unfocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+        
+        TextField dashesField = new TextField(Integer.toString(dashes), styles.getTextFieldStyle(Size.SMALL, true)) {
+            @Override
+            public float getPrefWidth() {
+                return Gdx.graphics.getHeight() / 30;
+            }
+        };
+        dashesField.setTextFieldFilter((textField, character) -> {
+            if (character == '-') return false;
+            try {
+                String text = textField.getText();
+                int cursor = textField.getCursorPosition();
+                if (cursor > text.length()) cursor = text.length();
+                Short.parseShort(text.substring(0, cursor) + character + text.substring(cursor) + '0');
+            } catch (NumberFormatException e) {
+                return false;
+            } catch (StringIndexOutOfBoundsException e) {
+                return false;
+            }
+            return true;
+        });
+        dashesField.setTextFieldListener((textField, c) -> {
+            try {
+                prevDashes = dashes;
+                short result = Short.valueOf(dashesField.getText());
+                dashes = result;
+                update();
+            } catch (NumberFormatException e) {}
+        });
+        dashesField.addListener(new InputListener() {
+            private void unfocus() {
+                dashesField.getStage().setKeyboardFocus(null);
+                try {
+                    short result = Short.valueOf(dashesField.getText());
+                    dashes = result;
+                } catch (NumberFormatException e) {
+                    dashes = prevDashes;
+                    Notifications.addNotification("Invalid number: " + dashesField.getText(), 1000);
+                }
+                dashesField.setText(Integer.toString(dashes));
+            }
+
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
+                    unfocus();
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (x < dashesField.getX() || y < dashesField.getY() || x > dashesField.getX() + dashesField.getWidth() || y > dashesField.getY() + dashesField.getHeight()) {
+                    unfocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        col1.add(selector).expand().fillY().right();
+        col2.add(dashesField).expand().fill();
+        col2.row();
+        col2.add(indexField).expand().fill();
+        output.add(col1).expand().fill();
+        output.add(col2).expand().fill();
+        return output;
+    }
+}

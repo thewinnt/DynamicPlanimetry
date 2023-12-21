@@ -1,4 +1,4 @@
-package net.thewinnt.planimetry.ui.properties;
+package net.thewinnt.planimetry.ui.properties.layout;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -6,17 +6,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.properties.types.Property;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.properties.Property;
 
-public class Entry extends WidgetGroup {
+public class PropertyEntry extends WidgetGroup {
     private Property<?> property;
     private ComponentLabel name;
     private StyleSet styles;
     private Actor propertySetup;
 
-    public Entry(Property<?> property, StyleSet styles) {
+    public PropertyEntry(Property<?> property, StyleSet styles) {
         this.property = property;
-        this.name = new ComponentLabel(property.getName(), styles.font, (int)Gdx.graphics.getHeight() / 18);
+        this.name = new ComponentLabel(property.getName(), styles.font, (int)Gdx.graphics.getHeight() / Size.MEDIUM.factor);
         this.styles = styles;
         this.propertySetup = property.getActorSetup(styles);
         super.addActor(this.name);

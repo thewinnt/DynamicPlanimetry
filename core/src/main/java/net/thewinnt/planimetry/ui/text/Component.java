@@ -17,8 +17,8 @@ public interface Component {
         return Empty.INSTANCE;
     }
 
-    public static Component literal(String value) {
-        return value == null ? Empty.INSTANCE : new LiteralComponent(value);
+    public static LiteralComponent literal(String value) {
+        return value == null ? LiteralComponent.EMPTY : new LiteralComponent(value);
     }
 
     public static Component of(Component... components) {

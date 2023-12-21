@@ -9,6 +9,7 @@ import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
@@ -85,5 +86,10 @@ public class InfiniteLine extends Line {
         PointReference a = (PointReference)context.resolveShape(nbt.getLong("a").getValue());
         PointReference b = (PointReference)context.resolveShape(nbt.getLong("b").getValue());
         return new InfiniteLine(context.getDrawing(), a, b);
+    }
+
+    @Override
+    public LineType getType() {
+        return LineType.INFINITE;
     }
 }

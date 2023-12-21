@@ -178,12 +178,12 @@ public class StyleSet {
     public static record StyleType(Size size, boolean isActive) {}
 
     public static enum Size {
-        SUPER_LARGE(7),
-        VERY_LARGE(10),
-        LARGE(14),
-        MEDIUM(18),
-        SMALL(24),
-        VERY_SMALL(32);
+        SUPER_LARGE(9),
+        VERY_LARGE(12),
+        LARGE(17),
+        MEDIUM(22),
+        SMALL(26),
+        VERY_SMALL(36);
 
         public final int factor;
 

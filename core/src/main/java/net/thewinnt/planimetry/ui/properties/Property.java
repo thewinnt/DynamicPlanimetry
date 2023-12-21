@@ -1,4 +1,4 @@
-package net.thewinnt.planimetry.ui.properties.types;
+package net.thewinnt.planimetry.ui.properties;
 
 import java.util.function.Consumer;
 

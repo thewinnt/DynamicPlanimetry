@@ -1,4 +1,4 @@
-package net.thewinnt.planimetry.ui.properties;
+package net.thewinnt.planimetry.ui.properties.layout;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.drawable.DynamicIcon;
 import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
 import net.thewinnt.planimetry.ui.drawable.RectangledIconDrawable;
@@ -28,7 +29,7 @@ public class PropertyList extends ScrollPane {
         super(null, styles.getScrollPaneStyleNoBg());
 
         this.setFillParent(true);
-        this.setupOverscroll(Gdx.graphics.getHeight() / 18 * 1.1f, 10, 200);
+        this.setupOverscroll(Gdx.graphics.getHeight() / Size.MEDIUM.factor * 1.1f, 10, 200);
 
         this.group = new VerticalGroup().left().expand().fill().pad(2, 5, 2, 5);
         this.group.setFillParent(true);
@@ -50,7 +51,7 @@ public class PropertyList extends ScrollPane {
         this.style.checkedOver = overOpen;
 
         this.toggle = new Button(this.style);
-        this.toggle.add(new ComponentLabel(this.name, styles.font, Gdx.graphics.getHeight() / 18)).padLeft(Gdx.graphics.getHeight() / 18);
+        this.toggle.add(new ComponentLabel(this.name, styles.font, Gdx.graphics.getHeight() / Size.MEDIUM.factor)).padLeft(Gdx.graphics.getHeight() / Size.MEDIUM.factor);
         this.toggle.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

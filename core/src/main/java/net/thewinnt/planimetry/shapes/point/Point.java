@@ -13,24 +13,29 @@ import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.properties.types.Property;
+import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.NameComponentProperty;
 import net.thewinnt.planimetry.ui.properties.types.Vec2Property;
 import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Point extends PointProvider {
     private Vec2 position;
     private final Vec2Property property;
+    private final NameComponentProperty componentProperty;
 
     public Point(Drawing drawing, Vec2 position) {
         super(drawing);
         this.position = position;
-        this.property = new Vec2Property(Component.empty(), position);
+        this.property = new Vec2Property(Component.literal("Координаты"), position);
         this.property.addValueChangeListener(pos -> {
             Point.this.position = pos;
         });
         this.addMovementListener(delta -> property.setValue(Point.this.position));
+        this.componentProperty = new NameComponentProperty(Component.literal("Имя"), this.name);
+        this.componentProperty.addValueChangeListener(component -> setName(component));
     }
 
     @Override
@@ -96,7 +101,7 @@ public class Point extends PointProvider {
 
     @Override
     public Collection<Property<?>> getProperties() {
-        return List.of(property);
+        return List.of(property, componentProperty);
     }
 
     @Override
@@ -113,12 +118,24 @@ public class Point extends PointProvider {
         CompoundTag nbt = new CompoundTag();
         nbt.putDouble("x", this.position.x);
         nbt.putDouble("y", this.position.y);
+        nbt.put("name", name.toNbt());
         return nbt;
     }
 
     public static Point readNbt(CompoundTag nbt, LoadingContext context) {
         double x = nbt.getDouble("x").getValue();
         double y = nbt.getDouble("y").getValue();
+        if (nbt.containsCompound("name")) {
+            NameComponent name = NameComponent.fromNbt(nbt.getCompound("name"));
+            Point output = new Point(context.getDrawing(), new Vec2(x, y)) {
+                @Override
+                protected boolean shouldAutoAssingnName() {
+                    return false;
+                }
+            };
+            output.setName(name);
+            return output;
+        }
         return new Point(context.getDrawing(), new Vec2(x, y));
     }
 }

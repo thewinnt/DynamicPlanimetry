@@ -12,13 +12,14 @@ import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
-import net.thewinnt.planimetry.ui.properties.types.Property;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -99,5 +100,10 @@ public class LineSegment extends Line {
         PointReference a = (PointReference)context.resolveShape(nbt.getLong("a").getValue());
         PointReference b = (PointReference)context.resolveShape(nbt.getLong("b").getValue());
         return new LineSegment(context.getDrawing(), a, b);
+    }
+
+    @Override
+    public LineType getType() {
+        return LineType.SEGMENT;
     }
 }

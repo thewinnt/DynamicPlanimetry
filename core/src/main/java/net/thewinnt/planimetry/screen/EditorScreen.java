@@ -18,12 +18,12 @@ import net.thewinnt.planimetry.shapes.factories.CircleFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.factories.PolygonFactory;
-import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.ComponentLabel;
+import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
-import net.thewinnt.planimetry.ui.properties.PropertyLayout;
-import net.thewinnt.planimetry.ui.properties.PropertyList;
+import net.thewinnt.planimetry.ui.functions.Function;
+import net.thewinnt.planimetry.ui.properties.layout.PropertyLayout;
 
 public class EditorScreen extends FlatUIScreen {
     private DrawingBoard board;
@@ -187,8 +187,12 @@ public class EditorScreen extends FlatUIScreen {
         creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5);
 
         if (selection != null) {
-            selectedShapeName.setActor(new ComponentLabel(selection.getName(), app::getBoldFont, Gdx.graphics.getHeight() / 18));
+            selectedShapeName.setActor(new ComponentLabel(selection.getName(), app::getBoldFont, Gdx.graphics.getHeight() / Size.MEDIUM.factor));
             properties.setActor(new PropertyLayout(selection.getProperties(), styles));
+            for (Function<?> i : selection.getFunctions()) {
+                i.addUseListener(shape -> show());
+                functions.add(i.setupActors(styles)).expandX().fillX().row();
+            }
         } else {
             selectedShapeName.setActor(null);
             properties.setActor(null);
@@ -220,10 +224,10 @@ public class EditorScreen extends FlatUIScreen {
         selectedShapeName.setSize(height * 0.5f - 10, selectedShapeName.getPrefHeight());
         selectedShapeName.setPosition(delimiter + 5, height - creation.getHeight() - selectedShapeName.getHeight() - 10);
         
-        properties.setSize(height * 0.5f, Math.min(properties.getPrefHeight(), height * 0.5f));
+        properties.setSize(height * 0.5f, Math.min(properties.getPrefHeight(), height * 0.4f));
         properties.setPosition(delimiter, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - 10);
         
-        functions.setSize(height * 0.5f, functions.getPrefHeight());
+        functions.setSize(height * 0.5f, Math.min(functions.getPrefHeight(), height * 0.4f));
         functions.setPosition(delimiter, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - functions.getHeight() - 10);
 
         actions.setSize(height * 0.5f, actions.getPrefHeight());

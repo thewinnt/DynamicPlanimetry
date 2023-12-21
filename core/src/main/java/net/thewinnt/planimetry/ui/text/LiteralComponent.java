@@ -8,6 +8,8 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.util.FontProvider;
 
 public record LiteralComponent(String text) implements Component, CharSequence {
+    public static final LiteralComponent EMPTY = new LiteralComponent("");
+
     @Override
     public int length() {
         return text.length();

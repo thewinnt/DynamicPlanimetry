@@ -17,6 +17,7 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class NumberProperty extends Property<Double> {
@@ -178,4 +179,5 @@ public class NumberProperty extends Property<Double> {
         this.isWhole = require;
         return this;
     }
+
 }

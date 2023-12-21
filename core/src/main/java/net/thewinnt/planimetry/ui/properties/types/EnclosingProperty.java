@@ -8,7 +8,8 @@ import java.util.function.Consumer;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.properties.PropertyLayout;
+import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.layout.PropertyLayout;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class EnclosingProperty extends Property<Property<?>> {

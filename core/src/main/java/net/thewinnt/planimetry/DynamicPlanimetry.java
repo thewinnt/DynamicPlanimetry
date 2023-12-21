@@ -243,6 +243,9 @@ public class DynamicPlanimetry extends Game {
             currentDrawing.save();
         }
         this.currentDrawing = drawing;
+        if (this.currentDrawing != null) {
+            this.currentDrawing.clearSwapListeners();
+        }
     }
 
     public Drawing getDrawing() {

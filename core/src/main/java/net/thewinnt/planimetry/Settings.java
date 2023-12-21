@@ -12,9 +12,9 @@ import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.properties.Entry;
-import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
+import net.thewinnt.planimetry.ui.properties.layout.PropertyEntry;
+import net.thewinnt.planimetry.ui.properties.layout.PropertyLayout;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.SelectionProperty;
@@ -23,7 +23,7 @@ import net.thewinnt.planimetry.ui.text.Component;
 public class Settings {
     public static final CustomLayout PROPERTY_LAYOUT = new CustomLayout() {
         @Override
-        public void layout(Actor actor, Entry entry) {
+        public void layout(Actor actor, PropertyEntry entry) {
             actor.setBounds((Gdx.graphics.getWidth() - 20) * 3 / 4, 2, (Gdx.graphics.getWidth() - 20) / 4 - 10, entry.getHeight() - 4);
         }
     };

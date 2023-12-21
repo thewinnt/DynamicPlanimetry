@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 import com.badlogic.gdx.Gdx;
@@ -22,6 +23,7 @@ import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.HashBiMap;
 
 public class Drawing {
+    public final List<BiConsumer<Shape, Shape>> swapListeners = new ArrayList<>();
     public final HashBiMap<Long, Shape> shapeIds = new HashBiMap<>();
     public final List<Shape> shapes;
     public final List<PointProvider> points;
@@ -120,6 +122,7 @@ public class Drawing {
     public void replaceShape(Shape old, Shape neo) {
         update();
         this.shapes.set(this.shapes.indexOf(old), neo);
+        this.swapListeners.forEach(listener -> listener.accept(old, neo));
     }
 
     public void removeShape(Shape shape) {
@@ -202,6 +205,14 @@ public class Drawing {
         } else {
             return Gdx.files.getLocalStoragePath() + filename + ".dpd";
         }
+    }
+
+    public void addSwapListener(BiConsumer<Shape, Shape> listener) {
+        this.swapListeners.add(listener);
+    }
+
+    public void clearSwapListeners() {
+        this.swapListeners.clear();
     }
 
     public CompoundTag toNbt() {
