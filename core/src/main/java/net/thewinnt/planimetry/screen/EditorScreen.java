@@ -23,6 +23,7 @@ import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
+import net.thewinnt.planimetry.ui.properties.PropertyList;
 
 public class EditorScreen extends FlatUIScreen {
     private DrawingBoard board;

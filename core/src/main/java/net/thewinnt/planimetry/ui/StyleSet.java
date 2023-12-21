@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.ui;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class StyleSet {
-    private final ShapeDrawer drawer;
+    public final ShapeDrawer drawer;
     public final FontProvider font;
     public final RectangleDrawable normal;
     public final RectangleDrawable pressed;
@@ -44,10 +45,10 @@ public class StyleSet {
     public final RectangleDrawable fullMain;
     private final Map<StyleType, TextButtonStyle> buttonStyles = new HashMap<>();
     private final Map<StyleType, TextFieldStyle> textFieldStyles = new HashMap<>();
-    private final Map<Size, SelectBoxStyle> listStyles = new HashMap<>();
-    private final Map<Size, LabelStyle> labelStyles = new HashMap<>();
+    private final Map<Size, SelectBoxStyle> listStyles = new EnumMap<>(Size.class);
+    private final Map<Size, LabelStyle> labelStyles = new EnumMap<>(Size.class);
     private final Map<StyleType, ButtonStyle> checkboxStyles = new HashMap<>();
-    private final Map<Size, WindowStyle> windowStyles = new HashMap<>();
+    private final Map<Size, WindowStyle> windowStyles = new EnumMap<>(Size.class);
     private ScrollPaneStyle scrollPaneStyleNoBg;
 
     public StyleSet(ShapeDrawer drawer, FontProvider font) {

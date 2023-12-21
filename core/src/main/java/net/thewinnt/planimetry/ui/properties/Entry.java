@@ -19,7 +19,6 @@ public class Entry extends WidgetGroup {
         this.name = new ComponentLabel(property.getName(), styles.font, (int)Gdx.graphics.getHeight() / 18);
         this.styles = styles;
         this.propertySetup = property.getActorSetup(styles);
-        super.setDebug(true, true);
         super.addActor(this.name);
         super.addActor(this.propertySetup);
     }

@@ -32,6 +32,22 @@ public abstract class DynamicIcon extends ShapeDrawerDrawable {
         }
     };
 
+    public static final DynamicIcon RIGHT_TRIANGLE = new DynamicIcon() {
+        @Override
+        public void render(float x, float y, float size) {
+            super.render(x, y, size);
+            drawer.filledTriangle(x(8), y(8), x(33), y(20.5f), x(8), y(33));
+        }
+    };
+    
+    public static final DynamicIcon DOWN_TRIANGLE = new DynamicIcon() {
+        @Override
+        public void render(float x, float y, float size) {
+            super.render(x, y, size);
+            drawer.filledTriangle(x(8), y(8), x(20.5f), y(33), x(33), y(8));
+        }
+    };
+
     public void render(float x, float y, float size) {
         this.x = x;
         this.y = y;

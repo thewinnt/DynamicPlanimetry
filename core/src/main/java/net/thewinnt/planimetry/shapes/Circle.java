@@ -100,10 +100,10 @@ public class Circle extends Shape {
     }
 
     public void setKeepRadius(boolean keepRadius) {
-        if (this.keepRadius != keepRadius) {
+        if (this.keepRadius != keepRadius && this.radiusPoint != null) {
             if (keepRadius) {
                 this.center.addMovementListener(this.radiusPoint::move);
-            } else if (this.radiusPoint != null) {
+            } else {
                 this.center.removeMovementListener(this.radiusPoint::move);
             }
         }
@@ -129,7 +129,7 @@ public class Circle extends Shape {
 
     @Override
     public Component getName() {
-        return Component.of(Component.literal(getTypeName()), this.center.getName());
+        return Component.of(Component.literal(getTypeName()), this.center.getNameComponent());
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 
 import dev.dewy.nbt.tags.array.LongArrayTag;
 import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -18,6 +19,7 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.types.Property;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -96,9 +98,14 @@ public class MultiPointLine extends Shape {
     @Override
     public Collection<Property<?>> getProperties() {
         List<Property<?>> properties = new ArrayList<>();
+        Vec2 prevPoint = points.get(0).getPosition();
+        double totalLength = 0;
         for (PointProvider i : points) {
             properties.add(new EnclosingProperty(i.getName(), i.getProperties()));
+            totalLength += i.getPosition().distanceTo(prevPoint);
+            prevPoint = i.getPosition();
         }
+        properties.add(new DisplayProperty(Component.literal("Длина"), Component.literal(DynamicPlanimetry.formatNumber(totalLength))));
         return properties;
     }
 

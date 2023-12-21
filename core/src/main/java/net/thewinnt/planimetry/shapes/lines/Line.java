@@ -52,8 +52,8 @@ public abstract class Line extends Shape {
     @Override
     public Collection<Property<?>> getProperties() {
         return List.of(
-            new EnclosingProperty(this.a.getName(), this.a.getProperties()),
-            new EnclosingProperty(this.b.getName(), this.b.getProperties())
+            new EnclosingProperty(this.a.getNameComponent(), this.a.getProperties()),
+            new EnclosingProperty(this.b.getNameComponent(), this.b.getProperties())
         );
     }
 

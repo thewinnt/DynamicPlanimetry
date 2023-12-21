@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.badlogic.gdx.Game;
@@ -274,5 +275,9 @@ public class DynamicPlanimetry extends Game {
     @Deprecated
     public ShapeDrawer getCurrentShapeDrawer() {
         return ((FlatUIScreen)this.screen).getDrawer();
+    }
+
+    public static String formatNumber(double number) {
+        return String.format((Locale)null, "%." + SETTINGS.getDisplayPresicion() + "f", number);
     }
 }
