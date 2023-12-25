@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.badlogic.gdx.graphics.Color;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.NameComponent;
+import net.thewinnt.planimetry.util.FontProvider;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public abstract class PointProvider extends Shape {
     protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
@@ -20,6 +24,11 @@ public abstract class PointProvider extends Shape {
         if (this.shouldAutoAssingnName()) {
             this.name = drawing.generateName(drawing.shouldUseDashesForNaming());
         }
+    }
+
+    public PointProvider(Drawing drawing, NameComponent name) {
+        super(drawing);
+        this.name = name;
     }
 
     public abstract Vec2 getPosition();
@@ -78,6 +87,25 @@ public abstract class PointProvider extends Shape {
 
     public void setName(NameComponent name) {
         this.name = name;
+    }
+
+    @Override
+    public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
+        if (!board.hasShape(this)) {
+            drawer.setColor(switch (selection) {
+                default -> Theme.current().utilityPoint();
+                case HOVERED -> Theme.current().utilityPointHovered();
+                case SELECTED -> Theme.current().utilityPointSelected();
+            });
+            drawer.circle(board.bx(getPosition().x), board.by(getPosition().y), this.getThickness(board.getScale()) * 2, 2);
+        } else {
+            Color color = switch (selection) {
+                default -> Theme.current().point();
+                case HOVERED -> Theme.current().pointHovered();
+                case SELECTED -> Theme.current().pointSelected();
+            };
+            drawer.filledCircle(board.boardToGlobal(getPosition()).toVector2f(), this.getThickness(board.getScale()) * 2, color);
+        }
     }
 
     protected abstract boolean shouldAutoAssingnName();

@@ -10,23 +10,29 @@ import net.thewinnt.planimetry.shapes.lines.Ray;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointReference;
+import net.thewinnt.planimetry.shapes.point.relative.TangentOffsetPoint;
 import net.thewinnt.planimetry.shapes.polygons.Polygon;
 import net.thewinnt.planimetry.util.HashBiMap;
 
 public class ShapeData {
     private static final HashBiMap<String, ShapeDeserializer<?>> SHAPE_TYPES = new HashBiMap<>();
 
+    // POINTS
     public static final ShapeDeserializer<Point> POINT_SIMPLE = register("point_simple", Point::readNbt);
     public static final ShapeDeserializer<MousePoint> MOUSE_POINT = register("mouse_point", MousePoint::readNbt);
     public static final ShapeDeserializer<PointReference> POINT_REFERENCE = register("point_reference", PointReference::readNbt);
+    public static final ShapeDeserializer<TangentOffsetPoint> TANGENT_OFFSET_POINT = register("tangent_offset_point", TangentOffsetPoint::readNbt);
 
+    // LINES
     public static final ShapeDeserializer<InfiniteLine> INFINITE_LINE = register("infinite_line", InfiniteLine::readNbt);
     public static final ShapeDeserializer<LineSegment> LINE_SEGMENT = register("line_segment", LineSegment::readNbt);
     public static final ShapeDeserializer<Ray> RAY = register("ray", Ray::readNbt);
 
+    // POLYGONS
     public static final ShapeDeserializer<MultiPointLine> POLYGONAL_CHAIN = register("polygonal_chain", MultiPointLine::readNbt);
     public static final ShapeDeserializer<Polygon> POLYGON = register("polygon", Polygon::readNbt);
 
+    // CIRCLES
     public static final ShapeDeserializer<Circle> CIRCLE = register("circle", Circle::readNbt);
 
     public static <T extends Shape> ShapeDeserializer<T> register(String name, ShapeDeserializer<T> deserializer) {

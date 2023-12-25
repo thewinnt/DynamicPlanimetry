@@ -283,4 +283,8 @@ public class DynamicPlanimetry extends Game {
     public static String formatNumber(double number) {
         return String.format((Locale)null, "%." + SETTINGS.getDisplayPresicion() + "f", number);
     }
+
+    public static DynamicPlanimetry getInstance() {
+        return (DynamicPlanimetry)Gdx.app.getApplicationListener();
+    }
 }

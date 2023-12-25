@@ -35,9 +35,8 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
         } else {
             indexLength = 0;
         }
-        fontAdditional.draw(batch, "'".repeat(dashes), x + x2, y + fontMain.getLineHeight() / 2);
-        float h3 = dashes == 0 ? 0 : fontAdditional.getLineHeight();
-        return new Vec2(x2 + Math.max(indexLength, FontUtils.getTextLength(fontAdditional, "'".repeat(dashes))), fontMain.getLineHeight() / 2 + h3);
+        fontMain.draw(batch, "'".repeat(dashes), x + x2, y);
+        return new Vec2(x2 + Math.max(indexLength, FontUtils.getTextLength(fontAdditional, "'".repeat(dashes))), fontMain.getLineHeight());
     }
 
     @Override
@@ -52,8 +51,7 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
             w2 = 0;
         }
         float w3 = FontUtils.getTextLength(fontAdditional, "'".repeat(dashes));
-        float h3 = dashes == 0 ? 0 : fontAdditional.getLineHeight();
-        return new Vec2(w1 + Math.max(w2, w3), fontMain.getLineHeight() / 2 + h3);
+        return new Vec2(w1 + Math.max(w2, w3), fontMain.getLineHeight());
     }
 
     public CompoundTag toNbt() {

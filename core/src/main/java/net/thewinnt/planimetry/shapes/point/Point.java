@@ -38,6 +38,16 @@ public class Point extends PointProvider {
         this.componentProperty.addValueChangeListener(component -> setName(component));
     }
 
+    public Point(Drawing drawing, Vec2 position, NameComponent name) {
+        super(drawing, name);
+        this.position = position;
+        this.property = new Vec2Property(Component.literal("Координаты"), position);
+        this.property.addValueChangeListener(pos -> Point.this.position = pos);
+        this.addMovementListener(delta -> property.setValue(Point.this.position));
+        this.componentProperty = new NameComponentProperty(Component.literal("Имя"), this.name);
+        this.componentProperty.addValueChangeListener(component -> setName(component));
+    }
+
     @Override
     public Vec2 getPosition() {
         return position;
@@ -51,25 +61,6 @@ public class Point extends PointProvider {
     @Override
     public boolean contains(double x, double y) {
         return position.x == x && position.y == y;
-    }
-
-    @Override
-    public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
-        if (!board.hasShape(this)) {
-            drawer.setColor(switch (selection) {
-                default -> Theme.current().utilityPoint();
-                case HOVERED -> Theme.current().utilityPointHovered();
-                case SELECTED -> Theme.current().utilityPointSelected();
-            });
-            drawer.circle(board.bx(position.x), board.by(position.y), this.getThickness(board.getScale()) * 2, 2);
-        } else {
-            Color color = switch (selection) {
-                default -> Theme.current().point();
-                case HOVERED -> Theme.current().pointHovered();
-                case SELECTED -> Theme.current().pointSelected();
-            };
-            drawer.filledCircle(board.boardToGlobal(position).toVector2f(), this.getThickness(board.getScale()) * 2, color);
-        }
     }
 
     @Override
@@ -127,14 +118,7 @@ public class Point extends PointProvider {
         double y = nbt.getDouble("y").getValue();
         if (nbt.containsCompound("name")) {
             NameComponent name = NameComponent.fromNbt(nbt.getCompound("name"));
-            Point output = new Point(context.getDrawing(), new Vec2(x, y)) {
-                @Override
-                protected boolean shouldAutoAssingnName() {
-                    return false;
-                }
-            };
-            output.setName(name);
-            return output;
+            return new Point(context.getDrawing(), new Vec2(x, y), name);
         }
         return new Point(context.getDrawing(), new Vec2(x, y));
     }

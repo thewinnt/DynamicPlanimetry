@@ -66,7 +66,7 @@ public class NameComponentProperty extends Property<NameComponent> {
         Table output = new Table();
         Table col1 = new Table();
         Table col2 = new Table();
-        SelectBox<String> selector = new SelectBox<>(styles.getListStyle(Size.LARGE));
+        SelectBox<String> selector = new SelectBox<>(styles.getListStyle(Size.MEDIUM));
         selector.setItems(NameComponent.ALLOWED_NAMES);
         selector.setSelectedIndex(letter);
         selector.addListener(new ChangeListener() {
@@ -76,7 +76,7 @@ public class NameComponentProperty extends Property<NameComponent> {
                 update();
             }
         });
-        TextField indexField = new TextField(Integer.toString(index), styles.getTextFieldStyle(Size.SMALL, true)) {
+        TextField indexField = new TextField(Integer.toString(index), styles.getTextFieldStyle(Size.VERY_SMALL, true)) {
             @Override
             public float getPrefWidth() {
                 return Gdx.graphics.getHeight() / 30;
@@ -105,7 +105,7 @@ public class NameComponentProperty extends Property<NameComponent> {
         });
         indexField.addListener(new InputListener() {
             private void unfocus() {
-                indexField.getStage().setKeyboardFocus(null);
+                // indexField.getStage().setKeyboardFocus(null);
                 try {
                     int result = Integer.valueOf(indexField.getText());
                     index = result;
@@ -135,7 +135,7 @@ public class NameComponentProperty extends Property<NameComponent> {
             }
         });
         
-        TextField dashesField = new TextField(Integer.toString(dashes), styles.getTextFieldStyle(Size.SMALL, true)) {
+        TextField dashesField = new TextField(Integer.toString(dashes), styles.getTextFieldStyle(Size.VERY_SMALL, true)) {
             @Override
             public float getPrefWidth() {
                 return Gdx.graphics.getHeight() / 30;
@@ -165,7 +165,7 @@ public class NameComponentProperty extends Property<NameComponent> {
         });
         dashesField.addListener(new InputListener() {
             private void unfocus() {
-                dashesField.getStage().setKeyboardFocus(null);
+                // dashesField.getStage().setKeyboardFocus(null);
                 try {
                     short result = Short.valueOf(dashesField.getText());
                     dashes = result;
