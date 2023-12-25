@@ -78,7 +78,7 @@ public class InfiniteLine extends Line {
     }
 
     @Override
-    public ShapeDeserializer<InfiniteLine> getDeserializer() {
+    public ShapeDeserializer<? extends InfiniteLine> getDeserializer() {
         return ShapeData.INFINITE_LINE;
     }
 

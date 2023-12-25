@@ -2,6 +2,7 @@ package net.thewinnt.planimetry.shapes.point;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
@@ -94,6 +95,16 @@ public class PointReference extends PointProvider {
     @Override
     protected boolean shouldAutoAssingnName() {
         return false;
+    }
+
+    @Override
+    public void addMovementListener(Consumer<Vec2> listener) {
+        this.point.addMovementListener(listener);
+    }
+
+    @Override
+    public boolean removeMovementListener(Consumer<Vec2> listener) {
+        return this.point.removeMovementListener(listener);
     }
 
     @Override

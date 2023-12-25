@@ -36,11 +36,11 @@ public class CreateParallelLine extends Function<Line> {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
-                board.startCreation(new ParallelLineFactory(board, shape, type));
+                board.startCreation(new ParallelLineFactory(board, shape));
                 use();
             }
         });
-        table.add(new ComponentLabel(Component.literal("Построить параллельную прямую"), DynamicPlanimetry.getInstance()::getFont, Gdx.graphics.getHeight() / Size.MEDIUM.factor));
+        table.add(new ComponentLabel(Component.literal("Построить параллельную прямую (демо!!!)"), DynamicPlanimetry.getInstance()::getFont, Gdx.graphics.getHeight() / Size.MEDIUM.factor));
         table.add(apply).right().expand();
         return table;
     }
