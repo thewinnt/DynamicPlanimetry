@@ -25,7 +25,7 @@ public class MousePoint extends PointProvider {
 
     @Override
     public Vec2 getPosition() {
-        DrawingBoard board = ((DynamicPlanimetry)Gdx.app.getApplicationListener()).editorScreen.getBoard();
+        DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
         return new Vec2(board.xb(Gdx.input.getX()), board.yb(Gdx.input.getY()));
     }
 

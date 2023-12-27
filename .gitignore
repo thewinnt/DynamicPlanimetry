@@ -61,6 +61,7 @@ www-test/
 *.ipr
 *.iws
 *.iml
+.fleet/
 
 ## Eclipse:
 .classpath
@@ -153,9 +154,16 @@ Thumbs.db
 *.*#
 *#*#
 
-/dev/
+## VSCode
 /.vscode/
+
+## App data
 /assets/drawings/
 /drawings/
 settings.dat
 /assets/settings.dat
+
+## Unrelated files
+/dev/
+*.docx
+*.doc

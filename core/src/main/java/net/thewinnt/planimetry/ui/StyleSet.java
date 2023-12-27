@@ -108,7 +108,7 @@ public class StyleSet {
 
             // list styles
             ScrollPaneStyle paneStyle = new ScrollPaneStyle(fullBlack, fullBlack, fullWhite, fullBlack, fullWhite);
-            ListStyle innerStyle = new ListStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), Theme.current().inactive(), selectionOver);
+            ListStyle innerStyle = new ListStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), Theme.current().textButton(), selectionOver);
             innerStyle.over = selectionOver;
             innerStyle.background = normal;
             innerStyle.down = new RectangleDrawable(drawer).withColors(Theme.current().pressed(), null);
