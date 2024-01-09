@@ -271,8 +271,16 @@ public class DrawingBoard extends Actor {
         return scale;
     }
 
+    public void setScaleBoard(double scale) {
+        this.scale = scale;
+    }
+
     public Vec2 getOffset() {
         return offset;
+    }
+
+    public void setOffset(Vec2 offset) {
+        this.offset = offset;
     }
 
     public double minX() {

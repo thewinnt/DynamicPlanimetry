@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.Drawing;
+import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.CircleFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory;
@@ -28,6 +29,8 @@ import net.thewinnt.planimetry.ui.properties.layout.PropertyLayout;
 public class EditorScreen extends FlatUIScreen {
     private DrawingBoard board;
     private ShapeSettingsBackground settings;
+    private double lastScale = -1;
+    private Vec2 lastOffset = null;
     
     private Table creation;
     private ScrollPane selectedShapeName;
@@ -206,6 +209,14 @@ public class EditorScreen extends FlatUIScreen {
     @Override
     public void show() {
         super.show();
+
+        if (lastScale > 0 && lastOffset != null) {
+            board.setScaleBoard(lastScale);
+            board.setOffset(lastOffset);
+            lastScale = -1;
+            lastOffset = null;
+        }
+
         final float width = Gdx.graphics.getWidth();
         final float height = Gdx.graphics.getHeight();
         final float delimiter = width - height * 0.5f;
@@ -243,5 +254,12 @@ public class EditorScreen extends FlatUIScreen {
     
     public DrawingBoard getBoard() {
         return board;
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        lastScale = board.getScale();
+        lastOffset = board.getOffset();
     }
 }

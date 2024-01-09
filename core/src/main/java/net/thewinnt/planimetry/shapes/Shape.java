@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.shapes;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -17,6 +18,10 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public abstract class Shape {
+    /** A list of shapes that this shape depends on */
+    protected final ArrayList<Shape> dependencies = new ArrayList<>();
+    /** A list of shapes that depend on this shape */
+    protected final ArrayList<Shape> dependents = new ArrayList<>();
     protected final Drawing drawing;
     private long id;
 
@@ -42,6 +47,22 @@ public abstract class Shape {
     public abstract Collection<Property<?>> getProperties();
     public Collection<Function<?>> getFunctions() {
         return Collections.emptyList();
+    }
+
+    public final Collection<Shape> getDependencies() {
+        return Collections.unmodifiableCollection(dependencies);
+    }
+
+    public final Collection<Shape> getDependingShapes() {
+        return Collections.unmodifiableCollection(dependents);
+    }
+
+    public final void addDependency(Shape shape) {
+        this.dependencies.add(shape);
+    }
+
+    public final void addDepending(Shape shape) {
+        this.dependents.add(shape);
     }
 
     public abstract Component getName();

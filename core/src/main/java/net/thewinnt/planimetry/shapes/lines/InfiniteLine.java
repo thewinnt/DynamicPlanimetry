@@ -8,6 +8,7 @@ import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
@@ -57,7 +58,7 @@ public class InfiniteLine extends Line {
         };
         Vec2 a = this.a.getPosition();
         Vec2 b = this.b.getPosition();
-        if (a.x == b.x) {
+        if (MathHelper.roughlyEquals(a.x, b.x)) {
             drawer.line(board.bx(a.x), board.getY(), board.bx(b.x), board.getY() + board.getHeight(), lineColor, getThickness(board.getScale()));
         } else {
             drawer.line(board.getX(), board.by(formula.apply(board.minX())), board.getX() + board.getWidth(), board.by(formula.apply(board.maxX())), lineColor, getThickness(board.getScale()));

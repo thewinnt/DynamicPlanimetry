@@ -3,6 +3,7 @@ package net.thewinnt.planimetry;
 import net.thewinnt.planimetry.shapes.Circle;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.ShapeDeserializer;
+import net.thewinnt.planimetry.shapes.lines.AngledInfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
@@ -29,6 +30,7 @@ public class ShapeData {
     public static final ShapeDeserializer<LineSegment> LINE_SEGMENT = register("line_segment", LineSegment::readNbt);
     public static final ShapeDeserializer<Ray> RAY = register("ray", Ray::readNbt);
     public static final ShapeDeserializer<ParallelInfiniteLine> PARALLEL_INFINITE_LINE = register("parallel_infinite_line", ParallelInfiniteLine::readNbt);
+    public static final ShapeDeserializer<AngledInfiniteLine> ANGLED_INFINITE_LINE = register("angled_infinite_line", AngledInfiniteLine::readNbt);
 
     // POLYGONS
     public static final ShapeDeserializer<MultiPointLine> POLYGONAL_CHAIN = register("polygonal_chain", MultiPointLine::readNbt);

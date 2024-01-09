@@ -25,6 +25,10 @@ public interface Component {
         return new MultiComponent(List.of(components));
     }
 
+    public static Component optional(Component component) {
+        return component == null ? Empty.INSTANCE : component;
+    }
+
     static class Empty implements Component {
         public static final Empty INSTANCE = new Empty();
 

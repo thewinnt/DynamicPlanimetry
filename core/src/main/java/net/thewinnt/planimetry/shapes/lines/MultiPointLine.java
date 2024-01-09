@@ -98,15 +98,21 @@ public class MultiPointLine extends Shape {
     @Override
     public Collection<Property<?>> getProperties() {
         List<Property<?>> properties = new ArrayList<>();
+        for (PointProvider i : points) {
+            properties.add(new EnclosingProperty(i.getName(), i.getProperties()));
+        }
+        properties.add(new DisplayProperty(Component.literal("Длина"), () -> Component.literal(DynamicPlanimetry.formatNumber(getPerimeter()))));
+        return properties;
+    }
+
+    public double getPerimeter() {
         Vec2 prevPoint = points.get(0).getPosition();
         double totalLength = 0;
         for (PointProvider i : points) {
-            properties.add(new EnclosingProperty(i.getName(), i.getProperties()));
             totalLength += i.getPosition().distanceTo(prevPoint);
             prevPoint = i.getPosition();
         }
-        properties.add(new DisplayProperty(Component.literal("Длина"), Component.literal(DynamicPlanimetry.formatNumber(totalLength))));
-        return properties;
+        return totalLength;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package net.thewinnt.planimetry.shapes.point.relative;
 
+import static net.thewinnt.planimetry.ui.text.Component.literal;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -12,6 +14,7 @@ import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.NameComponentProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -21,6 +24,7 @@ public class TangentOffsetPoint extends PointProvider {
     private final PointProvider start;
     private double tanAngle;
     private double offset;
+    private final DisplayProperty sourceDescription;
     private final NumberProperty angleProprety;
     private final NumberProperty offsetProperty;
     private final NameComponentProperty nameProperty;
@@ -30,11 +34,12 @@ public class TangentOffsetPoint extends PointProvider {
         this.start = start;
         this.tanAngle = tanAngle;
         this.offset = offset;
-        this.angleProprety = new NumberProperty(Component.literal("Тангенс"), tanAngle);
-        this.angleProprety.addValueChangeListener(angle -> TangentOffsetPoint.this.tanAngle = angle);
-        this.offsetProperty = new NumberProperty(Component.literal("Расстояние"), offset);
+        this.sourceDescription = new DisplayProperty(Component.of(literal("Относительно точки "), Component.optional(start.getNameComponent())));
+        this.angleProprety = new NumberProperty(literal("Угол (в градусах)"), Math.toDegrees(Math.atan(tanAngle)));
+        this.angleProprety.addValueChangeListener(angle -> TangentOffsetPoint.this.tanAngle = Math.tan(Math.toRadians(angle)));
+        this.offsetProperty = new NumberProperty(literal("Расстояние"), offset);
         this.offsetProperty.addValueChangeListener(distance -> TangentOffsetPoint.this.offset = distance);
-        this.nameProperty = new NameComponentProperty(Component.literal("Имя"), this.name);
+        this.nameProperty = new NameComponentProperty(literal("Имя"), this.name);
         this.nameProperty.addValueChangeListener(component -> setName(component));
     }
     
@@ -43,11 +48,12 @@ public class TangentOffsetPoint extends PointProvider {
         this.start = start;
         this.tanAngle = tanAngle;
         this.offset = offset;
-        this.angleProprety = new NumberProperty(Component.literal("Тангенс"), tanAngle);
-        this.angleProprety.addValueChangeListener(angle -> TangentOffsetPoint.this.tanAngle = angle);
-        this.offsetProperty = new NumberProperty(Component.literal("Расстояние"), offset);
+        this.sourceDescription = new DisplayProperty(Component.of(literal("Относительно точки "), Component.optional(start.getNameComponent())));
+        this.angleProprety = new NumberProperty(literal("Угол (в градусах)"), Math.toDegrees(Math.atan(tanAngle)));
+        this.angleProprety.addValueChangeListener(angle -> TangentOffsetPoint.this.tanAngle = Math.tan(Math.toRadians(angle)));
+        this.offsetProperty = new NumberProperty(literal("Расстояние"), offset);
         this.offsetProperty.addValueChangeListener(distance -> TangentOffsetPoint.this.offset = distance);
-        this.nameProperty = new NameComponentProperty(Component.literal("Имя"), this.name);
+        this.nameProperty = new NameComponentProperty(literal("Имя"), this.name);
         this.nameProperty.addValueChangeListener(component -> setName(component));
     }
 
@@ -114,7 +120,7 @@ public class TangentOffsetPoint extends PointProvider {
 
     @Override
     public Collection<Property<?>> getProperties() {
-        return List.of(angleProprety, offsetProperty, nameProperty);
+        return List.of(sourceDescription, angleProprety, offsetProperty, nameProperty);
     }
 
     public double getAngle() {

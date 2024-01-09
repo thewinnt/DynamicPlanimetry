@@ -13,6 +13,7 @@ import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.functions.CreateParallelLine;
+import net.thewinnt.planimetry.ui.functions.CreatePerpendicularLine;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.functions.LineTypeConversion;
 import net.thewinnt.planimetry.ui.properties.Property;
@@ -63,7 +64,7 @@ public abstract class Line extends Shape {
 
     @Override
     public Collection<Function<?>> getFunctions() {
-        return List.of(new LineTypeConversion(drawing, this), new CreateParallelLine(drawing, this));
+        return List.of(new LineTypeConversion(drawing, this), new CreateParallelLine(drawing, this), new CreatePerpendicularLine(drawing, this));
     }
 
     @Override

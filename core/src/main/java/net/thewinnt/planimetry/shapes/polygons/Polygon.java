@@ -5,6 +5,7 @@ import java.util.Collection;
 import com.badlogic.gdx.graphics.Color;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -14,6 +15,9 @@ import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
+import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -76,6 +80,36 @@ public class Polygon extends MultiPointLine {
             minDist = cache;
         }
         return minDist;
+    }
+
+    @Override
+    public Collection<Property<?>> getProperties() {
+        var prev = super.getProperties();
+        prev.add(new DisplayProperty(Component.literal("Площадь"), () -> Component.literal(DynamicPlanimetry.formatNumber(getArea()))));
+        return prev;
+    }
+
+    @Override
+    public double getPerimeter() {
+        Vec2 prevPoint = points.get(0).getPosition();
+        double totalLength = 0;
+        for (PointProvider i : points) {
+            totalLength += i.getPosition().distanceTo(prevPoint);
+            prevPoint = i.getPosition();
+        }
+        return totalLength + prevPoint.distanceTo(points.get(0).getPosition());
+    }
+
+    public double getArea() {
+        double xa = 0;
+        double ya = 0;
+        for (int i = this.points.size() - 1; i > 0; i--) {
+            Vec2 pos1 = this.points.get(i).getPosition();
+            Vec2 pos2 = this.points.get(i - 1).getPosition();
+            xa += pos1.x * pos2.y;
+            ya = pos1.y * pos2.x;
+        }
+        return Math.abs((xa - ya) / 2);
     }
 
     @Override

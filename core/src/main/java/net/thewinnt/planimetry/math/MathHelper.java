@@ -6,7 +6,7 @@ public class MathHelper {
     public static final double HALF_PI = Math.PI / 2;
 
     public static boolean roughlyEquals(double a, double b) {
-        return a - b < Math.pow(2, DynamicPlanimetry.SETTINGS.getMathPrecision());
+        return Math.abs(a - b) < Math.pow(2, DynamicPlanimetry.SETTINGS.getMathPrecision());
     }
 
     public static Vec2 continueFromTan(Vec2 from, double tan, double distance) {

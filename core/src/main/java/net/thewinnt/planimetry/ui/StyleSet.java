@@ -54,8 +54,8 @@ public class StyleSet {
     public StyleSet(ShapeDrawer drawer, FontProvider font) {
         this.drawer = drawer;
         this.font = font;
-        this.fullBlack = new RectangleDrawable(drawer).withColors(Color.BLACK, Color.BLACK);
-        this.fullWhite = new RectangleDrawable(drawer).withColors(Color.WHITE, Color.WHITE);
+        this.fullBlack = new RectangleDrawable(drawer).withColors(Color.BLACK.cpy(), Color.BLACK.cpy());
+        this.fullWhite = new RectangleDrawable(drawer).withColors(Color.WHITE.cpy(), Color.WHITE.cpy());
         this.normal = new RectangleDrawable(drawer).withColors(Theme.current().button(), Theme.current().outline());
         this.pressed = new RectangleDrawable(drawer).withColors(Theme.current().pressed(), Theme.current().outline());
         this.over = new RectangleDrawable(drawer).withColors(Theme.current().main(), Theme.current().outline());
