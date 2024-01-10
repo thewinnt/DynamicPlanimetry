@@ -18,7 +18,7 @@ public class MathHelper {
     }
 
     public static boolean isPointOnSegment(Vec2 a, Vec2 b, Vec2 point) {
-        return roughlyEquals(a.distanceToSqr(point) + b.distanceToSqr(point), a.distanceToSqr(b));
+        return roughlyEquals(a.distanceTo(point) + b.distanceTo(point), a.distanceTo(b));
     }
 
     public static double distanceToLine(Vec2 a, Vec2 b, Vec2 point) {

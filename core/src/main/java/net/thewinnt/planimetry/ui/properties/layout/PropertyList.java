@@ -15,6 +15,7 @@ import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.drawable.DynamicIcon;
 import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
 import net.thewinnt.planimetry.ui.drawable.RectangledIconDrawable;
+import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class PropertyList extends ScrollPane {

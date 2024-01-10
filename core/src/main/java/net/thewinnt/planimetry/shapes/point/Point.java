@@ -60,12 +60,12 @@ public class Point extends PointProvider {
 
     @Override
     public double distanceToMouse(Vec2 point, DrawingBoard board) {
-        return point.distanceToSqr(position);
+        return point.distanceTo(position);
     }
 
     @Override
     public double distanceToMouse(double x, double y, DrawingBoard board) {
-        return position.distanceToSqr(x, y);
+        return position.distanceTo(x, y);
     }
 
     @Override

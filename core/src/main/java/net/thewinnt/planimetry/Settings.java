@@ -12,9 +12,9 @@ import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.properties.PropertyEntry;
+import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
-import net.thewinnt.planimetry.ui.properties.layout.PropertyEntry;
-import net.thewinnt.planimetry.ui.properties.layout.PropertyLayout;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.SelectionProperty;
@@ -77,7 +77,7 @@ public class Settings {
     }
 
     public PropertyLayout getLayout(StyleSet styles) {
-        return new PropertyLayout(List.of(theme, displayPresicion, showGrid), styles);
+        return new PropertyLayout(List.of(theme, displayPresicion, showGrid), styles, null, true);
     }
 
     public void fromNbt(CompoundTag nbt) {

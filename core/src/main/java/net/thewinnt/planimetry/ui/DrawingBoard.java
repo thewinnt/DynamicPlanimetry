@@ -309,7 +309,7 @@ public class DrawingBoard extends Actor {
 
     public Shape getHoveredShape(double mx, double my) {
         Shape hovered = null;
-        double minDistance = 8 / scale;
+        double minDistance = 16 / scale;
         Collection<Shape> ignore;
         if (creatingShape != null) {
             ignore = creatingShape.getSuggestedShapes();
@@ -338,7 +338,7 @@ public class DrawingBoard extends Actor {
 
     public Shape getHoveredShape(double mx, double my, Predicate<Shape> predicate) {
         Shape hovered = null;
-        double minDistance = 8 / scale;
+        double minDistance = 16 / scale;
         Collection<Shape> ignore;
         if (creatingShape != null) {
             ignore = creatingShape.getSuggestedShapes();

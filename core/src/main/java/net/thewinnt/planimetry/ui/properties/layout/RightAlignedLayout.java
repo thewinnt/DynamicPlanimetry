@@ -4,6 +4,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.Layout;
 import com.badlogic.gdx.utils.Align;
 
+import net.thewinnt.planimetry.ui.properties.PropertyEntry;
+
 public class RightAlignedLayout implements CustomLayout {
     public static final RightAlignedLayout INSTANCE = new RightAlignedLayout();
 

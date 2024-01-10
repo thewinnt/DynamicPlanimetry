@@ -24,7 +24,8 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.functions.Function;
-import net.thewinnt.planimetry.ui.properties.layout.PropertyLayout;
+import net.thewinnt.planimetry.ui.properties.PropertyLayout;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class EditorScreen extends FlatUIScreen {
     private DrawingBoard board;
@@ -190,8 +191,14 @@ public class EditorScreen extends FlatUIScreen {
         creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5);
 
         if (selection != null) {
-            selectedShapeName.setActor(new ComponentLabel(selection.getName(), app::getBoldFont, Gdx.graphics.getHeight() / Size.MEDIUM.factor));
-            properties.setActor(new PropertyLayout(selection.getProperties(), styles));
+            selectedShapeName.setActor(new ComponentLabel(Component.literal("Свойства"), app::getBoldFont, Gdx.graphics.getHeight() / Size.MEDIUM.factor));
+            properties.setActor(new PropertyLayout(selection.getProperties(), styles, selection.getName(), true));
+            ((PropertyLayout)properties.getActor()).list.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    layout();
+                }
+            });
             for (Function<?> i : selection.getFunctions()) {
                 i.addUseListener(shape -> show());
                 functions.add(i.setupActors(styles)).expandX().fillX().row();
@@ -228,6 +235,14 @@ public class EditorScreen extends FlatUIScreen {
         settings.setSize(height * 0.5f, height);
 
         rebuildUI(board.getSelection());
+
+        layout();
+    }
+
+    private void layout() {
+        final float width = Gdx.graphics.getWidth();
+        final float height = Gdx.graphics.getHeight();
+        final float delimiter = width - height * 0.5f;
 
         creation.setSize(height * 0.5f, creation.getPrefHeight());
         creation.setPosition(delimiter, height - creation.getHeight());

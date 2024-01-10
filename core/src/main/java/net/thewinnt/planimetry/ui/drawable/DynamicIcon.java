@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.ui.drawable;
 
+import net.thewinnt.planimetry.ui.Theme;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 import space.earlygrey.shapedrawer.scene2d.ShapeDrawerDrawable;
@@ -36,7 +37,11 @@ public abstract class DynamicIcon extends ShapeDrawerDrawable {
         @Override
         public void render(float x, float y, float size) {
             super.render(x, y, size);
-            drawer.filledTriangle(x(8), y(8), x(33), y(20.5f), x(8), y(33));
+            drawer.setColor(Theme.current().outline());
+            drawer.path(new float[]{x(14), y(7), x(28), y(21), x(14), y(35)}, 3, JoinType.NONE, true);
+            drawer.filledCircle(x(14), y(7), 1.5f);
+            drawer.filledCircle(x(28), y(21), 1.5f);
+            drawer.filledCircle(x(14), y(35), 1.5f);
         }
     };
     
@@ -44,7 +49,11 @@ public abstract class DynamicIcon extends ShapeDrawerDrawable {
         @Override
         public void render(float x, float y, float size) {
             super.render(x, y, size);
-            drawer.filledTriangle(x(8), y(8), x(20.5f), y(33), x(33), y(8));
+            drawer.setColor(Theme.current().outline());
+            drawer.path(new float[]{x(7), y(14), x(21), y(28), x(35), y(14)}, 3, JoinType.NONE, true);
+            drawer.filledCircle(x(7), y(14), 1.5f);
+            drawer.filledCircle(x(21), y(28), 1.5f);
+            drawer.filledCircle(x(35), y(14), 1.5f);
         }
     };
 

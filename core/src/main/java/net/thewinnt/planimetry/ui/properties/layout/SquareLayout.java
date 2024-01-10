@@ -2,6 +2,8 @@ package net.thewinnt.planimetry.ui.properties.layout;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import net.thewinnt.planimetry.ui.properties.PropertyEntry;
+
 public class SquareLayout implements CustomLayout {
     public static final SquareLayout INSTANCE = new SquareLayout();
 
