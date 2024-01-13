@@ -14,6 +14,10 @@ import net.thewinnt.planimetry.util.FontProvider;
 public record NameComponent(byte letter, int index, short dashes) implements Component {
     public static final String[] ALLOWED_NAMES = new String[]{"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
 
+    public NameComponent(int letter, int index, int dashes) {
+        this((byte)letter, index, (short)dashes);
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder(ALLOWED_NAMES[letter]);
@@ -54,7 +58,8 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
         return new Vec2(w1 + Math.max(w2, w3), fontMain.getLineHeight());
     }
 
-    public CompoundTag toNbt() {
+    @Override
+    public CompoundTag writeNbt() {
         CompoundTag nbt = new CompoundTag();
         nbt.putByte("letterId", letter);
         nbt.putInt("index", index);
@@ -62,7 +67,12 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
         return nbt;
     }
 
-    public static NameComponent fromNbt(CompoundTag nbt) {
+    @Override
+    public ComponentDeserializer<?> getDeserializer() {
+        return ComponentRegistry.NAME;
+    }
+
+    public static NameComponent readNbt(CompoundTag nbt) {
         byte letter = nbt.getByte("letterId").byteValue();
         int index = nbt.getInt("index").intValue();
         short dashes = nbt.getShort("dashes").shortValue();

@@ -109,6 +109,9 @@ public abstract class Shape {
         long id = nbt.getLong("id").getValue();
         Shape shape = ShapeData.getDeserializer(type).deserialize(nbt, context);
         shape.setId(id);
+        if (nbt.containsCompound("name_override")) {
+            shape.setNameOverride(Component.fromNbt(nbt.getCompound("name_override")));
+        }
         return shape;
     }
 
@@ -116,6 +119,9 @@ public abstract class Shape {
         CompoundTag nbt = this.writeNbt(context);
         nbt.putLong("id", this.id);
         nbt.putString("type", ShapeData.getShapeType(this.getDeserializer()));
+        if (nameOverride != null) {
+            nbt.put("name_override", nameOverride.toNbt());
+        }
         return nbt;
     }
 

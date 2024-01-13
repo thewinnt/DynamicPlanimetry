@@ -13,9 +13,17 @@ import net.thewinnt.planimetry.ui.StyleSet.Size;
 public class SaveEntry extends Button {
     public static final DateFormat TIME_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     private Label nameLabel;
+    public final String name;
+    public final long creationTime;
+    public final long editTime;
+    public final String filename;
 
     public SaveEntry(String name, long creationTime, long editTime, String filename, StyleSet styles) {
         super(styles.getButtonStyle(Size.MEDIUM, true));
+        this.name = name;
+        this.creationTime = creationTime;
+        this.editTime = editTime;
+        this.filename = filename;
         this.nameLabel = new Label(name, styles.getLabelStyle(Size.MEDIUM));
         Label creationTimeLabel = new Label("Время создания: " + TIME_FORMAT.format(new Date(creationTime)), styles.getLabelStyle(Size.SMALL));
         Label editTimeLabel = new Label("Последнее изменение: " + TIME_FORMAT.format(new Date(editTime)), styles.getLabelStyle(Size.SMALL));

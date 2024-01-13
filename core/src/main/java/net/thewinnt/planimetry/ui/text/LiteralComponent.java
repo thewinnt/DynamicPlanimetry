@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
+import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.util.FontProvider;
 
@@ -40,5 +41,21 @@ public record LiteralComponent(String text) implements Component, CharSequence {
     @Override
     public String toString() {
         return text;
+    }
+
+    @Override
+    public CompoundTag writeNbt() {
+        CompoundTag output = new CompoundTag();
+        output.putString("text", text);
+        return output;
+    }
+
+    @Override
+    public ComponentDeserializer<?> getDeserializer() {
+        return ComponentRegistry.LITERAL;
+    }
+
+    public static LiteralComponent readNbt(CompoundTag nbt) {
+        return new LiteralComponent(nbt.getString("text").getValue());
     }
 }

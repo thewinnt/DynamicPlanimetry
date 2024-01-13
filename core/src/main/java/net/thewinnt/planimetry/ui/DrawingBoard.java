@@ -43,7 +43,11 @@ public class DrawingBoard extends Actor {
         this.drawer = drawer;
         this.font = font;
         this.drawing = drawing;
-        this.drawing.addSwapListener((old, neo) -> selection = neo);
+        this.drawing.addSwapListener((old, neo) -> {
+            if (selection == old) {
+                selection = neo;
+            }
+        });
         this.addListener(new ActorGestureListener(DynamicPlanimetry.IS_MOBILE ? 20 : 2, 0.4f, 1.1f, Integer.MAX_VALUE) {
             @Override
             public void zoom(InputEvent event, float initialDistance, float distance) {

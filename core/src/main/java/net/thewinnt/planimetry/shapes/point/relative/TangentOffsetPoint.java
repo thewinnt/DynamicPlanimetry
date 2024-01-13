@@ -107,7 +107,7 @@ public class TangentOffsetPoint extends PointProvider {
         double offset = nbt.getDouble("offset").getValue();
         PointProvider point = (PointProvider)context.resolveShape(nbt.getLong("point").longValue());
         if (nbt.containsCompound("name")) {
-            NameComponent name = NameComponent.fromNbt(nbt.getCompound("name"));
+            NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
             return new TangentOffsetPoint(context.getDrawing(), point, angle, offset, name);
         }
         return new TangentOffsetPoint(context.getDrawing(), point, angle, offset);

@@ -94,6 +94,16 @@ public class PointReference extends PointProvider {
     }
 
     @Override
+    public void setNameOverride(Component nameOverride) {
+        this.point.setNameOverride(nameOverride);
+    }
+
+    @Override
+    public Component getNameOverride() {
+        return this.point.getNameOverride();
+    }
+
+    @Override
     protected boolean shouldAutoAssingnName() {
         return false;
     }

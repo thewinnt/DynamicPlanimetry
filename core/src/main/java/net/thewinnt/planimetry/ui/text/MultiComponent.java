@@ -1,10 +1,13 @@
 package net.thewinnt.planimetry.ui.text;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
+import dev.dewy.nbt.tags.collection.CompoundTag;
+import dev.dewy.nbt.tags.collection.ListTag;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.util.FontProvider;
 
@@ -37,5 +40,30 @@ public class MultiComponent implements Component {
             height = Math.max(height, size.y);
         }
         return new Vec2(offx, y);
+    }
+
+    @Override
+    public CompoundTag writeNbt() {
+        CompoundTag output = new CompoundTag();
+        ListTag<CompoundTag> list = new ListTag<>();
+        for (Component i : this.components) {
+            list.add(i.toNbt());
+        }
+        output.put("components", list);
+        return output;
+    }
+
+    @Override
+    public ComponentDeserializer<?> getDeserializer() {
+        return ComponentRegistry.MULTIPLE;
+    }
+
+    public static MultiComponent readNbt(CompoundTag nbt) {
+        ListTag<CompoundTag> list = nbt.getList("components");
+        ArrayList<Component> components = new ArrayList<>(list.size());
+        for (CompoundTag i : list) {
+            components.add(Component.fromNbt(i));
+        }
+        return new MultiComponent(components);
     }
 }

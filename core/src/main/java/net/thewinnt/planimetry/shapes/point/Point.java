@@ -113,7 +113,7 @@ public class Point extends PointProvider {
         double x = nbt.getDouble("x").getValue();
         double y = nbt.getDouble("y").getValue();
         if (nbt.containsCompound("name")) {
-            NameComponent name = NameComponent.fromNbt(nbt.getCompound("name"));
+            NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
             return new Point(context.getDrawing(), new Vec2(x, y), name);
         }
         return new Point(context.getDrawing(), new Vec2(x, y));

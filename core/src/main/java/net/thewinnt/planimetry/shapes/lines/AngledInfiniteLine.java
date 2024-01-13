@@ -16,11 +16,13 @@ import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.LiteralComponent;
+import net.thewinnt.planimetry.ui.text.NameComponent;
 
 public class AngledInfiniteLine extends InfiniteLine {
     public static final LiteralComponent SOURCE_PROPERTY = Component.literal("Исходная прямая");
     public static final LiteralComponent ANGLE_PROPERTY = Component.literal("Угол к прямой");
     public static final LiteralComponent HELPER_POINT = Component.literal("Вспомогательная точка");
+    public static final NameComponent DUMMY_NAME = new NameComponent(0, 0, 0);
     private final DisplayProperty sourceProperty;
     private final NumberProperty angleProperty;
     private Line base;
@@ -28,7 +30,7 @@ public class AngledInfiniteLine extends InfiniteLine {
     private PointProvider point;
 
     public AngledInfiniteLine(Drawing drawing, Line baseLine, PointProvider point, double angleDeg) {
-        super(drawing, point, new TangentOffsetPoint(drawing, point, Math.tan(Math.atan(baseLine.getSlope()) + angleDeg), 1, null));
+        super(drawing, point, new TangentOffsetPoint(drawing, point, Math.tan(Math.atan(baseLine.getSlope()) + angleDeg), 1, DUMMY_NAME));
         this.b.getPoint().setNameOverride(HELPER_POINT);
         this.base = baseLine;
         this.point = point;
