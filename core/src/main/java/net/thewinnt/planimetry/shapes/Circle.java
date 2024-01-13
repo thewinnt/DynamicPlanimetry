@@ -129,6 +129,7 @@ public class Circle extends Shape {
 
     @Override
     public Component getName() {
+        if (nameOverride != null) return nameOverride;
         return Component.of(Component.literal(getTypeName()), this.center.getNameComponent());
     }
 

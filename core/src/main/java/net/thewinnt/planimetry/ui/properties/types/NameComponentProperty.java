@@ -9,6 +9,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -32,9 +33,15 @@ public class NameComponentProperty extends Property<NameComponent> {
 
     public NameComponentProperty(Component name, NameComponent value) {
         super(name);
-        this.letter = value.letter();
-        this.index = value.index();
-        this.dashes = value.dashes();
+        if (value == null) {
+            this.letter = 0;
+            this.index = 0;
+            this.dashes = 0;
+        } else {
+            this.letter = value.letter();
+            this.index = value.index();
+            this.dashes = value.dashes();
+        }
     }
 
     @Override
@@ -66,7 +73,12 @@ public class NameComponentProperty extends Property<NameComponent> {
         Table output = new Table();
         Table col1 = new Table();
         Table col2 = new Table();
-        SelectBox<String> selector = new SelectBox<>(styles.getListStyle(Size.MEDIUM));
+        SelectBox<String> selector = new SelectBox<>(styles.getListStyle(Size.MEDIUM)) {
+            @Override protected void onShow(Actor scrollPane, boolean below) {}
+            @Override protected void onHide(Actor scrollPane) {
+                scrollPane.addAction(Actions.removeActor());
+            }
+        };
         selector.setItems(NameComponent.ALLOWED_NAMES);
         selector.setSelectedIndex(letter);
         selector.addListener(new ChangeListener() {

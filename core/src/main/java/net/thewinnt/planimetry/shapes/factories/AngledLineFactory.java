@@ -2,7 +2,6 @@ package net.thewinnt.planimetry.shapes.factories;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
-import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.shapes.lines.AngledInfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.Line;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
@@ -14,10 +13,10 @@ public class AngledLineFactory extends ShapeFactory {
     private final PointReference point;
     private boolean isDone;
 
-    public AngledLineFactory(DrawingBoard board, Line originalLine) {
+    public AngledLineFactory(DrawingBoard board, Line originalLine, double angle) {
         super(board);
         this.point = new PointReference(new MousePoint(board.getDrawing()));
-        this.newLine = new AngledInfiniteLine(board.getDrawing(), originalLine, point, MathHelper.HALF_PI);
+        this.newLine = new AngledInfiniteLine(board.getDrawing(), originalLine, point, Math.toRadians(angle));
         addShape(newLine);
         addShape(point);
     }

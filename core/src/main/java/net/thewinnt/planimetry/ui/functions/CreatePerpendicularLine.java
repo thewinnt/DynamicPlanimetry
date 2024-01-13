@@ -18,7 +18,7 @@ public class CreatePerpendicularLine extends BasicNamedFunction<Line> {
             shape,
             line -> {
                 DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
-                board.startCreation(new AngledLineFactory(board, line));
+                board.startCreation(new AngledLineFactory(board, line, 90));
             },
             NAME,
             "Построить"

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
@@ -48,7 +49,12 @@ public class SelectionProperty<T> extends Property<T> {
     @Override
     public WidgetGroup getActorSetup(StyleSet styles) {
         Table output = new Table();
-        SelectBox<T> selector = new SelectBox<>(styles.getListStyle(Size.MEDIUM));
+        SelectBox<T> selector = new SelectBox<>(styles.getListStyle(Size.MEDIUM)) {
+            @Override protected void onShow(Actor scrollPane, boolean below) {}
+            @Override protected void onHide(Actor scrollPane) {
+                scrollPane.addAction(Actions.removeActor());
+            }
+        };
         selector.setItems(options);
         selector.setSelected(selected);
         selector.addListener(new ChangeListener() {
@@ -60,6 +66,7 @@ public class SelectionProperty<T> extends Property<T> {
                 }
             }
         });
+        
         output.add(selector).expand().fill();
         return output;
     }

@@ -87,6 +87,7 @@ public class Point extends PointProvider {
 
     @Override
     public Collection<Property<?>> getProperties() {
+        if (nameOverride != null) return List.of(property);
         return List.of(property, componentProperty);
     }
 

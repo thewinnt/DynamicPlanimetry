@@ -24,6 +24,7 @@ public abstract class Shape {
     protected final ArrayList<Shape> dependents = new ArrayList<>();
     protected final Drawing drawing;
     private long id;
+    protected Component nameOverride;
 
     public Shape(Drawing drawing) {
         this.drawing = drawing;
@@ -93,6 +94,14 @@ public abstract class Shape {
 
     private final void setId(long id) {
         this.id = id;
+    }
+
+    public Component getNameOverride() {
+        return nameOverride;
+    }
+
+    public void setNameOverride(Component nameOverride) {
+        this.nameOverride = nameOverride;
     }
 
     public static Shape fromNbt(CompoundTag nbt, LoadingContext context) {

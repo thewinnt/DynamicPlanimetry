@@ -30,13 +30,13 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
         float x2 = layoutMain.width + 2;
         float indexLength;
         if (index != 0) {
-            fontAdditional.draw(batch, String.valueOf(index), x + x2, y - fontMain.getLineHeight() / 4);
+            fontAdditional.draw(batch, String.valueOf(index), x + x2, y - fontMain.getLineHeight() / 3);
             indexLength = FontUtils.getTextLength(fontAdditional, String.valueOf(index));
         } else {
             indexLength = 0;
         }
-        fontMain.draw(batch, "'".repeat(dashes), x + x2, y);
-        return new Vec2(x2 + Math.max(indexLength, FontUtils.getTextLength(fontAdditional, "'".repeat(dashes))), fontMain.getLineHeight());
+        fontMain.draw(batch, "'".repeat(dashes), x + x2 - 2, y + 2);
+        return new Vec2(x2 + Math.max(indexLength, FontUtils.getTextLength(fontMain, "'".repeat(dashes))), fontMain.getLineHeight());
     }
 
     @Override
@@ -50,7 +50,7 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
         } else {
             w2 = 0;
         }
-        float w3 = FontUtils.getTextLength(fontAdditional, "'".repeat(dashes));
+        float w3 = FontUtils.getTextLength(fontMain, "'".repeat(dashes));
         return new Vec2(w1 + Math.max(w2, w3), fontMain.getLineHeight());
     }
 

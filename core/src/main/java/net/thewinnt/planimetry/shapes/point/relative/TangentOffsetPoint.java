@@ -120,6 +120,7 @@ public class TangentOffsetPoint extends PointProvider {
 
     @Override
     public Collection<Property<?>> getProperties() {
+        if (nameOverride != null) return List.of(sourceDescription, angleProprety, offsetProperty);
         return List.of(sourceDescription, angleProprety, offsetProperty, nameProperty);
     }
 

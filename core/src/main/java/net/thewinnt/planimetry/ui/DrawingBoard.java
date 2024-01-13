@@ -123,24 +123,24 @@ public class DrawingBoard extends Actor {
 
     /** global space -> board space */
     public double xb(double x) {
-        return ((x - getWidth() / 2f + offset.x) / scale);
+        return ((x - getWidth() / 2d + offset.x) / scale);
     }
 
     /** global space -> board space */
     public double yb(double y) {
-        return ((y - getHeight() / 2f - offset.y) / -scale);
+        return ((y - getHeight() / 2d - offset.y) / -scale);
     }
 
     /** board space -> global (render) space */
     public float bx(double x) {
         x *= scale;
-        return x((float)(getWidth() / 2f + x - offset.x));
+        return x((float)(getWidth() / 2d + x - offset.x));
     }
 
     /** board space -> global (render) space */
     public float by(double y) {
         y *= scale;
-        return y((float)(getHeight() / 2f + y - offset.y));
+        return y((float)(getHeight() / 2d + y - offset.y));
     }
 
     public Vec2 boardToGlobal(Vec2 point) {
@@ -370,7 +370,7 @@ public class DrawingBoard extends Actor {
     public PointProvider getNearestPoint(double mx, double my) {
         PointProvider hovered = null;
         double minDistance = Double.MAX_VALUE;
-        for (Shape i : this.drawing.shapes) {
+        for (Shape i : this.drawing.points) {
             if (i instanceof PointProvider point) {
                 double distance = point.distanceToMouse(xb(mx), yb(my), this);
                 if (distance <= minDistance) {
@@ -380,6 +380,30 @@ public class DrawingBoard extends Actor {
             }
         }
         return hovered;
+    }
+
+    public double getFreeSpace(double bx, double by) {
+        double minDistance = Double.MAX_VALUE;
+        for (Shape i : this.drawing.shapes) {
+            minDistance = Math.min(minDistance, i.distanceToMouse(bx, by, this));
+        }
+        for (Shape i : this.drawing.points) {
+            minDistance = Math.min(minDistance, i.distanceToMouse(bx, by, this));
+        }
+        minDistance *= scale;
+        double sx = bx(bx);
+        double sy = by(by);
+        if (sx - minDistance < getX()) {
+            return sx - getX();
+        } else if (sx + minDistance > getX() + getWidth()) {
+            return getX() + getWidth() - sx;
+        } else if (sy - minDistance < getY()) {
+            return sy - getY();
+        } else if (sy + minDistance > getY() + getHeight()) {
+            return getY() + getHeight() - sy;
+        } else {
+            return minDistance;
+        }
     }
 
     public void addShape(Shape shape) {

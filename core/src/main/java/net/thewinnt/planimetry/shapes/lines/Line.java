@@ -12,8 +12,8 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
+import net.thewinnt.planimetry.ui.functions.CreateAngledLine;
 import net.thewinnt.planimetry.ui.functions.CreateParallelLine;
-import net.thewinnt.planimetry.ui.functions.CreatePerpendicularLine;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.functions.LineTypeConversion;
 import net.thewinnt.planimetry.ui.properties.Property;
@@ -23,7 +23,6 @@ import net.thewinnt.planimetry.ui.text.Component;
 public abstract class Line extends Shape {
     public final PointReference a;
     public final PointReference b;
-    protected Component nameOverride = null;
 
     public Line(Drawing drawing, PointProvider a, PointProvider b) {
         super(drawing);
@@ -64,17 +63,13 @@ public abstract class Line extends Shape {
 
     @Override
     public Collection<Function<?>> getFunctions() {
-        return List.of(new LineTypeConversion(drawing, this), new CreateParallelLine(drawing, this), new CreatePerpendicularLine(drawing, this));
+        return List.of(new LineTypeConversion(drawing, this), new CreateParallelLine(drawing, this), new CreateAngledLine(drawing, this));
     }
 
     @Override
     public Component getName() {
         if (nameOverride != null) return Component.of(Component.literal(getTypeName()), nameOverride);
         return Component.of(Component.literal(getTypeName()), this.a.getNameComponent(), this.b.getNameComponent());
-    }
-
-    public void setName(Component name) {
-        this.nameOverride = name;
     }
 
     @Override

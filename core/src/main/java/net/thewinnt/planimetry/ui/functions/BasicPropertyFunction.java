@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.ui.functions;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.Gdx;
@@ -15,18 +16,23 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.text.Component;
 
-public class BasicNamedFunction<T extends Shape> extends Function<T> {
-    public final Consumer<T> action;
+public class BasicPropertyFunction<T extends Shape> extends Function<T> {
+    public static final Component PARAMETERS = Component.literal("Параметры");
+    public final Consumer<Map<String, Property<?>>> action;
     public final Component name;
     public final CharSequence actionButton;
+    public final Map<String, Property<?>> properties;
 
-    public BasicNamedFunction(Drawing drawing, T shape, Consumer<T> action, Component name, CharSequence actionButton) {
+    public BasicPropertyFunction(Drawing drawing, T shape, Consumer<Map<String, Property<?>>> action, Component name, CharSequence actionButton, Map<String, Property<?>> properties) {
         super(drawing, shape);
         this.action = action;
         this.name = name;
         this.actionButton = actionButton;
+        this.properties = properties;
     }
 
     @Override
@@ -36,12 +42,14 @@ public class BasicNamedFunction<T extends Shape> extends Function<T> {
         apply.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                action.accept(shape);
+                action.accept(properties);
                 use();
             }
         });
         table.add(new ComponentLabel(name, DynamicPlanimetry.getInstance()::getBoldFont, Gdx.graphics.getHeight() / Size.MEDIUM.factor));
-        table.add(apply).right().expand();
+        table.add(apply).right().expandX().row();
+        table.add(new PropertyLayout(properties.values(), styles, PARAMETERS, false)).expand().fill().colspan(9999);
         return table;
     }
+    
 }

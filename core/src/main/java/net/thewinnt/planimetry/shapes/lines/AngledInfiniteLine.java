@@ -15,8 +15,12 @@ import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.LiteralComponent;
 
 public class AngledInfiniteLine extends InfiniteLine {
+    public static final LiteralComponent SOURCE_PROPERTY = Component.literal("Исходная прямая");
+    public static final LiteralComponent ANGLE_PROPERTY = Component.literal("Угол к прямой");
+    public static final LiteralComponent HELPER_POINT = Component.literal("Вспомогательная точка");
     private final DisplayProperty sourceProperty;
     private final NumberProperty angleProperty;
     private Line base;
@@ -24,15 +28,16 @@ public class AngledInfiniteLine extends InfiniteLine {
     private PointProvider point;
 
     public AngledInfiniteLine(Drawing drawing, Line baseLine, PointProvider point, double angleDeg) {
-        super(drawing, point, new TangentOffsetPoint(drawing, point, Math.tan(Math.atan(baseLine.getSlope()) + angleDeg), 1));
+        super(drawing, point, new TangentOffsetPoint(drawing, point, Math.tan(Math.atan(baseLine.getSlope()) + angleDeg), 1, null));
+        this.b.getPoint().setNameOverride(HELPER_POINT);
         this.base = baseLine;
         this.point = point;
         this.angle = angleDeg;
         base.a.addMovementListener(delta -> ((TangentOffsetPoint)b.getPoint()).setAngle(Math.tan(Math.atan(base.getSlope()) + angle)));
         base.b.addMovementListener(delta -> ((TangentOffsetPoint)b.getPoint()).setAngle(Math.tan(Math.atan(base.getSlope()) + angle)));
         point.addMovementListener(delta -> ((TangentOffsetPoint)b.getPoint()).setAngle(Math.tan(Math.atan(base.getSlope()) + angle)));
-        this.sourceProperty = new DisplayProperty(Component.literal("Исходная прямая"), () -> base.getName());
-        this.angleProperty = new NumberProperty(Component.literal("Угол к прямой"), Math.toDegrees(angle));
+        this.sourceProperty = new DisplayProperty(SOURCE_PROPERTY, () -> base.getName());
+        this.angleProperty = new NumberProperty(ANGLE_PROPERTY, Math.toDegrees(angle));
         this.angleProperty.addValueChangeListener(newAngle -> {
             AngledInfiniteLine.this.angle = Math.toRadians(newAngle);
             ((TangentOffsetPoint)b.getPoint()).setAngle(Math.tan(Math.atan(base.getSlope()) + angle));

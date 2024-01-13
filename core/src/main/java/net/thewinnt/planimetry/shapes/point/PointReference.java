@@ -99,7 +99,7 @@ public class PointReference extends PointProvider {
     }
 
     @Override
-    public NameComponent getNameComponent() {
+    public Component getNameComponent() {
         return this.point.getNameComponent();
     }
 

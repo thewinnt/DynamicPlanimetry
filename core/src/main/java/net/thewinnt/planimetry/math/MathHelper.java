@@ -12,6 +12,10 @@ public class MathHelper {
     public static Vec2 continueFromTan(Vec2 from, double tan, double distance) {
         return new Vec2(from.x + Math.cos(Math.atan(tan)) * distance, from.y + Math.sin(Math.atan(tan)) * distance);
     }
+
+    public static Vec2 continueFromAngle(Vec2 from, double angle, double distance) {
+        return new Vec2(from.x + Math.cos(angle) * distance, from.y + Math.sin(angle) * distance);
+    }
     
     public static Vec2 perpendicular(Vec2 point, double slope, double distance) {
         return new Vec2(point.x + Math.cos(Math.atan(slope) + HALF_PI) * distance, point.y + Math.sin(Math.atan(slope) + HALF_PI) * distance);
@@ -26,7 +30,7 @@ public class MathHelper {
     }
 
     public static double distanceToSegment(Vec2 a, Vec2 b, Vec2 point) {
-        double distance = Math.abs((b.x - a.x)*(a.y - point.y) - (a.x - point.x)*(b.y - a.y)) / a.distanceTo(b);
+        double distance = distanceToLine(a, b, point);
         double slope = (a.y - b.y) / (a.x - b.x);
         if (!isPointOnSegment(a, b, perpendicular(point, slope, distance)) && !isPointOnSegment(a, b, perpendicular(point, slope, -distance))) {
             return Math.min(a.distanceTo(point), b.distanceTo(point));

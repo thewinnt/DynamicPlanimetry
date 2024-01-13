@@ -193,12 +193,6 @@ public class EditorScreen extends FlatUIScreen {
         if (selection != null) {
             selectedShapeName.setActor(new ComponentLabel(Component.literal("Свойства"), app::getBoldFont, Gdx.graphics.getHeight() / Size.MEDIUM.factor));
             properties.setActor(new PropertyLayout(selection.getProperties(), styles, selection.getName(), true));
-            ((PropertyLayout)properties.getActor()).list.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    layout();
-                }
-            });
             for (Function<?> i : selection.getFunctions()) {
                 i.addUseListener(shape -> show());
                 functions.add(i.setupActors(styles)).expandX().fillX().row();
@@ -239,7 +233,7 @@ public class EditorScreen extends FlatUIScreen {
         layout();
     }
 
-    private void layout() {
+    public void layout() {
         final float width = Gdx.graphics.getWidth();
         final float height = Gdx.graphics.getHeight();
         final float delimiter = width - height * 0.5f;
@@ -250,11 +244,11 @@ public class EditorScreen extends FlatUIScreen {
         selectedShapeName.setSize(height * 0.5f - 10, selectedShapeName.getPrefHeight());
         selectedShapeName.setPosition(delimiter + 5, height - creation.getHeight() - selectedShapeName.getHeight() - 10);
         
-        properties.setSize(height * 0.5f, Math.min(properties.getPrefHeight(), height * 0.4f));
-        properties.setPosition(delimiter, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - 10);
+        properties.setSize((int)(height * 0.5f) - 4, Math.min(properties.getPrefHeight(), height * 0.4f));
+        properties.setPosition(delimiter + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - 10);
         
-        functions.setSize(height * 0.5f, Math.min(functions.getPrefHeight(), height * 0.4f));
-        functions.setPosition(delimiter, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - functions.getHeight() - 10);
+        functions.setSize(height * 0.5f - 4, Math.min(functions.getPrefHeight(), height * 0.4f));
+        functions.setPosition(delimiter + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - functions.getHeight() - 20);
 
         actions.setSize(height * 0.5f, actions.getPrefHeight());
         actions.setPosition(delimiter, 0);

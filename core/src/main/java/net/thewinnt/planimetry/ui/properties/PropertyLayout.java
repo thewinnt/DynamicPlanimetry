@@ -9,22 +9,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.ListSwitch;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class PropertyLayout extends WidgetGroup {
-    private final Collection<Property<?>> properties;
-    private final StyleSet styles;
     private final ScrollPane pane;
     private final VerticalGroup propertyList;
     public final ListSwitch list;
 
     public PropertyLayout(Collection<Property<?>> properties, StyleSet styles, Component name, boolean open) {
         super();
-        this.properties = properties;
-        this.styles = styles;
         this.pane = new ScrollPane(null, styles.getScrollPaneStyleNoBg());
         if (name != null) {
             this.list = new ListSwitch(name, styles);
@@ -32,12 +29,12 @@ public class PropertyLayout extends WidgetGroup {
             list.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    PropertyLayout.this.rebuild();
                     if (list.isChecked()) {
                         PropertyLayout.this.addActor(pane);
                     } else {
                         PropertyLayout.this.removeActor(pane);
                     }
+                    DynamicPlanimetry.getInstance().editorScreen.layout();
                 }
             });
         } else {
@@ -48,14 +45,13 @@ public class PropertyLayout extends WidgetGroup {
         
         this.propertyList = new VerticalGroup().top().left().expand().fill().pad(2, 5, 2, 5);
         this.propertyList.setFillParent(true);
-        this.pane.setActor(propertyList);
-        if (open) {
-            rebuild();
-            this.addActor(pane);
+        for (Property<?> i : properties) {
+            this.propertyList.addActor(new PropertyEntry(i, styles));
         }
-        this.pane.setDebug(true, true);
+        this.pane.setActor(propertyList);
         
         if (list != null) this.addActor(list);
+        if (open) this.addActor(pane);
     }
 
     @Override
@@ -64,7 +60,7 @@ public class PropertyLayout extends WidgetGroup {
             this.pane.setBounds(0, 0, getWidth(), getHeight());
         } else {
             this.list.setBounds(0, getHeight() - list.getPrefHeight(), getWidth(), list.getPrefHeight());
-            this.pane.setBounds(0, 0, getWidth(), getHeight() - list.getPrefHeight());
+            this.pane.setBounds(0, 0, getWidth(), getHeight() - list.getPrefHeight() - 2);
         }
     }
 
@@ -85,13 +81,6 @@ public class PropertyLayout extends WidgetGroup {
             return this.list.getPrefHeight() * 2;
         } else {
             return this.list.getPrefHeight();
-        }
-    }
-
-    private void rebuild() {
-        this.propertyList.clearChildren();
-        for (Property<?> i : properties) {
-            this.propertyList.addActor(new PropertyEntry(i, styles));
         }
     }
 }
