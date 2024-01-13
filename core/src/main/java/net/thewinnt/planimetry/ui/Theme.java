@@ -14,6 +14,7 @@ public record Theme(
     Color textUI,
     Color textInactive,
     Color textField,
+    Color textSelectionBg,
     Color delimiter,
     Color inactive,
     Color shape,

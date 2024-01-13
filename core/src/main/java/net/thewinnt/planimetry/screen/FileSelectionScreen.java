@@ -5,32 +5,41 @@ import java.io.IOException;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.SaveEntry;
+import net.thewinnt.planimetry.ui.SaveEntry.SortingType;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
-import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.properties.PropertyEntry;
+import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
+import net.thewinnt.planimetry.ui.properties.types.SelectionProperty;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class FileSelectionScreen extends FlatUIScreen {
     private ScrollPaneStyle paneStyle;
-    private TextButtonStyle selectedItemStyle;
     // top row
     private Label linkBack;
     private Label title;
+    // sorting method
+    private Table sortingTable;
+    private final SelectionProperty<SaveEntry.SortingType> sortingType;
+    private final BooleanProperty isReverse;
     // file list
     private ScrollPane pane;
     private Table files;
@@ -38,7 +47,6 @@ public class FileSelectionScreen extends FlatUIScreen {
     private Table controlPanel;
     private TextButton openSaveFolder;
     private TextButton rename;
-    private TextButton delete;
     private TextButton update;
     private TextButton open;
     // renaming mini-screen
@@ -48,11 +56,20 @@ public class FileSelectionScreen extends FlatUIScreen {
     // selection stuff
     private boolean isRenaming;
     private Drawing selection;
-    private SaveEntry selectionUI;
     private long lastClickTime;
 
     public FileSelectionScreen(DynamicPlanimetry app) {
         super(app);
+        this.sortingType = new SelectionProperty<>(Settings.get().getLastSortingType(), Component.literal("Сортировка"), SortingType.values());
+        this.isReverse = new BooleanProperty(Component.literal("По убыванию"), Settings.get().getLastSortingOrder());
+        this.sortingType.addValueChangeListener(value -> {
+            Settings.get().setLastSortingType(value);
+            show();
+        });
+        this.isReverse.addValueChangeListener(value -> {
+            Settings.get().setLastSortingOrder(value);
+            show();
+        });
     }
     
     @Override
@@ -63,6 +80,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         // ACTOR DEFINITIONS
         // ==========================
         this.files = new Table().align(Align.top);
+        this.sortingTable = new Table();
         this.controlPanel = new Table();
 
         this.linkBack = new Label("< Назад", styles.getLabelStyle(Size.LARGE));
@@ -71,7 +89,6 @@ public class FileSelectionScreen extends FlatUIScreen {
         
         this.openSaveFolder = new TextButton("Открыть папку", styles.getButtonStyle(Size.MEDIUM, true));
         this.rename = new TextButton("Переименовать", styles.getButtonStyle(Size.MEDIUM, false));
-        this.delete = new TextButton("Удалить", styles.getButtonStyle(Size.MEDIUM, false));
         this.update = new TextButton("Обновить", styles.getButtonStyle(Size.MEDIUM, true));
         this.open = new TextButton("Открыть", styles.getButtonStyle(Size.MEDIUM, true));
 
@@ -79,7 +96,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.setName = new TextButton("Готово", styles.getButtonStyle(Size.MEDIUM, true));
         this.cancelRename = new TextButton("Отмена", styles.getButtonStyle(Size.MEDIUM, true));
 
-        refillFiles();
+        // refillFiles();
 
         // ==========================
         // LISTENERS
@@ -104,6 +121,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.update.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                selection = null;
                 app.preloadDrawings(Gdx.files.getLocalStoragePath() + "drawings");
                 refillFiles();
                 show();
@@ -143,11 +161,29 @@ public class FileSelectionScreen extends FlatUIScreen {
             }
         });
 
+        this.nameField.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Keys.ENTER || keycode == Keys.NUMPAD_ENTER) {
+                    if (!nameField.getText().isEmpty()) {
+                        isRenaming = false;
+                        selection.setName(nameField.getText());
+                        selection.save();
+                        refillFiles();
+                        show();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
         this.cancelRename.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 isRenaming = false;
                 nameField.setText(selection.getName());
+                show();
             }
         });
 
@@ -156,6 +192,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         // ==========================
         stage.addActor(linkBack);
         stage.addActor(title);
+        stage.addActor(sortingTable);
         stage.addActor(pane);
         stage.addActor(controlPanel);
         stage.setScrollFocus(pane);
@@ -181,32 +218,37 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.cancelRename.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
         
         rename.setDisabled(selection == null);
-        delete.setDisabled(selection == null);
         this.rename.setStyle(styles.getButtonStyle(Size.MEDIUM, selection != null));
-        this.delete.setStyle(styles.getButtonStyle(Size.MEDIUM, selection != null));
 
         refillFiles();
 
+        sortingTable.reset();
+        sortingTable.add(new PropertyEntry(sortingType, styles)).expand().fill().padRight(20).left();
+        sortingTable.add(new PropertyEntry(isReverse, styles)).expand().fill().left();
+
         controlPanel.reset();
-        controlPanel.add(openSaveFolder).expand().fill().pad(5);
-        controlPanel.add(open).expand().fill().pad(5);
-        controlPanel.add(rename).expand().fill().pad(5);
+        controlPanel.add(openSaveFolder).expand().fill().pad(5).uniform();
+        controlPanel.add(open).expand().fill().pad(5).uniform();
         if (isRenaming) {
-            controlPanel.add(nameField).expand().fill().pad(5);
-            controlPanel.add(setName).expand().fill().pad(5);
-            controlPanel.add(cancelRename).expand().fill().pad(5);
+            controlPanel.add(nameField).expand().fill().pad(5).uniform();
+            controlPanel.add(setName).expand().fill().pad(5).uniform();
+            controlPanel.add(cancelRename).expand().fill().pad(5).uniform();
+        } else {
+            controlPanel.add(rename).expand().fill().pad(5).uniform();
         }
-        controlPanel.add(delete).expand().fill().pad(5);
-        controlPanel.add(update).expand().fill().pad(5);
+        controlPanel.add(update).expand().fill().pad(5).uniform();
 
         linkBack.setPosition(5, height - linkBack.getPrefHeight() - 5);
         title.setPosition((width - title.getPrefWidth()) / 2, linkBack.getY());
+
+        sortingTable.setSize(Math.min(width - 10, sortingTable.getPrefWidth() + 20), sortingTable.getPrefHeight());
+        sortingTable.setPosition(5, height - title.getHeight() - sortingTable.getHeight() - 15);
 
         controlPanel.setPosition(5, 5);
         controlPanel.setSize(width - 10, controlPanel.getPrefHeight());
 
         pane.setPosition(5, controlPanel.getHeight() + 10);
-        pane.setSize(width - 10, height - pane.getY() - title.getHeight() - 10);
+        pane.setSize(width - 10, height - pane.getY() - title.getHeight() - 10 - sortingTable.getHeight() - 10);
 
     }
 
@@ -221,6 +263,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         // FILLING IN THE FILES
         // ==========================
         List<Drawing> drawings = app.getAllDrawings();
+        drawings.sort(sortingType.getValue().getComparator(isReverse.getValue()));
         files.clear();
         if (drawings == null || drawings.isEmpty()) {
             files.add(new Label("Тут ничего нет...", styles.getLabelStyle(Size.LARGE))).fill().center();
@@ -231,22 +274,18 @@ public class FileSelectionScreen extends FlatUIScreen {
                     continue;
                 }
                 SaveEntry file = new SaveEntry(i.getName(), i.getCreationTime(), i.getLastEditTime(), i.getFilename().replace(Gdx.files.getLocalStoragePath(), ""), styles);
+                file.setChecked(selection == i);
                 file.addListener(new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
-                        if (System.currentTimeMillis() - lastClickTime < 300) {
+                        if (System.currentTimeMillis() - lastClickTime < 300 && selection == i) {
                             app.setDrawing(i, true);
                             app.editorScreen.hide();
                             app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
                             return;
                         }
-                        if (selectionUI != null) {
-                            selectionUI.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
-                        }
                         selection = i;
-                        selectionUI = file;
                         lastClickTime = System.currentTimeMillis();
-                        file.setStyle(selectedItemStyle);
                         nameField.setText(i.getName());
                         show();
                     }
@@ -261,6 +300,5 @@ public class FileSelectionScreen extends FlatUIScreen {
 
     public void updateStyles() {
         this.paneStyle = new ScrollPaneStyle(styles.pressed, styles.fullWhite, styles.fullBlack, styles.fullWhite, styles.fullBlack);
-        this.selectedItemStyle = new TextButtonStyle(styles.pressed, styles.pressed, styles.pressed, app.getBoldFont(Gdx.graphics.getHeight() / Size.MEDIUM.factor, Theme.current().textButton()));
     }
 }

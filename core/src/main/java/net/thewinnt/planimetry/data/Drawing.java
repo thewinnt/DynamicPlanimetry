@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.data;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -200,10 +201,13 @@ public class Drawing {
     }
 
     public String getFilename() {
+        if (filename == null) {
+            filename = "autosave " + DynamicPlanimetry.AUTOSAVE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
+        }
         if (isFileAbsolute) {
             return filename;
         } else {
-            return Gdx.files.getLocalStoragePath() + filename + ".dpd";
+            return Gdx.files.local("drawings/" + filename + ".dpd").path();
         }
     }
 
@@ -268,7 +272,7 @@ public class Drawing {
 
     public static Drawing load(String filenameAbsolute) {
         try {
-            CompoundTag nbt = DynamicPlanimetry.NBT.fromFile(Gdx.files.absolute(filenameAbsolute).file());
+            CompoundTag nbt = DynamicPlanimetry.NBT.fromFile(new File(filenameAbsolute));
             return Drawing.fromNbt(nbt).withFilename(filenameAbsolute, true);
         } catch (IOException e) {
             Notifications.addNotification("Error loading file: " + e.getMessage(), 5000);

@@ -39,8 +39,6 @@ public class PropertyEntry extends WidgetGroup {
             this.name.setBounds(0, 2, name.getPrefWidth(), getHeight() - 4);
             this.property.getLayout().layout(this.propertySetup, this);
         }
-        // TODO try aligning to a table
-        // TODO fix text field scrolling
     }
 
     public ComponentLabel getNameLabel() {

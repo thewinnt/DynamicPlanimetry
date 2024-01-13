@@ -48,6 +48,7 @@ public class DynamicPlanimetry extends Game {
         new Color(0x000000FF), // text (ui)
         new Color(0x2D2D2DFF), // inactive text
         new Color(0xFFFFFFFF), // text field
+        new Color(0x0060FFB0), // selection background
         new Color(0xC0C0C0FF), // delimiter
         new Color(0x2D2D2DFF), // inactive
         new Color(0x000000FF), // shape
@@ -74,6 +75,7 @@ public class DynamicPlanimetry extends Game {
         new Color(0xEEEEEEFF), // text (ui)
         new Color(0x2D2D2DFF), // inactive text
         new Color(0x000000FF), // text field
+        new Color(0x0060FFB0), // selection background
         new Color(0x303030FF), // delimiter
         new Color(0x2D2D2DFF), // inactive
         new Color(0xEEEEEEFF), // shape

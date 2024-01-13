@@ -44,6 +44,7 @@ public class StyleSet {
     public final RectangleDrawable fullOutline;
     public final RectangleDrawable fullMain;
     private final Map<StyleType, TextButtonStyle> buttonStyles = new HashMap<>();
+    private final Map<Size, TextButtonStyle> buttonStylesToggleable = new EnumMap<>(Size.class);
     private final Map<StyleType, TextFieldStyle> textFieldStyles = new HashMap<>();
     private final Map<Size, SelectBoxStyle> listStyles = new EnumMap<>(Size.class);
     private final Map<Size, LabelStyle> labelStyles = new EnumMap<>(Size.class);
@@ -61,7 +62,7 @@ public class StyleSet {
         this.over = new RectangleDrawable(drawer).withColors(Theme.current().main(), Theme.current().outline());
         this.disabled = new RectangleDrawable(drawer).withColors(Theme.current().pressed(), Theme.current().inactive());
         this.field = new RectangleDrawable(drawer).withColors(Theme.current().textField(), Theme.current().outline());
-        this.selection = new RectangleDrawable(drawer).withColors(Color.BLUE, Color.BLUE);
+        this.selection = new RectangleDrawable(drawer).withColors(Theme.current().textSelectionBg(), Theme.current().textSelectionBg());
         this.fieldInactive = new RectangleDrawable(drawer).withColors(Theme.current().main(), Theme.current().inactive());
         this.cursor = new RectangleDrawable(drawer).withColors(Theme.current().textUI(), Theme.current().textUI());
         this.cursorInactive = new RectangleDrawable(drawer).withColors(Theme.current().inactive(), Theme.current().inactive());
@@ -95,6 +96,13 @@ public class StyleSet {
             buttonStyles.put(new StyleType(size, true), textButtonStyle);
             textButtonStyle = new TextButtonStyle(disabled, disabled, disabled, font.getFont(height / size.factor, Theme.current().textInactive()));
             buttonStyles.put(new StyleType(size, false), textButtonStyle);
+
+            // toggleable text button styles
+            textButtonStyle = new TextButtonStyle(normal, pressed, pressed, font.getFont(height / size.factor, Theme.current().textButton()));
+            textButtonStyle.over = over;
+            textButtonStyle.checkedOver = normal;
+            textButtonStyle.checkedDown = over;
+            buttonStylesToggleable.put(size, textButtonStyle);
 
             // text field styles
             TextFieldStyle textFieldStyle = new TextFieldStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), cursor, selection, field);
@@ -139,6 +147,10 @@ public class StyleSet {
 
     public TextButtonStyle getButtonStyle(Size size, boolean isActive) {
         return buttonStyles.get(new StyleType(size, isActive));
+    }
+
+    public TextButtonStyle getButtonStyleToggleable(Size size) {
+        return buttonStylesToggleable.get(size);
     }
 
     public TextFieldStyle getTextFieldStyle(Size size, boolean isActive) {

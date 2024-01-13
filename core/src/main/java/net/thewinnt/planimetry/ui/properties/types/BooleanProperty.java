@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -56,7 +57,17 @@ public class BooleanProperty extends Property<Boolean> {
     @Override
     public Table getActorSetup(StyleSet styles) {
         Table table = new Table();
-        Button checkbox = new Button(styles.getCheckboxStyle(Size.SMALL, true));
+        Button checkbox = new Button(styles.getCheckboxStyle(Size.SMALL, true)) {
+            @Override
+            public float getPrefHeight() {
+                return Gdx.graphics.getHeight() / Size.MEDIUM.factor;
+            }
+
+            @Override
+            public float getPrefWidth() {
+                return Gdx.graphics.getHeight() / Size.MEDIUM.factor;
+            }
+        };
         checkbox.setChecked(value);
         checkbox.addListener(new ChangeListener() {
             @Override

@@ -2,9 +2,11 @@ package net.thewinnt.planimetry.ui.text;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.util.FontProvider;
 
@@ -34,8 +36,8 @@ public record LiteralComponent(String text) implements Component, CharSequence {
 
     @Override
     public Vec2 getSize(FontProvider font, int fontSize) {
-        GlyphLayout layout = font.getFont(fontSize, Color.BLACK).newFontCache().addText(text, 0, 0);
-        return new Vec2(layout.width, font.getFont(fontSize, Color.BLACK).getLineHeight());
+        BitmapFont fnt = font.getFont(fontSize, Color.BLACK);
+        return new Vec2(FontUtils.getTextLength(fnt, text), fnt.getLineHeight());
     }
     
     @Override
