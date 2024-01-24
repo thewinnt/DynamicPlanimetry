@@ -7,12 +7,13 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.util.FontProvider;
 
 public interface Component {
     String toString();
-    Vec2 draw(Batch batch, FontProvider font, int fontSize, Color color, float x, float y);
-    Vec2 getSize(FontProvider font, int fontSize);
+    Vec2 draw(Batch batch, FontProvider font, Size size, Color color, float x, float y);
+    Vec2 getSize(FontProvider font, Size size);
     /**
      * @deprecated use {@link #toNbt()} for actual saving
      */
@@ -57,12 +58,12 @@ public interface Component {
         }
 
         @Override
-        public Vec2 getSize(FontProvider font, int fontSize) {
+        public Vec2 getSize(FontProvider font, Size size) {
             return Vec2.ZERO;
         }
 
         @Override
-        public Vec2 draw(Batch batch, FontProvider font, int fontSize, Color color, float x, float y) {
+        public Vec2 draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
             return Vec2.ZERO;
         }
 

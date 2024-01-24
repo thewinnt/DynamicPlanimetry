@@ -3,7 +3,6 @@ package net.thewinnt.planimetry.ui.properties.types;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
@@ -41,7 +40,7 @@ public class DisplayProperty extends Property<Component> {
 
     @Override
     public WidgetGroup getActorSetup(StyleSet styles) {
-        return new Container<>(new DynamicComponentLabel(data, styles.font, Gdx.graphics.getHeight() / Size.MEDIUM.factor)).fill();
+        return new Container<>(new DynamicComponentLabel(data, styles.font, Size.MEDIUM)).fill();
     }
 
     @Override

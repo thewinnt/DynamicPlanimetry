@@ -62,6 +62,9 @@ public class NumberProperty extends Property<Double> {
         } else if (minValue.isPresent() && value < minValue.getAsDouble()) {
             value = minValue.getAsDouble();
         }
+        for (Consumer<Double> i : this.listeners) {
+            i.accept(value);
+        }
     }
 
     @Override

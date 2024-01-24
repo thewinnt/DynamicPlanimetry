@@ -31,6 +31,7 @@ public class Settings {
     private SelectionProperty<Theme> theme = new SelectionProperty<>(DynamicPlanimetry.THEME_LIGHT, Component.literal("Тема"), DynamicPlanimetry.BUILT_IN_THEMES);
     private NumberProperty displayPresicion = new NumberProperty(Component.literal("Точность отображения чисел"), 3).withMin(OptionalDouble.of(1)).withMax(OptionalDouble.of(127)).requireWholeNumbers(true);
     private BooleanProperty showGrid = new BooleanProperty(Component.literal("Показывать сетку"), true);
+    private BooleanProperty isDebug = new BooleanProperty(Component.literal("Режим отладки"), true);
     private byte mathPrecision = -23;
     private SortingType lastSortingType = SortingType.BY_EDITING_TIME;
     private boolean lastSortingOrder = true;
@@ -39,9 +40,11 @@ public class Settings {
         theme.layoutOverride = PROPERTY_LAYOUT;
         displayPresicion.layoutOverride = PROPERTY_LAYOUT;
         theme.addValueChangeListener(theme -> {
-            DynamicPlanimetry app = (DynamicPlanimetry)Gdx.app.getApplicationListener();
-            app.setScreen(DynamicPlanimetry.MAIN_MENU);
-            app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
+            if (Gdx.app != null) {
+                DynamicPlanimetry app = DynamicPlanimetry.getInstance();
+                app.setScreen(DynamicPlanimetry.MAIN_MENU);
+                app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
+            }
         });
     }
 
@@ -96,7 +99,11 @@ public class Settings {
     }
 
     public PropertyLayout getLayout(StyleSet styles) {
-        return new PropertyLayout(List.of(theme, displayPresicion, showGrid), styles, null, true);
+        return new PropertyLayout(List.of(theme, displayPresicion, showGrid, isDebug), styles, null, true);
+    }
+
+    public boolean isDebug() {
+        return isDebug.getValue();
     }
 
     public void fromNbt(CompoundTag nbt) {
@@ -108,6 +115,7 @@ public class Settings {
             this.showGrid.setValue(nbt.getByte("show_grid").byteValue() != 0);
             this.lastSortingType = SortingType.valueOf(nbt.getString("last_sorting_type").getValue().toUpperCase());
             this.lastSortingOrder = nbt.getByte("is_reverse_sort").byteValue() != 0;
+            this.isDebug.setValue(nbt.getByte("debug_mode").byteValue() != 0);
         } catch (Exception e) {
             Notifications.addNotification("Error when loading settings: " + e.getMessage(), 5000);
             e.printStackTrace();
@@ -123,6 +131,7 @@ public class Settings {
         nbt.putByte("show_grid", showGrid.getValue() ? (byte)1 : (byte)0);
         nbt.putString("last_sorting_type", lastSortingType.name().toLowerCase());
         nbt.putByte("is_reverse_sort", lastSortingOrder ? (byte)1 : (byte)0);
+        nbt.putByte("debug_mode", isDebug.getValue() ? (byte)1 : (byte)0);
         try {
             DynamicPlanimetry.NBT.toFile(nbt, file);
         } catch (IOException e) {

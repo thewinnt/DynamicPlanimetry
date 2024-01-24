@@ -52,6 +52,9 @@ public class BooleanProperty extends Property<Boolean> {
     @Override
     public void setValue(Boolean value) {
         this.value = value;
+        for (Consumer<Boolean> i : this.listeners) {
+            i.accept(value);
+        }
     }
 
     @Override

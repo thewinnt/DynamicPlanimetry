@@ -259,7 +259,7 @@ public class DrawingBoard extends Actor {
                 i.render(drawer, hovered == i ? SelectionStatus.HOVERED : SelectionStatus.NONE, font, this);
             }
         }
-        if (DynamicPlanimetry.DEBUG_MODE) {
+        if (DynamicPlanimetry.isDebug()) {
             font.getFont(40, Color.FIREBRICK).draw(batch, "scale: " + scale, x(5), y(getHeight() - 5));
             font.getFont(40, Color.FIREBRICK).draw(batch, "offx: " + offset.x, x(5), y(getHeight() - 30));
             font.getFont(40, Color.FIREBRICK).draw(batch, "offy: " + offset.y, x(5), y(getHeight() - 55));

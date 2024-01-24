@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -112,7 +112,7 @@ public abstract class PointProvider extends Shape {
             drawer.filledCircle(board.boardToGlobal(getPosition()).toVector2f(), this.getThickness(board.getScale()) * 2, color);
         }
         if (this.name != null) {
-            Vec2 neededSpace = this.name.getSize(font, Gdx.graphics.getHeight() / Size.MEDIUM.factor).mul(0.5);
+            Vec2 neededSpace = this.name.getSize(font, Size.MEDIUM).mul(0.5);
             double minRadius = (Math.max(neededSpace.x, neededSpace.y)) / board.getScale();
             Vec2 start = getPosition();
             double bestSpace = 0;
@@ -149,7 +149,7 @@ public abstract class PointProvider extends Shape {
             //     drawer.filledCircle(board.boardToGlobal(test).toVector2f(), 2, Color.RED.cpy().lerp(Color.GREEN, (float)((space - _worstSpace) / (bestSpace - _worstSpace))));
             // }
             if (bestPos == null) bestPos = MathHelper.continueFromAngle(start, 90, -minRadius);
-            name.draw(drawer.getBatch(), font, Gdx.graphics.getHeight() / Size.MEDIUM.factor, Theme.current().textUI(), (float)board.bx(bestPos.x), (float)(board.by(bestPos.y) + neededSpace.y / 2));
+            name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), (float)board.bx(bestPos.x), (float)(board.by(bestPos.y) + neededSpace.y / 2));
         }
     }
 

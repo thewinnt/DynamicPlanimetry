@@ -21,7 +21,7 @@ import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.NameComponent;
 
 public class TangentOffsetPoint extends PointProvider {
-    private final PointProvider start;
+    private PointProvider start;
     private double tanAngle;
     private double offset;
     private final DisplayProperty sourceDescription;
@@ -138,6 +138,14 @@ public class TangentOffsetPoint extends PointProvider {
 
     public void setOffset(double offset) {
         this.offset = offset;
+    }
+
+    public PointProvider getStart() {
+        return start;
+    }
+
+    public void setStart(PointProvider start) {
+        this.start = start;
     }
 
     public static TangentOffsetPoint fromPoints(PointProvider startPos, PointProvider thisPos) {

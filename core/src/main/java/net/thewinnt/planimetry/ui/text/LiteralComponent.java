@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.ui.text;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.util.FontProvider;
 
 public record LiteralComponent(String text) implements Component, CharSequence {
@@ -29,14 +31,14 @@ public record LiteralComponent(String text) implements Component, CharSequence {
     }
 
     @Override
-    public Vec2 draw(Batch batch, FontProvider font, int fontSize, Color color, float x, float y) {
-        GlyphLayout layout = font.getFont(fontSize, color).draw(batch, text, x, y);
-        return new Vec2(layout.width, font.getFont(fontSize, color).getLineHeight());
+    public Vec2 draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
+        GlyphLayout layout = font.getFont(Gdx.graphics.getHeight() / size.factor, color).draw(batch, text, x, y);
+        return new Vec2(layout.width, font.getFont(Gdx.graphics.getHeight() / size.factor, color).getLineHeight());
     }
 
     @Override
-    public Vec2 getSize(FontProvider font, int fontSize) {
-        BitmapFont fnt = font.getFont(fontSize, Color.BLACK);
+    public Vec2 getSize(FontProvider font, Size size) {
+        BitmapFont fnt = font.getFont(Gdx.graphics.getHeight() / size.factor, Color.BLACK);
         return new Vec2(FontUtils.getTextLength(fnt, text), fnt.getLineHeight());
     }
     

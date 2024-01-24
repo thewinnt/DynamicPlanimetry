@@ -59,6 +59,9 @@ public class NameComponentProperty extends Property<NameComponent> {
         this.letter = value.letter();
         this.index = value.index();
         this.dashes = value.dashes();
+        for (Consumer<NameComponent> i : this.listeners) {
+            i.accept(getValue());
+        }
     }
 
     private void update() {

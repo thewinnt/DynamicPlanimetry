@@ -44,6 +44,9 @@ public class SelectionProperty<T> extends Property<T> {
     @Override
     public void setValue(T value) {
         selected = value;
+        for (Consumer<T> i : this.listeners) {
+            i.accept(value);
+        }
     }
 
     @Override

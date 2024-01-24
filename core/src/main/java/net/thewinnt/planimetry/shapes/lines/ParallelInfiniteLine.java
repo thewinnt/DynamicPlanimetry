@@ -38,7 +38,7 @@ public class ParallelInfiniteLine extends InfiniteLine {
 
     @Override
     public CompoundTag writeNbt(SavingContext context) {
-    CompoundTag nbt = new CompoundTag();
+        CompoundTag nbt = new CompoundTag();
         nbt.putLong("base", base.getId());
         context.addShape(base);
         nbt.putLong("point", point.getId());

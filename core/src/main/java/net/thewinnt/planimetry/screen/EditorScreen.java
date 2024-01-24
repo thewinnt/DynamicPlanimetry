@@ -191,7 +191,7 @@ public class EditorScreen extends FlatUIScreen {
         creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5);
 
         if (selection != null) {
-            selectedShapeName.setActor(new ComponentLabel(Component.literal("Свойства"), app::getBoldFont, Gdx.graphics.getHeight() / Size.MEDIUM.factor));
+            selectedShapeName.setActor(new ComponentLabel(Component.literal("Свойства"), app::getBoldFont, Size.MEDIUM));
             properties.setActor(new PropertyLayout(selection.getProperties(), styles, selection.getName(), true));
             for (Function<?> i : selection.getFunctions()) {
                 i.addUseListener(shape -> show());

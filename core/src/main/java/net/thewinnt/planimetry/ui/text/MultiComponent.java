@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import dev.dewy.nbt.tags.collection.ListTag;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.util.FontProvider;
 
 public class MultiComponent implements Component {
@@ -19,7 +20,7 @@ public class MultiComponent implements Component {
     }
 
     @Override
-    public Vec2 getSize(FontProvider font, int fontSize) {
+    public Vec2 getSize(FontProvider font, Size fontSize) {
         double width = 0;
         double height = 0;
         for (Component i : this.components) {
@@ -31,7 +32,7 @@ public class MultiComponent implements Component {
     }
 
     @Override
-    public Vec2 draw(Batch batch, FontProvider font, int fontSize, Color color, float x, float y) {
+    public Vec2 draw(Batch batch, FontProvider font, Size fontSize, Color color, float x, float y) {
         float offx = 0;
         double height = 0;
         for (Component i : this.components) {

@@ -82,7 +82,7 @@ public class Notifications extends Actor implements Disposable {
             drawer.line(x1, y - cache.height - 20, x2, y - cache.height - 20, 4);
             // drawer.setColor(Color.GREEN);
             drawer.line(x1 - 8, y - cache.height - 16, Math.max(MathUtils.lerp(x1 - 8, x2 + 8, 1 - dt / (float)notification.lengthMillis), x1 - 10), y - cache.height - 16, 4);
-            if (DynamicPlanimetry.DEBUG_MODE) {
+            if (DynamicPlanimetry.isDebug()) {
                 font.getFont(40, Color.GREEN).draw(batch, String.valueOf(dt), x1, y);
             }
             cache.draw(batch);

@@ -2,6 +2,7 @@ package net.thewinnt.planimetry.shapes;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.badlogic.gdx.graphics.Color;
@@ -29,6 +30,7 @@ public class Circle extends Shape {
     private boolean keepRadius = false;
     public Supplier<Double> radius;
     private PointProvider radiusPoint;
+    private Consumer<Vec2> radiusMove;
 
     public Circle(Drawing drawing, PointProvider center, double radius) {
         super(drawing);
@@ -85,8 +87,9 @@ public class Circle extends Shape {
     }
 
     public void setRadiusPoint(PointProvider point) {
-        if (this.radiusPoint != null) this.center.removeMovementListener(this.radiusPoint::move);
-        if (this.keepRadius) this.center.addMovementListener(point::move);
+        if (this.radiusPoint != null) this.center.removeMovementListener(this.radiusMove);
+        this.radiusMove = point::move;
+        if (this.keepRadius) this.center.addMovementListener(radiusMove);
         this.radiusPoint = point;
         this.radius = () -> point.getPosition().distanceTo(center.getPosition());
     }
@@ -102,9 +105,9 @@ public class Circle extends Shape {
     public void setKeepRadius(boolean keepRadius) {
         if (this.keepRadius != keepRadius && this.radiusPoint != null) {
             if (keepRadius) {
-                this.center.addMovementListener(this.radiusPoint::move);
+                this.center.addMovementListener(this.radiusMove);
             } else {
-                this.center.removeMovementListener(this.radiusPoint::move);
+                this.center.removeMovementListener(this.radiusMove);
             }
         }
         this.keepRadius = keepRadius;

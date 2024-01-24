@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.ui.text;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -9,6 +10,7 @@ import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.util.FontProvider;
 
 public record NameComponent(byte letter, int index, short dashes) implements Component {
@@ -27,9 +29,9 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
     }
 
     @Override
-    public Vec2 draw(Batch batch, FontProvider font, int fontSize, Color color, float x, float y) {
-        BitmapFont fontMain = font.getFont(fontSize, color);
-        BitmapFont fontAdditional = font.getFont(fontSize / 2, color);
+    public Vec2 draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
+        BitmapFont fontMain = font.getFont(Gdx.graphics.getHeight() / size.factor, color);
+        BitmapFont fontAdditional = font.getFont(Gdx.graphics.getHeight() / size.factor / 2, color);
         GlyphLayout layoutMain = fontMain.draw(batch, ALLOWED_NAMES[letter], x, y);
         float x2 = layoutMain.width + 2;
         float indexLength;
@@ -44,9 +46,9 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
     }
 
     @Override
-    public Vec2 getSize(FontProvider font, int fontSize) {
-        BitmapFont fontMain = font.getFont(fontSize, Theme.current().textButton());
-        BitmapFont fontAdditional = font.getFont(fontSize / 2, Theme.current().textButton());
+    public Vec2 getSize(FontProvider font, Size size) {
+        BitmapFont fontMain = font.getFont(Gdx.graphics.getHeight() / size.factor, Theme.current().textButton());
+        BitmapFont fontAdditional = font.getFont(Gdx.graphics.getHeight() / size.factor / 2, Theme.current().textButton());
         float w1 = FontUtils.getTextLength(fontMain, ALLOWED_NAMES[letter]) + 2;
         float w2;
         if (index != 0) {

@@ -1,6 +1,5 @@
 package net.thewinnt.planimetry.ui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 
@@ -14,7 +13,7 @@ public class ListSwitch extends Button {
 
     public ListSwitch(Component name, StyleSet styles) {
         super(styles.getButtonStyle(Size.MEDIUM, true));
-        this.add(new ComponentLabel(name, styles.font, Gdx.graphics.getHeight() / Size.MEDIUM.factor)).left().fill().expand().padLeft(getPrefHeight());
+        this.add(new ComponentLabel(name, styles.font, Size.MEDIUM)).left().fill().expand().padLeft(getPrefHeight());
         invalidate();
         this.drawer = styles.drawer;
     }

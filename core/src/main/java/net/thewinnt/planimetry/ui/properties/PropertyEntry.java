@@ -1,6 +1,5 @@
 package net.thewinnt.planimetry.ui.properties;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.ui.ComponentLabel;
@@ -14,7 +13,7 @@ public class PropertyEntry extends WidgetGroup {
 
     public PropertyEntry(Property<?> property, StyleSet styles) {
         this.property = property;
-        this.name = new ComponentLabel(property.getName(), styles.font, (int)Gdx.graphics.getHeight() / Size.MEDIUM.factor);
+        this.name = new ComponentLabel(property.getName(), styles.font, Size.MEDIUM);
         this.propertySetup = property.getActorSetup(styles);
         super.addActor(this.name);
         super.addActor(this.propertySetup);

@@ -26,6 +26,7 @@ import net.thewinnt.planimetry.util.HashBiMap;
 public class Drawing {
     public final List<BiConsumer<Shape, Shape>> swapListeners = new ArrayList<>();
     public final HashBiMap<Long, Shape> shapeIds = new HashBiMap<>();
+    public final List<Shape> allShapes;
     public final List<Shape> shapes;
     public final List<PointProvider> points;
     private long shapeIdCounter;
@@ -42,6 +43,7 @@ public class Drawing {
     boolean isLoading = false;
 
     public Drawing() {
+        this.allShapes = new ArrayList<>();
         this.shapes = new ArrayList<>();
         this.points = new ArrayList<>();
         this.name = "Безымянный";
@@ -50,6 +52,8 @@ public class Drawing {
     }
 
     public Drawing(Collection<Shape> shapes, Collection<PointProvider> points, String name, long creationTime, long lastEditTime) {
+        this.allShapes = new ArrayList<>(shapes);
+        this.allShapes.addAll(points);
         this.shapes = new ArrayList<>(shapes);
         this.points = new ArrayList<>(points);
         this.name = name;
@@ -67,6 +71,7 @@ public class Drawing {
     }
 
     public Drawing(Collection<Shape> shapes, String name, long creationTime, long lastEditTime) {
+        this.allShapes = new ArrayList<>();
         this.shapes = new ArrayList<>();
         this.points = new ArrayList<>();
         this.name = name;
@@ -82,6 +87,7 @@ public class Drawing {
     
     public void addShape(Shape shape) {
         update();
+        this.allShapes.add(shape);
         if (shape instanceof PointProvider point) {
             if (!this.points.contains(point)) {
                 this.points.add(point);
@@ -93,6 +99,7 @@ public class Drawing {
     }
 
     private void addShapeQuick(Shape shape) {
+        this.allShapes.add(shape);
         if (shape instanceof PointProvider point) {
             this.points.add(point);
         } else {

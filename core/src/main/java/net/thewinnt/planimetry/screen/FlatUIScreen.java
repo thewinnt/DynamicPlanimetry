@@ -69,7 +69,7 @@ public abstract class FlatUIScreen implements Screen {
 
         addActorsBelowFps();
 
-        if (DynamicPlanimetry.DEBUG_MODE) {
+        if (DynamicPlanimetry.isDebug()) {
             stage.addActor(fps);
             stage.addActor(mem_usage);
         }
@@ -99,7 +99,7 @@ public abstract class FlatUIScreen implements Screen {
 
         ScreenUtils.clear(Theme.current().main());
         customRender();
-        if (DynamicPlanimetry.DEBUG_MODE) {
+        if (DynamicPlanimetry.isDebug()) {
             fps_timer += dt;
             if (fps_timer > 0.5f) {
                 fps_timer = 0;

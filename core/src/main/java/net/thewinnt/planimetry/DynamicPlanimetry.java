@@ -97,7 +97,6 @@ public class DynamicPlanimetry extends Game {
     // general stuff
     public final List<Screen> screenByIds = new ArrayList<>();
     public String last_fps = "FPS: ..."; // the last reading of the fps counter
-    public static final boolean DEBUG_MODE = true;
     public static boolean IS_MOBILE = false;
 
     // settings
@@ -161,13 +160,13 @@ public class DynamicPlanimetry extends Game {
         settingsScreen = registerScreen(new SettingsScreen(this));
         setDrawing(null, false);
         setScreen(MAIN_MENU);
-        if (DEBUG_MODE) {
+        if (isDebug()) {
             Notifications.addNotification("Включён режим отладки", 2000);
         }
         try {
             Gdx.files.local("drawings").mkdirs();
         } catch (Exception e) {
-            if (DEBUG_MODE) {
+            if (isDebug()) {
                 Notifications.addNotification(e.getMessage(), 7500);
             }
         }
@@ -288,5 +287,9 @@ public class DynamicPlanimetry extends Game {
 
     public static DynamicPlanimetry getInstance() {
         return (DynamicPlanimetry)Gdx.app.getApplicationListener();
+    }
+
+    public static boolean isDebug() {
+        return SETTINGS.isDebug();
     }
 }

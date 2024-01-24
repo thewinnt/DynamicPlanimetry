@@ -3,7 +3,6 @@ package net.thewinnt.planimetry.ui.functions;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -46,7 +45,7 @@ public class BasicPropertyFunction<T extends Shape> extends Function<T> {
                 use();
             }
         });
-        table.add(new ComponentLabel(name, DynamicPlanimetry.getInstance()::getBoldFont, Gdx.graphics.getHeight() / Size.MEDIUM.factor));
+        table.add(new ComponentLabel(name, DynamicPlanimetry.getInstance()::getBoldFont, Size.MEDIUM));
         table.add(apply).right().expandX().row();
         table.add(new PropertyLayout(properties.values(), styles, PARAMETERS, false)).expand().fill().colspan(9999);
         return table;
