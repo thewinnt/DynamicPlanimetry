@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.drawable.DynamicIcon;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 
@@ -24,13 +25,16 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
     private Function<T, Component> textGetter;
     private float prefWidth;
     private float prefHeight;
+    private boolean open;
+    public Size size;
 
     @SuppressWarnings("unchecked")
-    public ComponentSelectBox(SelectBoxStyle style, Collection<T> items, Function<T, Component> textGetter) {
+    public ComponentSelectBox(SelectBoxStyle style, Collection<T> items, Function<T, Component> textGetter, Size size) {
         super(style);
+        this.size = size;
         super.setItems((T[])(items.toArray()));
         this.items = items;
-        ((ComponentList)this.getList()).finish(items, textGetter);
+        ((ComponentList)this.getList()).finish(items, textGetter, size);
         this.textGetter = textGetter;
         this.layout();
     }
@@ -43,15 +47,15 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
     @Override
     public void layout() {
         if (getSelectedPrefWidth()) {
-            Vec2 size = textGetter.apply(getSelected()).getSize(DynamicPlanimetry.getInstance()::getBoldFont, Size.MEDIUM);
+            Vec2 size = textGetter.apply(getSelected()).getSize(DynamicPlanimetry.getInstance()::getBoldFont, this.size);
             prefWidth = (float)size.x + 4;
-            prefHeight = (float)size.y + 4;
+            prefHeight = (float)size.y;
         } else {
             prefWidth = 0;
             prefHeight = 0;
             for (T i : items) {
-                Vec2 result = textGetter.apply(i).getSize(DynamicPlanimetry.getInstance()::getBoldFont, Size.MEDIUM);
-                prefHeight = Math.max(prefHeight, (float)result.y + 4);
+                Vec2 result = textGetter.apply(i).getSize(DynamicPlanimetry.getInstance()::getBoldFont, this.size);
+                prefHeight = Math.max(prefHeight, (float)result.y);
                 prefWidth = Math.max(prefWidth, (float)result.x + 4);
             }
         }
@@ -63,7 +67,12 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
         if (getBackgroundDrawable() != null) {
             getBackgroundDrawable().draw(batch, getX(), getY(), getWidth(), getHeight());
         }
-        textGetter.apply(getSelected()).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, Size.MEDIUM, Theme.current().textButton(), getX() + 2, getY() + getHeight() - 6);
+        if (this.open) {
+            DynamicIcon.DOWN_TRIANGLE.draw(batch, getX(), getY() + 2, getHeight() - 4, getHeight() - 4);
+        } else {
+            DynamicIcon.RIGHT_TRIANGLE.draw(batch, getX() + 2, getY() + 2, getHeight() - 4, getHeight() - 4);
+        }
+        textGetter.apply(getSelected()).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, this.size, Theme.current().textButton(), getX() + getHeight(), getY() + getHeight() * 3 / 4);
     }
 
     @Override
@@ -75,7 +84,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
 
     @Override
     public float getPrefWidth() {
-        return prefWidth;
+        return prefWidth + prefHeight + 4;
     }
 
     @Override
@@ -83,10 +92,17 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
         return prefHeight;
     }
 
-    @Override protected void onShow(Actor scrollPane, boolean below) {}
+    @Override protected void onShow(Actor scrollPane, boolean below) {
+        this.open = true;
+    }
 
     @Override protected void onHide(Actor scrollPane) {
         scrollPane.addAction(Actions.removeActor());
+        this.open = false;
+    }
+
+    public boolean isOpen() {
+        return open;
     }
 
     public class ComponentSelectBoxScrollPane extends SelectBoxScrollPane<T> {
@@ -96,7 +112,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
 
         @Override
         protected List<T> newList() {
-            return new ComponentList(ComponentSelectBox.this.getStyle().listStyle, DynamicPlanimetry.getInstance()::getBoldFont, Size.MEDIUM);
+            return new ComponentList(ComponentSelectBox.this.getStyle().listStyle, DynamicPlanimetry.getInstance()::getBoldFont, ComponentSelectBox.this.size);
         }
     }
 
@@ -104,7 +120,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
         private Collection<T> elements;
         private Function<T, Component> components;
         private final FontProvider font;
-        private final Size size;
+        private Size size;
         private float pw = 200;
         private float pht = 400;
 
@@ -115,9 +131,10 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
         }
 
         @SuppressWarnings("unchecked")
-        public void finish(Collection<T> elements, Function<T, Component> components) {
+        public void finish(Collection<T> elements, Function<T, Component> components, Size size) {
             this.elements = elements;
             this.components = components;
+            this.size = size;
             this.setItems((T[])this.elements.toArray());
             layout();
             invalidateHierarchy();
@@ -175,7 +192,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
                 if (entryBackground != null) {
                     entryBackground.draw(batch, x, y - 2, getWidth(), (float)size.y + 4);
                 }
-                y += text.draw(batch, font, this.size, color, x, y + (float)size.y - 4).y + 4;
+                y += text.draw(batch, font, this.size, color, x + 2, y + (float)size.y - 4).y + 4;
             }
         }
     }

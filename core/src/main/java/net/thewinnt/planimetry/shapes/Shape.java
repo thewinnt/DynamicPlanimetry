@@ -14,10 +14,11 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public abstract class Shape {
+public abstract class Shape implements ComponentRepresentable {
     /** A list of shapes that this shape depends on */
     protected final ArrayList<Shape> dependencies = new ArrayList<>();
     /** A list of shapes that depend on this shape */
@@ -123,6 +124,12 @@ public abstract class Shape {
             nbt.put("name_override", nameOverride.toNbt());
         }
         return nbt;
+    }
+
+    @Override
+    public Component toComponent() {
+        if (nameOverride != null) return getNameOverride();
+        return getName();
     }
 
     public static enum SelectionStatus {

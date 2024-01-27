@@ -3,9 +3,11 @@ package net.thewinnt.planimetry.ui;
 import com.badlogic.gdx.graphics.Color;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
 
 public record Theme(
-    String name,
+    Component name,
     Color main,
     Color pressed,
     Color button,
@@ -29,13 +31,13 @@ public record Theme(
     Color gridLine,
     Color gridHint,
     Color gridCenter
-) {
+) implements ComponentRepresentable {
     public static Theme current() {
         return DynamicPlanimetry.SETTINGS.getTheme();
     }
-
+    
     @Override
-    public String toString() {
+    public Component toComponent() {
         return name;
     }
 }

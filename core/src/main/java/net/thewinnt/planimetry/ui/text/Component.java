@@ -10,7 +10,7 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.util.FontProvider;
 
-public interface Component {
+public interface Component extends ComponentRepresentable {
     String toString();
     Vec2 draw(Batch batch, FontProvider font, Size size, Color color, float x, float y);
     Vec2 getSize(FontProvider font, Size size);
@@ -45,6 +45,11 @@ public interface Component {
 
     public static Component optional(Component component) {
         return component == null ? Empty.INSTANCE : component;
+    }
+
+    @Override
+    default Component toComponent() {
+        return this;
     }
 
     static class Empty implements Component {

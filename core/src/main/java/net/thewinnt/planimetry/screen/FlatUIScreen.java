@@ -20,6 +20,7 @@ import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.ScrollManager;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.drawable.DynamicIcon;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public abstract class FlatUIScreen implements Screen {
@@ -82,6 +83,9 @@ public abstract class FlatUIScreen implements Screen {
 
     @Override
     public void show() {
+        if (drawer != null) {
+            DynamicIcon.drawer = drawer;
+        }
         if (hiddenBefore) initActors();
         hiddenBefore = false;
         Gdx.input.setInputProcessor(stage);

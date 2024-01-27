@@ -1,5 +1,7 @@
 package net.thewinnt.planimetry.ui.drawable;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
+
 import net.thewinnt.planimetry.ui.Theme;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -62,6 +64,11 @@ public abstract class DynamicIcon extends ShapeDrawerDrawable {
         this.y = y;
         this.size = size;
     };
+
+    @Override
+    public void draw(Batch batch, float x, float y, float width, float height) {
+        this.render(x, y, Math.min(width, height));
+    }
 
     @Override
     public void drawShapes(ShapeDrawer shapeDrawer, float x, float y, float width, float height) {

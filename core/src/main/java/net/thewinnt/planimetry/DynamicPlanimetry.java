@@ -28,6 +28,7 @@ import net.thewinnt.planimetry.screen.MainMenuScreen;
 import net.thewinnt.planimetry.screen.SettingsScreen;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.text.Component;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -39,7 +40,7 @@ public class DynamicPlanimetry extends Game {
     public static final int SETTINGS_SCREEN = 3;
     public static final Nbt NBT = new Nbt();
     public static final Theme THEME_LIGHT = new Theme(
-        "Светлая",
+        Component.literal("Светлая"),
         new Color(0xFFFFFFFF), // main
         new Color(0xDCDCDCFF), // pressed
         new Color(0xF0F0F0FF), // button
@@ -66,7 +67,7 @@ public class DynamicPlanimetry extends Game {
     );
     
     public static final Theme THEME_DARK = new Theme(
-        "Тёмная",
+        Component.literal("Тёмная"),
         new Color(0x1F1F1FFF), // main
         new Color(0x000000FF), // pressed
         new Color(0x0F0F0FFF), // button
