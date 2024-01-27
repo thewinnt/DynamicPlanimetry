@@ -65,8 +65,7 @@ public class ShapeProperty extends Property<Shape> {
     public WidgetGroup getActorSetup(StyleSet styles) {
         Table output = new Table();
         Collection<Shape> shapes = this.drawing.allShapes.stream().filter(canConnect).toList();
-        SelectBox<Shape> selector = new SelectBox<>(styles.getListStyle(Size.MEDIUM));
-        selector.setItems(shapes.toArray(new Shape[0]));
+        SelectBox<Shape> selector = new ComponentSelectBox<>(styles.getListStyle(Size.MEDIUM), shapes, shape -> shape.getName());
         selector.setSelected(attachment);
         selector.addListener(new ChangeListener() {
             @Override

@@ -6,6 +6,7 @@ import java.util.function.Function;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
@@ -27,11 +28,11 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
     @SuppressWarnings("unchecked")
     public ComponentSelectBox(SelectBoxStyle style, Collection<T> items, Function<T, Component> textGetter) {
         super(style);
-        this.setItems((T[])(items.toArray()));
+        super.setItems((T[])(items.toArray()));
         this.items = items;
-        ((ComponentList)this.getList()).elements = items;
-        ((ComponentList)this.getList()).components = textGetter;
+        ((ComponentList)this.getList()).finish(items, textGetter);
         this.textGetter = textGetter;
+        this.layout();
     }
 
     @Override
@@ -62,7 +63,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
         if (getBackgroundDrawable() != null) {
             getBackgroundDrawable().draw(batch, getX(), getY(), getWidth(), getHeight());
         }
-        textGetter.apply(getSelected()).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, Size.MEDIUM, Theme.current().textButton(), getX() + 2, getY() + getHeight() - 5);
+        textGetter.apply(getSelected()).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, Size.MEDIUM, Theme.current().textButton(), getX() + 2, getY() + getHeight() - 6);
     }
 
     @Override
@@ -95,7 +96,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
 
         @Override
         protected List<T> newList() {
-            return new ComponentList(ComponentSelectBox.this.getStyle().listStyle, items, textGetter, DynamicPlanimetry.getInstance()::getBoldFont, Size.MEDIUM);
+            return new ComponentList(ComponentSelectBox.this.getStyle().listStyle, DynamicPlanimetry.getInstance()::getBoldFont, Size.MEDIUM);
         }
     }
 
@@ -104,36 +105,49 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
         private Function<T, Component> components;
         private final FontProvider font;
         private final Size size;
-        private float prefWidth;
-        private float prefHeight;
+        private float pw = 200;
+        private float pht = 400;
 
-        public ComponentList(ListStyle style, Collection<T> elements, Function<T, Component> components, FontProvider font, Size size) {
+        public ComponentList(ListStyle style, FontProvider font, Size size) {
             super(style);
-            this.elements = elements;
-            this.components = components;
             this.font = font;
             this.size = size;
         }
 
+        @SuppressWarnings("unchecked")
+        public void finish(Collection<T> elements, Function<T, Component> components) {
+            this.elements = elements;
+            this.components = components;
+            this.setItems((T[])this.elements.toArray());
+            layout();
+            invalidateHierarchy();
+        }
+
         @Override
         public void layout() {
-            prefWidth = 0;
-            prefHeight = 0;
+            this.pw = 0;
+            this.pht = 0;
+            if (elements == null) return;
             for (T i : elements) {
                 Vec2 result = components.apply(i).getSize(font, size);
-                prefWidth += (float)result.x + 4;
-                prefHeight = Math.max(prefHeight, (float)result.y + 4);
+                this.pw = Math.max(pw, (float)result.x + 4);
+                this.pht += (float)result.y + 4;
             }
         }
 
         @Override
         public float getPrefHeight() {
-            return prefHeight;
+            return this.pht;
         }
 
         @Override
         public float getPrefWidth() {
-            return prefWidth;
+            return this.pw;
+        }
+
+        @Override
+        public float getItemHeight() {
+            return this.pht / elements.size();
         }
 
         @Override
@@ -141,25 +155,27 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
             validate();
             drawBackground(batch, parentAlpha);
             float x = getX();
-            float y = getY() + getHeight();
+            float y = getY();
             float mx = Gdx.input.getX();
-            float my = Gdx.graphics.getHeight() - Gdx.input.getY();
+            float my = Gdx.input.getY();
             for (T i : getItems()) {
                 Drawable entryBackground = null;
                 Component text = components.apply(i);
                 ListStyle style = getStyle();
                 Vec2 size = text.getSize(font, this.size);
                 Color color = style.fontColorUnselected;
-                if (mx > x && mx < x + getWidth() && my > y - size.y && my < y) {
+                Vector2 startPos = this.localToScreenCoordinates(new Vector2(x, y));
+                if (mx > startPos.x && mx < startPos.x + getWidth() && my > startPos.y - size.y - 2 && my < startPos.y + 2) {
                     entryBackground = Gdx.input.isButtonPressed(0) ? style.down : style.over;
-                } else if (i == getSelected()) {
+                    this.setSelectedIndex(getItems().indexOf(i, true));
+                } else if (i == getItems().get(getSelectedIndex())) {
                     entryBackground = style.selection;
                     color = style.fontColorSelected;
                 }
                 if (entryBackground != null) {
-                    entryBackground.draw(batch, x, y - (float)size.y, getWidth(), (float)size.y);
+                    entryBackground.draw(batch, x, y - 2, getWidth(), (float)size.y + 4);
                 }
-                text.draw(batch, font, this.size, color, x, y);
+                y += text.draw(batch, font, this.size, color, x, y + (float)size.y - 4).y + 4;
             }
         }
     }

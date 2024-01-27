@@ -2,27 +2,26 @@ package net.thewinnt.planimetry.ui.properties;
 
 import java.util.Collection;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.ListSwitch;
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class PropertyLayout extends WidgetGroup {
-    private final ScrollPane pane;
+    private final Container<VerticalGroup> pane;
     private final VerticalGroup propertyList;
     public final ListSwitch list;
 
     public PropertyLayout(Collection<Property<?>> properties, StyleSet styles, Component name, boolean open) {
         super();
-        this.pane = new ScrollPane(null, styles.getScrollPaneStyleNoBg());
+        this.pane = new Container<>();
         if (name != null) {
             this.list = new ListSwitch(name, styles);
             list.setChecked(open);
@@ -41,7 +40,7 @@ public class PropertyLayout extends WidgetGroup {
             this.list = null;
         }
 
-        pane.setupOverscroll(Gdx.graphics.getHeight() / Size.MEDIUM.factor * 1.1f, 10, 200);
+        // pane.setupOverscroll(Gdx.graphics.getHeight() / Size.MEDIUM.factor * 1.1f, 10, 200);
         
         this.propertyList = new VerticalGroup().top().left().expand().fill().pad(2, 5, 2, 5);
         this.propertyList.setFillParent(true);
@@ -49,6 +48,8 @@ public class PropertyLayout extends WidgetGroup {
             this.propertyList.addActor(new PropertyEntry(i, styles));
         }
         this.pane.setActor(propertyList);
+        this.pane.align(Align.bottomLeft);
+        this.pane.fill();
         
         if (list != null) this.addActor(list);
         if (open) this.addActor(pane);

@@ -40,7 +40,7 @@ public class MultiComponent implements Component {
             offx += (float)size.x;
             height = Math.max(height, size.y);
         }
-        return new Vec2(offx, y);
+        return new Vec2(offx, height);
     }
 
     @Override
