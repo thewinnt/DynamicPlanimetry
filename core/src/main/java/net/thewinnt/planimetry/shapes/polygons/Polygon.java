@@ -5,7 +5,6 @@ import java.util.Collection;
 import com.badlogic.gdx.graphics.Color;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
-import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -85,7 +84,7 @@ public class Polygon extends MultiPointLine {
     @Override
     public Collection<Property<?>> getProperties() {
         var prev = super.getProperties();
-        prev.add(new DisplayProperty(Component.literal("Площадь"), () -> Component.literal(DynamicPlanimetry.formatNumber(getArea()))));
+        prev.add(new DisplayProperty(Component.literal("Площадь"), () -> Component.number(getArea())));
         return prev;
     }
 

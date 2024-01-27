@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -37,6 +38,10 @@ public interface Component extends ComponentRepresentable {
 
     public static LiteralComponent literal(String value) {
         return value == null ? LiteralComponent.EMPTY : new LiteralComponent(value);
+    }
+
+    public static LiteralComponent number(double value) {
+        return new LiteralComponent(DynamicPlanimetry.formatNumber(value));
     }
 
     public static Component of(Component... components) {

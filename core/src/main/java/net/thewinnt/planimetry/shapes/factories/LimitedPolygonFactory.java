@@ -2,6 +2,7 @@ package net.thewinnt.planimetry.shapes.factories;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
+import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
@@ -9,14 +10,19 @@ import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.shapes.polygons.Polygon;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 
-public class PolygonFactory extends ShapeFactory {
+public class LimitedPolygonFactory extends ShapeFactory {
+    private final int limit;
     private PointProvider point1;
     private PointReference nextPoint;
     private MultiPointLine line;
     private boolean isDone = false;
 
-    public PolygonFactory(DrawingBoard board) {
+    public LimitedPolygonFactory(DrawingBoard board, int limit) {
         super(board);
+        this.limit = limit;
+        if (limit < 3) {
+            throw new IllegalArgumentException("A Polygon must have at least three points");
+        }
     }
 
     @Override
@@ -31,14 +37,24 @@ public class PolygonFactory extends ShapeFactory {
             return false;
         } else {
             PointProvider next = getOrCreatePoint(x, y);
-            if (next == point1) {
-                isDone = line.getPoints().size() >= 3;
-                return line.getPoints().size() >= 3;
-            }
+            if (next == point1) return false; // don't allow self-looping
             this.nextPoint.setPoint(next);
             this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
+            if (this.line.points.size() == limit) {
+                if (this.line.points.size() == 3) {
+                    Polygon polygon = new Polygon(board.getDrawing(), this.line.points);
+                    this.replaceShape(this.line, polygon);
+                    this.line = polygon;
+                }
+                return true;
+            }
             this.addShape(this.nextPoint);
             this.line.addPoint(this.nextPoint);
+            if (this.line.points.size() == 3) {
+                Polygon polygon = new Polygon(board.getDrawing(), this.line.points);
+                this.replaceShape(this.line, polygon);
+                this.line = polygon;
+            }
             return false;
         }
     }
@@ -50,9 +66,12 @@ public class PolygonFactory extends ShapeFactory {
 
     @Override
     public void onFinish() {
-        var points = this.line.getPoints();
+        var points = this.line.points;
         points.remove(this.nextPoint);
-        board.replaceShape(this.line, new Polygon(board.getDrawing(), points));
         board.removeShape(this.nextPoint);
+        Polygon replaceCandidate = ShapeData.asSpecificPolygon((Polygon)this.line);
+        if (replaceCandidate != this.line) {
+            board.replaceShape(this.line, replaceCandidate);
+        }
     }
 }

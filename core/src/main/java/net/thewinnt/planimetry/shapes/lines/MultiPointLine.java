@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Color;
 
 import dev.dewy.nbt.tags.array.LongArrayTag;
 import dev.dewy.nbt.tags.collection.CompoundTag;
-import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -101,7 +100,7 @@ public class MultiPointLine extends Shape {
         for (PointProvider i : points) {
             properties.add(new EnclosingProperty(i.getName(), i.getProperties()));
         }
-        properties.add(new DisplayProperty(Component.literal("Длина"), () -> Component.literal(DynamicPlanimetry.formatNumber(getPerimeter()))));
+        properties.add(new DisplayProperty(Component.literal("Длина"), () -> Component.number(getPerimeter())));
         return properties;
     }
 
@@ -135,16 +134,6 @@ public class MultiPointLine extends Shape {
             b = points.get(i + 1).getPosition();
             drawer.line(board.bx(a.x), board.by(a.y), board.bx(b.x), board.by(b.y), lineColor, getThickness(board.getScale()));
         }
-    }
-
-    /**
-     * Returns whether this particular ordered set of points can be converted into this
-     * polygon.
-     * @param points A set of points, as if this was just 
-     * @return
-     */
-    public boolean validArrangement(List<PointProvider> points) {
-        return true;
     }
 
     @Override

@@ -17,8 +17,10 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.CircleFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory;
+import net.thewinnt.planimetry.shapes.factories.PointFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
-import net.thewinnt.planimetry.shapes.factories.PolygonFactory;
+import net.thewinnt.planimetry.shapes.factories.FreePolygonFactory;
+import net.thewinnt.planimetry.shapes.factories.LimitedPolygonFactory;
 import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
@@ -41,11 +43,13 @@ public class EditorScreen extends FlatUIScreen {
     private Container<Window> saveOverlay;
 
     private Label creationCategory;
+    private TextButton createPoint;
     private TextButton createLine;
     private TextButton createRay;
     private TextButton createLineSegment;
     private TextButton createCircle;
     private TextButton createPolygon;
+    private TextButton createTriangle;
 
     private TextButton exitToMenu;
     private TextButton goSettings;
@@ -93,17 +97,26 @@ public class EditorScreen extends FlatUIScreen {
 
         // ACTORS
         creationCategory = new Label("Создание", styles.getLabelStyle(Size.MEDIUM));
+        createPoint = new TextButton("Точка", styles.getButtonStyle(Size.SMALL, true));
         createLine = new TextButton("Прямая", styles.getButtonStyle(Size.SMALL, true));
         createRay = new TextButton("Луч", styles.getButtonStyle(Size.SMALL, true));
         createLineSegment = new TextButton("Отрезок", styles.getButtonStyle(Size.SMALL, true));
         createCircle = new TextButton("Окружность", styles.getButtonStyle(Size.SMALL, true));
         createPolygon = new TextButton("Многоугольник", styles.getButtonStyle(Size.SMALL, true));
+        createTriangle = new TextButton("Треугольник", styles.getButtonStyle(Size.SMALL, true));
 
         exitToMenu = new TextButton("В меню", styles.getButtonStyle(Size.SMALL, true));
         goSettings = new TextButton("Настройки", styles.getButtonStyle(Size.SMALL, true));
         save = new TextButton("Сохранить", styles.getButtonStyle(Size.SMALL, true));
 
         // LISTENERS
+        createPoint.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                board.startCreation(new PointFactory(board));
+            }
+        });
+
         createLine.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -135,7 +148,14 @@ public class EditorScreen extends FlatUIScreen {
         createPolygon.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                board.startCreation(new PolygonFactory(board));
+                board.startCreation(new FreePolygonFactory(board));
+            }
+        });
+
+        createTriangle.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                board.startCreation(new LimitedPolygonFactory(board, 3));
             }
         });
 
@@ -184,16 +204,18 @@ public class EditorScreen extends FlatUIScreen {
         });
         // ADDING TO TABLES
         creation.add(creationCategory).expandX().fillX().pad(5, 5, 0, 5).row();
+        creation.add(createPoint).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createLine).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createRay).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createLineSegment).expandX().fillX().pad(5, 5, 0, 5).row();
         creation.add(createCircle).expandX().fillX().pad(5, 5, 0, 5).row();
-        creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5);
+        creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5).row();
+        creation.add(createTriangle).expandX().fillX().pad(5, 5, 0, 5);
 
         if (selection != null) {
             selectedShapeName.setActor(new ComponentLabel(Component.literal("Свойства"), app::getBoldFont, Size.MEDIUM));
             properties.setActor(new PropertyLayout(selection.getProperties(), styles, selection.getName(), true));
-            functions.add(new ComponentLabel(Component.literal("Действия"), app::getBoldFont, Size.MEDIUM)).left().row();
+            functions.add(new ComponentLabel(Component.literal("Действия"), app::getBoldFont, Size.MEDIUM)).expand().left().row();
             for (Function<?> i : selection.getFunctions()) {
                 i.addUseListener(shape -> show());
                 functions.add(i.setupActors(styles)).expandX().fillX().row();

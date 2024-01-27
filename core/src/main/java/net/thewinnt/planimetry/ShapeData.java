@@ -14,6 +14,7 @@ import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.shapes.point.relative.TangentOffsetPoint;
 import net.thewinnt.planimetry.shapes.polygons.Polygon;
+import net.thewinnt.planimetry.shapes.polygons.Triangle;
 import net.thewinnt.planimetry.util.HashBiMap;
 
 public class ShapeData {
@@ -35,6 +36,7 @@ public class ShapeData {
     // POLYGONS
     public static final ShapeDeserializer<MultiPointLine> POLYGONAL_CHAIN = register("polygonal_chain", MultiPointLine::readNbt);
     public static final ShapeDeserializer<Polygon> POLYGON = register("polygon", Polygon::readNbt);
+    public static final ShapeDeserializer<Polygon> TRIANGLE = register("triangle", Triangle::readNbt);
 
     // CIRCLES
     public static final ShapeDeserializer<Circle> CIRCLE = register("circle", Circle::readNbt);
@@ -50,5 +52,12 @@ public class ShapeData {
 
     public static String getShapeType(ShapeDeserializer<?> deserializer) {
         return SHAPE_TYPES.getKey(deserializer);
+    }
+
+    public static Polygon asSpecificPolygon(Polygon generic) {
+        return switch (generic.points.size()) {
+            case 3 -> new Triangle(generic);
+            default -> generic;
+        };
     }
 }

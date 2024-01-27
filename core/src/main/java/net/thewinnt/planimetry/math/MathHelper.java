@@ -2,6 +2,7 @@ package net.thewinnt.planimetry.math;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 
+/** A class containing some utility math functions, mostly geometry-related. */
 public class MathHelper {
     public static final double HALF_PI = Math.PI / 2;
 
@@ -37,5 +38,13 @@ public class MathHelper {
         } else {
             return distance;
         }
+    }
+
+    public static double getSlope(Vec2 a, Vec2 b) {
+        return (a.y - b.y) / (a.x - b.x);
+    }
+
+    public static double angle(Vec2 end1, Vec2 center, Vec2 end2) {
+        return Math.abs(Math.atan(getSlope(center, end1)) - Math.atan(getSlope(center, end2)));
     }
 }

@@ -54,6 +54,12 @@ public abstract class ShapeFactory {
         this.addingShapes.add(shape);
     }
 
+    protected void replaceShape(Shape old, Shape neo) {
+        this.board.replaceShape(old, neo);
+        this.addingShapes.remove(old);
+        this.addingShapes.add(neo);
+    }
+
     protected PointProvider getOrCreatePoint(double x, double y) {
         PointProvider p1 = (PointProvider) board.getHoveredShape(Gdx.input.getX(), Gdx.input.getY(), shape -> shape instanceof PointProvider);
         if (p1 != null) {

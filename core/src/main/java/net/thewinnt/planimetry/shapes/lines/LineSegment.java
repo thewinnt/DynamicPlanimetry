@@ -6,7 +6,6 @@ import java.util.List;
 import com.badlogic.gdx.graphics.Color;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
-import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -82,7 +81,7 @@ public class LineSegment extends Line {
     public Collection<Property<?>> getProperties() {
         EnclosingProperty a = new EnclosingProperty(this.a.getNameComponent(), this.a.getProperties());
         EnclosingProperty b = new EnclosingProperty(this.b.getNameComponent(), this.b.getProperties());
-        DisplayProperty length = new DisplayProperty(Component.literal("Длина"), () -> Component.literal(DynamicPlanimetry.formatNumber(this.a.getPosition().distanceTo(this.b.getPosition()))));
+        DisplayProperty length = new DisplayProperty(Component.literal("Длина"), () -> Component.number(this.a.getPosition().distanceTo(this.b.getPosition())));
         return List.of(a, b, length);
     }
 
