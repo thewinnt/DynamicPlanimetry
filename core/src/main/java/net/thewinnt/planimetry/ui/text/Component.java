@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -42,6 +43,10 @@ public interface Component extends ComponentRepresentable {
 
     public static LiteralComponent number(double value) {
         return new LiteralComponent(DynamicPlanimetry.formatNumber(value));
+    }
+
+    public static LiteralComponent angle(double radians) {
+        return new LiteralComponent(DynamicPlanimetry.formatNumber(Settings.get().representAngle(radians)) + Settings.get().getAngleUnit().getUnit());
     }
 
     public static Component of(Component... components) {

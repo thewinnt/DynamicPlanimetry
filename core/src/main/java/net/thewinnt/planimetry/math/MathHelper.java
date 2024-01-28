@@ -5,6 +5,7 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 /** A class containing some utility math functions, mostly geometry-related. */
 public class MathHelper {
     public static final double HALF_PI = Math.PI / 2;
+    public static final double RADIANS_TO_GRADIANS = 200 / Math.PI;
 
     public static boolean roughlyEquals(double a, double b) {
         return Math.abs(a - b) < Math.pow(2, DynamicPlanimetry.SETTINGS.getMathPrecision());
@@ -45,6 +46,8 @@ public class MathHelper {
     }
 
     public static double angle(Vec2 end1, Vec2 center, Vec2 end2) {
-        return Math.abs(Math.atan(getSlope(center, end1)) - Math.atan(getSlope(center, end2)));
+        Vec2 angle1 = end1.subtract(center);
+        Vec2 angle2 = end2.subtract(center);
+        return Math.acos(angle1.dot(angle2) / (angle1.length() * angle2.length()));
     }
 }

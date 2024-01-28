@@ -22,7 +22,7 @@ public class EnclosingProperty extends Property<Property<?>> {
         }
     }
 
-    public EnclosingProperty(Component name, Collection<Property<?>> properties) {
+    public EnclosingProperty(Component name, Collection<? extends Property<?>> properties) {
         super(name);
         this.properties.addAll(properties);
     }

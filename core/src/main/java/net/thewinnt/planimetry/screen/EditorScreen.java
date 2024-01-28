@@ -1,5 +1,7 @@
 package net.thewinnt.planimetry.screen;
 
+import java.util.Collection;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
@@ -215,10 +217,13 @@ public class EditorScreen extends FlatUIScreen {
         if (selection != null) {
             selectedShapeName.setActor(new ComponentLabel(Component.literal("Свойства"), app::getBoldFont, Size.MEDIUM));
             properties.setActor(new PropertyLayout(selection.getProperties(), styles, selection.getName(), true));
-            functions.add(new ComponentLabel(Component.literal("Действия"), app::getBoldFont, Size.MEDIUM)).expand().left().row();
-            for (Function<?> i : selection.getFunctions()) {
-                i.addUseListener(shape -> show());
-                functions.add(i.setupActors(styles)).expandX().fillX().row();
+            Collection<Function<?>> shapeFunctions = selection.getFunctions();
+            if (!shapeFunctions.isEmpty()) {
+                functions.add(new ComponentLabel(Component.literal("Действия"), app::getBoldFont, Size.MEDIUM)).expand().left().row();
+                for (Function<?> i : shapeFunctions) {
+                    i.addUseListener(shape -> show());
+                    functions.add(i.setupActors(styles)).expandX().fillX().row();
+                }
             }
         } else {
             selectedShapeName.setActor(null);

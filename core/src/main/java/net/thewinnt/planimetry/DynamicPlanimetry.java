@@ -121,7 +121,8 @@ public class DynamicPlanimetry extends Game {
 
     static {
         StringBuilder chars = new StringBuilder();
-        for (int i = 0x20; i < 0x7B; i++) chars.append((char) i);
+        for (int i = 0x20; i < 0x7E; i++) chars.append((char) i);
+        for (int i = 0xA0; i < 0xFF; i++) chars.append((char) i);
         for (int i = 0x401; i < 0x452; i++) chars.append((char) i);
         chars.append('₽');
         characters = chars.toString();
