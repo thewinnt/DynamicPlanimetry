@@ -2,9 +2,12 @@ package net.thewinnt.planimetry.shapes.factories;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
+import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
+import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class PointFactory extends ShapeFactory {
     private final PointReference point;
@@ -17,12 +20,17 @@ public class PointFactory extends ShapeFactory {
 
     @Override
     public boolean click(InputEvent event, double x, double y) {
-        this.point.setPoint(this.getOrCreatePoint(x, y));
+        this.point.setPoint(new Point(board.getDrawing(), new Vec2(x, y)));
         return true;
     }
 
     @Override
     public boolean isDone() {
         return !(point.getPoint() instanceof MousePoint);
+    }
+
+    @Override
+    public Component getName() {
+        return Component.literal("Точка");
     }
 }

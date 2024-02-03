@@ -62,10 +62,10 @@ public class ShapeProperty extends Property<Shape> {
     }
 
     @Override
-    public WidgetGroup getActorSetup(StyleSet styles) {
+    public WidgetGroup getActorSetup(StyleSet styles, Size size) {
         Table output = new Table();
         Collection<Shape> shapes = this.drawing.allShapes.stream().filter(canConnect).toList();
-        SelectBox<Shape> selector = new ComponentSelectBox<>(styles.getListStyle(Size.MEDIUM), shapes, shape -> shape.getName(), Size.MEDIUM);
+        SelectBox<Shape> selector = new ComponentSelectBox<>(styles.getListStyle(size), shapes, Shape::getName, Size.MEDIUM);
         selector.setSelected(attachment);
         selector.addListener(new ChangeListener() {
             @Override
@@ -73,7 +73,7 @@ public class ShapeProperty extends Property<Shape> {
                 setValue(selector.getSelected());
             }
         });
-        
+
         output.add(selector).expand().fill();
         return output;
     }

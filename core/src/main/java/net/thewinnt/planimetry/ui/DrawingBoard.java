@@ -24,6 +24,8 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
 import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -209,7 +211,7 @@ public class DrawingBoard extends Actor {
                     drawer.line(getX(), by(i), getX() + getWidth(), by(i), Theme.current().gridLine(), 1);
                     if (Math.abs(i) < Math.pow(2, -16)) continue;
                     if (Math.abs(i) % 1 == 0) {
-                        float length = FontUtils.getTextLength(font.getFont(40, Theme.current().gridCenter()), String.valueOf((long)i));
+                        float length = FontUtils.getTextLength(font.getFont(40, Theme.current().gridHint()), String.valueOf((long)i));
                         float hintY = bx(0) + 5;
                         int alignYH = Align.left;
                         if (hintY >= getX() + getWidth() - length - 10) {
@@ -226,7 +228,7 @@ public class DrawingBoard extends Actor {
                         while (string.charAt(k) == '0') k--;
                         string = string.substring(0, k + 1);
                         if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
-                        float length = FontUtils.getTextLength(font.getFont(40, Theme.current().gridCenter()), string);
+                        float length = FontUtils.getTextLength(font.getFont(40, Theme.current().gridHint()), string);
                         float hintY = bx(0) + 5;
                         int alignYH = Align.left;
                         if (hintY >= getX() + getWidth() - length - 10) {
@@ -240,7 +242,7 @@ public class DrawingBoard extends Actor {
                     }
                 }
             }
-            drawer.setColor(0, 0, 0, 1);
+            drawer.setColor(Theme.current().gridCenter());
             drawer.line(getX(), by(0), getX() + getWidth(), by(0), 2);
             drawer.line(bx(0), getY(), bx(0), getY() + getHeight(), 2);
         }
@@ -267,6 +269,9 @@ public class DrawingBoard extends Actor {
             font.getFont(40, Color.FIREBRICK).draw(batch, "my: " + my, x(5), y(getHeight() - 105));
             font.getFont(40, Color.FIREBRICK).draw(batch, "mxb: " + xb(mx), x(5), y(getHeight() - 130));
             font.getFont(40, Color.FIREBRICK).draw(batch, "mxy: " + yb(my), x(5), y(getHeight() - 155));
+        }
+        if (creatingShape != null) {
+            Component.of(Component.literal("Создание фигуры: "), creatingShape.getName()).draw(batch, font, Size.MEDIUM, Theme.current().textUI(), x(5), y(getHeight() - 5));
         }
     }
 

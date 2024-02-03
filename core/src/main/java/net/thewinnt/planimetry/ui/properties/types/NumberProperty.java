@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.Locale;
 import java.util.OptionalDouble;
+import java.util.function.Predicate;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -26,6 +27,7 @@ public class NumberProperty extends Property<Double> {
     private double value;
     private OptionalDouble maxValue = OptionalDouble.empty();
     private OptionalDouble minValue = OptionalDouble.empty();
+    private Predicate<Double> filter;
     private boolean isWhole;
 
     public NumberProperty() {
@@ -53,29 +55,31 @@ public class NumberProperty extends Property<Double> {
 
     @Override
     public void setValue(Double value) {
-        this.value = value;
-        if (isWhole) {
-            value = (double)Math.round(value);
-        }
-        if (maxValue.isPresent() && value > maxValue.getAsDouble()) {
-            value = maxValue.getAsDouble();
-        } else if (minValue.isPresent() && value < minValue.getAsDouble()) {
-            value = minValue.getAsDouble();
-        }
-        for (Consumer<Double> i : this.listeners) {
-            i.accept(value);
+        if (filter == null || filter.test(value)) {
+            this.value = value;
+            if (isWhole) {
+                value = (double)Math.round(value);
+            }
+            if (maxValue.isPresent() && value > maxValue.getAsDouble()) {
+                value = maxValue.getAsDouble();
+            } else if (minValue.isPresent() && value < minValue.getAsDouble()) {
+                value = minValue.getAsDouble();
+            }
+            for (Consumer<Double> i : this.listeners) {
+                i.accept(value);
+            }
         }
     }
 
     @Override
-    public Table getActorSetup(StyleSet styles) {
+    public Table getActorSetup(StyleSet styles, Size size) {
         String fieldText;
         if (!isWhole) {
             fieldText = String.format((Locale)null, "%." + DynamicPlanimetry.SETTINGS.getDisplayPresicion() + "f", value);
         } else {
             fieldText = String.valueOf((long)value);
         }
-        TextField doubleField = new TextField(fieldText, styles.getTextFieldStyle(Size.SMALL, true)) {
+        TextField doubleField = new TextField(fieldText, styles.getTextFieldStyle(size, true)) {
             @Override
             public float getPrefWidth() {
                 return Gdx.graphics.getHeight() / 30;
@@ -88,9 +92,7 @@ public class NumberProperty extends Property<Double> {
                 int cursor = textField.getCursorPosition();
                 if (cursor > text.length()) cursor = text.length();
                 Double.parseDouble(text.substring(0, cursor) + character + text.substring(cursor) + '0');
-            } catch (NumberFormatException e) {
-                return false;
-            } catch (StringIndexOutOfBoundsException e) {
+            } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
                 return false;
             }
             return true;
@@ -98,35 +100,14 @@ public class NumberProperty extends Property<Double> {
         doubleField.setTextFieldListener((textField, c) -> {
             try {
                 prevValue = value;
-                double result = Double.valueOf(doubleField.getText());
-                if (isWhole) {
-                    result = Math.round(result);
-                }
-                if (maxValue.isPresent() && result > maxValue.getAsDouble()) {
-                    result = maxValue.getAsDouble();
-                } else if (minValue.isPresent() && result < minValue.getAsDouble()) {
-                    result = minValue.getAsDouble();
-                }
-                value = result;
-                for (Consumer<Double> i : this.listeners) {
-                    i.accept(value);
-                }
+                setValue(Double.valueOf(doubleField.getText()));
             } catch (NumberFormatException e) {}
         });
         doubleField.addListener(new InputListener() {
             private void unfocus() {
                 doubleField.getStage().setKeyboardFocus(null);
                 try {
-                    double result = Double.valueOf(doubleField.getText());
-                    if (isWhole) {
-                        result = Math.round(result);
-                    }
-                    if (maxValue.isPresent() && result > maxValue.getAsDouble()) {
-                        result = maxValue.getAsDouble();
-                    } else if (minValue.isPresent() && result < minValue.getAsDouble()) {
-                        result = minValue.getAsDouble();
-                    }
-                    value = result;
+                    setValue(Double.valueOf(doubleField.getText()));
                 } catch (NumberFormatException e) {
                     value = prevValue;
                     Notifications.addNotification("Invalid number: " + doubleField.getText(), 1000);
@@ -183,4 +164,8 @@ public class NumberProperty extends Property<Double> {
         return this;
     }
 
+    public NumberProperty filtered(Predicate<Double> filter) {
+        this.filter = filter;
+        return this;
+    }
 }

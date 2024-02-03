@@ -1,6 +1,7 @@
 package net.thewinnt.planimetry.ui.properties.types;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -8,6 +9,7 @@ import java.util.function.Consumer;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -17,9 +19,7 @@ public class EnclosingProperty extends Property<Property<?>> {
 
     public EnclosingProperty(Component name, Property<?>... properties) {
         super(name);
-        for (Property<?> i : properties) {
-            this.properties.add(i);
-        }
+        this.properties.addAll(Arrays.asList(properties));
     }
 
     public EnclosingProperty(Component name, Collection<? extends Property<?>> properties) {
@@ -43,8 +43,8 @@ public class EnclosingProperty extends Property<Property<?>> {
     }
 
     @Override
-    public WidgetGroup getActorSetup(StyleSet styles) {
-        return new PropertyLayout(properties, styles, name, false);
+    public WidgetGroup getActorSetup(StyleSet styles, Size size) {
+        return new PropertyLayout(properties, styles, name, size, false);
     }
 
     public void addProperty(Property<?> property) {

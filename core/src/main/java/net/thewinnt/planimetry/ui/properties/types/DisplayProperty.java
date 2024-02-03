@@ -27,7 +27,7 @@ public class DisplayProperty extends Property<Component> {
         super(name);
         this.data = () -> data;
     }
-    
+
     public DisplayProperty(Component name, Supplier<Component> data) {
         super(name);
         this.data = data;
@@ -39,8 +39,8 @@ public class DisplayProperty extends Property<Component> {
     }
 
     @Override
-    public WidgetGroup getActorSetup(StyleSet styles) {
-        return new Container<>(new DynamicComponentLabel(data, styles.font, Size.MEDIUM)).fill();
+    public WidgetGroup getActorSetup(StyleSet styles, Size size) {
+        return new Container<>(new DynamicComponentLabel(data, styles.font, size)).fill();
     }
 
     @Override

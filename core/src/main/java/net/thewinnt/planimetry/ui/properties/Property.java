@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.properties.layout.BasicLayout;
 import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -27,7 +28,7 @@ public abstract class Property<T> {
     }
 
     public abstract void addValueChangeListener(Consumer<T> listener);
-    public abstract WidgetGroup getActorSetup(StyleSet styles);
+    public abstract WidgetGroup getActorSetup(StyleSet styles, Size size);
     public abstract T getValue();
     public abstract void setValue(T value);
 }

@@ -71,7 +71,7 @@ public class FileSelectionScreen extends FlatUIScreen {
             show();
         });
     }
-    
+
     @Override
     public void addActorsBelowFps() {
         app.preloadDrawings(Gdx.files.getLocalStoragePath() + "drawings");
@@ -86,7 +86,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.linkBack = new Label("< Назад", styles.getLabelStyle(Size.LARGE));
         this.title = new Label("Открыть чертёж", styles.getLabelStyle(Size.LARGE));
         this.pane = new ScrollPane(files, paneStyle);
-        
+
         this.openSaveFolder = new TextButton("Открыть папку", styles.getButtonStyle(Size.MEDIUM, true));
         this.rename = new TextButton("Переименовать", styles.getButtonStyle(Size.MEDIUM, false));
         this.update = new TextButton("Обновить", styles.getButtonStyle(Size.MEDIUM, true));
@@ -204,11 +204,11 @@ public class FileSelectionScreen extends FlatUIScreen {
         updateStyles();
         final int width = Gdx.graphics.getWidth();
         final int height = Gdx.graphics.getHeight();
-        
+
         this.linkBack.setStyle(styles.getLabelStyle(Size.LARGE));
         this.title.setStyle(styles.getLabelStyle(Size.LARGE));
         this.pane.setStyle(paneStyle);
-        
+
         this.openSaveFolder.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
         this.update.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
         this.open.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
@@ -216,15 +216,15 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.nameField.setStyle(styles.getTextFieldStyle(Size.MEDIUM, true));
         this.setName.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
         this.cancelRename.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
-        
+
         rename.setDisabled(selection == null);
         this.rename.setStyle(styles.getButtonStyle(Size.MEDIUM, selection != null));
 
         refillFiles();
 
         sortingTable.reset();
-        sortingTable.add(new PropertyEntry(sortingType, styles)).expand().fill().padRight(20).left();
-        sortingTable.add(new PropertyEntry(isReverse, styles)).expand().fill().left();
+        sortingTable.add(new PropertyEntry(sortingType, styles, Size.MEDIUM)).expand().fill().padRight(20).left();
+        sortingTable.add(new PropertyEntry(isReverse, styles, Size.MEDIUM)).expand().fill().left();
 
         controlPanel.reset();
         controlPanel.add(openSaveFolder).expand().fill().pad(5).uniform();

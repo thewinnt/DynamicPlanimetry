@@ -69,7 +69,7 @@ public abstract class Line extends Shape {
     @Override
     public Component getName() {
         if (nameOverride != null) return Component.of(Component.literal(getTypeName()), nameOverride);
-        return Component.of(Component.literal(getTypeName()), this.a.getNameComponent(), this.b.getNameComponent());
+        return Component.of(Component.literal(getTypeName()), this.a.getName(), this.b.getNameComponent());
     }
 
     @Override

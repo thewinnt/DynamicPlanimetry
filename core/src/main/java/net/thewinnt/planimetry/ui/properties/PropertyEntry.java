@@ -11,10 +11,10 @@ public class PropertyEntry extends WidgetGroup {
     private ComponentLabel name;
     private WidgetGroup propertySetup;
 
-    public PropertyEntry(Property<?> property, StyleSet styles) {
+    public PropertyEntry(Property<?> property, StyleSet styles, Size size) {
         this.property = property;
-        this.name = new ComponentLabel(property.getName(), styles.font, Size.MEDIUM);
-        this.propertySetup = property.getActorSetup(styles);
+        this.name = new ComponentLabel(property.getName(), styles.font, size);
+        this.propertySetup = property.getActorSetup(styles, size);
         super.addActor(this.name);
         super.addActor(this.propertySetup);
     }
@@ -28,7 +28,7 @@ public class PropertyEntry extends WidgetGroup {
     public float getPrefHeight() {
         return Math.max(name.getPrefHeight(), this.propertySetup.getPrefHeight()) + 4;
     }
-    
+
     @Override
     public void layout() {
         if (this.propertySetup instanceof PropertyLayout) {

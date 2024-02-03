@@ -7,6 +7,7 @@ import net.thewinnt.planimetry.shapes.lines.ParallelInfiniteLine;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class ParallelLineFactory extends ShapeFactory {
     private final Line newLine;
@@ -31,5 +32,10 @@ public class ParallelLineFactory extends ShapeFactory {
     @Override
     public boolean isDone() {
         return isDone;
+    }
+
+    @Override
+    public Component getName() {
+        return Component.literal("Прямая, параллелльная к другой");
     }
 }

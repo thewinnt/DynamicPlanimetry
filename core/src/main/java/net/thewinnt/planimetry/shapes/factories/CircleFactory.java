@@ -9,6 +9,7 @@ import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class CircleFactory extends ShapeFactory {
     private PointReference point = null;
@@ -20,7 +21,7 @@ public class CircleFactory extends ShapeFactory {
     public CircleFactory(DrawingBoard board) {
         super(board);
     }
-    
+
     @Override
     public boolean click(InputEvent event, double x, double y) {
         if (this.point == null) {
@@ -76,5 +77,10 @@ public class CircleFactory extends ShapeFactory {
     public CircleFactory setKeepRadius(boolean keepRadius) {
         this.keepRadius = keepRadius;
         return this;
+    }
+
+    @Override
+    public Component getName() {
+        return Component.literal("Окружность");
     }
 }

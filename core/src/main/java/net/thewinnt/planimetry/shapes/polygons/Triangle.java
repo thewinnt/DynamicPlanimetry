@@ -48,6 +48,11 @@ public class Triangle extends Polygon {
         return ShapeData.TRIANGLE;
     }
 
+    public boolean isEquilateral() {
+        return MathHelper.roughlyEquals(a.distanceToMouse(b.getPosition(), null), a.distanceToMouse(c.getPosition(), null)) &&
+               MathHelper.roughlyEquals(a.distanceToMouse(b.getPosition(), null), b.distanceToMouse(c.getPosition(), null));
+    }
+
     public static Triangle readNbt(CompoundTag nbt, LoadingContext context) {
         var points = pointsFromNbt(nbt, context);
         return new Triangle(context.getDrawing(), points.get(0), points.get(1), points.get(2));

@@ -15,12 +15,12 @@ import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.text.Component;
 
-public class PropertyLayout extends WidgetGroup {
+public class DropdownLayout extends WidgetGroup {
     private final Container<VerticalGroup> pane;
-    private final VerticalGroup propertyList;
+    private final VerticalGroup actorList;
     public final ListSwitch list;
 
-    public PropertyLayout(Collection<Property<?>> properties, StyleSet styles, Component name, Size size, boolean open) {
+    public DropdownLayout(Collection<Actor> actors, StyleSet styles, Component name, Size size, boolean open) {
         super();
         this.pane = new Container<>();
         if (name != null) {
@@ -30,9 +30,9 @@ public class PropertyLayout extends WidgetGroup {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     if (list.isChecked()) {
-                        PropertyLayout.this.addActor(pane);
+                        DropdownLayout.this.addActor(pane);
                     } else {
-                        PropertyLayout.this.removeActor(pane);
+                        DropdownLayout.this.removeActor(pane);
                     }
                     DynamicPlanimetry.getInstance().editorScreen.layout();
                 }
@@ -43,12 +43,12 @@ public class PropertyLayout extends WidgetGroup {
 
         // pane.setupOverscroll(Gdx.graphics.getHeight() / Size.MEDIUM.factor * 1.1f, 10, 200);
 
-        this.propertyList = new VerticalGroup().top().left().expand().fill().pad(2, 5, 2, 5);
-        this.propertyList.setFillParent(true);
-        for (Property<?> i : properties) {
-            this.propertyList.addActor(new PropertyEntry(i, styles, size));
+        this.actorList = new VerticalGroup().top().left().expand().fill().pad(0, 5, 3, 5);
+        this.actorList.setFillParent(true);
+        for (Actor i : actors) {
+            this.actorList.addActor(i);
         }
-        this.pane.setActor(propertyList);
+        this.pane.setActor(actorList);
         this.pane.align(Align.bottomLeft);
         this.pane.fill();
 

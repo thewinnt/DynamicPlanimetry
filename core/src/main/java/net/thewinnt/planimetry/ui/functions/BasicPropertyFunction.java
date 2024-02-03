@@ -47,7 +47,7 @@ public class BasicPropertyFunction<T extends Shape> extends Function<T> {
         });
         table.add(new ComponentLabel(name, DynamicPlanimetry.getInstance()::getBoldFont, Size.MEDIUM));
         table.add(apply).right().expandX().row();
-        table.add(new PropertyLayout(properties.values(), styles, PARAMETERS, false)).expand().fill().colspan(9999);
+        table.add(new PropertyLayout(properties.values(), styles, PARAMETERS, Size.MEDIUM, false)).expand().fill().colspan(9999);
         return table;
     }
     

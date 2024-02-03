@@ -24,7 +24,9 @@ public class MainMenuScreen extends FlatUIScreen {
 
         Table buttons = new Table();
         
-        LabelStyle style_title = new LabelStyle(app.getBoldFont(200, Theme.current().textUI()), Theme.current().textUI());
+        // the font size is 201 because with 200 the letters 'a', 'c' and 'e' don't show up :(
+        // painful, i know
+        LabelStyle style_title = new LabelStyle(app.getBoldFont(201, Theme.current().textUI()), Theme.current().textUI());
         Label title = new Label("Dynamic Planimetry", style_title);
 
         TextButtonStyle buttonStyle = styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true);

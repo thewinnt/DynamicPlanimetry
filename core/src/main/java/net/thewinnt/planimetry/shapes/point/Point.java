@@ -85,6 +85,10 @@ public class Point extends PointProvider {
         this.movementListeners.forEach(i -> i.accept(new Vec2(dx, dy)));
     }
 
+    public void setPosition(Vec2 position) {
+        this.position = position;
+    }
+
     @Override
     public Collection<Property<?>> getProperties() {
         if (nameOverride != null) return List.of(property);

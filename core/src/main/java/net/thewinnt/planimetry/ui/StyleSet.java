@@ -202,5 +202,25 @@ public class StyleSet {
         private Size(int factor) {
             this.factor = factor;
         }
+
+        public Size smaller() {
+            return switch (this) {
+                case SUPER_LARGE -> VERY_LARGE;
+                case VERY_LARGE -> LARGE;
+                case LARGE -> MEDIUM;
+                case MEDIUM -> SMALL;
+                default -> VERY_SMALL;
+            };
+        }
+
+        public Size larger() {
+            return switch (this) {
+                case VERY_SMALL -> SMALL;
+                case SMALL -> MEDIUM;
+                case MEDIUM -> LARGE;
+                case LARGE -> VERY_LARGE;
+                default -> SUPER_LARGE;
+            };
+        }
     }
 }

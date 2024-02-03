@@ -15,6 +15,7 @@ import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.LiteralComponent;
 
 public class LineFactory extends ShapeFactory {
     private final LineType type;
@@ -42,7 +43,7 @@ public class LineFactory extends ShapeFactory {
             this.addedPoint1 = true;
         }
     }
-    
+
     @Override
     public boolean click(InputEvent event, double x, double y) {
         this.board.setSelection(null);
@@ -102,5 +103,10 @@ public class LineFactory extends ShapeFactory {
     @FunctionalInterface
     public static interface LineConstructor<T extends Line> {
         T create(Drawing drawing, PointProvider a, PointProvider b);
+    }
+
+    @Override
+    public Component getName() {
+        return (LiteralComponent)type.name;
     }
 }

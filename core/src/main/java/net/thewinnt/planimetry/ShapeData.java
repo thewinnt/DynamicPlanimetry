@@ -14,6 +14,7 @@ import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.shapes.point.relative.TangentOffsetPoint;
 import net.thewinnt.planimetry.shapes.polygons.Polygon;
+import net.thewinnt.planimetry.shapes.polygons.Tetragon;
 import net.thewinnt.planimetry.shapes.polygons.Triangle;
 import net.thewinnt.planimetry.util.HashBiMap;
 
@@ -57,6 +58,7 @@ public class ShapeData {
     public static Polygon asSpecificPolygon(Polygon generic) {
         return switch (generic.points.size()) {
             case 3 -> new Triangle(generic);
+            case 4 -> new Tetragon(generic);
             default -> generic;
         };
     }

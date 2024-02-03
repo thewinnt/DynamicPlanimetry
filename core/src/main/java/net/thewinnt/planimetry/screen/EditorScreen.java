@@ -1,6 +1,8 @@
 package net.thewinnt.planimetry.screen;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -13,21 +15,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import com.badlogic.gdx.utils.Align;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.CircleFactory;
-import net.thewinnt.planimetry.shapes.factories.LineFactory;
-import net.thewinnt.planimetry.shapes.factories.PointFactory;
-import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.factories.FreePolygonFactory;
 import net.thewinnt.planimetry.shapes.factories.LimitedPolygonFactory;
+import net.thewinnt.planimetry.shapes.factories.LineFactory;
+import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
+import net.thewinnt.planimetry.shapes.factories.PointFactory;
 import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.functions.Function;
+import net.thewinnt.planimetry.ui.properties.DropdownLayout;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.text.Component;
 
@@ -36,8 +40,8 @@ public class EditorScreen extends FlatUIScreen {
     private ShapeSettingsBackground settings;
     private double lastScale = -1;
     private Vec2 lastOffset = null;
-    
-    private Table creation;
+
+    private ScrollPane creation;
     private ScrollPane selectedShapeName;
     private ScrollPane properties;
     private Table functions;
@@ -70,7 +74,7 @@ public class EditorScreen extends FlatUIScreen {
         board = new DrawingBoard(drawer, app::getBoldFont, app.getDrawing());
         board.addSelectionListener(shape -> show());
 
-        creation = new Table();
+        creation = new ScrollPane(null);
         selectedShapeName = new ScrollPane(null);
         properties = new ScrollPane(null);
         functions = new Table();
@@ -91,21 +95,27 @@ public class EditorScreen extends FlatUIScreen {
         stage.addActor(saveOverlay);
     }
 
+    private TextButton leftAlignedButton(String text, Size size, boolean active) {
+        TextButton output = new TextButton(text, styles.getButtonStyle(size, active));
+        output.getLabel().setAlignment(Align.left);
+        output.getLabelCell().padLeft(4);
+        return output;
+    }
+
     public void rebuildUI(Shape selection) {
         // TABLES
-        creation.reset();
         functions.reset();
         actions.reset();
 
         // ACTORS
         creationCategory = new Label("Создание", styles.getLabelStyle(Size.MEDIUM));
-        createPoint = new TextButton("Точка", styles.getButtonStyle(Size.SMALL, true));
-        createLine = new TextButton("Прямая", styles.getButtonStyle(Size.SMALL, true));
-        createRay = new TextButton("Луч", styles.getButtonStyle(Size.SMALL, true));
-        createLineSegment = new TextButton("Отрезок", styles.getButtonStyle(Size.SMALL, true));
-        createCircle = new TextButton("Окружность", styles.getButtonStyle(Size.SMALL, true));
-        createPolygon = new TextButton("Многоугольник", styles.getButtonStyle(Size.SMALL, true));
-        createTriangle = new TextButton("Треугольник", styles.getButtonStyle(Size.SMALL, true));
+        createPoint = leftAlignedButton("Точка", Size.SMALL, true);
+        createLine = leftAlignedButton("Прямая", Size.SMALL, true);
+        createRay = leftAlignedButton("Луч", Size.SMALL, true);
+        createLineSegment = leftAlignedButton("Отрезок", Size.SMALL, true);
+        createCircle = leftAlignedButton("Окружность", Size.SMALL, true);
+        createPolygon = leftAlignedButton("Многоугольник", Size.SMALL, true);
+        createTriangle = leftAlignedButton("Треугольник", Size.SMALL, true);
 
         exitToMenu = new TextButton("В меню", styles.getButtonStyle(Size.SMALL, true));
         goSettings = new TextButton("Настройки", styles.getButtonStyle(Size.SMALL, true));
@@ -139,14 +149,14 @@ public class EditorScreen extends FlatUIScreen {
                 board.startCreation(new LineFactory(board, LineType.SEGMENT));
             }
         });
-        
+
         createCircle.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 board.startCreation(new CircleFactory(board));
             }
         });
-        
+
         createPolygon.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -197,26 +207,24 @@ public class EditorScreen extends FlatUIScreen {
                     }
                 });
 
-                saveDialog.add(new Label("Имя чертежа", styles.getLabelStyle(Size.SMALL))).pad(Gdx.graphics.getHeight() / 40, 5, 0, 5);
-                saveDialog.add(namePicker).expand().fill().pad(Gdx.graphics.getHeight() / 40 + 5, 5, 0, 5).row();;
+                saveDialog.add(new Label("Имя чертежа", styles.getLabelStyle(Size.SMALL))).pad(Gdx.graphics.getHeight() / 40f, 5, 0, 5);
+                saveDialog.add(namePicker).expand().fill().pad(Gdx.graphics.getHeight() / 40f + 5, 5, 0, 5).row();;
                 saveDialog.add(filename).colspan(2).pad(5).row();
                 saveDialog.add(save).colspan(2).pad(5);
                 saveOverlay.setActor(saveDialog);
             }
         });
         // ADDING TO TABLES
-        creation.add(creationCategory).expandX().fillX().pad(5, 5, 0, 5).row();
-        creation.add(createPoint).expandX().fillX().pad(5, 5, 0, 5).row();
-        creation.add(createLine).expandX().fillX().pad(5, 5, 0, 5).row();
-        creation.add(createRay).expandX().fillX().pad(5, 5, 0, 5).row();
-        creation.add(createLineSegment).expandX().fillX().pad(5, 5, 0, 5).row();
-        creation.add(createCircle).expandX().fillX().pad(5, 5, 0, 5).row();
-        creation.add(createPolygon).expandX().fillX().pad(5, 5, 0, 5).row();
-        creation.add(createTriangle).expandX().fillX().pad(5, 5, 0, 5);
+        List<Actor> creations = new ArrayList<>();
+        creations.add(createPoint);
+        creations.add(createCircle);
+        creations.add(new DropdownLayout(List.of(createLine, createLineSegment, createRay), styles, Component.literal("Линии"), Size.SMALL, false));
+        creations.add(new DropdownLayout(List.of(createPolygon, createTriangle), styles, Component.literal("Многоугольники"), Size.SMALL, false));
+        creation.setActor(new DropdownLayout(creations, styles, Component.literal("Создать фигуру"), Size.SMALL, true));
 
         if (selection != null) {
             selectedShapeName.setActor(new ComponentLabel(Component.literal("Свойства"), app::getBoldFont, Size.MEDIUM));
-            properties.setActor(new PropertyLayout(selection.getProperties(), styles, selection.getName(), true));
+            properties.setActor(new PropertyLayout(selection.getProperties(), styles, selection.getName(), Size.SMALL, true));
             Collection<Function<?>> shapeFunctions = selection.getFunctions();
             if (!shapeFunctions.isEmpty()) {
                 functions.add(new ComponentLabel(Component.literal("Действия"), app::getBoldFont, Size.MEDIUM)).expand().left().row();
@@ -266,21 +274,21 @@ public class EditorScreen extends FlatUIScreen {
         final float height = Gdx.graphics.getHeight();
         final float delimiter = width - height * 0.5f;
 
-        creation.setSize(height * 0.5f, creation.getPrefHeight());
-        creation.setPosition(delimiter, height - creation.getHeight());
+        creation.setSize(height * 0.5f - 10, creation.getPrefHeight());
+        creation.setPosition(delimiter + 5, height - creation.getHeight() - 5);
 
         selectedShapeName.setSize(height * 0.5f - 10, selectedShapeName.getPrefHeight());
-        selectedShapeName.setPosition(delimiter + 5, height - creation.getHeight() - selectedShapeName.getHeight() - 10);
-        
+        selectedShapeName.setPosition(delimiter + 5, height - creation.getHeight() - selectedShapeName.getHeight() - 15);
+
         properties.setSize((int)(height * 0.5f) - 4, Math.min(properties.getPrefHeight(), height * 0.4f));
-        properties.setPosition(delimiter + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - 10);
-        
+        properties.setPosition(delimiter + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - 15);
+
         functions.setSize(height * 0.5f - 4, Math.min(functions.getPrefHeight(), height * 0.4f));
-        functions.setPosition(delimiter + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - functions.getHeight() - 20);
+        functions.setPosition(delimiter + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - functions.getHeight() - 25);
 
         actions.setSize(height * 0.5f, actions.getPrefHeight());
         actions.setPosition(delimiter, 0);
-        
+
         saveOverlay.setSize(width, height);
         saveOverlay.setPosition(0, 0);
         saveOverlay.center().fill(false);
@@ -288,7 +296,7 @@ public class EditorScreen extends FlatUIScreen {
 
     @Override public void customRender() {}
     @Override public void addActorsAboveFps() {}
-    
+
     public DrawingBoard getBoard() {
         return board;
     }

@@ -11,9 +11,9 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public class ListSwitch extends Button {
     private final ShapeDrawer drawer;
 
-    public ListSwitch(Component name, StyleSet styles) {
-        super(styles.getButtonStyle(Size.MEDIUM, true));
-        this.add(new ComponentLabel(name, styles.font, Size.MEDIUM)).left().fill().expand().padLeft(getPrefHeight());
+    public ListSwitch(Component name, StyleSet styles, Size size) {
+        super(styles.getButtonStyle(size, true));
+        this.add(new ComponentLabel(name, styles.font, size)).left().fill().expand().padLeft(getPrefHeight());
         invalidate();
         this.drawer = styles.drawer;
     }

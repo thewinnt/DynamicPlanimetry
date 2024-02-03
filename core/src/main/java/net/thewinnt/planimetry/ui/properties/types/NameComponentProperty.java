@@ -72,11 +72,11 @@ public class NameComponentProperty extends Property<NameComponent> {
     }
 
     @Override
-    public WidgetGroup getActorSetup(StyleSet styles) {
+    public WidgetGroup getActorSetup(StyleSet styles, Size size) {
         Table output = new Table();
         Table col1 = new Table();
         Table col2 = new Table();
-        SelectBox<String> selector = new SelectBox<>(styles.getListStyle(Size.MEDIUM)) {
+        SelectBox<String> selector = new SelectBox<>(styles.getListStyle(size)) {
             @Override protected void onShow(Actor scrollPane, boolean below) {}
             @Override protected void onHide(Actor scrollPane) {
                 scrollPane.addAction(Actions.removeActor());
@@ -91,7 +91,7 @@ public class NameComponentProperty extends Property<NameComponent> {
                 update();
             }
         });
-        TextField indexField = new TextField(Integer.toString(index), styles.getTextFieldStyle(Size.VERY_SMALL, true)) {
+        TextField indexField = new TextField(Integer.toString(index), styles.getTextFieldStyle(size.smaller().smaller(), true)) {
             @Override
             public float getPrefWidth() {
                 return Gdx.graphics.getHeight() / 30;
@@ -103,9 +103,7 @@ public class NameComponentProperty extends Property<NameComponent> {
                 int cursor = textField.getCursorPosition();
                 if (cursor > text.length()) cursor = text.length();
                 Integer.parseInt(text.substring(0, cursor) + character + text.substring(cursor) + '0');
-            } catch (NumberFormatException e) {
-                return false;
-            } catch (StringIndexOutOfBoundsException e) {
+            } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
                 return false;
             }
             return true;
@@ -113,17 +111,15 @@ public class NameComponentProperty extends Property<NameComponent> {
         indexField.setTextFieldListener((textField, c) -> {
             try {
                 prevIndex = index;
-                int result = Integer.valueOf(indexField.getText());
-                index = result;
+                index = Integer.parseInt(indexField.getText());
                 update();
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException ignored) {}
         });
         indexField.addListener(new InputListener() {
             private void unfocus() {
                 // indexField.getStage().setKeyboardFocus(null);
                 try {
-                    int result = Integer.valueOf(indexField.getText());
-                    index = result;
+                    index = Integer.parseInt(indexField.getText());
                 } catch (NumberFormatException e) {
                     index = prevIndex;
                     Notifications.addNotification("Invalid number: " + indexField.getText(), 1000);
@@ -149,8 +145,8 @@ public class NameComponentProperty extends Property<NameComponent> {
                 return false;
             }
         });
-        
-        TextField dashesField = new TextField(Integer.toString(dashes), styles.getTextFieldStyle(Size.VERY_SMALL, true)) {
+
+        TextField dashesField = new TextField(Integer.toString(dashes), styles.getTextFieldStyle(size.smaller().smaller(), true)) {
             @Override
             public float getPrefWidth() {
                 return Gdx.graphics.getHeight() / 30;
@@ -163,9 +159,7 @@ public class NameComponentProperty extends Property<NameComponent> {
                 int cursor = textField.getCursorPosition();
                 if (cursor > text.length()) cursor = text.length();
                 Short.parseShort(text.substring(0, cursor) + character + text.substring(cursor) + '0');
-            } catch (NumberFormatException e) {
-                return false;
-            } catch (StringIndexOutOfBoundsException e) {
+            } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
                 return false;
             }
             return true;
@@ -173,8 +167,7 @@ public class NameComponentProperty extends Property<NameComponent> {
         dashesField.setTextFieldListener((textField, c) -> {
             try {
                 prevDashes = dashes;
-                short result = Short.valueOf(dashesField.getText());
-                dashes = result;
+                dashes = Short.parseShort(dashesField.getText());
                 update();
             } catch (NumberFormatException e) {}
         });
@@ -182,8 +175,7 @@ public class NameComponentProperty extends Property<NameComponent> {
             private void unfocus() {
                 // dashesField.getStage().setKeyboardFocus(null);
                 try {
-                    short result = Short.valueOf(dashesField.getText());
-                    dashes = result;
+                    dashes = Short.parseShort(dashesField.getText());
                 } catch (NumberFormatException e) {
                     dashes = prevDashes;
                     Notifications.addNotification("Invalid number: " + dashesField.getText(), 1000);

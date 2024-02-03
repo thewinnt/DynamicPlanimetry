@@ -6,6 +6,7 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 public class MathHelper {
     public static final double HALF_PI = Math.PI / 2;
     public static final double RADIANS_TO_GRADIANS = 200 / Math.PI;
+    public static final double GRADIANS_TO_RADIANS = Math.PI / 200;
 
     public static boolean roughlyEquals(double a, double b) {
         return Math.abs(a - b) < Math.pow(2, DynamicPlanimetry.SETTINGS.getMathPrecision());
@@ -46,8 +47,15 @@ public class MathHelper {
     }
 
     public static double angle(Vec2 end1, Vec2 center, Vec2 end2) {
+        if (center.equals(Vec2.ZERO)) {
+            return Math.acos(end1.dot(end2) / (end1.length() * end2.length())); // optimize for zero
+        }
         Vec2 angle1 = end1.subtract(center);
         Vec2 angle2 = end2.subtract(center);
         return Math.acos(angle1.dot(angle2) / (angle1.length() * angle2.length()));
+    }
+
+    public static boolean areParallel(Vec2 aa, Vec2 ab, Vec2 ba, Vec2 bb) {
+        return roughlyEquals(getSlope(ba, bb), getSlope(aa, ab));
     }
 }

@@ -9,6 +9,7 @@ import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.shapes.polygons.Polygon;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class LimitedPolygonFactory extends ShapeFactory {
     private final int limit;
@@ -73,5 +74,10 @@ public class LimitedPolygonFactory extends ShapeFactory {
         if (replaceCandidate != this.line) {
             board.replaceShape(this.line, replaceCandidate);
         }
+    }
+
+    @Override
+    public Component getName() {
+        return Component.literal(limit + "-угольник");
     }
 }

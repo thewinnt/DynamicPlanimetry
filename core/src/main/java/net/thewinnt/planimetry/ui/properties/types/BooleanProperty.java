@@ -58,17 +58,17 @@ public class BooleanProperty extends Property<Boolean> {
     }
 
     @Override
-    public Table getActorSetup(StyleSet styles) {
+    public Table getActorSetup(StyleSet styles, Size size) {
         Table table = new Table();
-        Button checkbox = new Button(styles.getCheckboxStyle(Size.SMALL, true)) {
+        Button checkbox = new Button(styles.getCheckboxStyle(size, true)) {
             @Override
             public float getPrefHeight() {
-                return Gdx.graphics.getHeight() / Size.MEDIUM.factor;
+                return Gdx.graphics.getHeight() / size.factor;
             }
 
             @Override
             public float getPrefWidth() {
-                return Gdx.graphics.getHeight() / Size.MEDIUM.factor;
+                return Gdx.graphics.getHeight() / size.factor;
             }
         };
         checkbox.setChecked(value);

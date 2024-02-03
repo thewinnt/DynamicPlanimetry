@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
 
@@ -44,10 +45,10 @@ public class Vec2Property extends Property<Vec2> {
     }
 
     @Override
-    public WidgetGroup getActorSetup(StyleSet styles) {
+    public WidgetGroup getActorSetup(StyleSet styles, Size size) {
         Table table = new Table();
-        table.add(x.getActorSetup(styles)).expand().fill();
-        table.add(y.getActorSetup(styles)).expand().fill().padLeft(5);
+        table.add(x.getActorSetup(styles, size)).expand().fill();
+        table.add(y.getActorSetup(styles, size)).expand().fill().padLeft(5);
         return table;
     }
 }

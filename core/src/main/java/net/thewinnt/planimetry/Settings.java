@@ -15,6 +15,7 @@ import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.SaveEntry.SortingType;
 import net.thewinnt.planimetry.ui.StyleSet;
+import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.PropertyEntry;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
@@ -37,6 +38,7 @@ public class Settings {
     private SelectionProperty<AngleType> angleUnits = new SelectionProperty<>(AngleType.DEGREES, Component.literal("Единица углов"), AngleType.values());
     private BooleanProperty showGrid = new BooleanProperty(Component.literal("Показывать сетку"), true);
     private BooleanProperty isDebug = new BooleanProperty(Component.literal("Режим отладки"), true);
+    private BooleanProperty fullscreen = new BooleanProperty(Component.literal("Полный экран"), false);
     private byte mathPrecision = -23;
     private SortingType lastSortingType = SortingType.BY_EDITING_TIME;
     private boolean lastSortingOrder = true;
@@ -50,6 +52,13 @@ public class Settings {
                 DynamicPlanimetry app = DynamicPlanimetry.getInstance();
                 app.setScreen(DynamicPlanimetry.MAIN_MENU);
                 app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
+            }
+        });
+        fullscreen.addValueChangeListener(isFullscreen -> {
+            if (isFullscreen) {
+                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            } else {
+                Gdx.graphics.setWindowedMode(1280, 720);
             }
         });
     }
@@ -66,8 +75,12 @@ public class Settings {
         return (byte)(double)displayPresicion.getValue();
     }
 
-    public double representAngle(double radians) {
-        return angleUnits.getValue().apply(radians);
+    public double toUnit(double radians) {
+        return angleUnits.getValue().toUnit(radians);
+    }
+
+    public double toRadians(double unitval) {
+        return angleUnits.getValue().toRadians(unitval);
     }
 
     public AngleType getAngleUnit() {
@@ -80,8 +93,8 @@ public class Settings {
 
     public boolean getLastSortingOrder() {
         return lastSortingOrder;
-    }   
-    
+    }
+
     public void setLastSortingType(SortingType lastSortingType) {
         this.lastSortingType = lastSortingType;
     }
@@ -113,7 +126,7 @@ public class Settings {
     }
 
     public PropertyLayout getLayout(StyleSet styles) {
-        return new PropertyLayout(List.of(theme, displayPresicion, angleUnits, showGrid, isDebug), styles, null, true);
+        return new PropertyLayout(List.of(theme, displayPresicion, angleUnits, showGrid, isDebug, fullscreen), styles, null, Size.MEDIUM, true);
     }
 
     public boolean isDebug() {
@@ -161,18 +174,22 @@ public class Settings {
     }
 
     public static enum AngleType implements ComponentRepresentable {
-        GRADIANS(Component.literal("Градианы"), t -> t * MathHelper.RADIANS_TO_GRADIANS, " град"),
-        RADIANS(Component.literal("Радианы"), t -> t, " рад"),
-        DEGREES(Component.literal("Градусы"), t -> Math.toDegrees(t), "°");
+        GRADIANS(Component.literal("Градианы"), t -> t * MathHelper.RADIANS_TO_GRADIANS, t -> t * MathHelper.GRADIANS_TO_RADIANS, " град", 400),
+        RADIANS(Component.literal("Радианы"), t -> t, t -> t, " рад", Math.PI * 2),
+        DEGREES(Component.literal("Градусы"), t -> Math.toDegrees(t), t -> Math.toRadians(t), "°", 360); // TODO set angles in custom units too
 
-        private final Component name;
-        private final DoubleFunction<Double> converter;
-        private final String unit;
-        
-        private AngleType(Component name, DoubleFunction<Double> converter, String unit) {
+        private final DoubleFunction<Double> toUnit;
+        private final DoubleFunction<Double> toRadians;
+        public final Component name;
+        public final String unit;
+        public final double max;
+
+        private AngleType(Component name, DoubleFunction<Double> toUnit, DoubleFunction<Double> toRadians, String unit, double max) {
             this.name = name;
-            this.converter = converter;
+            this.toUnit = toUnit;
+            this.toRadians = toRadians;
             this.unit = unit;
+            this.max = max;
         }
 
         @Override
@@ -180,12 +197,20 @@ public class Settings {
             return name;
         }
 
-        public double apply(double radians) {
-            return converter.apply(radians);
+        public double toUnit(double radians) {
+            return toUnit.apply(radians);
+        }
+
+        public double toRadians(double unitval) {
+            return toRadians.apply(unitval);
         }
 
         public String getUnit() {
             return unit;
+        }
+
+        public double getMax() {
+            return max;
         }
     }
 }

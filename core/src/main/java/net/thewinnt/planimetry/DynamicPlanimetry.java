@@ -61,11 +61,11 @@ public class DynamicPlanimetry extends Game {
         new Color(0x0080FFFF), // utility point
         new Color(0x00C4FFFF), // utility point hovered
         new Color(0x0055CCFF), // utility point selected
-        new Color(0xCCCCCCFF), // grid line
+        new Color(0xDDDDDDFF), // grid line
         new Color(0xAAAAAAFF), // grid hint
-        new Color(0x000000FF)  // grid center
+        new Color(0x808080FF)  // grid center
     );
-    
+
     public static final Theme THEME_DARK = new Theme(
         Component.literal("Тёмная"),
         new Color(0x1F1F1FFF), // main
@@ -260,10 +260,7 @@ public class DynamicPlanimetry extends Game {
         for (FileHandle i : Gdx.files.absolute(folder).list()) {
             try {
                 drawings.add(Drawing.load(i.path()));
-            } catch (Exception e) {
-                Notifications.addNotification("Ошибка при загрузке файла (" + i.nameWithoutExtension() + "):  " + e.getMessage(), 5000);
-                e.printStackTrace();
-            } catch (StackOverflowError e) {
+            } catch (Exception | StackOverflowError e) {
                 Notifications.addNotification("Ошибка при загрузке файла (" + i.nameWithoutExtension() + "):  " + e.getMessage(), 5000);
                 e.printStackTrace();
             }

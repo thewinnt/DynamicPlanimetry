@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.ui.text;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.badlogic.gdx.graphics.Color;
@@ -46,11 +47,11 @@ public interface Component extends ComponentRepresentable {
     }
 
     public static LiteralComponent angle(double radians) {
-        return new LiteralComponent(DynamicPlanimetry.formatNumber(Settings.get().representAngle(radians)) + Settings.get().getAngleUnit().getUnit());
+        return new LiteralComponent(DynamicPlanimetry.formatNumber(Settings.get().toUnit(radians)) + Settings.get().getAngleUnit().getUnit());
     }
 
     public static Component of(Component... components) {
-        return new MultiComponent(List.of(components));
+        return new MultiComponent(Arrays.asList(components));
     }
 
     public static Component optional(Component component) {

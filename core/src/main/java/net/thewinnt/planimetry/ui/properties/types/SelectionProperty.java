@@ -61,9 +61,9 @@ public class SelectionProperty<T> extends Property<T> {
     }
 
     @Override
-    public WidgetGroup getActorSetup(StyleSet styles) {
+    public WidgetGroup getActorSetup(StyleSet styles, Size size) {
         Table output = new Table();
-        SelectBox<T> selector = new ComponentSelectBox<>(styles.getListStyle(Size.MEDIUM), List.of(options), componentProvider, Size.MEDIUM);
+        SelectBox<T> selector = new ComponentSelectBox<>(styles.getListStyle(size), List.of(options), componentProvider, size);
         selector.setSelected(selected);
         selector.addListener(new ChangeListener() {
             @Override
@@ -74,7 +74,7 @@ public class SelectionProperty<T> extends Property<T> {
                 }
             }
         });
-        
+
         output.add(selector).expand().fill();
         return output;
     }

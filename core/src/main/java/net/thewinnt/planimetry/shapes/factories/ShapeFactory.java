@@ -12,6 +12,7 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public abstract class ShapeFactory {
     private final List<Shape> addingShapes = new ArrayList<>();
@@ -36,6 +37,11 @@ public abstract class ShapeFactory {
      * @return whether the shape has been added and this factory can be safely removed.
      */
     public abstract boolean isDone();
+
+    /**
+     * @return the name of the shape being created, used when showing the creating text on the board
+     */
+    public abstract Component getName();
 
     /**
      * Executed upon finishing the shape creation, once isDone() turns true.
