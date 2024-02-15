@@ -21,12 +21,13 @@ import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 
 public class ComponentSelectBox<T> extends SelectBox<T> {
+    private final Function<T, Component> textGetter;
+    private final Size size;
     private Collection<T> items;
-    private Function<T, Component> textGetter;
     private float prefWidth;
     private float prefHeight;
     private boolean open;
-    public Size size;
+    public float iconSizeOverride = 0;
 
     @SuppressWarnings("unchecked")
     public ComponentSelectBox(SelectBoxStyle style, Collection<T> items, Function<T, Component> textGetter, Size size) {
@@ -67,12 +68,21 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
         if (getBackgroundDrawable() != null) {
             getBackgroundDrawable().draw(batch, getX(), getY(), getWidth(), getHeight());
         }
-        if (this.open) {
-            DynamicIcon.DOWN_TRIANGLE.draw(batch, getX(), getY() + 2, getHeight() - 4, getHeight() - 4);
+        if (iconSizeOverride == 0) {
+            if (this.open) {
+                DynamicIcon.DOWN_TRIANGLE.draw(batch, getX(), getY() + 2, getHeight() - 4, getHeight() - 4);
+            } else {
+                DynamicIcon.RIGHT_TRIANGLE.draw(batch, getX() + 2, getY() + 2, getHeight() - 4, getHeight() - 4);
+            }
+            textGetter.apply(getSelected()).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, this.size, Theme.current().textButton(), getX() + getHeight(), getY() + getHeight() * 3 / 4);
         } else {
-            DynamicIcon.RIGHT_TRIANGLE.draw(batch, getX() + 2, getY() + 2, getHeight() - 4, getHeight() - 4);
+            if (this.open){
+                DynamicIcon.DOWN_TRIANGLE.draw(batch, getX(), getY() + iconSizeOverride / 2, iconSizeOverride, iconSizeOverride);
+            } else {
+                DynamicIcon.RIGHT_TRIANGLE.draw(batch, getX(), getY() + iconSizeOverride / 2, iconSizeOverride, iconSizeOverride);
+            }
+            textGetter.apply(getSelected()).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, this.size, Theme.current().textButton(), getX() + iconSizeOverride, getY() + getHeight() * 3 / 4);
         }
-        textGetter.apply(getSelected()).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, this.size, Theme.current().textButton(), getX() + getHeight(), getY() + getHeight() * 3 / 4);
     }
 
     @Override
@@ -174,7 +184,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
             float x = getX();
             float y = getY();
             float mx = Gdx.input.getX();
-            float my = Gdx.input.getY();
+            float my = Gdx.graphics.getHeight() - ComponentSelectBox.this.getScrollPane().getY() - Gdx.input.getY();
             for (T i : getItems()) {
                 Drawable entryBackground = null;
                 Component text = components.apply(i);
@@ -182,7 +192,8 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
                 Vec2 size = text.getSize(font, this.size);
                 Color color = style.fontColorUnselected;
                 Vector2 startPos = this.localToScreenCoordinates(new Vector2(x, y));
-                if (mx > startPos.x && mx < startPos.x + getWidth() && my > startPos.y - size.y - 2 && my < startPos.y + 2) {
+                Vector2 mousePos = this.screenToLocalCoordinates(new Vector2(mx, my));
+                if (mousePos.x > x && mousePos.x < x + getWidth() && my < y + size.y - 2 && my > y + 2) {
                     entryBackground = Gdx.input.isButtonPressed(0) ? style.down : style.over;
                     this.setSelectedIndex(getItems().indexOf(i, true));
                 } else if (i == getItems().get(getSelectedIndex())) {

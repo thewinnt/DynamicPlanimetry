@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.shapes.lines;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.DoubleFunction;
@@ -36,6 +37,10 @@ public abstract class Line extends Shape {
         } else {
             this.b = new PointReference(b);
         }
+        this.a.addDepending(this);
+        this.b.addDepending(this);
+        this.addDependency(a);
+        this.addDependency(b);
     }
 
     public double getSlope() {
@@ -63,7 +68,12 @@ public abstract class Line extends Shape {
 
     @Override
     public Collection<Function<?>> getFunctions() {
-        return List.of(new LineTypeConversion(drawing, this), new CreateParallelLine(drawing, this), new CreateAngledLine(drawing, this));
+        Collection<Function<?>> output = new ArrayList<>();
+        output.add(new LineTypeConversion(drawing, this));
+        output.add(new CreateParallelLine(drawing, this));
+        output.add(new CreateAngledLine(drawing, this));
+        output.addAll(super.getFunctions());
+        return output;
     }
 
     @Override

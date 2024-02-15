@@ -24,7 +24,7 @@ public class CircleTangentFactory extends ShapeFactory {
 
     @Override
     public boolean click(InputEvent event, double x, double y) {
-        if (getOrCreatePoint(x, y) instanceof CirclePoint point) {
+        if (getOrCreatePoint(x, y).getPoint() instanceof CirclePoint point) {
             this.newLine.a.setPoint(point);
         }
         isDone = true;
@@ -33,8 +33,7 @@ public class CircleTangentFactory extends ShapeFactory {
 
     @Override
     public void onRender(double mx, double my) {
-        // TODO fix half of angles working
-        this.newLine.setAngle(MathHelper.angle(new Vec2(mx, my), circle.center.getPosition(), circle.center.getPosition().add(10, 0)));
+        this.newLine.setAngle(MathHelper.polarAngle(circle.center.getPosition(), new Vec2(mx, my)));
     }
 
     @Override

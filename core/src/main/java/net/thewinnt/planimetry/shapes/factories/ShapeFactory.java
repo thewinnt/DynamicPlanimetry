@@ -11,6 +11,7 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
+import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
 
@@ -71,12 +72,16 @@ public abstract class ShapeFactory {
         this.addingShapes.add(neo);
     }
 
-    protected PointProvider getOrCreatePoint(double x, double y) {
+    protected PointReference getOrCreatePoint(double x, double y) {
         PointProvider p1 = (PointProvider) board.getHoveredShape(Gdx.input.getX(), Gdx.input.getY(), shape -> shape instanceof PointProvider);
         if (p1 != null) {
-            return p1;
+            if (p1 instanceof PointReference ref) {
+                return ref;
+            } else {
+                return new PointReference(p1);
+            }
         } else {
-            return new Point(board.getDrawing(), new Vec2(x, y));
+            return new PointReference(new Point(board.getDrawing(), new Vec2(x, y)));
         }
     }
 }

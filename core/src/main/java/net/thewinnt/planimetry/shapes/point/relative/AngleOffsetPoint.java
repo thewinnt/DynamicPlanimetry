@@ -36,7 +36,7 @@ public class AngleOffsetPoint extends PointProvider {
         this.angle = angle;
         this.offset = offset;
         this.sourceDescription = new DisplayProperty(Component.of(literal("Относительно точки "), Component.optional(start.getNameComponent())));
-        this.angleProperty = new NumberProperty(Component.literal("Угол на окружности"), angle);
+        this.angleProperty = new NumberProperty(Component.literal("Угол"), angle);
         this.angleProperty.addValueChangeListener(newAngle -> AngleOffsetPoint.this.angle = Settings.get().toRadians(newAngle));
         this.offsetProperty = new NumberProperty(literal("Расстояние"), offset);
         this.offsetProperty.addValueChangeListener(distance -> AngleOffsetPoint.this.offset = distance);
@@ -50,7 +50,7 @@ public class AngleOffsetPoint extends PointProvider {
         this.angle = angle;
         this.offset = offset;
         this.sourceDescription = new DisplayProperty(Component.of(literal("Относительно точки "), Component.optional(start.getNameComponent())));
-        this.angleProperty = new NumberProperty(Component.literal("Угол на окружности"), angle);
+        this.angleProperty = new NumberProperty(Component.literal("Угол"), angle);
         this.angleProperty.addValueChangeListener(newAngle -> AngleOffsetPoint.this.angle = Settings.get().toRadians(newAngle));
         this.offsetProperty = new NumberProperty(literal("Расстояние"), offset);
         this.offsetProperty.addValueChangeListener(distance -> AngleOffsetPoint.this.offset = distance);

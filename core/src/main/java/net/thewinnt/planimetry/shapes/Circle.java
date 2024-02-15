@@ -41,6 +41,8 @@ public class Circle extends Shape {
         super(drawing);
         this.center = center;
         this.radius = () -> radius;
+        center.addDepending(this);
+        this.addDependency(center);
     }
 
     public Circle(Drawing drawing, PointProvider center, PointProvider radius, boolean keepRadius) {
@@ -49,6 +51,10 @@ public class Circle extends Shape {
         this.radius = () -> radius.getPosition().distanceTo(center.getPosition());
         this.keepRadius = keepRadius;
         this.setRadiusPoint(radius);
+        center.addDepending(this);
+        radius.addDepending(this);
+        this.addDependency(center);
+        this.addDependency(radius);
     }
 
     @Override
@@ -137,12 +143,13 @@ public class Circle extends Shape {
 
     @Override
     public Collection<Function<?>> getFunctions() {
-        ArrayList<Function<?>> functions = new ArrayList<>();
+        Collection<Function<?>> functions = new ArrayList<>();
+        DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
         if (!this.drawing.hasShape(this.radiusPoint)) {
-            DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
             functions.add(new BasicNamedFunction<>(drawing, this, s -> drawing.addShape(radiusPoint), Component.literal("Отметить точку радиуса"), Component.literal("Отметить")));
-            functions.add(new BasicNamedFunction<>(drawing, this, s -> board.startCreation(new CircleTangentFactory(board, Circle.this)), Component.literal("Построить касательную"), Component.literal("Построить")));
         }
+        functions.add(new BasicNamedFunction<>(drawing, this, s -> board.startCreation(new CircleTangentFactory(board, Circle.this)), Component.literal("Построить касательную"), Component.literal("Построить")));
+        functions.addAll(super.getFunctions());
         return functions;
     }
 

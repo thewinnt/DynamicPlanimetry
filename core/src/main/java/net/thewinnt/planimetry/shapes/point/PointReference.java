@@ -20,7 +20,11 @@ public class PointReference extends PointProvider {
 
     public PointReference(PointProvider point) {
         super(point.getDrawing());
+        if (point instanceof PointReference ref) {
+            point = ref.getPoint(); // prevent referring to references at all cost
+        }
         this.point = point;
+        this.addDependency(point);
     }
 
     @Override
@@ -71,7 +75,13 @@ public class PointReference extends PointProvider {
     }
 
     public void setPoint(PointProvider point) {
-        this.point = Objects.requireNonNull(point);
+        this.removeDependency(this.point);
+        if (point instanceof PointReference ref) {
+            this.point = ref.getPoint();
+        } else {
+            this.point = Objects.requireNonNull(point);
+        }
+        this.addDependency(this.point);
     }
 
     public PointProvider getPoint() {
@@ -114,6 +124,12 @@ public class PointReference extends PointProvider {
     }
 
     @Override
+    public boolean delete(boolean includeDependencies, boolean force) {
+        super.delete(includeDependencies, force);
+        return point.delete(includeDependencies, force);
+    }
+
+    @Override
     public ShapeDeserializer<PointReference> getDeserializer() {
         return ShapeData.POINT_REFERENCE;
     }
@@ -128,5 +144,10 @@ public class PointReference extends PointProvider {
 
     public static PointReference readNbt(CompoundTag nbt, LoadingContext context) {
         return new PointReference((PointProvider)context.resolveShape(nbt.getLong("point").getValue()));
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " -> " + this.point.toString();
     }
 }

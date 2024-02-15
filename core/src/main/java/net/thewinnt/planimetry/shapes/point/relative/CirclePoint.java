@@ -14,6 +14,7 @@ import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.NameComponentProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
+import net.thewinnt.planimetry.ui.properties.types.ShapeProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.NameComponent;
 
@@ -21,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class CirclePoint extends PointProvider {
-    private final DisplayProperty circleProperty;
+    private final ShapeProperty circleProperty;
     private final NumberProperty angleProperty;
     private final NameComponentProperty nameProperty;
     private Circle circle;
@@ -30,10 +31,11 @@ public class CirclePoint extends PointProvider {
     public CirclePoint(Drawing drawing, Circle circle, double angleRad) {
         super(drawing);
         this.circle = circle;
-        this.circleProperty = new DisplayProperty(Component.literal("Лежит на "), this.circle::getName);
+        this.circleProperty = new ShapeProperty(Component.literal("Лежит на "), drawing, this.circle, shape -> shape instanceof Circle);
+        this.circleProperty.addValueChangeListener(shape -> setCircle((Circle) shape));
         this.angle = angleRad;
         this.angleProperty = new NumberProperty(Component.literal("Угол на окружности"), angleRad);
-        this.angleProperty.addValueChangeListener(newAngle -> CirclePoint.this.angle = Settings.get().toRadians(newAngle));
+        this.angleProperty.addValueChangeListener(newAngle -> setAngle(Settings.get().toRadians(newAngle)));
         this.nameProperty = new NameComponentProperty(Component.literal("Имя"), this.name);
         this.nameProperty.addValueChangeListener(this::setName);
     }
@@ -41,12 +43,15 @@ public class CirclePoint extends PointProvider {
     public CirclePoint(Drawing drawing, Circle circle, double angleRad, NameComponent name) {
         super(drawing, name);
         this.circle = circle;
-        this.circleProperty = new DisplayProperty(Component.literal("Лежит на "), this.circle::getName);
+        this.circleProperty = new ShapeProperty(Component.literal("Лежит на "), drawing, this.circle, shape -> shape instanceof Circle);
+        this.circleProperty.addValueChangeListener(shape -> setCircle((Circle) shape));
         this.angle = angleRad;
         this.angleProperty = new NumberProperty(Component.literal("Угол на окружности"), angleRad);
-        this.angleProperty.addValueChangeListener(newAngle -> CirclePoint.this.angle = Settings.get().toRadians(newAngle));
+        this.angleProperty.addValueChangeListener(newAngle -> setAngle(Settings.get().toRadians(newAngle)));
         this.nameProperty = new NameComponentProperty(Component.literal("Имя"), this.name);
         this.nameProperty.addValueChangeListener(this::setName);
+        this.addDependency(circle);
+        circle.addDepending(this);
     }
 
     @Override
@@ -89,7 +94,11 @@ public class CirclePoint extends PointProvider {
     }
 
     public void setCircle(Circle circle) {
+        this.circle.removeDepending(this);
+        this.removeDependency(this.circle);
         this.circle = circle;
+        circle.addDepending(this);
+        this.addDepending(circle);
     }
 
     @Override
@@ -99,6 +108,7 @@ public class CirclePoint extends PointProvider {
 
     @Override
     public Collection<Property<?>> getProperties() {
+        angleProperty.setValue(Settings.get().toUnit(angle));
         return List.of(circleProperty, angleProperty, nameProperty);
     }
 

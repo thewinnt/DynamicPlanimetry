@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import net.thewinnt.planimetry.ui.ComponentSelectBox;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
@@ -76,13 +77,8 @@ public class NameComponentProperty extends Property<NameComponent> {
         Table output = new Table();
         Table col1 = new Table();
         Table col2 = new Table();
-        SelectBox<String> selector = new SelectBox<>(styles.getListStyle(size)) {
-            @Override protected void onShow(Actor scrollPane, boolean below) {}
-            @Override protected void onHide(Actor scrollPane) {
-                scrollPane.addAction(Actions.removeActor());
-            }
-        };
-        selector.setItems(NameComponent.ALLOWED_NAMES);
+        ComponentSelectBox<String> selector = new ComponentSelectBox<>(styles.getListStyle(size), List.of(NameComponent.ALLOWED_NAMES), Component::literal, size);
+        selector.iconSizeOverride = Gdx.graphics.getHeight() / 30f;
         selector.setSelectedIndex(letter);
         selector.addListener(new ChangeListener() {
             @Override

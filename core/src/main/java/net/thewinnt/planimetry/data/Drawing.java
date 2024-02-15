@@ -84,7 +84,7 @@ public class Drawing {
             shapeIdCounter = maxIdUponLoad + 1;
         }
     }
-    
+
     public void addShape(Shape shape) {
         update();
         this.allShapes.add(shape);
@@ -129,12 +129,32 @@ public class Drawing {
 
     public void replaceShape(Shape old, Shape neo) {
         update();
-        this.shapes.set(this.shapes.indexOf(old), neo);
+        // swap dependencies
+        for (Shape i : old.getDependencies()) {
+            neo.addDependency(i);
+            i.removeDepending(old);
+        }
+        for (Shape i : old.getDependingShapes()) {
+            neo.addDepending(i);
+            i.removeDependency(old);
+        }
+        // both must either be both points, or both not points since they go to different lists
+        if (old instanceof PointProvider != neo instanceof PointProvider) {
+            throw new IllegalArgumentException("Cannot replace a point with a non-point or vice-versa");
+        }
+        // actually swap them
+        if (neo instanceof PointProvider point) {
+            this.points.set(this.points.indexOf(old), point);
+        } else {
+            this.shapes.set(this.shapes.indexOf(old), neo);
+        }
+        this.allShapes.set(this.allShapes.indexOf(old), neo);
         this.swapListeners.forEach(listener -> listener.accept(old, neo));
     }
 
     public void removeShape(Shape shape) {
         update();
+        this.allShapes.remove(shape);
         this.shapes.remove(shape);
         this.points.remove(shape);
     }
@@ -237,7 +257,7 @@ public class Drawing {
         output.putLong("last_edit_time", lastEditTime);
         return output;
     }
-    
+
     public static Drawing fromNbt(CompoundTag nbt) {
         String name = nbt.getString("name").getValue();
         long creationTime = nbt.getLong("creation_time").getValue();

@@ -35,17 +35,11 @@ public class CircleTangentLine extends InfiniteLine {
         b.setStart(this.a.getPoint());
         b.setOffset(100);
         this.angleProperty = new NumberProperty(Component.literal("Угол на окружности"), angle);
-        this.angleProperty.addValueChangeListener(newAngle -> {
-            newAngle = Settings.get().toRadians(angle);
-            CircleTangentLine.this.angle = newAngle;
-            ((CirclePoint)this.a.getPoint()).setAngle(newAngle);
-            ((AngleOffsetPoint)this.b.getPoint()).setAngle(newAngle + MathHelper.HALF_PI);
-        });
+        this.angleProperty.addValueChangeListener(newAngle -> setAngle(Settings.get().toRadians(newAngle)));
         this.circleProperty = new ShapeProperty(Component.literal("Окружность"), drawing, circle, shape -> shape instanceof Circle);
-        this.circleProperty.addValueChangeListener(shape -> {
-            this.circle = (Circle)shape;
-            ((CirclePoint)this.a.getPoint()).setCircle(this.circle);
-        });
+        this.circleProperty.addValueChangeListener(shape -> setCircle((Circle) shape));
+        this.addDependency(circle);
+        circle.addDepending(this);
     }
 
     public void setAngle(double angle) {
@@ -55,8 +49,17 @@ public class CircleTangentLine extends InfiniteLine {
     }
 
     public void setCircle(Circle circle) {
+        this.circle.removeDepending(this);
+        this.removeDependency(this.circle);
         this.circle = circle;
+        circle.addDepending(this);
+        this.addDepending(circle);
         ((CirclePoint)this.a.getPoint()).setCircle(this.circle);
+    }
+
+    @Override
+    public boolean defaultIgnoreDependencies() {
+        return false;
     }
 
     @Override
@@ -71,6 +74,7 @@ public class CircleTangentLine extends InfiniteLine {
 
     @Override
     public Collection<Property<?>> getProperties() {
+        this.angleProperty.setValue(Settings.get().toUnit(this.angle));
         return List.of(angleProperty, circleProperty);
     }
 

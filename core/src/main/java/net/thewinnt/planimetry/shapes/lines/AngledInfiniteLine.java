@@ -46,6 +46,8 @@ public class AngledInfiniteLine extends InfiniteLine {
             AngledInfiniteLine.this.angle = Settings.get().toRadians(newAngle);
             ((TangentOffsetPoint)b.getPoint()).setAngle(Math.tan(Math.atan(base.getSlope()) + angle));
         });
+        baseLine.addDepending(this);
+        this.addDependency(baseLine);
     }
 
     public Line getBase() {
@@ -57,7 +59,11 @@ public class AngledInfiniteLine extends InfiniteLine {
     }
 
     public void setBase(Line base) {
+        this.base.removeDepending(this);
+        this.removeDependency(this.base);
         this.base = base;
+        base.addDepending(this);
+        this.addDependency(base);
     }
 
     @Override
@@ -93,5 +99,10 @@ public class AngledInfiniteLine extends InfiniteLine {
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
         ((TangentOffsetPoint)b.getPoint()).setAngle(Math.tan(Math.atan(getBase().getSlope()) + getAngle()));
         super.render(drawer, selection, font, board);
+    }
+
+    @Override
+    public boolean defaultIgnoreDependencies() {
+        return false;
     }
 }

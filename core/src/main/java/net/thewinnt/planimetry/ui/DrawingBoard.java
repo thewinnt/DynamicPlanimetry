@@ -3,11 +3,13 @@ package net.thewinnt.planimetry.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -101,6 +103,7 @@ public class DrawingBoard extends Actor {
                 if (!isPanning && selection != null) {
                     startedAtPoint = selection.distanceToMouse(xb(mx), yb(my), DrawingBoard.this) <= 16 / scale;
                 }
+                getStage().setKeyboardFocus(DrawingBoard.this);
             }
         });
         this.addListener(new InputListener() {
@@ -113,6 +116,20 @@ public class DrawingBoard extends Actor {
                 Vec2 distanceNew = offset.subtract(xb(mx), yb(my));
                 offset = offset.subtract(distanceNew.subtract(distanceOld).mul(scale));
                 return true;
+            }
+
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                Notifications.addNotification("Received keyboard input: " + Keys.toString(keycode) + " (" + keycode + ")", 1000);
+                if (keycode == Keys.FORWARD_DEL && selection != null) {
+                    boolean onlyThis = Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT);
+                    boolean force = Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT);
+                    // onlyThis = !ignoreDependencies
+                    // if defaultIgnoreDependencies, inverts ignoreDependencies
+                    selection.delete(onlyThis != selection.defaultIgnoreDependencies(), force);
+                    return true;
+                }
+                return false;
             }
         });
     }
@@ -271,6 +288,10 @@ public class DrawingBoard extends Actor {
             font.getFont(40, Color.FIREBRICK).draw(batch, "my: " + my, x(5), y(getHeight() - 105));
             font.getFont(40, Color.FIREBRICK).draw(batch, "mxb: " + xb(mx), x(5), y(getHeight() - 130));
             font.getFont(40, Color.FIREBRICK).draw(batch, "mxy: " + yb(my), x(5), y(getHeight() - 155));
+            if (selection != null) {
+                font.getFont(50, Color.MAROON).draw(batch, "keyboard focus: " + this.getStage().getKeyboardFocus(), x(5), y(155));
+            }
+            font.getFont(50, Color.MAROON).draw(batch, "selected: " + selection, x(5), y(115));
         }
         if (creatingShape != null) {
             Component.of(Component.literal("Создание фигуры: "), creatingShape.getName()).draw(batch, font, Size.MEDIUM, Theme.current().textUI(), x(5), y(getHeight() - 5));
@@ -426,7 +447,9 @@ public class DrawingBoard extends Actor {
     }
 
     public void setSelection(Shape shape) {
-        if (this.drawing.shapes.contains(shape) || (shape instanceof PointProvider && this.drawing.points.contains(shape))) {
+        if (shape == null) {
+            selection = null;
+        } else if (this.drawing.shapes.contains(shape) || (shape instanceof PointProvider && this.drawing.points.contains(shape))) {
             selection = shape;
         } else {
             selection = null;

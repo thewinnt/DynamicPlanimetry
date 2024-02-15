@@ -62,4 +62,9 @@ public class MathHelper {
     public static boolean areParallel(Vec2 aa, Vec2 ab, Vec2 ba, Vec2 bb) {
         return roughlyEquals(getSlope(ba, bb), getSlope(aa, ab));
     }
+
+    public static double polarAngle(Vec2 center, Vec2 point) {
+        Vec2 zero = point.subtract(center);
+        return Math.atan2(zero.y, zero.x);
+    }
 }

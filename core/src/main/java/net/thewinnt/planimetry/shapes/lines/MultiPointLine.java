@@ -34,16 +34,24 @@ public class MultiPointLine extends Shape {
         this.points = new ArrayList<>(points.length);
         for (PointProvider i : points) {
             this.points.add(i);
+            this.addDependency(i);
+            i.addDepending(this);
         }
     }
 
     public MultiPointLine(Drawing drawing, Collection<PointProvider> points) {
         super(drawing);
         this.points = new ArrayList<>(points);
+        for (PointProvider i : this.points) {
+            this.addDependency(i);
+            i.addDepending(this);
+        }
     }
 
     public void addPoint(PointProvider point) {
         this.points.add(point);
+        this.addDependency(point);
+        point.addDepending(this);
     }
 
     public List<PointProvider> getPoints() {

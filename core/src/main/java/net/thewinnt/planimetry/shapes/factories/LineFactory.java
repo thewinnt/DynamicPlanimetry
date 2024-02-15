@@ -49,20 +49,10 @@ public class LineFactory extends ShapeFactory {
     public boolean click(InputEvent event, double x, double y) {
         this.board.setSelection(null);
         if (point2 == null) {
-            PointProvider p1 = (PointProvider) board.getHoveredShape(Gdx.input.getX(), Gdx.input.getY(), shape -> shape instanceof PointProvider);
-            if (p1 != null) {
-                this.point1.setPoint(p1);
-            } else {
-                this.point1.setPoint(new Point(board.getDrawing(), new Vec2(x, y)));
-            }
+            this.point1 = getOrCreatePoint(x, y);
             this.point2 = new PointReference(new MousePoint(board.getDrawing()));
         } else if (point2.getPoint() instanceof MousePoint) {
-            PointProvider p2 = (PointProvider) board.getHoveredShape(Gdx.input.getX(), Gdx.input.getY(), shape -> shape instanceof PointProvider);
-            if (p2 != null) {
-                this.point2.setPoint(p2);
-            } else {
-                this.point2.setPoint(new Point(board.getDrawing(), new Vec2(x, y)));
-            }
+            this.point2.setPoint(getOrCreatePoint(x, y).getPoint());
             this.addShape(point2);
             return true;
         }

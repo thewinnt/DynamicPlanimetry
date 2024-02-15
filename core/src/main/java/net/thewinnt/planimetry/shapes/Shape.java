@@ -1,18 +1,20 @@
 package net.thewinnt.planimetry.shapes;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
+import net.thewinnt.planimetry.ui.functions.BasicPropertyFunction;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -48,7 +50,9 @@ public abstract class Shape implements ComponentRepresentable {
 
     public abstract Collection<Property<?>> getProperties();
     public Collection<Function<?>> getFunctions() {
-        return Collections.emptyList();
+        ArrayList<Function<?>> output = new ArrayList<>();
+        output.add(new BasicNamedFunction<>(drawing, this, shape -> shape.delete(defaultIgnoreDependencies(), false), Component.literal("Удалить фигуру"), Component.literal("Удалить")));
+        return output;
     }
 
     public final Collection<Shape> getDependencies() {
@@ -59,12 +63,58 @@ public abstract class Shape implements ComponentRepresentable {
         return Collections.unmodifiableCollection(dependents);
     }
 
+    /** Adds a shape that this shape depends on */
     public final void addDependency(Shape shape) {
-        this.dependencies.add(shape);
+        if (shape != this) this.dependencies.add(shape);
     }
 
+    /** Adds a shape that depends on this shape */
     public final void addDepending(Shape shape) {
-        this.dependents.add(shape);
+        if (shape != this) this.dependents.add(shape);
+    }
+
+    /** Removes the given shape from the dependencies list */
+    public final void removeDependency(Shape shape) {
+        this.dependencies.remove(shape);
+    }
+
+    /** Removes the given shape from the dependents list */
+    public final void removeDepending(Shape shape) {
+        this.dependents.remove(shape);
+    }
+
+    /**
+     * Tries to delete this shape from its drawing
+     * @param includeDependencies whether to also delete dependencies that would be left without ones
+     * @param force whether to delete this shape regardless of whether there are shapes depending on it
+     * @return whether this shape got deleted
+     */
+    public boolean delete(boolean includeDependencies, boolean force) {
+        if (!force && !this.dependents.isEmpty()) return false;
+        drawing.removeShape(this);
+        for (Shape i : this.dependencies) {
+            i.removeDepending(this);
+        }
+        if (includeDependencies) {
+            for (Shape i : this.dependencies) {
+                if (i.dependents.isEmpty()) i.delete(false, false);
+            }
+        }
+        if (force && !this.dependents.isEmpty()) {
+            for (Shape i : this.dependents.toArray(new Shape[0])) { // prevent concurrent modification
+                i.delete(false, true);
+            }
+        }
+        DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
+        if (board != null) {
+            board.setSelection(null);
+        }
+        return true;
+    }
+
+    /** Returns the default value for {@link #delete(boolean, boolean)}'s ignoreDependencies */
+    public boolean defaultIgnoreDependencies() {
+        return true;
     }
 
     public abstract Component getName();

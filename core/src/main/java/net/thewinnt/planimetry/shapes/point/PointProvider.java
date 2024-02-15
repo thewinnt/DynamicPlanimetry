@@ -154,12 +154,4 @@ public abstract class PointProvider extends Shape {
     }
 
     protected abstract boolean shouldAutoAssingnName();
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder(getTypeName() + NameComponent.ALLOWED_NAMES[name.letter()]);
-        if (name.index() != 0) builder.append(name.index());
-        if (name.dashes() > 0) builder.append('[');
-        return builder.toString();
-    }
 }
