@@ -10,6 +10,7 @@ import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
+import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Circle;
 import net.thewinnt.planimetry.shapes.point.relative.AngleOffsetPoint;
 import net.thewinnt.planimetry.shapes.point.relative.CirclePoint;
@@ -32,6 +33,7 @@ public class CircleTangentLine extends InfiniteLine {
         AngleOffsetPoint b = (AngleOffsetPoint)this.b.getPoint();
         a.setAngle(angle);
         b.setAngle(angle + MathHelper.HALF_PI);
+        a.addMovementListener(delta -> setAngleFromPoint(a.getAngle()));
         b.setStart(this.a.getPoint());
         b.setOffset(100);
         this.angleProperty = new NumberProperty(Component.literal("Угол на окружности"), angle);
@@ -45,6 +47,11 @@ public class CircleTangentLine extends InfiniteLine {
     public void setAngle(double angle) {
         this.angle = angle;
         ((CirclePoint)this.a.getPoint()).setAngle(angle);
+        ((AngleOffsetPoint)this.b.getPoint()).setAngle(angle + MathHelper.HALF_PI);
+    }
+
+    private void setAngleFromPoint(double angle) {
+        this.angle = angle;
         ((AngleOffsetPoint)this.b.getPoint()).setAngle(angle + MathHelper.HALF_PI);
     }
 
@@ -90,5 +97,15 @@ public class CircleTangentLine extends InfiniteLine {
         nbt.putLong("circle", circle.getId());
         nbt.putDouble("angle", angle);
         return nbt;
+    }
+
+    @Override
+    public void move(Vec2 delta) {
+        this.a.move(delta);
+    }
+
+    @Override
+    public void move(double dx, double dy) {
+        this.a.move(dx, dy);
     }
 }

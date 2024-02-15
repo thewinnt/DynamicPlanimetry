@@ -4,14 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.OptionalDouble;
-import java.util.function.DoubleFunction;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.data.NbtUtil;
-import net.thewinnt.planimetry.math.MathHelper;
+import net.thewinnt.planimetry.settings.ShapeMovementPredicate;
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.SaveEntry.SortingType;
 import net.thewinnt.planimetry.ui.StyleSet;
@@ -24,7 +24,7 @@ import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.SelectionProperty;
 import net.thewinnt.planimetry.ui.text.Component;
-import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
+import net.thewinnt.planimetry.settings.AngleType;
 
 public class Settings {
     public static final CustomLayout PROPERTY_LAYOUT = new CustomLayout() {
@@ -33,12 +33,13 @@ public class Settings {
             actor.setBounds((Gdx.graphics.getWidth() - 20) * 3 / 4, 2, (Gdx.graphics.getWidth() - 20) / 4 - 10, entry.getHeight() - 4);
         }
     };
-    private SelectionProperty<Theme> theme = new SelectionProperty<>(DynamicPlanimetry.THEME_LIGHT, Component.literal("Тема"), DynamicPlanimetry.BUILT_IN_THEMES);
-    private NumberProperty displayPresicion = new NumberProperty(Component.literal("Точность отображения чисел"), 3).withMin(OptionalDouble.of(1)).withMax(OptionalDouble.of(127)).requireWholeNumbers(true);
-    private SelectionProperty<AngleType> angleUnits = new SelectionProperty<>(AngleType.DEGREES, Component.literal("Единица углов"), AngleType.values());
-    private BooleanProperty showGrid = new BooleanProperty(Component.literal("Показывать сетку"), true);
-    private BooleanProperty isDebug = new BooleanProperty(Component.literal("Режим отладки"), true);
-    private BooleanProperty fullscreen = new BooleanProperty(Component.literal("Полный экран"), false);
+    private final SelectionProperty<Theme> theme = new SelectionProperty<>(DynamicPlanimetry.THEME_LIGHT, Component.literal("Тема"), DynamicPlanimetry.BUILT_IN_THEMES);
+    private final NumberProperty displayPresicion = new NumberProperty(Component.literal("Точность отображения чисел"), 3).withMin(OptionalDouble.of(1)).withMax(OptionalDouble.of(127)).requireWholeNumbers(true);
+    private final SelectionProperty<AngleType> angleUnits = new SelectionProperty<>(AngleType.DEGREES, Component.literal("Единица углов"), AngleType.values());
+    private final SelectionProperty<ShapeMovementPredicate> moveShapes = new SelectionProperty<>(ShapeMovementPredicate.ONLY_POINTS, Component.literal("Перемещать без выделения"), ShapeMovementPredicate.values());
+    private final BooleanProperty showGrid = new BooleanProperty(Component.literal("Показывать сетку"), true);
+    private final BooleanProperty isDebug = new BooleanProperty(Component.literal("Режим отладки"), true);
+    private final BooleanProperty fullscreen = new BooleanProperty(Component.literal("Полный экран"), false);
     private byte mathPrecision = -23;
     private SortingType lastSortingType = SortingType.BY_EDITING_TIME;
     private boolean lastSortingOrder = true;
@@ -47,6 +48,7 @@ public class Settings {
         theme.layoutOverride = PROPERTY_LAYOUT;
         displayPresicion.layoutOverride = PROPERTY_LAYOUT;
         angleUnits.layoutOverride = PROPERTY_LAYOUT;
+        moveShapes.layoutOverride = PROPERTY_LAYOUT;
         theme.addValueChangeListener(theme -> {
             if (Gdx.app != null) {
                 DynamicPlanimetry app = DynamicPlanimetry.getInstance();
@@ -85,6 +87,18 @@ public class Settings {
 
     public AngleType getAngleUnit() {
         return angleUnits.getValue();
+    }
+
+    public boolean canMove(Shape shape) {
+        return moveShapes.getValue().test(shape);
+    }
+
+    public ShapeMovementPredicate getShapeMovementPredicate() {
+        return moveShapes.getValue();
+    }
+
+    public void setMoveShapes(ShapeMovementPredicate predicate) {
+        this.moveShapes.setValue(predicate);
     }
 
     public SortingType getLastSortingType() {
@@ -126,7 +140,7 @@ public class Settings {
     }
 
     public PropertyLayout getLayout(StyleSet styles) {
-        return new PropertyLayout(List.of(theme, displayPresicion, angleUnits, showGrid, isDebug, fullscreen), styles, null, Size.MEDIUM, true);
+        return new PropertyLayout(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, isDebug, fullscreen), styles, null, Size.MEDIUM, true);
     }
 
     public boolean isDebug() {
@@ -143,6 +157,7 @@ public class Settings {
             this.theme.setValue(NbtUtil.getOptionalInt(nbt, "theme", 0) == 1 ? DynamicPlanimetry.THEME_DARK : DynamicPlanimetry.THEME_LIGHT);
             this.displayPresicion.setValue((double)NbtUtil.getOptionalByte(nbt, "display_precision", (byte)3));
             this.angleUnits.setValue(AngleType.valueOf(NbtUtil.getOptionalString(nbt, "angle_units", "degrees").toUpperCase()));
+            this.moveShapes.setValue(ShapeMovementPredicate.valueOf(NbtUtil.getOptionalString(nbt, "shape_movement_predicate", "only_points").toUpperCase()));
             this.mathPrecision = NbtUtil.getOptionalByte(nbt, "math_precision", (byte)-23);
             this.showGrid.setValue(NbtUtil.getOptionalBoolean(nbt, "show_grid", true));
             this.lastSortingType = SortingType.valueOf(NbtUtil.getOptionalString(nbt, "last_sorting_type", "by_editing_time").toUpperCase());
@@ -160,6 +175,7 @@ public class Settings {
         nbt.putInt("theme", this.theme.getValue() == DynamicPlanimetry.THEME_DARK ? 1 : 0);
         nbt.putByte("display_precision", displayPresicion.getValue().byteValue());
         nbt.putString("angle_units", angleUnits.getValue().name().toLowerCase());
+        nbt.putString("shape_movement_predicate", moveShapes.getValue().name().toLowerCase());
         nbt.putByte("math_precision", mathPrecision);
         NbtUtil.writeBoolean(nbt, "show_grid", showGrid.getValue());
         nbt.putString("last_sorting_type", lastSortingType.name().toLowerCase());
@@ -175,46 +191,5 @@ public class Settings {
 
     public static Settings get() {
         return DynamicPlanimetry.SETTINGS;
-    }
-
-    public static enum AngleType implements ComponentRepresentable {
-        GRADIANS(Component.literal("Градианы"), t -> t * MathHelper.RADIANS_TO_GRADIANS, t -> t * MathHelper.GRADIANS_TO_RADIANS, " град", 400),
-        RADIANS(Component.literal("Радианы"), t -> t, t -> t, " рад", Math.PI * 2),
-        DEGREES(Component.literal("Градусы"), t -> Math.toDegrees(t), t -> Math.toRadians(t), "°", 360); // TODO set angles in custom units too
-
-        private final DoubleFunction<Double> toUnit;
-        private final DoubleFunction<Double> toRadians;
-        public final Component name;
-        public final String unit;
-        public final double max;
-
-        private AngleType(Component name, DoubleFunction<Double> toUnit, DoubleFunction<Double> toRadians, String unit, double max) {
-            this.name = name;
-            this.toUnit = toUnit;
-            this.toRadians = toRadians;
-            this.unit = unit;
-            this.max = max;
-        }
-
-        @Override
-        public Component toComponent() {
-            return name;
-        }
-
-        public double toUnit(double radians) {
-            return toUnit.apply(radians);
-        }
-
-        public double toRadians(double unitval) {
-            return toRadians.apply(unitval);
-        }
-
-        public String getUnit() {
-            return unit;
-        }
-
-        public double getMax() {
-            return max;
-        }
     }
 }

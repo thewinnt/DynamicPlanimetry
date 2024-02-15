@@ -13,6 +13,7 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
@@ -179,7 +180,7 @@ public class Circle extends Shape {
         } else {
             nbt.putLong("radius", this.radiusPoint.getId());
             context.addShape(this.radiusPoint);
-            nbt.putByte("keep_radius", this.keepRadius ? (byte)1 : (byte)0);
+            NbtUtil.writeBoolean(nbt, "keep_radius", keepRadius);
         }
         return nbt;
     }
@@ -188,11 +189,28 @@ public class Circle extends Shape {
         PointProvider center = (PointProvider)context.resolveShape(nbt.getLong("center").getValue());
         if (nbt.containsLong("radius")) {
             PointProvider radius = (PointProvider)context.resolveShape(nbt.getLong("radius").getValue());
-            boolean keepRadius = nbt.getByte("keep_radius").getValue() > 0;
+            boolean keepRadius = NbtUtil.getBoolean(nbt, "keep_radius");
             return new Circle(context.getDrawing(), center, radius, keepRadius);
         } else {
             double radius = nbt.getDouble("radius").getValue();
             return new Circle(context.getDrawing(), center, radius);
         }
+    }
+
+    @Override
+    public void move(Vec2 delta) {
+        this.center.move(delta);
+        if (!keepRadius && radiusPoint != null) radiusPoint.move(delta);
+    }
+
+    @Override
+    public void move(double dx, double dy) {
+        this.center.move(dx, dy);
+        if (!keepRadius && radiusPoint != null) radiusPoint.move(dx, dy);
+    }
+
+    @Override
+    public boolean canMove() {
+        return true;
     }
 }

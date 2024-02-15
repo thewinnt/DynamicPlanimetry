@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.Align;
 
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -41,7 +42,7 @@ public class DrawingBoard extends Actor {
     private Shape selection;
     private ShapeFactory creatingShape;
     private boolean isPanning = false;
-    private boolean startedAtPoint = false;
+    private Shape movingShape = null;
 
     public DrawingBoard(ShapeDrawer drawer, FontProvider font, Drawing drawing) {
         this.drawer = drawer;
@@ -67,10 +68,12 @@ public class DrawingBoard extends Actor {
             @Override
             public void pan(InputEvent event, float x, float y, float deltaX, float deltaY) {
                 isPanning = true;
-                if (creatingShape == null && selection != null && startedAtPoint && selection instanceof PointProvider point && point.canMove()) {
-                    point.move(deltaX / scale, deltaY / scale);
-                    for (Consumer<Shape> i : selectionListeners) {
-                        i.accept(selection);
+                if (creatingShape == null && movingShape != null && movingShape.canMove()) {
+                    movingShape.move(deltaX / scale, deltaY / scale);
+                    if (selection != null) {
+                        for (Consumer<Shape> i : selectionListeners) {
+                            i.accept(selection);
+                        }
                     }
                 } else {
                     offset = offset.add(-deltaX, -deltaY);
@@ -101,7 +104,9 @@ public class DrawingBoard extends Actor {
                 int mx = Gdx.input.getX();
                 int my = Gdx.input.getY();
                 if (!isPanning && selection != null) {
-                    startedAtPoint = selection.distanceToMouse(xb(mx), yb(my), DrawingBoard.this) <= 16 / scale;
+                    movingShape = selection.distanceToMouse(xb(mx), yb(my), DrawingBoard.this) <= 16 / scale ? selection : null;
+                } else if (!isPanning) {
+                    movingShape = getHoveredShape(mx, my, Settings.get().getShapeMovementPredicate());
                 }
                 getStage().setKeyboardFocus(DrawingBoard.this);
             }

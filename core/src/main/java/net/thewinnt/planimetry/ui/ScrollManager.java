@@ -14,8 +14,7 @@ public class ScrollManager extends Actor {
             public boolean scrolled(InputEvent event, float x, float y, float amountX, float amountY) {
                 Stage stage = getStage();
                 if (stage != null) {
-                    Vector2 coords = stage.screenToStageCoordinates(new Vector2(x, y));
-                    Actor actor = stage.hit(coords.x, coords.y, true);
+                    Actor actor = stage.hit(x, y, true);
                     if (actor == null) return false;
                     return actor.fire(event);
                 }

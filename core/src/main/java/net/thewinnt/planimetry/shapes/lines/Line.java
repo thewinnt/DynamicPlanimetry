@@ -93,4 +93,21 @@ public abstract class Line extends Shape {
     }
 
     public abstract LineType getType();
+
+    @Override
+    public void move(Vec2 delta) {
+        this.a.move(delta);
+        this.b.move(delta);
+    }
+
+    @Override
+    public void move(double dx, double dy) {
+        this.a.move(dx, dy);
+        this.b.move(dx, dy);
+    }
+
+    @Override
+    public boolean canMove() {
+        return true;
+    }
 }

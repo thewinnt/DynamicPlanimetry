@@ -190,4 +190,23 @@ public class MultiPointLine extends Shape {
     public static MultiPointLine readNbt(CompoundTag nbt, LoadingContext context) {
         return new MultiPointLine(context.getDrawing(), pointsFromNbt(nbt, context));
     }
+
+    @Override
+    public void move(Vec2 delta) {
+        for (PointProvider i : this.points) {
+            i.move(delta);
+        }
+    }
+
+    @Override
+    public void move(double dx, double dy) {
+        for (PointProvider i : this.points) {
+            i.move(dx, dy);
+        }
+    }
+
+    @Override
+    public boolean canMove() {
+        return true;
+    }
 }

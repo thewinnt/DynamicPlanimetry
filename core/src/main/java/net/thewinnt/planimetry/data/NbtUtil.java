@@ -25,17 +25,17 @@ public class NbtUtil {
         if (!tag.contains(name)) return fallback;
         return tag.getDouble(name).doubleValue();
     }
-    
+
     public static int getOptionalInt(CompoundTag tag, String name, int fallback) {
         if (!tag.contains(name)) return fallback;
         return tag.getInt(name).intValue();
     }
-    
+
     public static byte getOptionalByte(CompoundTag tag, String name, byte fallback) {
         if (!tag.contains(name)) return fallback;
         return tag.getByte(name).byteValue();
     }
-    
+
     public static String getOptionalString(CompoundTag tag, String name, String fallback) {
         if (!tag.contains(name)) return fallback;
         return tag.getString(name).getValue();
@@ -43,6 +43,10 @@ public class NbtUtil {
 
     public static boolean getOptionalBoolean(CompoundTag tag, String name, boolean fallback) {
         if (!tag.contains(name)) return fallback;
+        return tag.getByte(name).byteValue() != 0;
+    }
+
+    public static boolean getBoolean(CompoundTag tag, String name) {
         return tag.getByte(name).byteValue() != 0;
     }
 

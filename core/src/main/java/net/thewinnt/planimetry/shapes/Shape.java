@@ -83,6 +83,10 @@ public abstract class Shape implements ComponentRepresentable {
         this.dependents.remove(shape);
     }
 
+    public abstract void move(Vec2 delta);
+    public abstract void move(double dx, double dy);
+    public abstract boolean canMove();
+
     /**
      * Tries to delete this shape from its drawing
      * @param includeDependencies whether to also delete dependencies that would be left without ones

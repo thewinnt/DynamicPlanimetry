@@ -8,6 +8,7 @@ import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
+import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.relative.TangentOffsetPoint;
 import net.thewinnt.planimetry.ui.DrawingBoard;
@@ -60,5 +61,15 @@ public class ParallelInfiniteLine extends InfiniteLine {
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
         ((TangentOffsetPoint)this.b.getPoint()).setAngle(this.base.getSlope());
         super.render(drawer, selection, font, board);
+    }
+
+    @Override
+    public void move(Vec2 delta) {
+        this.a.move(delta);
+    }
+
+    @Override
+    public void move(double dx, double dy) {
+        this.a.move(dx, dy);
     }
 }

@@ -35,9 +35,6 @@ public abstract class PointProvider extends Shape {
     }
 
     public abstract Vec2 getPosition();
-    public abstract boolean canMove();
-    public abstract void move(Vec2 delta);
-    public abstract void move(double dx, double dy);
 
     public double getX() {
         return getPosition().x;

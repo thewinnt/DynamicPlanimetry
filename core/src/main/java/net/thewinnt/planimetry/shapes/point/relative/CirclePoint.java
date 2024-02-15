@@ -64,7 +64,7 @@ public class CirclePoint extends PointProvider {
     public void move(Vec2 delta) {
         Vec2 oldPos = this.getPosition();
         Vec2 newPos = this.getPosition().add(delta);
-        this.angle = Math.atan(MathHelper.getSlope(circle.center.getPosition(), newPos));
+        this.angle = MathHelper.polarAngle(this.circle.center.getPosition(), newPos);
         this.movementListeners.forEach(consumer -> consumer.accept(this.getPosition().subtract(oldPos)));
     }
 
@@ -72,7 +72,7 @@ public class CirclePoint extends PointProvider {
     public void move(double dx, double dy) {
         Vec2 oldPos = this.getPosition();
         Vec2 newPos = this.getPosition().add(dx, dy);
-        this.angle = Math.atan(MathHelper.getSlope(circle.center.getPosition(), newPos));
+        this.angle = MathHelper.polarAngle(this.circle.center.getPosition(), newPos);
         this.movementListeners.forEach(consumer -> consumer.accept(this.getPosition().subtract(oldPos)));
     }
 
