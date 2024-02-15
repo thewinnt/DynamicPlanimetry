@@ -3,16 +3,21 @@ package net.thewinnt.planimetry;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.zip.Deflater;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -167,6 +172,7 @@ public class DynamicPlanimetry extends Game {
         }
         try {
             Gdx.files.local("drawings").mkdirs();
+            Gdx.files.local("screenshots").mkdirs();
         } catch (Exception e) {
             if (isDebug()) {
                 Notifications.addNotification(e.getMessage(), 7500);
@@ -183,6 +189,15 @@ public class DynamicPlanimetry extends Game {
     @Override
     public void render() {
         super.render();
+        if (Gdx.input.isKeyJustPressed(Keys.F2)) {
+            Pixmap screenshot = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            String filename = AUTOSAVE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
+            PixmapIO.writePNG(Gdx.files.local("screenshots/" + filename + ".png"), screenshot, Deflater.DEFAULT_COMPRESSION, true); 
+            screenshot.dispose();
+            Notifications.addNotification("Скриншот сохранён как " + filename + ".png", 2000);
+        } else if (Gdx.input.isKeyJustPressed(Keys.F11)) {
+            SETTINGS.toggleFullscreen();
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.shapes;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -8,15 +9,19 @@ import java.util.function.Supplier;
 import com.badlogic.gdx.graphics.Color;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.factories.CircleTangentFactory;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
+import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
@@ -128,6 +133,17 @@ public class Circle extends Shape {
             radius.addValueChangeListener(r -> Circle.this.radius = () -> r);
             return List.of(new EnclosingProperty(Component.literal("Центр"), this.center.getProperties()), radius);
         }
+    }
+
+    @Override
+    public Collection<Function<?>> getFunctions() {
+        ArrayList<Function<?>> functions = new ArrayList<>();
+        if (!this.drawing.hasShape(this.radiusPoint)) {
+            DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
+            functions.add(new BasicNamedFunction<>(drawing, this, s -> drawing.addShape(radiusPoint), Component.literal("Отметить точку радиуса"), Component.literal("Отметить")));
+            functions.add(new BasicNamedFunction<>(drawing, this, s -> board.startCreation(new CircleTangentFactory(board, Circle.this)), Component.literal("Построить касательную"), Component.literal("Построить")));
+        }
+        return functions;
     }
 
     @Override

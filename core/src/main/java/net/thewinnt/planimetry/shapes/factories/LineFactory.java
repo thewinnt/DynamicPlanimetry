@@ -15,6 +15,7 @@ import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
 import net.thewinnt.planimetry.ui.text.LiteralComponent;
 
 public class LineFactory extends ShapeFactory {
@@ -78,14 +79,15 @@ public class LineFactory extends ShapeFactory {
         return point2 != null && point2.getPoint() instanceof Point;
     }
 
-    public static enum LineType {
+    public static enum LineType implements ComponentRepresentable {
         INFINITE(InfiniteLine::new, Component.literal("Прямая")),
         RAY(Ray::new, Component.literal("Луч")),
         SEGMENT(LineSegment::new, Component.literal("Отрезок"));
 
         public final LineConstructor<?> factory;
-        public final CharSequence name;
-        private LineType(LineConstructor<?> factory, CharSequence name) {
+        public final Component name;
+
+        private LineType(LineConstructor<?> factory, Component name) {
             this.factory = factory;
             this.name = name;
         }
@@ -95,8 +97,8 @@ public class LineFactory extends ShapeFactory {
         }
 
         @Override
-        public String toString() {
-            return name.toString();
+        public Component toComponent() {
+            return name;
         }
     }
 

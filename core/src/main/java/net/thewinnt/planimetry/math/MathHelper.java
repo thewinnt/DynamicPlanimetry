@@ -12,6 +12,10 @@ public class MathHelper {
         return Math.abs(a - b) < Math.pow(2, DynamicPlanimetry.SETTINGS.getMathPrecision());
     }
 
+    public static boolean roughlyEquals(Vec2 a, Vec2 b) {
+        return roughlyEquals(a.x, b.x) && roughlyEquals(a.y, b.y);
+    }
+
     public static Vec2 continueFromTan(Vec2 from, double tan, double distance) {
         return new Vec2(from.x + Math.cos(Math.atan(tan)) * distance, from.y + Math.sin(Math.atan(tan)) * distance);
     }
@@ -19,7 +23,7 @@ public class MathHelper {
     public static Vec2 continueFromAngle(Vec2 from, double angle, double distance) {
         return new Vec2(from.x + Math.cos(angle) * distance, from.y + Math.sin(angle) * distance);
     }
-    
+
     public static Vec2 perpendicular(Vec2 point, double slope, double distance) {
         return new Vec2(point.x + Math.cos(Math.atan(slope) + HALF_PI) * distance, point.y + Math.sin(Math.atan(slope) + HALF_PI) * distance);
     }

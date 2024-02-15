@@ -48,7 +48,6 @@ public class EditorScreen extends FlatUIScreen {
     private Table actions;
     private Container<Window> saveOverlay;
 
-    private Label creationCategory;
     private TextButton createPoint;
     private TextButton createLine;
     private TextButton createRay;
@@ -108,7 +107,6 @@ public class EditorScreen extends FlatUIScreen {
         actions.reset();
 
         // ACTORS
-        creationCategory = new Label("Создание", styles.getLabelStyle(Size.MEDIUM));
         createPoint = leftAlignedButton("Точка", Size.SMALL, true);
         createLine = leftAlignedButton("Прямая", Size.SMALL, true);
         createRay = leftAlignedButton("Луч", Size.SMALL, true);

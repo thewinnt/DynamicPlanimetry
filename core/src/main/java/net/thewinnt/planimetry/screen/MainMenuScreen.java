@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class MainMenuScreen extends FlatUIScreen {
     public MainMenuScreen(DynamicPlanimetry app) {
@@ -28,9 +29,10 @@ public class MainMenuScreen extends FlatUIScreen {
         // painful, i know
         LabelStyle style_title = new LabelStyle(app.getBoldFont(201, Theme.current().textUI()), Theme.current().textUI());
         Label title = new Label("Dynamic Planimetry", style_title);
+        Label version = new Label(Component.literal("v. 0.1"), style_fps);
 
         TextButtonStyle buttonStyle = styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true);
-        TextButton create = new TextButton(app.getDrawing() == null ? "Создать" : "Продолжить", buttonStyle);
+        TextButton create = new TextButton(app.getDrawing() == null ? "Создать" : "Новый чертёж", buttonStyle);
         TextButton load = new TextButton("Загрузить", buttonStyle);
         TextButton go_settings = new TextButton("Настройки", styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true));
         TextButton exit = new TextButton("Выход", buttonStyle);
@@ -66,17 +68,17 @@ public class MainMenuScreen extends FlatUIScreen {
         create.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                app.setDrawing(null, true);
                 app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
             }
         });
 
         if (app.getDrawing() != null) {
-            TextButton newDrawing = new TextButton("Новый рисунок", buttonStyle);
+            TextButton newDrawing = new TextButton("Продолжить", buttonStyle);
             newDrawing.setSize(605, 70);
             newDrawing.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    app.setDrawing(null, true);
                     app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
                 }
             });
@@ -92,7 +94,11 @@ public class MainMenuScreen extends FlatUIScreen {
         table.row();
         table.add(buttons).expandY().top();
 
+        version.setPosition(4, 0);
+        this.repositionFps(4, 35);
+
         stage.addActor(table);
+        stage.addActor(version);
     }
 
     @Override

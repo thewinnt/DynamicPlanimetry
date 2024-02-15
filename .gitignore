@@ -160,6 +160,8 @@ Thumbs.db
 ## App data
 /assets/drawings/
 /drawings/
+/screenshots/
+/assets/screenshots/
 settings.dat
 /assets/settings.dat
 

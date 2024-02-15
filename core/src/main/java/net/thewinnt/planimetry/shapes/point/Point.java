@@ -8,6 +8,7 @@ import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
+import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.Property;
@@ -25,12 +26,10 @@ public class Point extends PointProvider {
         super(drawing);
         this.position = position;
         this.property = new Vec2Property(Component.literal("Координаты"), position);
-        this.property.addValueChangeListener(pos -> {
-            Point.this.position = pos;
-        });
+        this.property.addValueChangeListener(pos -> Point.this.position = pos);
         this.addMovementListener(delta -> property.setValue(Point.this.position));
         this.componentProperty = new NameComponentProperty(Component.literal("Имя"), this.name);
-        this.componentProperty.addValueChangeListener(component -> setName(component));
+        this.componentProperty.addValueChangeListener(this::setName);
     }
 
     public Point(Drawing drawing, Vec2 position, NameComponent name) {
@@ -40,7 +39,7 @@ public class Point extends PointProvider {
         this.property.addValueChangeListener(pos -> Point.this.position = pos);
         this.addMovementListener(delta -> property.setValue(Point.this.position));
         this.componentProperty = new NameComponentProperty(Component.literal("Имя"), this.name);
-        this.componentProperty.addValueChangeListener(component -> setName(component));
+        this.componentProperty.addValueChangeListener(this::setName);
     }
 
     @Override
@@ -50,12 +49,12 @@ public class Point extends PointProvider {
 
     @Override
     public boolean contains(Vec2 point) {
-        return point.equals(position);
+        return MathHelper.roughlyEquals(point, position);
     }
 
     @Override
     public boolean contains(double x, double y) {
-        return position.x == x && position.y == y;
+        return MathHelper.roughlyEquals(position.x, x) && MathHelper.roughlyEquals(position.y, y);
     }
 
     @Override

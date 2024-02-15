@@ -70,7 +70,7 @@ public abstract class Shape implements ComponentRepresentable {
     public abstract Component getName();
     public abstract String getTypeName();
 
-    /** @deprecated use {@link #toNbt()} for saving instead, as this provides incomplete data */
+    /** @deprecated use {@link #toNbt(SavingContext)} for saving instead, as this provides incomplete data */
     @Deprecated public abstract CompoundTag writeNbt(SavingContext context);
     public abstract ShapeDeserializer<?> getDeserializer();
 

@@ -29,12 +29,15 @@ public abstract class FlatUIScreen implements Screen {
     private Texture texture;
     protected ShapeDrawer drawer;
     protected StyleSet styles;
+    protected LabelStyle style_fps;
 
     private Label fps;
     private Label mem_usage;
     private Notifications notifications;
     private ScrollManager scrollManager;
     private float fps_timer;
+    private float fps_x = 4;
+    private float fps_y = 0;
 
     private boolean hiddenBefore;
 
@@ -58,7 +61,7 @@ public abstract class FlatUIScreen implements Screen {
         TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
         this.drawer = new ShapeDrawer(stage.getBatch(), region);
 
-        LabelStyle style_fps = new LabelStyle(app.getBoldFont(DynamicPlanimetry.FPS), getFpsColor());
+        this.style_fps = new LabelStyle(app.getBoldFont(DynamicPlanimetry.FPS), getFpsColor());
         this.styles = new StyleSet(drawer, app::getBoldFont);
 
         if (notifications != null) notifications.dispose();
@@ -89,8 +92,8 @@ public abstract class FlatUIScreen implements Screen {
         if (hiddenBefore) initActors();
         hiddenBefore = false;
         Gdx.input.setInputProcessor(stage);
-        fps.setPosition(4, 0, Align.bottomLeft);
-        mem_usage.setPosition(4, 40, Align.bottomLeft);
+        fps.setPosition(fps_x, fps_y, Align.bottomLeft);
+        mem_usage.setPosition(fps_x, fps_y + 40, Align.bottomLeft);
         notifications.setPosition(0, 0);
         notifications.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         notifications.updateCaches();
@@ -147,6 +150,11 @@ public abstract class FlatUIScreen implements Screen {
 
     public Color getFpsColor() {
         return Theme.current().textButton();
+    }
+
+    public void repositionFps(float x, float y) {
+        fps_x = x;
+        fps_y = y;
     }
 
     public ShapeDrawer getDrawer() {

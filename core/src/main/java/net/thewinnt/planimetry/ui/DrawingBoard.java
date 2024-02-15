@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.badlogic.gdx.Gdx;
@@ -14,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Predicate;
 
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
@@ -246,21 +246,23 @@ public class DrawingBoard extends Actor {
             drawer.line(getX(), by(0), getX() + getWidth(), by(0), 2);
             drawer.line(bx(0), getY(), bx(0), getY() + getHeight(), 2);
         }
+        if (creatingShape != null) creatingShape.onRender(xb(mx), yb(my));
         Shape hovered = getHoveredShape(mx, my);
         for (Shape i : this.drawing.shapes) {
-            if (selection == i) {
-                i.render(drawer, SelectionStatus.SELECTED, font, this);
-            } else {
-                i.render(drawer, hovered == i ? SelectionStatus.HOVERED : SelectionStatus.NONE, font, this);
-            }
+            i.render(drawer, SelectionStatus.NONE, font, this);
+        }
+        if (selection != null && !(selection instanceof PointProvider)) {
+            selection.render(drawer, SelectionStatus.SELECTED, font, this);
+        }
+        if (hovered != null && !(hovered instanceof PointProvider)) {
+            hovered.render(drawer, hovered == selection ? SelectionStatus.SELECTED : SelectionStatus.HOVERED, font, this);
         }
         for (PointProvider i : this.drawing.points) {
-            if (selection == i) {
-                i.render(drawer, SelectionStatus.SELECTED, font, this);
-            } else {
-                i.render(drawer, hovered == i ? SelectionStatus.HOVERED : SelectionStatus.NONE, font, this);
-            }
+            if (selection == i || hovered == i) continue;
+            i.render(drawer, SelectionStatus.NONE, font, this);
         }
+        if (selection instanceof PointProvider) selection.render(drawer, SelectionStatus.SELECTED, font, this);
+        if (hovered instanceof PointProvider) hovered.render(drawer, hovered == selection ? SelectionStatus.SELECTED : SelectionStatus.HOVERED, font, this);
         if (DynamicPlanimetry.isDebug()) {
             font.getFont(40, Color.FIREBRICK).draw(batch, "scale: " + scale, x(5), y(getHeight() - 5));
             font.getFont(40, Color.FIREBRICK).draw(batch, "offx: " + offset.x, x(5), y(getHeight() - 30));
@@ -356,7 +358,7 @@ public class DrawingBoard extends Actor {
         }
         for (PointProvider i : this.drawing.points) {
             if (ignore.contains(i)) continue;
-            if (!predicate.evaluate(i)) continue;
+            if (!predicate.test(i)) continue;
             double distance = i.distanceToMouse(xb(mx), yb(my), this);
             if (distance <= minDistance) {
                 hovered = i;
@@ -366,7 +368,7 @@ public class DrawingBoard extends Actor {
         if (hovered != null) return hovered;
         for (Shape i : this.drawing.shapes) {
             if (ignore.contains(i)) continue;
-            if (!predicate.evaluate(i)) continue;
+            if (!predicate.test(i)) continue;
             double distance = i.distanceToMouse(xb(mx), yb(my), this);
             if (distance <= minDistance) {
                 hovered = i;

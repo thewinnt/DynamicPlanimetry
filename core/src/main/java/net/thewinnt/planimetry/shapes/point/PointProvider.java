@@ -48,12 +48,12 @@ public abstract class PointProvider extends Shape {
 
     @Override
     public boolean contains(Vec2 point) {
-        return getPosition().equals(point);
+        return MathHelper.roughlyEquals(point, getPosition());
     }
 
     @Override
     public boolean contains(double x, double y) {
-        return getPosition().x == x && getPosition().y == y;
+        return MathHelper.roughlyEquals(getPosition().x, x) && MathHelper.roughlyEquals(getPosition().y, y);
     }
 
     @Override

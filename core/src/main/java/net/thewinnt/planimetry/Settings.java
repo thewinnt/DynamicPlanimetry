@@ -133,6 +133,10 @@ public class Settings {
         return isDebug.getValue();
     }
 
+    public void toggleFullscreen() {
+        fullscreen.setValue(!fullscreen.getValue());
+    }
+
     public void fromNbt(CompoundTag nbt) {
         if (nbt == null) return;
         try {

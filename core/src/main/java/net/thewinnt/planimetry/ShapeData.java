@@ -3,19 +3,10 @@ package net.thewinnt.planimetry;
 import net.thewinnt.planimetry.shapes.Circle;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.ShapeDeserializer;
-import net.thewinnt.planimetry.shapes.lines.AngledInfiniteLine;
-import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
-import net.thewinnt.planimetry.shapes.lines.LineSegment;
-import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
-import net.thewinnt.planimetry.shapes.lines.ParallelInfiniteLine;
-import net.thewinnt.planimetry.shapes.lines.Ray;
-import net.thewinnt.planimetry.shapes.point.MousePoint;
-import net.thewinnt.planimetry.shapes.point.Point;
-import net.thewinnt.planimetry.shapes.point.PointReference;
-import net.thewinnt.planimetry.shapes.point.relative.TangentOffsetPoint;
-import net.thewinnt.planimetry.shapes.polygons.Polygon;
-import net.thewinnt.planimetry.shapes.polygons.Tetragon;
-import net.thewinnt.planimetry.shapes.polygons.Triangle;
+import net.thewinnt.planimetry.shapes.lines.*;
+import net.thewinnt.planimetry.shapes.point.*;
+import net.thewinnt.planimetry.shapes.point.relative.*;
+import net.thewinnt.planimetry.shapes.polygons.*;
 import net.thewinnt.planimetry.util.HashBiMap;
 
 public class ShapeData {
@@ -26,6 +17,8 @@ public class ShapeData {
     public static final ShapeDeserializer<MousePoint> MOUSE_POINT = register("mouse_point", MousePoint::readNbt);
     public static final ShapeDeserializer<PointReference> POINT_REFERENCE = register("point_reference", PointReference::readNbt);
     public static final ShapeDeserializer<TangentOffsetPoint> TANGENT_OFFSET_POINT = register("tangent_offset_point", TangentOffsetPoint::readNbt);
+    public static final ShapeDeserializer<AngleOffsetPoint> ANGLE_OFFSET_POINT = register("angle_offset_point", AngleOffsetPoint::readNbt);
+    public static final ShapeDeserializer<CirclePoint> CIRCLE_POINT = register("circle_point", CirclePoint::readNbt);
 
     // LINES
     public static final ShapeDeserializer<InfiniteLine> INFINITE_LINE = register("infinite_line", InfiniteLine::readNbt);
@@ -33,6 +26,7 @@ public class ShapeData {
     public static final ShapeDeserializer<Ray> RAY = register("ray", Ray::readNbt);
     public static final ShapeDeserializer<ParallelInfiniteLine> PARALLEL_INFINITE_LINE = register("parallel_infinite_line", ParallelInfiniteLine::readNbt);
     public static final ShapeDeserializer<AngledInfiniteLine> ANGLED_INFINITE_LINE = register("angled_infinite_line", AngledInfiniteLine::readNbt);
+    public static final ShapeDeserializer<CircleTangentLine> CIRCLE_TANGENT = register("circle_tangent", CircleTangentLine::readNbt);
 
     // POLYGONS
     public static final ShapeDeserializer<MultiPointLine> POLYGONAL_CHAIN = register("polygonal_chain", MultiPointLine::readNbt);

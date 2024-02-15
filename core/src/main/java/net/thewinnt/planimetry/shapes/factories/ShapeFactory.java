@@ -49,6 +49,11 @@ public abstract class ShapeFactory {
     public void onFinish() {}
 
     /**
+     * Executed during rendering. Use this to update shape positions in real-time.
+     */
+    public void onRender(double mx, double my) {}
+
+    /**
      * @return the shapes being added by this factory
      */
     public Collection<Shape> getSuggestedShapes() {

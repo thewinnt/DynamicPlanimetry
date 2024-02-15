@@ -37,7 +37,7 @@ public class BasicPropertyFunction<T extends Shape> extends Function<T> {
     @Override
     public WidgetGroup setupActors(StyleSet styles) {
         Table table = new Table();
-        TextButton apply = new TextButton(actionButton.toString(), styles.getButtonStyle(Size.MEDIUM, true));
+        TextButton apply = new TextButton(actionButton.toString(), styles.getButtonStyle(Size.SMALL, true));
         apply.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -45,10 +45,10 @@ public class BasicPropertyFunction<T extends Shape> extends Function<T> {
                 use();
             }
         });
-        table.add(new ComponentLabel(name, DynamicPlanimetry.getInstance()::getBoldFont, Size.MEDIUM));
+        table.add(new ComponentLabel(name, DynamicPlanimetry.getInstance()::getBoldFont, Size.SMALL));
         table.add(apply).right().expandX().row();
-        table.add(new PropertyLayout(properties.values(), styles, PARAMETERS, Size.MEDIUM, false)).expand().fill().colspan(9999);
+        table.add(new PropertyLayout(properties.values(), styles, PARAMETERS, Size.SMALL, false)).expand().fill().colspan(9999);
         return table;
     }
-    
+
 }
