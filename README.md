@@ -23,5 +23,5 @@
 все необходимые библиотеки, готовый jar-файл будет лежать в `lwjgl3/build/libs/`. Необходима Java 17.
 
 ## Используемые библиотеки
-- (libGDX)[https://libgdx.com]
-- (nbt)[https://github.com/BitBuf/nbt]
+- [libGDX](https://libgdx.com)
+- [nbt](https://github.com/BitBuf/nbt)
