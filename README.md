@@ -1,33 +1,27 @@
-# DynamicPlanimetry
+# Dynamic Planimetry
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/tommyettinger/gdx-liftoff).
+Программа для создания чертежей по планиметрии.
 
-This project was generated with a template including simple application launchers and a main class extending `Game` that sets the first screen.
+## Функционал
+Можно создавать:
+- точки
+- прямые, отрезки и лучи
+- окружности
+- многоугольники
 
-## Platforms
+У каждой фигуры можно изменять свойства. Прямые, отрезки и лучи (далее - линии) можно преобразовывать между собой.
+К линиям можно достраивать параллельные прямые и прямые под произвольным уголм (по умолчанию - 90 градусов).
+Единицы измерения можно изменить в настройках.
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3.
+## Системные требования
+- Windows 7 или новее
+- Java 17
+- ~30 МБ свободного места
 
-## Gradle
+## Сборка
+В папке репозитория выполнить команду `./gradlew build` (или `gradlew build` в командной строке Windows). Скачаются
+все необходимые библиотеки, готовый jar-файл будет лежать в `lwjgl3/build/libs/`. Необходима Java 17.
 
-This project uses [Gradle](http://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
-
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
-
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+## Используемые библиотеки
+- (libGDX)[https://libgdx.com]
+- (nbt)[https://github.com/BitBuf/nbt]
