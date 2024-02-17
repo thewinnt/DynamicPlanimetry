@@ -125,7 +125,6 @@ public class DrawingBoard extends Actor {
 
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                Notifications.addNotification("Received keyboard input: " + Keys.toString(keycode) + " (" + keycode + ")", 1000);
                 if (keycode == Keys.FORWARD_DEL && selection != null) {
                     boolean onlyThis = Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT);
                     boolean force = Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT);

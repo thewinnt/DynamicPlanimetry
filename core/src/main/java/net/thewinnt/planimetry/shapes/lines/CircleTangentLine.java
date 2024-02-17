@@ -80,6 +80,11 @@ public class CircleTangentLine extends InfiniteLine {
     }
 
     @Override
+    public Component getName() {
+        return Component.of(Component.literal(getTypeName() + "к окр. "), circle.center.getNameComponent(), Component.literal(" в точке "), this.a.getNameComponent());
+    }
+
+    @Override
     public Collection<Property<?>> getProperties() {
         this.angleProperty.setValue(Settings.get().toUnit(this.angle));
         return List.of(angleProperty, circleProperty);

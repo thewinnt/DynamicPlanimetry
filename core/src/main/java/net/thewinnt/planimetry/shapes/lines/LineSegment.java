@@ -36,7 +36,7 @@ public class LineSegment extends Line {
     @Override
     public boolean contains(Vec2 point) {
         return a.getPosition().distanceTo(point) + b.getPosition().distanceTo(point) - a.getPosition().distanceTo(b.getPosition()) < Math.pow(2, -23);
-    }   
+    }
 
     @Override
     public double distanceToMouse(Vec2 point, DrawingBoard board) {
@@ -79,8 +79,8 @@ public class LineSegment extends Line {
 
     @Override
     public Collection<Property<?>> getProperties() {
-        EnclosingProperty a = new EnclosingProperty(this.a.getNameComponent(), this.a.getProperties());
-        EnclosingProperty b = new EnclosingProperty(this.b.getNameComponent(), this.b.getProperties());
+        EnclosingProperty a = new EnclosingProperty(this.a.getName(), this.a.getProperties());
+        EnclosingProperty b = new EnclosingProperty(this.b.getName(), this.b.getProperties());
         DisplayProperty length = new DisplayProperty(Component.literal("Длина"), () -> Component.number(this.a.getPosition().distanceTo(this.b.getPosition())));
         return List.of(a, b, length);
     }

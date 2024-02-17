@@ -29,25 +29,17 @@ public class Polygon extends MultiPointLine {
     public Polygon(Drawing drawing, PointProvider... points) {
         super(drawing, points);
         if (points.length < 3) {
-            throw new IllegalArgumentException("A Polygon must have at least three vertices");
+            throw new IllegalArgumentException("A Polygon must have at least three points");
         }
-        angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), points[0].getNameComponent()), () -> Component.angle(MathHelper.angle(points[1].getPosition(), points[0].getPosition(), points[points.length - 1].getPosition()))));
-        for (int i = 1; i < points.length - 1; i++) {
-            final int j = i;
-            angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), points[j].getNameComponent()), () -> Component.angle(MathHelper.angle(points[j-1].getPosition(), points[j].getPosition(), points[j+1].getPosition()))));
-        }
-        angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), points[points.length - 1].getNameComponent()), () -> Component.angle(MathHelper.angle(points[points.length - 2].getPosition(), points[points.length - 1].getPosition(), points[0].getPosition()))));
+        recalculateAngles();
     }
 
     public Polygon(Drawing drawing, Collection<PointProvider> points) {
         super(drawing, points);
-        PointProvider[] pts = points.toArray(new PointProvider[0]);
-        angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), pts[0].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[1].getPosition(), pts[0].getPosition(), pts[pts.length - 1].getPosition()))));
-        for (int i = 1; i < pts.length - 1; i++) {
-            final int j = i;
-            angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), pts[j].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[j-1].getPosition(), pts[j].getPosition(), pts[j+1].getPosition()))));
+        if (points.size() < 3) {
+            throw new IllegalArgumentException("A Polygon must have at least three points");
         }
-        angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), pts[pts.length - 1].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[pts.length - 2].getPosition(), pts[pts.length - 1].getPosition(), pts[0].getPosition()))));
+        recalculateAngles();
     }
 
     @Override
@@ -104,6 +96,7 @@ public class Polygon extends MultiPointLine {
 
     @Override
     public Collection<Property<?>> getProperties() {
+        recalculateAngles();
         var prev = super.getProperties();
         prev.add(new DisplayProperty(Component.literal("Площадь"), () -> Component.number(getArea())));
         prev.add(new EnclosingProperty(Component.literal("Углы"), angles));
@@ -119,6 +112,23 @@ public class Polygon extends MultiPointLine {
             prevPoint = i.getPosition();
         }
         return totalLength + prevPoint.distanceTo(points.get(0).getPosition());
+    }
+
+    @Override
+    public void addPoint(PointProvider point) {
+        super.addPoint(point);
+        recalculateAngles();
+    }
+
+    private void recalculateAngles() {
+        angles.clear();
+        PointProvider[] pts = points.toArray(new PointProvider[0]);
+        angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), pts[0].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[1].getPosition(), pts[0].getPosition(), pts[pts.length - 1].getPosition()))));
+        for (int i = 1; i < pts.length - 1; i++) {
+            final int j = i;
+            angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), pts[j].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[j-1].getPosition(), pts[j].getPosition(), pts[j+1].getPosition()))));
+        }
+        angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), pts[pts.length - 1].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[pts.length - 2].getPosition(), pts[pts.length - 1].getPosition(), pts[0].getPosition()))));
     }
 
     public double getArea() {

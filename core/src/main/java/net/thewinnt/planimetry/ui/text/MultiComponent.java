@@ -24,6 +24,7 @@ public class MultiComponent implements Component {
         double width = 0;
         double height = 0;
         for (Component i : this.components) {
+            if (i == null) continue;
             Vec2 size = i.getSize(font, fontSize);
             width += size.x;
             height = Math.max(height, size.y);
@@ -36,6 +37,7 @@ public class MultiComponent implements Component {
         float offx = 0;
         double height = 0;
         for (Component i : this.components) {
+            if (i == null) continue;
             Vec2 size = i.draw(batch, font, fontSize, color, x + offx, y);
             offx += (float)size.x;
             height = Math.max(height, size.y);
