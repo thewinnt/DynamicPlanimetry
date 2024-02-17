@@ -34,8 +34,10 @@ public class CircleTangentLine extends InfiniteLine {
         a.setAngle(angle);
         b.setAngle(angle + MathHelper.HALF_PI);
         a.addMovementListener(delta -> setAngleFromPoint(a.getAngle()));
+        a.shouldRender = false;
         b.setStart(this.a.getPoint());
         b.setOffset(100);
+        b.shouldRender = false;
         this.angleProperty = new NumberProperty(Component.literal("Угол на окружности"), angle);
         this.angleProperty.addValueChangeListener(newAngle -> setAngle(Settings.get().toRadians(newAngle)));
         this.circleProperty = new ShapeProperty(Component.literal("Окружность"), drawing, circle, shape -> shape instanceof Circle);

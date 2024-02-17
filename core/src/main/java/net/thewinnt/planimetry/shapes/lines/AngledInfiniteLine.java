@@ -37,6 +37,7 @@ public class AngledInfiniteLine extends InfiniteLine {
     public AngledInfiniteLine(Drawing drawing, Line baseLine, PointProvider point, double angleDeg) {
         super(drawing, point, new TangentOffsetPoint(drawing, point, Math.tan(Math.atan(baseLine.getSlope()) + angleDeg), 1, DUMMY_NAME));
         this.b.getPoint().setNameOverride(HELPER_POINT);
+        this.b.getPoint().shouldRender = false;
         this.base = baseLine;
         this.point = point;
         this.angle = angleDeg;

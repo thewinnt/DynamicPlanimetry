@@ -5,6 +5,7 @@ import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
@@ -107,16 +108,21 @@ public class AngleOffsetPoint extends PointProvider {
         double angle = nbt.getDouble("angle").getValue();
         double offset = nbt.getDouble("offset").getValue();
         PointProvider point = (PointProvider)context.resolveShape(nbt.getLong("point").longValue());
+        boolean shouldRender = NbtUtil.getOptionalBoolean(nbt, "should_render", true);
         if (nbt.containsCompound("name")) {
             NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
-            return new AngleOffsetPoint(context.getDrawing(), point, angle, offset, name);
+            AngleOffsetPoint output = new AngleOffsetPoint(context.getDrawing(), point, angle, offset, name);
+            output.shouldRender = shouldRender;
+            return output;
         }
-        return new AngleOffsetPoint(context.getDrawing(), point, angle, offset);
+        AngleOffsetPoint output = new AngleOffsetPoint(context.getDrawing(), point, angle, offset);
+        output.shouldRender = shouldRender;
+        return output;
     }
 
     @Override
     public ShapeDeserializer<?> getDeserializer() {
-        return ShapeData.TANGENT_OFFSET_POINT;
+        return ShapeData.ANGLE_OFFSET_POINT;
     }
 
     @Override

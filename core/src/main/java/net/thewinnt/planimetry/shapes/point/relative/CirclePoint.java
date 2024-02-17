@@ -5,6 +5,7 @@ import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
@@ -118,7 +119,7 @@ public class CirclePoint extends PointProvider {
         context.addShape(circle);
         nbt.putLong("circle", circle.getId());
         nbt.putDouble("angle", angle);
-        nbt.put(this.name.toNbt());
+        nbt.put("name", this.name.toNbt());
         return nbt;
     }
 
@@ -130,10 +131,15 @@ public class CirclePoint extends PointProvider {
     public static CirclePoint readNbt(CompoundTag nbt, LoadingContext context) {
         Circle circle = (Circle) context.resolveShape(nbt.getLong("circle").longValue());
         double angle = nbt.getDouble("angle").doubleValue();
+        boolean shouldRender = NbtUtil.getOptionalBoolean(nbt, "should_render", true);
         if (nbt.containsCompound("name")) {
             NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
-            return new CirclePoint(context.getDrawing(), circle, angle, name);
+            CirclePoint output = new CirclePoint(context.getDrawing(), circle, angle, name);
+            output.shouldRender = shouldRender;
+            return output;
         }
-        return new CirclePoint(context.getDrawing(), circle, angle);
+        CirclePoint output = new CirclePoint(context.getDrawing(), circle, angle);
+        output.shouldRender = shouldRender;
+        return output;
     }
 }

@@ -28,8 +28,8 @@ configure(subprojects) {
 }
 
 subprojects {
-  version = '1.0.0'
-  ext.appName = 'DynamicPlanimetry'
+  version = '0.1'
+  ext.appName = 'Dynamic Planimetry'
   repositories {
     mavenCentral()
     maven { url 'https://s01.oss.sonatype.org' }

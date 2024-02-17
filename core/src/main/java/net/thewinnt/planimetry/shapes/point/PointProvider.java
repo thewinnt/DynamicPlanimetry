@@ -13,6 +13,7 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -21,6 +22,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public abstract class PointProvider extends Shape {
     protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
     protected NameComponent name;
+    public boolean shouldRender = true;
 
     public PointProvider(Drawing drawing) {
         super(drawing);
@@ -69,6 +71,11 @@ public abstract class PointProvider extends Shape {
 
     public boolean removeMovementListener(Consumer<Vec2> listener) {
         return this.movementListeners.remove(listener);
+    }
+
+    @Override
+    public boolean shouldRender() {
+        return shouldRender;
     }
 
     @Override

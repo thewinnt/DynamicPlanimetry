@@ -7,6 +7,7 @@ import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
@@ -109,16 +110,22 @@ public class Point extends PointProvider {
         nbt.putDouble("x", this.position.x);
         nbt.putDouble("y", this.position.y);
         nbt.put("name", name.toNbt());
+        NbtUtil.writeBoolean(nbt, "should_render", shouldRender);
         return nbt;
     }
 
     public static Point readNbt(CompoundTag nbt, LoadingContext context) {
         double x = nbt.getDouble("x").getValue();
         double y = nbt.getDouble("y").getValue();
+        boolean shouldRender = NbtUtil.getOptionalBoolean(nbt, "should_render", true);
         if (nbt.containsCompound("name")) {
             NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
-            return new Point(context.getDrawing(), new Vec2(x, y), name);
+            Point output = new Point(context.getDrawing(), new Vec2(x, y), name);
+            output.shouldRender = shouldRender;
+            return output;
         }
-        return new Point(context.getDrawing(), new Vec2(x, y));
+        Point output = new Point(context.getDrawing(), new Vec2(x, y));
+        output.shouldRender = shouldRender;
+        return output;
     }
 }

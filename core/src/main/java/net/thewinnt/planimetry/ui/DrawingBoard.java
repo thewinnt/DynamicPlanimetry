@@ -270,7 +270,7 @@ public class DrawingBoard extends Actor {
         if (creatingShape != null) creatingShape.onRender(xb(mx), yb(my));
         Shape hovered = getHoveredShape(mx, my);
         for (Shape i : this.drawing.shapes) {
-            i.render(drawer, SelectionStatus.NONE, font, this);
+            if (i.shouldRender()) i.render(drawer, SelectionStatus.NONE, font, this);
         }
         if (selection != null && !(selection instanceof PointProvider)) {
             selection.render(drawer, SelectionStatus.SELECTED, font, this);
@@ -279,7 +279,7 @@ public class DrawingBoard extends Actor {
             hovered.render(drawer, hovered == selection ? SelectionStatus.SELECTED : SelectionStatus.HOVERED, font, this);
         }
         for (PointProvider i : this.drawing.points) {
-            if (selection == i || hovered == i) continue;
+            if (selection == i || hovered == i || !i.shouldRender()) continue;
             i.render(drawer, SelectionStatus.NONE, font, this);
         }
         if (selection instanceof PointProvider) selection.render(drawer, SelectionStatus.SELECTED, font, this);

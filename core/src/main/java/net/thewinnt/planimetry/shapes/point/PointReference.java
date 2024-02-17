@@ -130,6 +130,11 @@ public class PointReference extends PointProvider {
     }
 
     @Override
+    public boolean shouldRender() {
+        return point.shouldRender() && this.shouldRender;
+    }
+
+    @Override
     public ShapeDeserializer<PointReference> getDeserializer() {
         return ShapeData.POINT_REFERENCE;
     }

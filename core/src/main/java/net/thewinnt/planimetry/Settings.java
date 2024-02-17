@@ -38,7 +38,7 @@ public class Settings {
     private final SelectionProperty<AngleType> angleUnits = new SelectionProperty<>(AngleType.DEGREES, Component.literal("Единица углов"), AngleType.values());
     private final SelectionProperty<ShapeMovementPredicate> moveShapes = new SelectionProperty<>(ShapeMovementPredicate.ONLY_POINTS, Component.literal("Перемещать без выделения"), ShapeMovementPredicate.values());
     private final BooleanProperty showGrid = new BooleanProperty(Component.literal("Показывать сетку"), true);
-    private final BooleanProperty isDebug = new BooleanProperty(Component.literal("Режим отладки"), true);
+    private final BooleanProperty isDebug = new BooleanProperty(Component.literal("Режим отладки"), false);
     private final BooleanProperty fullscreen = new BooleanProperty(Component.literal("Полный экран"), false);
     private byte mathPrecision = -23;
     private SortingType lastSortingType = SortingType.BY_EDITING_TIME;
@@ -140,7 +140,7 @@ public class Settings {
     }
 
     public PropertyLayout getLayout(StyleSet styles) {
-        return new PropertyLayout(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, isDebug, fullscreen), styles, null, Size.MEDIUM, true);
+        return new PropertyLayout(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen), styles, null, Size.MEDIUM, true);
     }
 
     public boolean isDebug() {
