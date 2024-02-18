@@ -34,6 +34,7 @@ public class CircleFactory extends ShapeFactory {
             return false;
         } else if (this.point.getPoint() instanceof MousePoint) {
             this.point.setPoint(getOrCreatePoint(x, y));
+            this.point.shouldRender = false;
         }
         return true;
     }

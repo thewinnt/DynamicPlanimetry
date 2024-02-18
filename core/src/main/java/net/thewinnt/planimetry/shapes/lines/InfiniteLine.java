@@ -64,10 +64,10 @@ public class InfiniteLine extends Line {
             drawer.line(board.getX(), board.by(formula.apply(board.minX())), board.getX() + board.getWidth(), board.by(formula.apply(board.maxX())), lineColor, getThickness(board.getScale()));
         }
         if (selection == SelectionStatus.SELECTED) {
-            if (!board.getShapes().contains(this.a)) {
+            if (!board.getShapes().contains(this.a) && this.a.shouldRender()) {
                 this.a.render(drawer, SelectionStatus.NONE, font, board);
             }
-            if (!board.getShapes().contains(this.b)) {
+            if (!board.getShapes().contains(this.b) && this.b.shouldRender()) {
                 this.b.render(drawer, SelectionStatus.NONE, font, board);
             }
         }

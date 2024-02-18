@@ -129,7 +129,7 @@ public class Circle extends Shape {
     public Collection<Property<?>> getProperties() {
         if (radiusPoint != null) {
             BooleanProperty keep = new BooleanProperty(Component.literal("Сохранять радиус"), keepRadius);
-            keep.addValueChangeListener(result -> Circle.this.setKeepRadius(result));
+            keep.addValueChangeListener(Circle.this::setKeepRadius);
             return List.of(
                 new EnclosingProperty(Component.literal("Центр"), this.center.getProperties()),
                 new EnclosingProperty(Component.literal("Точка радиуса"), this.radiusPoint.getProperties()),
@@ -146,8 +146,11 @@ public class Circle extends Shape {
     public Collection<Function<?>> getFunctions() {
         Collection<Function<?>> functions = new ArrayList<>();
         DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
-        if (!this.drawing.hasShape(this.radiusPoint)) {
-            functions.add(new BasicNamedFunction<>(drawing, this, s -> drawing.addShape(radiusPoint), Component.literal("Отметить точку радиуса"), Component.literal("Отметить")));
+        if (this.radiusPoint != null && (!this.drawing.hasShape(this.radiusPoint) || !this.radiusPoint.shouldRender())) {
+            functions.add(new BasicNamedFunction<>(drawing, this, s -> {
+                drawing.addShape(radiusPoint);
+                radiusPoint.shouldRender = true;
+            }, Component.literal("Отметить точку радиуса"), Component.literal("Отметить")));
         }
         functions.add(new BasicNamedFunction<>(drawing, this, s -> board.startCreation(new CircleTangentFactory(board, Circle.this)), Component.literal("Построить касательную"), Component.literal("Построить")));
         functions.addAll(super.getFunctions());

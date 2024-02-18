@@ -34,8 +34,8 @@ public class Settings {
         }
     };
     private final SelectionProperty<Theme> theme = new SelectionProperty<>(DynamicPlanimetry.THEME_LIGHT, Component.literal("Тема"), DynamicPlanimetry.BUILT_IN_THEMES);
-    private final NumberProperty displayPresicion = new NumberProperty(Component.literal("Точность отображения чисел"), 3).withMin(OptionalDouble.of(1)).withMax(OptionalDouble.of(127)).requireWholeNumbers(true);
-    private final SelectionProperty<AngleType> angleUnits = new SelectionProperty<>(AngleType.DEGREES, Component.literal("Единица углов"), AngleType.values());
+    private final NumberProperty displayPresicion = new NumberProperty(Component.literal("Точность отображения чисел (знаки после запятой)"), 3).withMin(OptionalDouble.of(1)).withMax(OptionalDouble.of(127)).requireWholeNumbers(true);
+    private final SelectionProperty<AngleType> angleUnits = new SelectionProperty<>(AngleType.DEGREES, Component.literal("Единица измерения углов"), AngleType.values());
     private final SelectionProperty<ShapeMovementPredicate> moveShapes = new SelectionProperty<>(ShapeMovementPredicate.ONLY_POINTS, Component.literal("Перемещать без выделения"), ShapeMovementPredicate.values());
     private final BooleanProperty showGrid = new BooleanProperty(Component.literal("Показывать сетку"), true);
     private final BooleanProperty isDebug = new BooleanProperty(Component.literal("Режим отладки"), false);
