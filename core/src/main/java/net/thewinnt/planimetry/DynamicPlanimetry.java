@@ -21,10 +21,14 @@ import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 import dev.dewy.nbt.Nbt;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.data.Drawing;
+import net.thewinnt.planimetry.data.Language;
 import net.thewinnt.planimetry.data.SettingsIO;
 import net.thewinnt.planimetry.screen.EditorScreen;
 import net.thewinnt.planimetry.screen.FileSelectionScreen;
@@ -44,8 +48,9 @@ public class DynamicPlanimetry extends Game {
     public static final int FILE_SELECTION_SCREEN = 2;
     public static final int SETTINGS_SCREEN = 3;
     public static final Nbt NBT = new Nbt();
+    public static final Gson GSON = new GsonBuilder().create();
     public static final Theme THEME_LIGHT = new Theme(
-        Component.literal("Светлая"),
+        Component.translatable("theme.builtin.light"),
         new Color(0xFFFFFFFF), // main
         new Color(0xDCDCDCFF), // pressed
         new Color(0xF0F0F0FF), // button
@@ -72,7 +77,7 @@ public class DynamicPlanimetry extends Game {
     );
 
     public static final Theme THEME_DARK = new Theme(
-        Component.literal("Тёмная"),
+        Component.translatable("theme.builtin.dark"),
         new Color(0x1F1F1FFF), // main
         new Color(0x000000FF), // pressed
         new Color(0x0F0F0FFF), // button
@@ -107,10 +112,12 @@ public class DynamicPlanimetry extends Game {
 
     // settings
     public static final Settings SETTINGS = new Settings();
+    private final Map<String, Language> languages = new HashMap<>();
     private final SettingsIO settingsFile;
 
     // data
     private Drawing currentDrawing;
+    private Language currentLanguage = Language.EMPTY;
     private List<Drawing> allDrawings;
 
     // screens
@@ -160,6 +167,25 @@ public class DynamicPlanimetry extends Game {
         gen_bold = new FreeTypeFontGenerator(Gdx.files.internal("dhmbold.ttf"));
         fonts_default = new HashMap<>();
         fonts_bold = new HashMap<>();
+
+        
+        FileHandle[] builtinLangs = Gdx.files.internal("lang").list();
+        for (FileHandle i : builtinLangs) {
+            Language language = Language.fromJson(i.nameWithoutExtension(), GSON.fromJson(i.readString(), JsonObject.class));
+            languages.put(language.getId(), language);
+        }
+        FileHandle langDir = Gdx.files.local("custom_languages");
+        if (langDir.exists() && langDir.isDirectory()) {
+            FileHandle[] customLangs = langDir.list();
+            for (FileHandle i : customLangs) {
+                Language language = Language.fromJson(i.nameWithoutExtension(), GSON.fromJson(i.readString(), JsonObject.class));
+                languages.put(language.getId(), language);
+            }
+        }
+        for (Language i : languages.values()) {
+            System.out.println(i);
+        }
+        SETTINGS.initLanguages(languages);
 
         mainMenu = registerScreen(new MainMenuScreen(this));
         editorScreen = registerScreen(new EditorScreen(this));
@@ -295,6 +321,18 @@ public class DynamicPlanimetry extends Game {
         return ((FlatUIScreen)this.screen).getDrawer();
     }
 
+    public Map<String, Language> getAllLanguages() {
+        return languages;
+    }
+
+    public Language getCurrentLanguage() {
+        return currentLanguage;
+    }
+
+    void setLanguage(Language language) {
+        this.currentLanguage = language;
+    }
+
     public static String formatNumber(double number) {
         return String.format((Locale)null, "%." + SETTINGS.getDisplayPresicion() + "f", number);
     }
@@ -305,5 +343,13 @@ public class DynamicPlanimetry extends Game {
 
     public static boolean isDebug() {
         return SETTINGS.isDebug();
+    }
+
+    public static String translate(String string) {
+        return DynamicPlanimetry.getInstance().currentLanguage.get(string);
+    }
+
+    public static String translate(String string, Object... args) {
+        return DynamicPlanimetry.getInstance().currentLanguage.get(string, args);
     }
 }

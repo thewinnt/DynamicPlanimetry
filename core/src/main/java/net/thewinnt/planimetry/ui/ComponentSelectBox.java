@@ -191,7 +191,6 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
                 ListStyle style = getStyle();
                 Vec2 size = text.getSize(font, this.size);
                 Color color = style.fontColorUnselected;
-                Vector2 startPos = this.localToScreenCoordinates(new Vector2(x, y));
                 Vector2 mousePos = this.screenToLocalCoordinates(new Vector2(mx, my));
                 if (mousePos.x > x && mousePos.x < x + getWidth() && my < y + size.y - 2 && my > y + 2) {
                     entryBackground = Gdx.input.isButtonPressed(0) ? style.down : style.over;

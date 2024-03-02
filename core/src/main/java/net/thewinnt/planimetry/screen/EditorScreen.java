@@ -107,17 +107,17 @@ public class EditorScreen extends FlatUIScreen {
         actions.reset();
 
         // ACTORS
-        createPoint = leftAlignedButton("Точка", Size.SMALL, true);
-        createLine = leftAlignedButton("Прямая", Size.SMALL, true);
-        createRay = leftAlignedButton("Луч", Size.SMALL, true);
-        createLineSegment = leftAlignedButton("Отрезок", Size.SMALL, true);
-        createCircle = leftAlignedButton("Окружность", Size.SMALL, true);
-        createPolygon = leftAlignedButton("Многоугольник", Size.SMALL, true);
-        createTriangle = leftAlignedButton("Треугольник", Size.SMALL, true);
+        createPoint = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.point"), Size.SMALL, true);
+        createLine = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.infinite_line"), Size.SMALL, true);
+        createRay = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.ray"), Size.SMALL, true);
+        createLineSegment = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.line_segment"), Size.SMALL, true);
+        createCircle = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.circle"), Size.SMALL, true);
+        createPolygon = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.polygon"), Size.SMALL, true);
+        createTriangle = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.triangle"), Size.SMALL, true);
 
-        exitToMenu = new TextButton("В меню", styles.getButtonStyle(Size.SMALL, true));
-        goSettings = new TextButton("Настройки", styles.getButtonStyle(Size.SMALL, true));
-        save = new TextButton("Сохранить", styles.getButtonStyle(Size.SMALL, true));
+        exitToMenu = new TextButton(DynamicPlanimetry.translate("ui.edit.exit_to_menu"), styles.getButtonStyle(Size.SMALL, true));
+        goSettings = new TextButton(DynamicPlanimetry.translate("ui.edit.settings"), styles.getButtonStyle(Size.SMALL, true));
+        save = new TextButton(DynamicPlanimetry.translate("ui.edit.save"), styles.getButtonStyle(Size.SMALL, true));
 
         // LISTENERS
         createPoint.addListener(new ChangeListener() {
@@ -187,15 +187,20 @@ public class EditorScreen extends FlatUIScreen {
         save.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                saveDialog = new Window("Сохранение", styles.getWindowStyle(Size.MEDIUM));
+                saveDialog = new Window(DynamicPlanimetry.translate("ui.save.title"), styles.getWindowStyle(Size.MEDIUM));
                 saveDialog.getTitleLabel().getStyle().background = styles.pressed;
                 saveDialog.row().row();
-                Label filename = new Label("Будет сохранён в " + app.getDrawing().withFilename(app.getDrawing().getName(), false).getFilename(), styles.getLabelStyle(Size.SMALL));
+
+                String willBeSavedAs = DynamicPlanimetry.translate("ui.save.filename", app.getDrawing().withFilename(app.getDrawing().getName(), false).getFilename());
+                Label filename = new Label(willBeSavedAs, styles.getLabelStyle(Size.VERY_SMALL));
+
                 TextField namePicker = new TextField(app.getDrawing().getName(), styles.getTextFieldStyle(Size.SMALL, true));
                 namePicker.setTextFieldListener((textField, c) -> {
-                    filename.setText("Будет сохранён в " + app.getDrawing().withFilename(namePicker.getText(), false).getFilename());
+                    String translate = DynamicPlanimetry.translate("ui.save.filename", app.getDrawing().withFilename(namePicker.getText(), false).getFilename());
+                    filename.setText(translate);
                 });
-                TextButton save = new TextButton("Сохранить", styles.getButtonStyle(Size.SMALL, true));
+
+                TextButton save = new TextButton(DynamicPlanimetry.translate("ui.save.save"), styles.getButtonStyle(Size.SMALL, true));
                 save.addListener(new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
@@ -205,7 +210,7 @@ public class EditorScreen extends FlatUIScreen {
                     }
                 });
 
-                saveDialog.add(new Label("Имя чертежа", styles.getLabelStyle(Size.SMALL))).pad(Gdx.graphics.getHeight() / 40f, 5, 0, 5);
+                saveDialog.add(new Label(DynamicPlanimetry.translate("ui.save.drawing_name"), styles.getLabelStyle(Size.SMALL))).pad(Gdx.graphics.getHeight() / 40f, 5, 0, 5);
                 saveDialog.add(namePicker).expand().fill().pad(Gdx.graphics.getHeight() / 40f + 5, 5, 0, 5).row();;
                 saveDialog.add(filename).colspan(2).pad(5).row();
                 saveDialog.add(save).colspan(2).pad(5);
@@ -216,16 +221,16 @@ public class EditorScreen extends FlatUIScreen {
         List<Actor> creations = new ArrayList<>();
         creations.add(createPoint);
         creations.add(createCircle);
-        creations.add(new DropdownLayout(List.of(createLine, createLineSegment, createRay), styles, Component.literal("Линии"), Size.SMALL, false));
-        creations.add(new DropdownLayout(List.of(createPolygon, createTriangle), styles, Component.literal("Многоугольники"), Size.SMALL, false));
-        creation.setActor(new DropdownLayout(creations, styles, Component.literal("Создать фигуру"), Size.SMALL, true));
+        creations.add(new DropdownLayout(List.of(createLine, createLineSegment, createRay), styles, Component.translatable("ui.edit.create.group.lines"), Size.SMALL, false));
+        creations.add(new DropdownLayout(List.of(createPolygon, createTriangle), styles, Component.translatable("ui.edit.create.group.polygons"), Size.SMALL, false));
+        creation.setActor(new DropdownLayout(creations, styles, Component.translatable("ui.edit.create.title"), Size.SMALL, true));
 
         if (selection != null) {
-            selectedShapeName.setActor(new ComponentLabel(Component.literal("Свойства"), app::getBoldFont, Size.MEDIUM));
+            selectedShapeName.setActor(new ComponentLabel(Component.translatable("ui.edit.properties.title"), app::getBoldFont, Size.MEDIUM));
             properties.setActor(new PropertyLayout(selection.getProperties(), styles, selection.getName(), Size.SMALL, true));
             Collection<Function<?>> shapeFunctions = selection.getFunctions();
             if (!shapeFunctions.isEmpty()) {
-                functions.add(new ComponentLabel(Component.literal("Действия"), app::getBoldFont, Size.MEDIUM)).expand().left().row();
+                functions.add(new ComponentLabel(Component.translatable("ui.edit.actions.title"), app::getBoldFont, Size.MEDIUM)).expand().left().row();
                 for (Function<?> i : shapeFunctions) {
                     i.addUseListener(shape -> show());
                     functions.add(i.setupActors(styles)).expandX().fillX().row();

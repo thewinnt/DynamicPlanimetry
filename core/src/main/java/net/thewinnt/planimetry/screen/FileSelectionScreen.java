@@ -60,8 +60,8 @@ public class FileSelectionScreen extends FlatUIScreen {
 
     public FileSelectionScreen(DynamicPlanimetry app) {
         super(app);
-        this.sortingType = new SelectionProperty<>(Settings.get().getLastSortingType(), Component.literal("Сортировка"), SortingType.values());
-        this.isReverse = new BooleanProperty(Component.literal("По убыванию"), Settings.get().getLastSortingOrder());
+        this.sortingType = new SelectionProperty<>(Settings.get().getLastSortingType(), Component.translatable("ui.load_file.sort_by"), SortingType.values());
+        this.isReverse = new BooleanProperty(Component.translatable("ui.load_file.sort_descending"), Settings.get().getLastSortingOrder());
         this.sortingType.addValueChangeListener(value -> {
             Settings.get().setLastSortingType(value);
             show();
@@ -83,18 +83,18 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.sortingTable = new Table();
         this.controlPanel = new Table();
 
-        this.linkBack = new Label("< Назад", styles.getLabelStyle(Size.LARGE));
-        this.title = new Label("Открыть чертёж", styles.getLabelStyle(Size.LARGE));
+        this.linkBack = new Label(Component.translatable("ui.load_file.exit"), styles.getLabelStyle(Size.LARGE));
+        this.title = new Label(Component.translatable("ui.load_file.title"), styles.getLabelStyle(Size.LARGE));
         this.pane = new ScrollPane(files, paneStyle);
 
-        this.openSaveFolder = new TextButton("Открыть папку", styles.getButtonStyle(Size.MEDIUM, true));
-        this.rename = new TextButton("Переименовать", styles.getButtonStyle(Size.MEDIUM, false));
-        this.update = new TextButton("Обновить", styles.getButtonStyle(Size.MEDIUM, true));
-        this.open = new TextButton("Открыть", styles.getButtonStyle(Size.MEDIUM, true));
+        this.openSaveFolder = new TextButton(DynamicPlanimetry.translate("ui.load_file.open_folder"), styles.getButtonStyle(Size.MEDIUM, true));
+        this.rename = new TextButton(DynamicPlanimetry.translate("ui.load_file.rename"), styles.getButtonStyle(Size.MEDIUM, false));
+        this.update = new TextButton(DynamicPlanimetry.translate("ui.load_file.update"), styles.getButtonStyle(Size.MEDIUM, true));
+        this.open = new TextButton(DynamicPlanimetry.translate("ui.load_file.open_file"), styles.getButtonStyle(Size.MEDIUM, true));
 
         this.nameField = new TextField("", styles.getTextFieldStyle(Size.MEDIUM, true));
-        this.setName = new TextButton("Готово", styles.getButtonStyle(Size.MEDIUM, true));
-        this.cancelRename = new TextButton("Отмена", styles.getButtonStyle(Size.MEDIUM, true));
+        this.setName = new TextButton(DynamicPlanimetry.translate("ui.load_file.rename.done"), styles.getButtonStyle(Size.MEDIUM, true));
+        this.cancelRename = new TextButton(DynamicPlanimetry.translate("ui.load_file.rename.cancel"), styles.getButtonStyle(Size.MEDIUM, true));
 
         // refillFiles();
 
@@ -113,7 +113,7 @@ public class FileSelectionScreen extends FlatUIScreen {
                 try {
                     java.awt.Desktop.getDesktop().open(new File(Gdx.files.getLocalStoragePath() + "drawings"));
                 } catch (IOException e) {
-                    Notifications.addNotification("Error opening folder: " + e.getMessage(), 5000);
+                    Notifications.addNotification(DynamicPlanimetry.translate("error.load_file.cannot_open_folder", e.getMessage()), 5000);
                 }
             }
         });
@@ -266,11 +266,11 @@ public class FileSelectionScreen extends FlatUIScreen {
         drawings.sort(sortingType.getValue().getComparator(isReverse.getValue()));
         files.clear();
         if (drawings == null || drawings.isEmpty()) {
-            files.add(new Label("Тут ничего нет...", styles.getLabelStyle(Size.LARGE))).fill().center();
+            files.add(new Label(DynamicPlanimetry.translate("ui.load_file.no_files"), styles.getLabelStyle(Size.LARGE))).fill().center();
         } else {
             for (Drawing i : drawings) {
                 if (i == null) {
-                    Notifications.addNotification("Null drawing loaded", 100);
+                    Notifications.addNotification(DynamicPlanimetry.translate("error.load_file.null_loaded"), 100);
                     continue;
                 }
                 SaveEntry file = new SaveEntry(i.getName(), i.getCreationTime(), i.getLastEditTime(), i.getFilename().replace(Gdx.files.getLocalStoragePath(), ""), styles);

@@ -1,7 +1,6 @@
 package net.thewinnt.planimetry.ui.text;
 
 import java.util.Arrays;
-import java.util.List;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -56,6 +55,14 @@ public interface Component extends ComponentRepresentable {
 
     public static Component optional(Component component) {
         return component == null ? Empty.INSTANCE : component;
+    }
+
+    public static SimpleTranslatableComponent translatable(String key) {
+        return new SimpleTranslatableComponent(key);
+    }
+
+    public static ComplexTranslatableComponent translatable(String key, Object... args) {
+        return new ComplexTranslatableComponent(key, args);
     }
 
     @Override

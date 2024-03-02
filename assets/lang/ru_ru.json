@@ -1,0 +1,9 @@
+{
+  "name": "Русский (Россия)",
+  "locale": "ru-RU",
+  "translations": {
+    "settings.language": "Язык",
+    "theme.builtin.light": "Светлая",
+    "theme.builtin.dark": "Тёмная"
+  }
+}

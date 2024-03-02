@@ -1,5 +1,8 @@
 package net.thewinnt.planimetry.shapes.point.relative;
 
+import java.util.Collection;
+import java.util.List;
+
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.ShapeData;
@@ -12,15 +15,11 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Circle;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
-import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.NameComponentProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.ShapeProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.NameComponent;
-
-import java.util.Collection;
-import java.util.List;
 
 public class CirclePoint extends PointProvider {
     private final ShapeProperty circleProperty;

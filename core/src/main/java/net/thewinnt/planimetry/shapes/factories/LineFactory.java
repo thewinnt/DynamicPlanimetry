@@ -1,10 +1,8 @@
 package net.thewinnt.planimetry.shapes.factories;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.data.Drawing;
-import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.Line;
 import net.thewinnt.planimetry.shapes.lines.LineSegment;

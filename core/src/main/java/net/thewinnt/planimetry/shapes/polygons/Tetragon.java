@@ -1,7 +1,5 @@
 package net.thewinnt.planimetry.shapes.polygons;
 
-import static net.thewinnt.planimetry.math.MathHelper.getSlope;
-
 import java.util.List;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;

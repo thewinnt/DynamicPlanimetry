@@ -7,17 +7,17 @@ import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
 import java.util.function.DoubleFunction;
 
 public enum AngleType implements ComponentRepresentable {
-    GRADIANS(Component.literal("Градианы"), t -> t * MathHelper.RADIANS_TO_GRADIANS, t -> t * MathHelper.GRADIANS_TO_RADIANS, " град", 400),
-    RADIANS(Component.literal("Радианы"), t -> t, t -> t, " рад", Math.PI * 2),
-    DEGREES(Component.literal("Градусы"), t -> Math.toDegrees(t), t -> Math.toRadians(t), "°", 360); // TODO set angles in custom units too
+    GRADIANS(Component.translatable("angle.gradians"), t -> t * MathHelper.RADIANS_TO_GRADIANS, t -> t * MathHelper.GRADIANS_TO_RADIANS, Component.translatable("angle.gradians.unit"), 400),
+    RADIANS(Component.translatable("angle.radians"), t -> t, t -> t, Component.translatable("angle.radians.unit"), Math.PI * 2),
+    DEGREES(Component.translatable("angle.degrees"), t -> Math.toDegrees(t), t -> Math.toRadians(t), Component.translatable("angle.degrees.unit"), 360);
 
     private final DoubleFunction<Double> toUnit;
     private final DoubleFunction<Double> toRadians;
     public final Component name;
-    public final String unit;
+    public final CharSequence unit;
     public final double max;
 
-    private AngleType(Component name, DoubleFunction<Double> toUnit, DoubleFunction<Double> toRadians, String unit, double max) {
+    private AngleType(Component name, DoubleFunction<Double> toUnit, DoubleFunction<Double> toRadians, CharSequence unit, double max) {
         this.name = name;
         this.toUnit = toUnit;
         this.toRadians = toRadians;
@@ -38,7 +38,7 @@ public enum AngleType implements ComponentRepresentable {
         return toRadians.apply(unitval);
     }
 
-    public String getUnit() {
+    public CharSequence getUnit() {
         return unit;
     }
 

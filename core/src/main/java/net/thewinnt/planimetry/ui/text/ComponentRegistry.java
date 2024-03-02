@@ -9,6 +9,8 @@ public class ComponentRegistry {
 
     public static final ComponentDeserializer<Empty> EMPTY = register("empty", Empty::readNbt);
     public static final ComponentDeserializer<LiteralComponent> LITERAL = register("literal", LiteralComponent::readNbt);
+    public static final ComponentDeserializer<SimpleTranslatableComponent> SIMPLE_TRANSLATABLE = register("simple_translatable", SimpleTranslatableComponent::readNbt);
+    public static final ComponentDeserializer<ComplexTranslatableComponent> COMPLEX_TRANSLATABLE = register("complex_translatable", ComplexTranslatableComponent::readNbt);
     public static final ComponentDeserializer<NameComponent> NAME = register("name", NameComponent::readNbt);
     public static final ComponentDeserializer<MultiComponent> MULTIPLE = register("multiple", MultiComponent::readNbt);
     
