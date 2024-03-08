@@ -38,9 +38,9 @@ public class CircleTangentLine extends InfiniteLine {
         b.setStart(this.a.getPoint());
         b.setOffset(100);
         b.shouldRender = false;
-        this.angleProperty = new NumberProperty(Component.literal("Угол на окружности"), angle);
+        this.angleProperty = new NumberProperty(Component.translatable("property.circle_tangent.angle"), angle);
         this.angleProperty.addValueChangeListener(newAngle -> setAngle(Settings.get().toRadians(newAngle)));
-        this.circleProperty = new ShapeProperty(Component.literal("Окружность"), drawing, circle, shape -> shape instanceof Circle);
+        this.circleProperty = new ShapeProperty(Component.translatable("property.circle_tangent.source"), drawing, circle, shape -> shape instanceof Circle);
         this.circleProperty.addValueChangeListener(shape -> setCircle((Circle) shape));
         this.addDependency(circle);
         circle.addDepending(this);
@@ -78,12 +78,12 @@ public class CircleTangentLine extends InfiniteLine {
 
     @Override
     public String getTypeName() {
-        return "Касательная ";
+        return "shape.circle_tangent";
     }
 
     @Override
     public Component getName() {
-        return Component.of(Component.literal(getTypeName() + "к окр. "), circle.center.getNameComponent(), Component.literal(" в точке "), this.a.getNameComponent());
+        return Component.translatable(getTypeName(), circle.center.getNameComponent(), this.a.getNameComponent());
     }
 
     @Override

@@ -1,6 +1,8 @@
 package net.thewinnt.planimetry.ui.text;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -61,7 +63,39 @@ public interface Component extends ComponentRepresentable {
         return new SimpleTranslatableComponent(key);
     }
 
-    public static ComplexTranslatableComponent translatable(String key, Object... args) {
+    public static Component translatable(String key, Object... args) {
+        boolean isMulti = false;
+        for (Object i : args) {
+            if (i instanceof Component) {
+                isMulti = true;
+                break;
+            }
+        }
+        if (isMulti) {
+            Object[] swapped = new Object[args.length];
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] instanceof Component) {
+                    swapped[i] = "\ue631" + i + "\ue632"; // i picked these numbers randomly
+                } else {
+                    swapped[i] = args[i];
+                }
+            }
+            String[] results = DynamicPlanimetry.translate(key, swapped).split("\ue631");
+            List<Component> components = new ArrayList<>(results.length);
+            for (String i : results) {
+                if (i.contains("\ue632")) {
+                    String[] pair = i.split("\ue632");
+                    int index = Integer.parseInt(pair[0]);
+                    components.add(((Component) args[index])); // we checked it before, so it's safe
+                    if (pair.length > 1 && !pair[1].isBlank()) {
+                        components.add(new LiteralComponent(pair[1]));
+                    }
+                } else {
+                    components.add(new LiteralComponent(i));
+                }
+            }
+            return new MultiComponent(components);
+        }
         return new ComplexTranslatableComponent(key, args);
     }
 

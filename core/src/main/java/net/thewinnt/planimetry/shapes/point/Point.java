@@ -26,20 +26,20 @@ public class Point extends PointProvider {
     public Point(Drawing drawing, Vec2 position) {
         super(drawing);
         this.position = position;
-        this.property = new Vec2Property(Component.literal("Координаты"), position);
+        this.property = new Vec2Property(Component.translatable("property.point.coordinates"), position);
         this.property.addValueChangeListener(pos -> Point.this.position = pos);
         this.addMovementListener(delta -> property.setValue(Point.this.position));
-        this.componentProperty = new NameComponentProperty(Component.literal("Имя"), this.name);
+        this.componentProperty = new NameComponentProperty(Component.translatable("property.point.name"), this.name);
         this.componentProperty.addValueChangeListener(this::setName);
     }
 
     public Point(Drawing drawing, Vec2 position, NameComponent name) {
         super(drawing, name);
         this.position = position;
-        this.property = new Vec2Property(Component.literal("Координаты"), position);
+        this.property = new Vec2Property(Component.translatable("property.point.coordinates"), position);
         this.property.addValueChangeListener(pos -> Point.this.position = pos);
         this.addMovementListener(delta -> property.setValue(Point.this.position));
-        this.componentProperty = new NameComponentProperty(Component.literal("Имя"), this.name);
+        this.componentProperty = new NameComponentProperty(Component.translatable("property.point.name"), this.name);
         this.componentProperty.addValueChangeListener(this::setName);
     }
 

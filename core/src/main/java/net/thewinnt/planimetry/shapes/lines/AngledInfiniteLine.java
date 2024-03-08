@@ -18,15 +18,15 @@ import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.ShapeProperty;
 import net.thewinnt.planimetry.ui.text.Component;
-import net.thewinnt.planimetry.ui.text.LiteralComponent;
+import net.thewinnt.planimetry.ui.text.SimpleTranslatableComponent;
 import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class AngledInfiniteLine extends InfiniteLine {
-    public static final LiteralComponent SOURCE_PROPERTY = Component.literal("Исходная прямая");
-    public static final LiteralComponent ANGLE_PROPERTY = Component.literal("Угол к прямой");
-    public static final LiteralComponent HELPER_POINT = Component.literal("Вспомогательная точка");
+    public static final SimpleTranslatableComponent SOURCE_PROPERTY = Component.translatable("property.angled_line.source");
+    public static final SimpleTranslatableComponent ANGLE_PROPERTY = Component.translatable("property.angled_line.angle");
+    public static final SimpleTranslatableComponent HELPER_POINT = Component.translatable("property.angled_line.helper_point");
     public static final NameComponent DUMMY_NAME = new NameComponent(0, 0, 0);
     private final ShapeProperty sourceProperty;
     private final NumberProperty angleProperty;

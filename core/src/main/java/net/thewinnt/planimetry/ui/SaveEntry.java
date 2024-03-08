@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
 
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -28,8 +29,8 @@ public class SaveEntry extends Button {
         this.editTime = editTime;
         this.filename = filename;
         this.nameLabel = new Label(name, styles.getLabelStyle(Size.MEDIUM));
-        Label creationTimeLabel = new Label("Время создания: " + TIME_FORMAT.format(new Date(creationTime)), styles.getLabelStyle(Size.SMALL));
-        Label editTimeLabel = new Label("Последнее изменение: " + TIME_FORMAT.format(new Date(editTime)), styles.getLabelStyle(Size.SMALL));
+        ComponentLabel creationTimeLabel = new ComponentLabel(Component.translatable("ui.load_file.entry.creation_time", TIME_FORMAT.format(new Date(creationTime))), DynamicPlanimetry.getInstance()::getBoldFont, Size.SMALL);
+        ComponentLabel editTimeLabel = new ComponentLabel(Component.translatable("ui.load_file.entry.edit_time", TIME_FORMAT.format(new Date(editTime))), DynamicPlanimetry.getInstance()::getBoldFont, Size.SMALL);
         Label filenameLabel = new Label("(" + filename + ")", styles.getLabelStyle(Size.SMALL));
         this.add(nameLabel).padLeft(5).padRight(10);
         this.add(filenameLabel).padRight(5).expand().fill().row();
@@ -43,10 +44,10 @@ public class SaveEntry extends Button {
     }
 
     public static enum SortingType {
-        BY_NAME(Component.literal("По названию"), (o1, o2) -> o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase())),
-        BY_CREATION_TIME(Component.literal("По времени создания"), Comparator.comparingLong(value -> value.getCreationTime())),
-        BY_EDITING_TIME(Component.literal("По последнему изменению"), Comparator.comparingLong(value -> value.getLastEditTime())),
-        BY_FILE_NAME(Component.literal("По имени файла"), (o1, o2) -> o1.getFilename().compareTo(o2.getFilename()));
+        BY_NAME(Component.translatable("sorting.by_name"), (o1, o2) -> o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase())),
+        BY_CREATION_TIME(Component.translatable("sorting.by_creation_time"), Comparator.comparingLong(value -> value.getCreationTime())),
+        BY_EDITING_TIME(Component.translatable("sorting.by_editing_time"), Comparator.comparingLong(value -> value.getLastEditTime())),
+        BY_FILE_NAME(Component.translatable("sorting.by_filename"), (o1, o2) -> o1.getFilename().compareTo(o2.getFilename()));
 
         private final CharSequence name;
         private final Comparator<Drawing> comparator;

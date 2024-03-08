@@ -78,6 +78,6 @@ public class LimitedPolygonFactory extends ShapeFactory {
 
     @Override
     public Component getName() {
-        return Component.literal(limit + "-угольник");
+        return Component.translatable(ShapeData.polygonName(limit), limit);
     }
 }

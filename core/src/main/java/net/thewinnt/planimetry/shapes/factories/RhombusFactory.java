@@ -50,6 +50,6 @@ public class RhombusFactory extends ShapeFactory {
 
     @Override
     public Component getName() {
-        return Component.literal("Ромб (экспериментально!)");
+        return Component.translatable("shape.factory.rhombus");
     }
 }

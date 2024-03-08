@@ -8,10 +8,10 @@ import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
 import java.util.function.Predicate;
 
 public enum ShapeMovementPredicate implements ComponentRepresentable, Predicate<Shape> {
-    ALL(Component.literal("Все фигуры"), shape -> true),
-    ONLY_POINTS(Component.literal("Только точки"), shape -> shape instanceof PointProvider),
-    ONLY_NON_POINTS(Component.literal("Все, кроме точек"), shape -> !(shape instanceof PointProvider)),
-    NONE(Component.literal("Ничего"), shape -> false);
+    ALL(Component.translatable("settings.move_without_selection.all"), shape -> true),
+    ONLY_POINTS(Component.translatable("settings.move_without_selection.only_points"), shape -> shape instanceof PointProvider),
+    ONLY_NON_POINTS(Component.translatable("settings.move_without_selection.only_non_points"), shape -> !(shape instanceof PointProvider)),
+    NONE(Component.translatable("settings.move_without_selection.none"), shape -> false);
 
     private final Component name;
     private final Predicate<Shape> condition;

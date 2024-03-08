@@ -68,6 +68,6 @@ public class FreePolygonFactory extends ShapeFactory {
 
     @Override
     public Component getName() {
-        return Component.literal("Произвольный многоугольник");
+        return Component.translatable("Freeform polygon");
     }
 }

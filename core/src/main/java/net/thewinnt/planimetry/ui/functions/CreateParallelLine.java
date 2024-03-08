@@ -9,7 +9,7 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class CreateParallelLine extends BasicNamedFunction<Line> {
-    private static final Component NAME = Component.literal("Построить параллельную прямую");
+    private static final Component NAME = Component.translatable("function.infinite_line.create_parallel");
     public LineType type;
 
     public CreateParallelLine(Drawing drawing, Line shape) {
@@ -21,7 +21,7 @@ public class CreateParallelLine extends BasicNamedFunction<Line> {
                 board.startCreation(new AngledLineFactory(board, line, 0));
             },
             NAME,
-            "Построить"
+            Component.translatable("function.infinite_line.create_parallel.action")
         );
         this.type = shape.getType();
     }

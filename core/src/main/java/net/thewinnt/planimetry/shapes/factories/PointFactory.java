@@ -31,6 +31,6 @@ public class PointFactory extends ShapeFactory {
 
     @Override
     public Component getName() {
-        return Component.literal("Точка");
+        return Component.translatable("shape.factory.point");
     }
 }

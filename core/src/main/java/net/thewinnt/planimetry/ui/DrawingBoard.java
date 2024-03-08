@@ -297,7 +297,7 @@ public class DrawingBoard extends Actor {
             font.getFont(50, Color.MAROON).draw(batch, "selected: " + selection, x(5), y(115));
         }
         if (creatingShape != null) {
-            Component.of(Component.literal("Создание фигуры: "), creatingShape.getName()).draw(batch, font, Size.MEDIUM, Theme.current().textUI(), x(5), y(getHeight() - 5));
+            Component.translatable("ui.edit.board.creating_shape", creatingShape.getName()).draw(batch, font, Size.MEDIUM, Theme.current().textUI(), x(5), y(getHeight() - 5));
         }
     }
 

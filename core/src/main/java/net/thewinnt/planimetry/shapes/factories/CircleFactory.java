@@ -82,6 +82,6 @@ public class CircleFactory extends ShapeFactory {
 
     @Override
     public Component getName() {
-        return Component.literal("Окружность");
+        return Component.translatable("shape.factory.circle");
     }
 }

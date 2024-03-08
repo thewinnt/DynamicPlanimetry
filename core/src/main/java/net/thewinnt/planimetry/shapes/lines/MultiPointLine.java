@@ -108,7 +108,7 @@ public class MultiPointLine extends Shape {
         for (PointProvider i : points) {
             properties.add(new EnclosingProperty(i.getName(), i.getProperties()));
         }
-        properties.add(new DisplayProperty(Component.literal("Длина"), () -> Component.number(getPerimeter())));
+        properties.add(new DisplayProperty(Component.translatable("property.polygonal_chain.length"), () -> Component.number(getPerimeter())));
         return properties;
     }
 
@@ -148,16 +148,15 @@ public class MultiPointLine extends Shape {
     public Component getName() {
         if (nameOverride != null) return nameOverride;
         ArrayList<Component> output = new ArrayList<>();
-        output.add(Component.literal(getTypeName()));
         for (PointProvider i : this.points) {
             output.add(i.getNameComponent());
         }
-        return new MultiComponent(output);
+        return Component.translatable(getTypeName(), output.toArray());
     }
 
     @Override
     public String getTypeName() {
-        return "Ломаная ";
+        return "shape.polygonal_chain";
     }
 
     @Override

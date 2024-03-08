@@ -7,6 +7,7 @@ import java.util.List;
 import com.badlogic.gdx.graphics.Color;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -98,8 +99,8 @@ public class Polygon extends MultiPointLine {
     public Collection<Property<?>> getProperties() {
         recalculateAngles();
         var prev = super.getProperties();
-        prev.add(new DisplayProperty(Component.literal("Площадь"), () -> Component.number(getArea())));
-        prev.add(new EnclosingProperty(Component.literal("Углы"), angles));
+        prev.add(new DisplayProperty(Component.translatable("property.polygon.area"), () -> Component.number(getArea())));
+        prev.add(new EnclosingProperty(Component.translatable("property.polygon.angles"), angles));
         return prev;
     }
 
@@ -123,12 +124,12 @@ public class Polygon extends MultiPointLine {
     private void recalculateAngles() {
         angles.clear();
         PointProvider[] pts = points.toArray(new PointProvider[0]);
-        angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), pts[0].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[1].getPosition(), pts[0].getPosition(), pts[pts.length - 1].getPosition()))));
+        angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[0].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[1].getPosition(), pts[0].getPosition(), pts[pts.length - 1].getPosition()))));
         for (int i = 1; i < pts.length - 1; i++) {
             final int j = i;
-            angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), pts[j].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[j-1].getPosition(), pts[j].getPosition(), pts[j+1].getPosition()))));
+            angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[j].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[j-1].getPosition(), pts[j].getPosition(), pts[j+1].getPosition()))));
         }
-        angles.add(new DisplayProperty(Component.of(Component.literal("Угол "), pts[pts.length - 1].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[pts.length - 2].getPosition(), pts[pts.length - 1].getPosition(), pts[0].getPosition()))));
+        angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[pts.length - 1].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[pts.length - 2].getPosition(), pts[pts.length - 1].getPosition(), pts[0].getPosition()))));
     }
 
     public double getArea() {
@@ -159,7 +160,10 @@ public class Polygon extends MultiPointLine {
 
     @Override
     public String getTypeName() {
-        return "Многоугольник ";
+        if (DynamicPlanimetry.getInstance().getCurrentLanguage().hasKey("shape.polygon." + points.size())) {
+            return "shape.polygon." + points.size();
+        }
+        return "shape.polygon";
     }
 
     @Override

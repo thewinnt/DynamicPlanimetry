@@ -43,6 +43,6 @@ public class CircleTangentFactory extends ShapeFactory {
 
     @Override
     public Component getName() {
-        return Component.of(Component.literal("Касательная к "), circle.getName());
+        return Component.translatable("Касательная к ", circle.getName());
     }
 }

@@ -26,7 +26,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Ray extends Line {
     private boolean startFromA = true;
-    private BooleanProperty startProperty = new BooleanProperty(Component.literal("Начать с первой точки"), startFromA);
+    private BooleanProperty startProperty = new BooleanProperty(Component.translatable("property.ray.start_from_a"), startFromA);
     
     public Ray(Drawing drawing, PointProvider a, PointProvider b) {
         super(drawing, a, b);
@@ -127,7 +127,7 @@ public class Ray extends Line {
 
     @Override
     public String getTypeName() {
-        return "Луч ";
+        return "shape.ray";
     }
 
     @Override

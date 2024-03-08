@@ -128,17 +128,17 @@ public class Circle extends Shape {
     @Override
     public Collection<Property<?>> getProperties() {
         if (radiusPoint != null) {
-            BooleanProperty keep = new BooleanProperty(Component.literal("Сохранять радиус"), keepRadius);
+            BooleanProperty keep = new BooleanProperty(Component.translatable("property.circle.keep_radius"), keepRadius);
             keep.addValueChangeListener(Circle.this::setKeepRadius);
             return List.of(
-                new EnclosingProperty(Component.literal("Центр"), this.center.getProperties()),
-                new EnclosingProperty(Component.literal("Точка радиуса"), this.radiusPoint.getProperties()),
+                new EnclosingProperty(Component.translatable("property.circle.group.center_point"), this.center.getProperties()),
+                new EnclosingProperty(Component.translatable("property.circle.group.radius_point"), this.radiusPoint.getProperties()),
                 keep
             );
         } else {
-            NumberProperty radius = new NumberProperty(Component.literal("Радиус"), this.radius.get());
+            NumberProperty radius = new NumberProperty(Component.translatable("property.circle.radius"), this.radius.get());
             radius.addValueChangeListener(r -> Circle.this.radius = () -> r);
-            return List.of(new EnclosingProperty(Component.literal("Центр"), this.center.getProperties()), radius);
+            return List.of(new EnclosingProperty(Component.translatable("property.circle.group.center_point"), this.center.getProperties()), radius);
         }
     }
 
@@ -150,9 +150,9 @@ public class Circle extends Shape {
             functions.add(new BasicNamedFunction<>(drawing, this, s -> {
                 drawing.addShape(radiusPoint);
                 radiusPoint.shouldRender = true;
-            }, Component.literal("Отметить точку радиуса"), Component.literal("Отметить")));
+            }, Component.translatable("function.circle.add_radius_point"), Component.translatable("function.circle.add_radius_point.action")));
         }
-        functions.add(new BasicNamedFunction<>(drawing, this, s -> board.startCreation(new CircleTangentFactory(board, Circle.this)), Component.literal("Построить касательную"), Component.literal("Построить")));
+        functions.add(new BasicNamedFunction<>(drawing, this, s -> board.startCreation(new CircleTangentFactory(board, Circle.this)), Component.translatable("function.circle.create_tangent"), Component.translatable("function.circle.create_tangent.action")));
         functions.addAll(super.getFunctions());
         return functions;
     }
@@ -160,12 +160,12 @@ public class Circle extends Shape {
     @Override
     public Component getName() {
         if (nameOverride != null) return nameOverride;
-        return Component.of(Component.literal(getTypeName()), this.center.getNameComponent());
+        return Component.translatable(getTypeName(), this.center.getNameComponent());
     }
 
     @Override
     public String getTypeName() {
-        return "Окружность ";
+        return "shape.circle";
     }
 
     @Override

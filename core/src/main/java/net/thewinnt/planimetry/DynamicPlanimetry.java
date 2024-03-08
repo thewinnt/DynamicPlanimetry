@@ -168,24 +168,7 @@ public class DynamicPlanimetry extends Game {
         fonts_default = new HashMap<>();
         fonts_bold = new HashMap<>();
 
-        
-        FileHandle[] builtinLangs = Gdx.files.internal("lang").list();
-        for (FileHandle i : builtinLangs) {
-            Language language = Language.fromJson(i.nameWithoutExtension(), GSON.fromJson(i.readString(), JsonObject.class));
-            languages.put(language.getId(), language);
-        }
-        FileHandle langDir = Gdx.files.local("custom_languages");
-        if (langDir.exists() && langDir.isDirectory()) {
-            FileHandle[] customLangs = langDir.list();
-            for (FileHandle i : customLangs) {
-                Language language = Language.fromJson(i.nameWithoutExtension(), GSON.fromJson(i.readString(), JsonObject.class));
-                languages.put(language.getId(), language);
-            }
-        }
-        for (Language i : languages.values()) {
-            System.out.println(i);
-        }
-        SETTINGS.initLanguages(languages);
+        reloadLanguages();
 
         mainMenu = registerScreen(new MainMenuScreen(this));
         editorScreen = registerScreen(new EditorScreen(this));
@@ -212,13 +195,35 @@ public class DynamicPlanimetry extends Game {
         return screen;
     }
 
+    public void reloadLanguages() {
+        String[] builtinLangs = Gdx.files.internal("lang/langs.txt").readString().split("\n");
+        for (String name : builtinLangs) {
+            if (name.startsWith("#") || !name.endsWith(".json")) continue;
+            FileHandle i = Gdx.files.internal("lang/" + name);
+            Language language = Language.fromJson(i.nameWithoutExtension(), GSON.fromJson(i.readString(), JsonObject.class));
+            languages.put(language.getId(), language);
+        }
+        FileHandle langDir = Gdx.files.local("custom_languages");
+        if (langDir.exists() && langDir.isDirectory()) {
+            FileHandle[] customLangs = langDir.list();
+            for (FileHandle i : customLangs) {
+                Language language = Language.fromJson(i.nameWithoutExtension(), GSON.fromJson(i.readString(), JsonObject.class));
+                languages.put(language.getId(), language);
+            }
+        }
+        for (Language i : languages.values()) {
+            System.out.println(i);
+        }
+        SETTINGS.initLanguages(languages);
+    }
+
     @Override
     public void render() {
         super.render();
         if (Gdx.input.isKeyJustPressed(Keys.F2)) {
             Pixmap screenshot = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             String filename = AUTOSAVE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
-            PixmapIO.writePNG(Gdx.files.local("screenshots/" + filename + ".png"), screenshot, Deflater.DEFAULT_COMPRESSION, true); 
+            PixmapIO.writePNG(Gdx.files.local("screenshots/" + filename + ".png"), screenshot, Deflater.DEFAULT_COMPRESSION, true);
             screenshot.dispose();
             Notifications.addNotification("Скриншот сохранён как " + filename + ".png", 2000);
         } else if (Gdx.input.isKeyJustPressed(Keys.F11)) {

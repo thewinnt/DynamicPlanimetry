@@ -20,7 +20,7 @@ public class AngledLineFactory extends ShapeFactory {
         super(board);
         this.point = new PointReference(new MousePoint(board.getDrawing()));
         this.newLine = new AngledInfiniteLine(board.getDrawing(), originalLine, point, Settings.get().toRadians(angle));
-        this.name = Component.of(Component.literal("Прямая под углом к "), originalLine.getName());
+        this.name = Component.translatable("shape.factory.angled_line", originalLine.getName());
         addShape(newLine);
         addShape(point);
     }

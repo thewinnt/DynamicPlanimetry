@@ -28,7 +28,7 @@ public class ParallelInfiniteLine extends InfiniteLine {
         super(drawing, point, new TangentOffsetPoint(drawing, point, base.getSlope(), 1));
         this.base = base;
         this.point = point;
-        this.sourceProperty = new DisplayProperty(Component.literal("Исходная прямая"), () -> base.getName());
+        this.sourceProperty = new DisplayProperty(Component.translatable("property.parallel_line.source"), () -> base.getName());
     }
 
     @Override

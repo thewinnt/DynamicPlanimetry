@@ -56,4 +56,11 @@ public class ShapeData {
             default -> generic;
         };
     }
+
+    public static String polygonName(int limit) {
+        if (limit <= 4) {
+            return "shape.factory.polygon.sized." + limit;
+        }
+        return "shape.factory.polygon.sized.n";
+    }
 }

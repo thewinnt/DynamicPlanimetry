@@ -80,7 +80,7 @@ public abstract class PointProvider extends Shape {
     @Override
     public Component getName() {
         if (nameOverride != null) return nameOverride;
-        return Component.of(Component.literal(getTypeName()), name);
+        return Component.translatable(getTypeName(), name);
     }
 
     public Component getNameComponent() {
@@ -90,7 +90,7 @@ public abstract class PointProvider extends Shape {
 
     @Override
     public String getTypeName() {
-        return "Точка ";
+        return "shape.point";
     }
 
     public void setName(NameComponent name) {

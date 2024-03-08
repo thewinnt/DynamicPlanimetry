@@ -14,7 +14,6 @@ import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
-import net.thewinnt.planimetry.ui.text.LiteralComponent;
 
 public class LineFactory extends ShapeFactory {
     private final LineType type;
@@ -68,9 +67,9 @@ public class LineFactory extends ShapeFactory {
     }
 
     public static enum LineType implements ComponentRepresentable {
-        INFINITE(InfiniteLine::new, Component.literal("Прямая")),
-        RAY(Ray::new, Component.literal("Луч")),
-        SEGMENT(LineSegment::new, Component.literal("Отрезок"));
+        INFINITE(InfiniteLine::new, Component.translatable("shape.infinite_line")),
+        RAY(Ray::new, Component.translatable("shape.ray")),
+        SEGMENT(LineSegment::new, Component.translatable("shape.line_segment"));
 
         public final LineConstructor<?> factory;
         public final Component name;
@@ -97,6 +96,6 @@ public class LineFactory extends ShapeFactory {
 
     @Override
     public Component getName() {
-        return (LiteralComponent)type.name;
+        return type.name;
     }
 }

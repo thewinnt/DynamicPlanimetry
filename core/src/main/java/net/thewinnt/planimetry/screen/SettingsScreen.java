@@ -10,8 +10,11 @@ import com.badlogic.gdx.utils.Align;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class SettingsScreen extends FlatUIScreen {
+    public static final CharSequence TITLE = Component.translatable("ui.settings.title");
+    public static final CharSequence EXIT = Component.translatable("ui.settings.exit");
     private Screen from;
     private Label title;
     private Label goBack;
@@ -27,9 +30,9 @@ public class SettingsScreen extends FlatUIScreen {
 
     @Override
     public void addActorsBelowFps() {
-        this.title = new Label("Настройки", this.styles.getLabelStyle(Size.LARGE));
+        this.title = new Label(TITLE, this.styles.getLabelStyle(Size.LARGE));
         this.settings = new ScrollPane(null);
-        this.goBack = new Label("< Назад", styles.getLabelStyle(Size.MEDIUM));
+        this.goBack = new Label(EXIT, styles.getLabelStyle(Size.MEDIUM));
 
         this.goBack.addListener(new ClickListener() {
             @Override

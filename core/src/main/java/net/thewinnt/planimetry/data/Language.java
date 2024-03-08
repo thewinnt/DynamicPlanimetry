@@ -60,6 +60,10 @@ public class Language implements ComponentRepresentable {
         }
     }
 
+    public boolean hasKey(String key) {
+        return keys.containsKey(key);
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("Language ");

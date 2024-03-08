@@ -10,6 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
+import io.jbock.util.Either;
 import net.thewinnt.planimetry.data.Language;
 import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.settings.ShapeMovementPredicate;
@@ -18,12 +19,13 @@ import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.SaveEntry.SortingType;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.drawable.DynamicIcon;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.PropertyEntry;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
+import net.thewinnt.planimetry.ui.properties.types.ActionSelectionProperty;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
-import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.SelectionProperty;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -43,7 +45,7 @@ public class Settings {
     private final BooleanProperty showGrid = new BooleanProperty(Component.translatable("settings.show_grid"), true);
     private final BooleanProperty isDebug = new BooleanProperty(Component.translatable("settings.debug_mode"), false);
     private final BooleanProperty fullscreen = new BooleanProperty(Component.translatable("settings.fullscreen"), false);
-    private SelectionProperty<Language> language;
+    private ActionSelectionProperty<Language> language;
     private String currentLanguage;
     private byte mathPrecision = -23;
     private SortingType lastSortingType = SortingType.BY_EDITING_TIME;
@@ -145,7 +147,7 @@ public class Settings {
     }
 
     public PropertyLayout getLayout(StyleSet styles) {
-        return new PropertyLayout(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen, language, new DisplayProperty(Component.translatable("test"))), styles, null, Size.MEDIUM, true);
+        return new PropertyLayout(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen, language), styles, null, Size.MEDIUM, true);
     }
 
     public boolean isDebug() {
@@ -158,7 +160,8 @@ public class Settings {
 
     void initLanguages(Map<String, Language> languages) {
         Language.setFallbackLanguage(languages.get("en_us"));
-        this.language = new SelectionProperty<>(Component.translatable("settings.language"), languages.values().toArray(new Language[0]));
+        this.language = new ActionSelectionProperty<>(Component.translatable("settings.language"), languages.values().toArray(new Language[0]));
+        this.language.setAction(DynamicPlanimetry.getInstance()::reloadLanguages, true, Either.right(DynamicIcon.EXIT_SIGN));
         DynamicPlanimetry.getInstance().setLanguage(languages.get(this.currentLanguage));
         this.language.setValue(DynamicPlanimetry.getInstance().getCurrentLanguage());
         this.language.addValueChangeListener(lang -> {
@@ -167,6 +170,7 @@ public class Settings {
                 app.setLanguage(lang);
                 app.setScreen(DynamicPlanimetry.MAIN_MENU);
                 app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
+                currentLanguage = lang.getId();
             }
         });
         this.language.layoutOverride = PROPERTY_LAYOUT;

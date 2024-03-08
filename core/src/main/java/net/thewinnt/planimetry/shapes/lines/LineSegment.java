@@ -81,13 +81,13 @@ public class LineSegment extends Line {
     public Collection<Property<?>> getProperties() {
         EnclosingProperty a = new EnclosingProperty(this.a.getName(), this.a.getProperties());
         EnclosingProperty b = new EnclosingProperty(this.b.getName(), this.b.getProperties());
-        DisplayProperty length = new DisplayProperty(Component.literal("Длина"), () -> Component.number(this.a.getPosition().distanceTo(this.b.getPosition())));
+        DisplayProperty length = new DisplayProperty(Component.translatable("property.line_segment.length"), () -> Component.number(this.a.getPosition().distanceTo(this.b.getPosition())));
         return List.of(a, b, length);
     }
 
     @Override
     public String getTypeName() {
-        return "Отрезок ";
+        return "shape.line_segment";
     }
 
     @Override

@@ -19,12 +19,28 @@ allprojects {
   apply plugin: 'idea'
 }
 
+task writeAllAssetsToFile {
+  doLast {
+    def assetsFolder = new File("${project.rootDir}/assets/lang")
+    def assetsFile = new File(assetsFolder, "langs.txt")
+    assetsFile.delete()
+
+    assetsFile.append("# IF YOU ADD OR REMOVE BUILTIN LANGUAGES, PLEASE ADD THEM HERE TOO.\n")
+    assetsFile.append("# Otherwise, the app won't detect them.\n")
+    fileTree(assetsFolder).collect {assetsFolder.relativePath(it)}.each {
+      assetsFile.append(it + "\n")
+    }
+  }
+}
+
 configure(subprojects) {
   apply plugin: 'java-library'
   sourceCompatibility = 17
   compileJava {
     options.incremental = true
   }
+
+  compileJava.dependsOn writeAllAssetsToFile
 }
 
 subprojects {

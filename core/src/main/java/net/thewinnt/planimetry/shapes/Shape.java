@@ -51,7 +51,7 @@ public abstract class Shape implements ComponentRepresentable {
     public abstract Collection<Property<?>> getProperties();
     public Collection<Function<?>> getFunctions() {
         ArrayList<Function<?>> output = new ArrayList<>();
-        output.add(new BasicNamedFunction<>(drawing, this, shape -> shape.delete(defaultIgnoreDependencies(), false), Component.literal("Удалить фигуру"), Component.literal("Удалить")));
+        output.add(new BasicNamedFunction<>(drawing, this, shape -> shape.delete(defaultIgnoreDependencies(), false), Component.translatable("function.generic.delete"), Component.translatable("function.generic.delete.action")));
         return output;
     }
 

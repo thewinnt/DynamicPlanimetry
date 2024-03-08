@@ -36,6 +36,6 @@ public class ParallelLineFactory extends ShapeFactory {
 
     @Override
     public Component getName() {
-        return Component.literal("Прямая, параллелльная к другой");
+        return Component.translatable("shape.factory.parallel_line");
     }
 }

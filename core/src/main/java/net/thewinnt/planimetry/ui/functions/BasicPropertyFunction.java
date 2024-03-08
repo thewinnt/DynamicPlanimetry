@@ -20,7 +20,7 @@ import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class BasicPropertyFunction<T extends Shape> extends Function<T> {
-    public static final Component PARAMETERS = Component.literal("Параметры");
+    public static final Component PARAMETERS = Component.translatable("function.generic.parameters");
     public final Consumer<Map<String, Property<?>>> action;
     public final Component name;
     public final CharSequence actionButton;

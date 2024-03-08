@@ -9,7 +9,7 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class CreatePerpendicularLine extends BasicNamedFunction<Line> {
-    private static final Component NAME = Component.literal("Построить перпендикуляр");
+    private static final Component NAME = Component.translatable("function.infinite_line.create_perpendicular");
     public LineType type;
 
     public CreatePerpendicularLine(Drawing drawing, Line shape) {
@@ -21,7 +21,7 @@ public class CreatePerpendicularLine extends BasicNamedFunction<Line> {
                 board.startCreation(new AngledLineFactory(board, line, 90));
             },
             NAME,
-            "Построить"
+            Component.translatable("function.infinite_line.create_perpendicular.action")
         );
         this.type = shape.getType();
     }

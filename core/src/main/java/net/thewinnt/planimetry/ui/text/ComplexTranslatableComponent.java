@@ -48,7 +48,7 @@ public class ComplexTranslatableComponent implements Component, CharSequence {
         BitmapFont fnt = font.getFont(Gdx.graphics.getHeight() / size.factor, Color.BLACK);
         return new Vec2(FontUtils.getTextLength(fnt, toString()), fnt.getLineHeight());
     }
-    
+
     @Override
     public String toString() {
         return DynamicPlanimetry.getInstance().getCurrentLanguage().get(key, args);

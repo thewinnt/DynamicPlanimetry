@@ -13,9 +13,9 @@ import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class CreateAngledLine extends BasicPropertyFunction<Line> {
-    public static final Component NAME = Component.literal("Построить прямую под углом");
-    public static final CharSequence ACTION = Component.literal("Начать");
-    public static final Component PROPERTY = Component.literal("Угол");
+    public static final Component NAME = Component.translatable("Построить прямую под углом");
+    public static final CharSequence ACTION = Component.translatable("Начать");
+    public static final Component PROPERTY = Component.translatable("Угол");
 
     public CreateAngledLine(Drawing drawing, Line shape) {
         super(

@@ -14,6 +14,13 @@ import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class MainMenuScreen extends FlatUIScreen {
+    public static final CharSequence CREATE_DRAWING = Component.translatable("ui.main.create_drawing");
+    public static final CharSequence NEW_DRAWING = Component.translatable("ui.main.new_drawing");
+    public static final CharSequence LOAD = Component.translatable("ui.main.load");
+    public static final CharSequence SETTINGS = Component.translatable("ui.main.settings");
+    public static final CharSequence EXIT = Component.translatable("ui.main.exit");
+    public static final CharSequence CONTINUE = Component.translatable("ui.main.continue");
+
     public MainMenuScreen(DynamicPlanimetry app) {
         super(app);
     }
@@ -32,10 +39,10 @@ public class MainMenuScreen extends FlatUIScreen {
         Label version = new Label(Component.literal("v. 0.1"), style_fps);
 
         TextButtonStyle buttonStyle = styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true);
-        TextButton create = new TextButton(app.getDrawing() == null ? "Создать" : "Новый чертёж", buttonStyle);
-        TextButton load = new TextButton("Загрузить", buttonStyle);
-        TextButton go_settings = new TextButton("Настройки", styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true));
-        TextButton exit = new TextButton("Выход", buttonStyle);
+        TextButton create = new TextButton(app.getDrawing() == null ? CREATE_DRAWING.toString() : NEW_DRAWING.toString(), buttonStyle);
+        TextButton load = new TextButton(LOAD.toString(), buttonStyle);
+        TextButton go_settings = new TextButton(SETTINGS.toString(), styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true));
+        TextButton exit = new TextButton(EXIT.toString(), buttonStyle);
 
         create.setSize(30, 70);
         load.setSize(300, 70);
@@ -74,7 +81,7 @@ public class MainMenuScreen extends FlatUIScreen {
         });
 
         if (app.getDrawing() != null) {
-            TextButton newDrawing = new TextButton("Продолжить", buttonStyle);
+            TextButton newDrawing = new TextButton(CONTINUE.toString(), buttonStyle);
             newDrawing.setSize(605, 70);
             newDrawing.addListener(new ChangeListener() {
                 @Override
