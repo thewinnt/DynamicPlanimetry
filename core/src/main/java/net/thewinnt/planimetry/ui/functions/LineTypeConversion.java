@@ -1,21 +1,23 @@
 package net.thewinnt.planimetry.ui.functions;
 
+import java.util.List;
+
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.lines.Line;
+import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.ComponentSelectBox;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
-
-import java.util.List;
+import net.thewinnt.planimetry.ui.text.Component;
 
 public class LineTypeConversion extends Function<Line> {
     private LineType targetType;
@@ -36,7 +38,7 @@ public class LineTypeConversion extends Function<Line> {
                 targetType = selector.getSelected();
             }
         });
-        TextButton apply = new TextButton("Применить", styles.getButtonStyle(Size.SMALL, true));
+        TextButton apply = new TextButton(DynamicPlanimetry.translate("function.generic_line.convert.action"), styles.getButtonStyle(Size.SMALL, true));
         apply.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -44,7 +46,7 @@ public class LineTypeConversion extends Function<Line> {
                 use();
             }
         });
-        table.add(new Label("Преобразовать в ", styles.getLabelStyle(Size.SMALL)));
+        table.add(new ComponentLabel(Component.translatable("function.generic_line.convert"), styles.font, Size.SMALL));
         table.add(selector).expand();
         table.add(apply).right().expand();
         return table;

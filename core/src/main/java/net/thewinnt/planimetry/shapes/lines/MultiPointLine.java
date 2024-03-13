@@ -22,7 +22,6 @@ import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
 import net.thewinnt.planimetry.ui.text.Component;
-import net.thewinnt.planimetry.ui.text.MultiComponent;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 

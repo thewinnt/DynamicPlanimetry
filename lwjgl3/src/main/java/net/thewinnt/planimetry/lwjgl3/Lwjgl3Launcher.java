@@ -1,6 +1,7 @@
 package net.thewinnt.planimetry.lwjgl3;
 
 import java.io.File;
+import java.util.Arrays;
 import java.io.IOException;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -16,6 +17,13 @@ public class Lwjgl3Launcher {
     public static void main(String[] args) {
         if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
 
+        boolean debug = false;
+        for (String i : args) {
+            if (i.contains("--debug")) {
+                debug = true;
+            }
+        }
+
         // load settings (it's easier on native platforms)
         File settingsFile = new File("./settings.dat");
         CompoundTag nbt = null;
@@ -28,11 +36,11 @@ public class Lwjgl3Launcher {
             }
         }
 
-        createApplication(nbt);
+        createApplication(nbt, debug);
     }
 
-    private static Lwjgl3Application createApplication(CompoundTag settings) {
-        return new Lwjgl3Application(new DynamicPlanimetry(settings, () -> new File("./settings.dat")), getDefaultConfiguration());
+    private static Lwjgl3Application createApplication(CompoundTag settings, boolean debug) {
+        return new Lwjgl3Application(new DynamicPlanimetry(settings, () -> new File("./settings.dat"), debug), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

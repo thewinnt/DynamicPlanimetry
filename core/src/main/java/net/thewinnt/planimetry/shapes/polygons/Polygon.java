@@ -124,12 +124,15 @@ public class Polygon extends MultiPointLine {
     private void recalculateAngles() {
         angles.clear();
         PointProvider[] pts = points.toArray(new PointProvider[0]);
-        angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[0].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[1].getPosition(), pts[0].getPosition(), pts[pts.length - 1].getPosition()))));
+        // for each angle in the polygon, add a new display property consisting of:
+        // - a translation string, with 3 adjacent points' names as arguments
+        // - the angle, formatted as one
+        angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[1].getNameComponent(), pts[0].getNameComponent(), pts[pts.length - 1].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[1].getPosition(), pts[0].getPosition(), pts[pts.length - 1].getPosition()))));
         for (int i = 1; i < pts.length - 1; i++) {
             final int j = i;
-            angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[j].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[j-1].getPosition(), pts[j].getPosition(), pts[j+1].getPosition()))));
+            angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[j-1].getNameComponent(), pts[j].getNameComponent(), pts[j+1].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[j-1].getPosition(), pts[j].getPosition(), pts[j+1].getPosition()))));
         }
-        angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[pts.length - 1].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[pts.length - 2].getPosition(), pts[pts.length - 1].getPosition(), pts[0].getPosition()))));
+        angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[pts.length - 2].getNameComponent(), pts[pts.length - 1].getNameComponent(), pts[0].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[pts.length - 2].getPosition(), pts[pts.length - 1].getPosition(), pts[0].getPosition()))));
     }
 
     public double getArea() {

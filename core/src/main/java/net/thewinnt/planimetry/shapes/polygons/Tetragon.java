@@ -95,7 +95,7 @@ public class Tetragon extends Polygon {
 
     @Override
     public String getTypeName() {
-        return "Треугольник ";
+        return "shape.polygon.4";
     }
     
     @Override

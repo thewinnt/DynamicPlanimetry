@@ -3,12 +3,14 @@ package net.thewinnt.planimetry;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.zip.Deflater;
+import java.util.MissingFormatArgumentException;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -155,10 +157,13 @@ public class DynamicPlanimetry extends Game {
     public static final DateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
     public static final DateFormat AUTOSAVE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss.SSS");
 
-    public DynamicPlanimetry(CompoundTag settings, SettingsIO io) {
+    public DynamicPlanimetry(CompoundTag settings, SettingsIO io, boolean forceDebug) {
         super();
         SETTINGS.fromNbt(settings);
         this.settingsFile = io;
+        if (forceDebug) {
+            SETTINGS.setDebug();
+        }
     }
 
     @Override
@@ -355,6 +360,10 @@ public class DynamicPlanimetry extends Game {
     }
 
     public static String translate(String string, Object... args) {
-        return DynamicPlanimetry.getInstance().currentLanguage.get(string, args);
+        try {
+            return DynamicPlanimetry.getInstance().currentLanguage.get(string, args);
+        } catch (MissingFormatArgumentException e) {
+            throw new IllegalArgumentException(String.format("Exception formatting string %s, arguments: %s", string, Arrays.toString(args)), e);
+        }
     }
 }

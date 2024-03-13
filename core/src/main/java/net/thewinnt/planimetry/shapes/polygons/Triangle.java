@@ -35,12 +35,12 @@ public class Triangle extends Polygon {
 
     @Override
     public double getArea() {
-        return MathHelper.distanceToLine(a.getPosition(), b.getPosition(), c.getPosition());
+        return MathHelper.distanceToLine(a.getPosition(), b.getPosition(), c.getPosition()) * a.getPosition().distanceTo(b.getPosition()) / 2.0;
     }
 
     @Override
     public String getTypeName() {
-        return "Треугольник ";
+        return "shape.polygon.3";
     }
     
     @Override
