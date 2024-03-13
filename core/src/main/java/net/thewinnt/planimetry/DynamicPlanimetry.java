@@ -201,18 +201,18 @@ public class DynamicPlanimetry extends Game {
     }
 
     public void reloadLanguages() {
-        String[] builtinLangs = Gdx.files.internal("lang/langs.txt").readString().split("\n");
+        String[] builtinLangs = Gdx.files.internal("lang/langs.txt").readString("utf8").split("\n");
         for (String name : builtinLangs) {
             if (name.startsWith("#") || !name.endsWith(".json")) continue;
             FileHandle i = Gdx.files.internal("lang/" + name);
-            Language language = Language.fromJson(i.nameWithoutExtension(), GSON.fromJson(i.readString(), JsonObject.class));
+            Language language = Language.fromJson(i.nameWithoutExtension(), GSON.fromJson(i.readString("utf8"), JsonObject.class));
             languages.put(language.getId(), language);
         }
         FileHandle langDir = Gdx.files.local("custom_languages");
         if (langDir.exists() && langDir.isDirectory()) {
             FileHandle[] customLangs = langDir.list();
             for (FileHandle i : customLangs) {
-                Language language = Language.fromJson(i.nameWithoutExtension(), GSON.fromJson(i.readString(), JsonObject.class));
+                Language language = Language.fromJson(i.nameWithoutExtension(), GSON.fromJson(i.readString("utf8"), JsonObject.class));
                 languages.put(language.getId(), language);
             }
         }

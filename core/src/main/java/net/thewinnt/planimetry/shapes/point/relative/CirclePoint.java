@@ -34,7 +34,7 @@ public class CirclePoint extends PointProvider {
         this.circleProperty = new ShapeProperty(Component.translatable("property.circle_point.source"), drawing, this.circle, shape -> shape instanceof Circle);
         this.circleProperty.addValueChangeListener(shape -> setCircle((Circle) shape));
         this.angle = angleRad;
-        this.angleProperty = new NumberProperty(Component.translatable("proprety.circle_point.angle"), angleRad);
+        this.angleProperty = new NumberProperty(Component.translatable("property.circle_point.angle"), angleRad);
         this.angleProperty.addValueChangeListener(newAngle -> setAngle(Settings.get().toRadians(newAngle)));
         this.nameProperty = new NameComponentProperty(Component.translatable("property.circle_point.name"), this.name);
         this.nameProperty.addValueChangeListener(this::setName);
@@ -46,7 +46,7 @@ public class CirclePoint extends PointProvider {
         this.circleProperty = new ShapeProperty(Component.translatable("property.circle_point.source"), drawing, this.circle, shape -> shape instanceof Circle);
         this.circleProperty.addValueChangeListener(shape -> setCircle((Circle) shape));
         this.angle = angleRad;
-        this.angleProperty = new NumberProperty(Component.translatable("proprety.circle_point.angle"), angleRad);
+        this.angleProperty = new NumberProperty(Component.translatable("property.circle_point.angle"), angleRad);
         this.angleProperty.addValueChangeListener(newAngle -> setAngle(Settings.get().toRadians(newAngle)));
         this.nameProperty = new NameComponentProperty(Component.translatable("property.circle_point.name"), this.name);
         this.nameProperty.addValueChangeListener(this::setName);
