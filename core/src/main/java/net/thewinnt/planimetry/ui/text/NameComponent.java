@@ -29,7 +29,7 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
     }
 
     @Override
-    public Vec2 draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
+    public Vec2 drawGetSize(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
         BitmapFont fontMain = font.getFont(Gdx.graphics.getHeight() / size.factor, color);
         BitmapFont fontAdditional = font.getFont(Gdx.graphics.getHeight() / size.factor / 2, color);
         GlyphLayout layoutMain = fontMain.draw(batch, ALLOWED_NAMES[letter], x, y);
@@ -43,6 +43,18 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
         }
         fontMain.draw(batch, "'".repeat(dashes), x + x2 - 2, y + 2);
         return new Vec2(x2 + Math.max(indexLength, FontUtils.getTextLength(fontMain, "'".repeat(dashes))), fontMain.getLineHeight());
+    }
+    
+    @Override
+    public void draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
+        BitmapFont fontMain = font.getFont(Gdx.graphics.getHeight() / size.factor, color);
+        BitmapFont fontAdditional = font.getFont(Gdx.graphics.getHeight() / size.factor / 2, color);
+        GlyphLayout layoutMain = fontMain.draw(batch, ALLOWED_NAMES[letter], x, y);
+        float x2 = layoutMain.width + 2;
+        if (index != 0) {
+            fontAdditional.draw(batch, String.valueOf(index), x + x2, y - fontMain.getLineHeight() / 3);
+        }
+        fontMain.draw(batch, "'".repeat(dashes), x + x2 - 2, y + 2);
     }
 
     @Override

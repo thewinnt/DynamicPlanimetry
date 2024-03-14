@@ -4,7 +4,9 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 
 /** A class containing some utility math functions, mostly geometry-related. */
 public class MathHelper {
+    public static final double QUARTER_PI = Math.PI / 4;
     public static final double HALF_PI = Math.PI / 2;
+    public static final double DOUBLE_PI = Math.PI * 2;
     public static final double RADIANS_TO_GRADIANS = 200 / Math.PI;
     public static final double GRADIANS_TO_RADIANS = Math.PI / 200;
 

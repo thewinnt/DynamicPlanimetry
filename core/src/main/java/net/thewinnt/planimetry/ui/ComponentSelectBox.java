@@ -202,7 +202,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
                 if (entryBackground != null) {
                     entryBackground.draw(batch, x, y - 2, getWidth(), (float)size.y + 4);
                 }
-                y += text.draw(batch, font, this.size, color, x + 2, y + (float)size.y - 4).y + 4;
+                y += text.drawGetSize(batch, font, this.size, color, x + 2, y + (float)size.y - 4).y + 4;
             }
         }
     }

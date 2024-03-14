@@ -30,9 +30,14 @@ public record SimpleTranslatableComponent(String key) implements Component, Char
     }
 
     @Override
-    public Vec2 draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
+    public Vec2 drawGetSize(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
         GlyphLayout layout = font.getFont(Gdx.graphics.getHeight() / size.factor, color).draw(batch, toString(), x, y);
         return new Vec2(layout.width, font.getFont(Gdx.graphics.getHeight() / size.factor, color).getLineHeight());
+    }
+
+    @Override
+    public void draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
+        font.getFont(Gdx.graphics.getHeight() / size.factor, color).draw(batch, toString(), x, y);
     }
 
     @Override

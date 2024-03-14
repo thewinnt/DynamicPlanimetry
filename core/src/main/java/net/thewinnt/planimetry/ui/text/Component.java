@@ -16,7 +16,8 @@ import net.thewinnt.planimetry.util.FontProvider;
 
 public interface Component extends ComponentRepresentable {
     String toString();
-    Vec2 draw(Batch batch, FontProvider font, Size size, Color color, float x, float y);
+    Vec2 drawGetSize(Batch batch, FontProvider font, Size size, Color color, float x, float y);
+    void draw(Batch batch, FontProvider font, Size size, Color color, float x, float y);
     Vec2 getSize(FontProvider font, Size size);
     /**
      * @deprecated use {@link #toNbt()} for actual saving
@@ -120,9 +121,12 @@ public interface Component extends ComponentRepresentable {
         }
 
         @Override
-        public Vec2 draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
+        public Vec2 drawGetSize(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
             return Vec2.ZERO;
         }
+
+        @Override
+        public void draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {}
 
         @Override
         public CompoundTag writeNbt() {

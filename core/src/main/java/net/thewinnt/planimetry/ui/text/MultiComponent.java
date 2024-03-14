@@ -33,16 +33,26 @@ public class MultiComponent implements Component {
     }
 
     @Override
-    public Vec2 draw(Batch batch, FontProvider font, Size fontSize, Color color, float x, float y) {
+    public Vec2 drawGetSize(Batch batch, FontProvider font, Size fontSize, Color color, float x, float y) {
         float offx = 0;
         double height = 0;
         for (Component i : this.components) {
             if (i == null) continue;
-            Vec2 size = i.draw(batch, font, fontSize, color, x + offx, y);
+            Vec2 size = i.drawGetSize(batch, font, fontSize, color, x + offx, y);
             offx += (float)size.x;
             height = Math.max(height, size.y);
         }
         return new Vec2(offx, height);
+    }
+    
+    @Override
+    public void draw(Batch batch, FontProvider font, Size fontSize, Color color, float x, float y) {
+        float offx = 0;
+        for (Component i : this.components) {
+            if (i == null) continue;
+            Vec2 size = i.drawGetSize(batch, font, fontSize, color, x + offx, y);
+            offx += (float)size.x;
+        }
     }
 
     @Override

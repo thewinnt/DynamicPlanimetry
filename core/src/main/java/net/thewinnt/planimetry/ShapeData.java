@@ -3,6 +3,7 @@ package net.thewinnt.planimetry;
 import net.thewinnt.planimetry.shapes.Circle;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.ShapeDeserializer;
+import net.thewinnt.planimetry.shapes.display.angle.PointAngleMarker;
 import net.thewinnt.planimetry.shapes.lines.*;
 import net.thewinnt.planimetry.shapes.point.*;
 import net.thewinnt.planimetry.shapes.point.relative.*;
@@ -35,6 +36,9 @@ public class ShapeData {
 
     // CIRCLES
     public static final ShapeDeserializer<Circle> CIRCLE = register("circle", Circle::readNbt);
+
+    // ANGLE MARKERS
+    public static final ShapeDeserializer<PointAngleMarker> POINT_ANGLE_MARKER = register("point_angle_marker", PointAngleMarker::readNbt);
 
     public static <T extends Shape> ShapeDeserializer<T> register(String name, ShapeDeserializer<T> deserializer) {
         SHAPE_TYPES.put(name, deserializer);

@@ -3,9 +3,11 @@ package net.thewinnt.planimetry.screen;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -15,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
-import com.badlogic.gdx.utils.Align;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.Vec2;
@@ -25,7 +26,9 @@ import net.thewinnt.planimetry.shapes.factories.FreePolygonFactory;
 import net.thewinnt.planimetry.shapes.factories.LimitedPolygonFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
+import net.thewinnt.planimetry.shapes.factories.PointAngleMarkerFactory;
 import net.thewinnt.planimetry.shapes.factories.PointFactory;
+import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
 import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
@@ -47,14 +50,6 @@ public class EditorScreen extends FlatUIScreen {
     private Table functions;
     private Table actions;
     private Container<Window> saveOverlay;
-
-    private TextButton createPoint;
-    private TextButton createLine;
-    private TextButton createRay;
-    private TextButton createLineSegment;
-    private TextButton createCircle;
-    private TextButton createPolygon;
-    private TextButton createTriangle;
 
     private TextButton exitToMenu;
     private TextButton goSettings;
@@ -94,10 +89,20 @@ public class EditorScreen extends FlatUIScreen {
         stage.addActor(saveOverlay);
     }
 
-    private TextButton leftAlignedButton(String text, Size size, boolean active) {
-        TextButton output = new TextButton(text, styles.getButtonStyle(size, active));
-        output.getLabel().setAlignment(Align.left);
-        output.getLabelCell().padLeft(4);
+    private Button leftAlignedButton(String translation, Size size, boolean active) {
+        Button output = new Button(styles.getButtonStyle(size, active));
+        output.add(new ComponentLabel(Component.translatable(translation), styles.font, size)).expand().fill();
+        return output;
+    }
+
+    private Button shapeCreationButton(String translation, Size size, Supplier<? extends ShapeFactory> factory) {
+        Button output = leftAlignedButton(translation, size, true);
+        output.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                board.startCreation(factory.get());
+            }
+        });
         return output;
     }
 
@@ -107,68 +112,20 @@ public class EditorScreen extends FlatUIScreen {
         actions.reset();
 
         // ACTORS
-        createPoint = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.point"), Size.SMALL, true);
-        createLine = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.infinite_line"), Size.SMALL, true);
-        createRay = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.ray"), Size.SMALL, true);
-        createLineSegment = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.line_segment"), Size.SMALL, true);
-        createCircle = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.circle"), Size.SMALL, true);
-        createPolygon = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.polygon"), Size.SMALL, true);
-        createTriangle = leftAlignedButton(DynamicPlanimetry.translate("ui.edit.create.triangle"), Size.SMALL, true);
+        Button createPoint = shapeCreationButton("ui.edit.create.point", Size.SMALL, () -> new PointFactory(board));
+        Button createLine = shapeCreationButton("ui.edit.create.infinite_line", Size.SMALL, () -> new LineFactory(board, LineType.INFINITE));
+        Button createRay = shapeCreationButton("ui.edit.create.ray", Size.SMALL, () -> new LineFactory(board, LineType.RAY));
+        Button createLineSegment = shapeCreationButton("ui.edit.create.line_segment", Size.SMALL, () -> new LineFactory(board, LineType.SEGMENT));
+        Button createCircle = shapeCreationButton("ui.edit.create.circle", Size.SMALL, () -> new CircleFactory(board));
+        Button createPolygon = shapeCreationButton("ui.edit.create.polygon", Size.SMALL, () -> new FreePolygonFactory(board));
+        Button createTriangle = shapeCreationButton("ui.edit.create.triangle", Size.SMALL, () -> new LimitedPolygonFactory(board, 3));
+        Button createPointAngleMarker = shapeCreationButton("ui.edit.create.angle_marker.point", Size.SMALL, () -> new PointAngleMarkerFactory(board));
 
         exitToMenu = new TextButton(DynamicPlanimetry.translate("ui.edit.exit_to_menu"), styles.getButtonStyle(Size.SMALL, true));
         goSettings = new TextButton(DynamicPlanimetry.translate("ui.edit.settings"), styles.getButtonStyle(Size.SMALL, true));
         save = new TextButton(DynamicPlanimetry.translate("ui.edit.save"), styles.getButtonStyle(Size.SMALL, true));
 
         // LISTENERS
-        createPoint.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                board.startCreation(new PointFactory(board));
-            }
-        });
-
-        createLine.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                board.startCreation(new LineFactory(board, LineType.INFINITE));
-            }
-        });
-
-        createRay.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                board.startCreation(new LineFactory(board, LineType.RAY));
-            }
-        });
-
-        createLineSegment.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                board.startCreation(new LineFactory(board, LineType.SEGMENT));
-            }
-        });
-
-        createCircle.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                board.startCreation(new CircleFactory(board));
-            }
-        });
-
-        createPolygon.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                board.startCreation(new FreePolygonFactory(board));
-            }
-        });
-
-        createTriangle.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                board.startCreation(new LimitedPolygonFactory(board, 3));
-            }
-        });
-
         exitToMenu.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -223,6 +180,7 @@ public class EditorScreen extends FlatUIScreen {
         creations.add(createCircle);
         creations.add(new DropdownLayout(List.of(createLine, createLineSegment, createRay), styles, Component.translatable("ui.edit.create.group.lines"), Size.SMALL, false));
         creations.add(new DropdownLayout(List.of(createPolygon, createTriangle), styles, Component.translatable("ui.edit.create.group.polygons"), Size.SMALL, false));
+        creations.add(new DropdownLayout(List.of(createPointAngleMarker), styles, Component.translatable("ui.edit.create.group.markers"), Size.SMALL, false));
         creation.setActor(new DropdownLayout(creations, styles, Component.translatable("ui.edit.create.title"), Size.SMALL, true));
 
         if (selection != null) {

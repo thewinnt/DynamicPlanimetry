@@ -75,7 +75,9 @@ public class DynamicPlanimetry extends Game {
         new Color(0x0055CCFF), // utility point selected
         new Color(0xDDDDDDFF), // grid line
         new Color(0xAAAAAAFF), // grid hint
-        new Color(0x808080FF)  // grid center
+        new Color(0x808080FF), // grid center
+        new Color(0x202020FF), // angle marker
+        new Color(0x202020FF)  // angle marker text
     );
 
     public static final Theme THEME_DARK = new Theme(
@@ -102,7 +104,9 @@ public class DynamicPlanimetry extends Game {
         new Color(0x0055CCFF), // utility point selected
         new Color(0x404040FF), // grid line
         new Color(0x505050FF), // grid hint
-        new Color(0x000000FF)  // grid center
+        new Color(0x000000FF), // grid center
+        new Color(0xE0E0E0FF), // angle marker
+        new Color(0xF0F0F0FF)  // angle marker text
     );
 
     public static final Theme[] BUILT_IN_THEMES = new Theme[]{THEME_LIGHT, THEME_DARK};
