@@ -106,7 +106,7 @@
     "sorting.by_filename": "По имени файла",
     "sorting.by_name": "По названию",
     "theme.builtin.dark": "Тёмная",
-    "theme.builtin.light": "Светаля",
+    "theme.builtin.light": "Светлая",
     "ui.edit.actions.title": "Действия",
     "ui.edit.board.creating_shape": "Создание фигуры: %s",
     "ui.edit.create.angle_marker.point": "Угол по 3 точкам",

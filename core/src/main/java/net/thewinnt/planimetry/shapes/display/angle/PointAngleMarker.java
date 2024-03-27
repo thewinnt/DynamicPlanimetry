@@ -1,8 +1,5 @@
 package net.thewinnt.planimetry.shapes.display.angle;
 
-import java.util.Collection;
-import java.util.List;
-
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
@@ -10,12 +7,12 @@ import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
-import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class PointAngleMarker extends AngleMarker {
-    private final PointProvider a, b, c;
+    private PointProvider a, b, c;
     
     public PointAngleMarker(Drawing drawing, PointProvider a, PointProvider b, PointProvider c) {
         super(drawing);
@@ -55,6 +52,17 @@ public class PointAngleMarker extends AngleMarker {
     }
 
     @Override
+    public void replaceShape(Shape old, Shape neo) {
+        if (old == this.a) {
+            this.a = (PointProvider)neo;
+        } else if (old == this.b) {
+            this.b = (PointProvider)neo;
+        } else if (old == this.c) {
+            this.c = (PointProvider)neo;
+        }
+    }
+
+    @Override
     public CompoundTag writeNbt(SavingContext context) {
         context.addShape(a);
         context.addShape(b);
@@ -64,11 +72,6 @@ public class PointAngleMarker extends AngleMarker {
         nbt.putLong("main", b.getId());
         nbt.putLong("b", c.getId());
         return nbt;
-    }
-
-    @Override
-    public Collection<Property<?>> getProperties() {
-        return List.of();
     }
 
     @Override

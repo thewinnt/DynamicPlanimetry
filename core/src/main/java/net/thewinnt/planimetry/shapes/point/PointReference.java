@@ -8,6 +8,7 @@ import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -137,6 +138,13 @@ public class PointReference extends PointProvider {
     @Override
     public ShapeDeserializer<PointReference> getDeserializer() {
         return ShapeData.POINT_REFERENCE;
+    }
+
+    @Override
+    public void replaceShape(Shape old, Shape neo) {
+        if (old == this.point) {
+            this.setPoint((PointProvider)neo);
+        }
     }
 
     @Override

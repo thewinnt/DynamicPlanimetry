@@ -10,16 +10,17 @@ import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
-import net.thewinnt.planimetry.shapes.point.relative.TangentOffsetPoint;
+import net.thewinnt.planimetry.shapes.point.relative.AngleOffsetPoint;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.ShapeProperty;
 import net.thewinnt.planimetry.ui.text.Component;
-import net.thewinnt.planimetry.ui.text.SimpleTranslatableComponent;
 import net.thewinnt.planimetry.ui.text.NameComponent;
+import net.thewinnt.planimetry.ui.text.SimpleTranslatableComponent;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -35,7 +36,7 @@ public class AngledInfiniteLine extends InfiniteLine {
     private PointProvider point;
 
     public AngledInfiniteLine(Drawing drawing, Line baseLine, PointProvider point, double angleDeg) {
-        super(drawing, point, new TangentOffsetPoint(drawing, point, Math.tan(Math.atan(baseLine.getSlope()) + angleDeg), 1, DUMMY_NAME));
+        super(drawing, point, new AngleOffsetPoint(drawing, point, Math.atan(baseLine.getSlope()) + angleDeg, 1, DUMMY_NAME));
         this.b.getPoint().setNameOverride(HELPER_POINT);
         this.b.getPoint().shouldRender = false;
         this.base = baseLine;
@@ -46,7 +47,7 @@ public class AngledInfiniteLine extends InfiniteLine {
         this.angleProperty = new NumberProperty(ANGLE_PROPERTY, Settings.get().toUnit(angleDeg));
         this.angleProperty.addValueChangeListener(newAngle -> {
             AngledInfiniteLine.this.angle = Settings.get().toRadians(newAngle);
-            ((TangentOffsetPoint)b.getPoint()).setAngle(Math.tan(Math.atan(base.getSlope()) + angle));
+            ((AngleOffsetPoint)b.getPoint()).setAngle(Math.atan(base.getSlope()) + angle);
         });
         baseLine.addDepending(this);
         this.addDependency(baseLine);
@@ -99,7 +100,7 @@ public class AngledInfiniteLine extends InfiniteLine {
 
     @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
-        ((TangentOffsetPoint)b.getPoint()).setAngle(Math.tan(Math.atan(getBase().getSlope()) + getAngle()));
+        ((AngleOffsetPoint)b.getPoint()).setAngle(Math.atan(getBase().getSlope()) + getAngle());
         super.render(drawer, selection, font, board);
     }
 
@@ -116,5 +117,13 @@ public class AngledInfiniteLine extends InfiniteLine {
     @Override
     public void move(double dx, double dy) {
         this.a.move(dx, dy);
+    }
+
+    @Override
+    public void replaceShape(Shape old, Shape neo) {
+        super.replaceShape(old, neo);
+        if (old == this.base) {
+            this.setBase((Line)neo);
+        }
     }
 }

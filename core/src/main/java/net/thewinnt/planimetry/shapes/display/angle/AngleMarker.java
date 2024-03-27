@@ -1,6 +1,10 @@
 package net.thewinnt.planimetry.shapes.display.angle;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.Drawing;
@@ -10,11 +14,17 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
+import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public abstract class AngleMarker extends Shape {
+    protected final DisplayProperty value = new DisplayProperty(Component.translatable("property.angle_marker.generic.value"), () -> Component.angle(getAngle()));
+    protected final BooleanProperty displayValue = new BooleanProperty(Component.translatable("property.angle_marker.generic.show_value"), true);
+
     public AngleMarker(Drawing drawing) {
         super(drawing);
     }
@@ -32,13 +42,23 @@ public abstract class AngleMarker extends Shape {
 
     @Override
     public double distanceToMouse(Vec2 point, DrawingBoard board) {
-        return Double.POSITIVE_INFINITY; // TODO distance to mouse
-        // double dirPoint = MathHelper.polarAngle(getStartPoint(), point);
+        Vec2 start = getStartPoint();
+        double distance = point.distanceTo(start);
+        if (MathHelper.isAngleBetween(getAngleA(), getAngleB(), MathHelper.polarAngle(start, point))) return distance / 2;
+        return Double.POSITIVE_INFINITY;
     }
 
     @Override
     public double distanceToMouse(double x, double y, DrawingBoard board) {
-        return Double.POSITIVE_INFINITY; // TODO distance to mouse
+        return distanceToMouse(new Vec2(x, y), board);
+    }
+
+    @Override
+    public Collection<Property<?>> getProperties() {
+        ArrayList<Property<?>> output = new ArrayList<>();
+        output.add(value);
+        output.add(displayValue);
+        return output;
     }
     
     @Override
@@ -51,55 +71,79 @@ public abstract class AngleMarker extends Shape {
         Vec2 center = getStartPoint();
         float x = board.bx(center.x);
         float y = board.by(center.y);
-        drawer.setColor(Theme.current().angleMarker());
+        Color color = switch (selection) {
+            case NONE -> Theme.current().angleMarker();
+            case HOVERED -> Theme.current().shapeHovered();
+            case SELECTED -> Theme.current().shapeSelected();
+        };
+        drawer.setColor(color);
 
-        // draw arc
+        // detect center angle
         double centerAngle;
         if (angle < 0) {
-            drawer.arc(x, y, 24, angleA, -angle, getThickness(board.getScale()));
             centerAngle = angleA - angle / 2;
         } else if (angle < Math.PI && angleB >= angleA) {
-            drawer.arc(x, y, 24, angleA, (float)(Math.PI - angle), getThickness(board.getScale()));
             centerAngle = angleA + (Math.PI - angle) / 2;
         } else if (angle < Math.PI && angleB < angleA) {
-            drawer.arc(x, y, 24, angleB, angle, getThickness(board.getScale()));
             centerAngle = angleB + angle / 2;
         } else {
-            drawer.arc(x, y, 24, angleA, (float)(MathHelper.DOUBLE_PI - angle), getThickness(board.getScale()));
             centerAngle = angleA + (MathHelper.DOUBLE_PI - angle) / 2;
+        }
+        if (centerAngle > Math.PI) centerAngle = centerAngle - MathHelper.DOUBLE_PI;
+
+        // draw arc
+        if (MathHelper.roughlyEquals(angFull, MathHelper.HALF_PI)) {
+            Vec2 targPoint = board.boardToGlobal(MathHelper.continueFromAngle(center, centerAngle, 24 / board.getScale() * Math.sqrt(2)));
+            Vec2 p1 = board.boardToGlobal(MathHelper.continueFromAngle(center, angleA, 24 / board.getScale()));
+            Vec2 p2 = board.boardToGlobal(MathHelper.continueFromAngle(center, angleB, 24 / board.getScale()));
+            drawer.path(Array.with(p1.toVector2f(), targPoint.toVector2f(), p2.toVector2f()), getThickness(board.getScale()), true);
+        } else {
+            if (angle < 0) {
+                drawer.arc(x, y, 24, angleA, -angle, getThickness(board.getScale()));
+            } else if (angle < Math.PI && angleB >= angleA) {
+                drawer.arc(x, y, 24, angleA, (float)(Math.PI - angle), getThickness(board.getScale()));
+            } else if (angle < Math.PI && angleB < angleA) {
+                drawer.arc(x, y, 24, angleB, angle, getThickness(board.getScale()));
+            } else {
+                drawer.arc(x, y, 24, angleA, (float)(MathHelper.DOUBLE_PI - angle), getThickness(board.getScale()));
+            }
         }
         
         // draw text
-        Component marker = Component.angle(angFull);
-        Vec2 pos = MathHelper.continueFromAngle(new Vec2(x, y), centerAngle, 12);
-        Vec2 size = marker.getSize(font, Size.SMALL);
-        double yMul, xMul;
-        if (centerAngle > MathHelper.QUARTER_PI && centerAngle <= Math.PI * 3 / 4) {
-            xMul = Math.sin(centerAngle - MathHelper.QUARTER_PI);
-            yMul = 1;
-        } else if (centerAngle > Math.PI * 3 / 4 || centerAngle < -Math.PI * 3 / 4) {
-            xMul = 1;
-            yMul = (Math.sin(centerAngle) * Math.sqrt(2) + 1) / 2;
-        } else if (centerAngle < MathHelper.QUARTER_PI && centerAngle > -MathHelper.QUARTER_PI) {
-            xMul = 0;
-            yMul = Math.sin(centerAngle) * Math.sqrt(2);
-        } else {
-            xMul = Math.sin(centerAngle + MathHelper.QUARTER_PI);
-            yMul = 0;
-        }
-        Vec2 pos2 = pos.add(size.x * xMul, size.y * yMul);
-        marker.draw(drawer.getBatch(), font, Size.SMALL, Theme.current().textAngleMarker(), (float)pos2.x, (float)pos2.y);
+        if (displayValue.getValue()) {
+            Component marker = Component.angle(angFull);
+            Vec2 pos = MathHelper.continueFromAngle(new Vec2(x, y), centerAngle, 20);
+            Vec2 size = marker.getSize(font, Size.SMALL);
+            double yMul, xMul;
+            // offset the text for beauty
+            if (centerAngle > MathHelper.QUARTER_PI && centerAngle <= Math.PI * 3 / 4) {
+                xMul = -Math.sin(centerAngle - MathHelper.QUARTER_PI);
+                yMul = 1;
+            } else if (centerAngle > Math.PI * 3 / 4 || centerAngle < -Math.PI * 3 / 4) {
+                xMul = -1;
+                yMul = (Math.sin(centerAngle + MathHelper.QUARTER_PI) + 1);
+            } else if (centerAngle < MathHelper.QUARTER_PI && centerAngle > -MathHelper.QUARTER_PI) {
+                xMul = 0;
+                yMul = (Math.sin(centerAngle) * Math.sqrt(2) + 1) / 2;
+            } else {
+                xMul = Math.sin(centerAngle + MathHelper.QUARTER_PI); 
+                yMul = 0;
+            }
+            Vec2 pos2 = pos.add(size.x * xMul, size.y * yMul);
+            marker.draw(drawer.getBatch(), font, Size.SMALL, Theme.current().textAngleMarker(), (float)pos2.x, (float)pos2.y);
 
-        // debug data
-        if (DynamicPlanimetry.isDebug()) {
-            font.getFont(30, Color.SLATE).draw(drawer.getBatch(), "angle a: " + getAngleA(), x, y + 25);
-            font.getFont(30, Color.SLATE).draw(drawer.getBatch(), "angle b: " + getAngleB(), x, y + 50);
-            font.getFont(30, Color.SLATE).draw(drawer.getBatch(), "angle full: " + getAngle(), x, y + 75);
-            font.getFont(30, Color.SLATE).draw(drawer.getBatch(), "angle res: " + angle, x, y + 100);
-            Vec2 pos3 = MathHelper.continueFromAngle(pos, centerAngle, 48);
-            drawer.line(x, y, (float)pos3.x, (float)pos3.y, Color.SLATE, 4);
-            drawer.line((float)pos.x, (float)pos.y, (float)(pos.x + size.x * xMul), (float)pos.y, Color.RED, 2);
-            drawer.line((float)pos.x, (float)pos.y, (float)pos.x, (float)(pos.y + size.y * yMul), Color.GREEN, 2);
+            // debug data
+            if (DynamicPlanimetry.isDebug()) {
+                font.getFont(30, Color.SLATE).draw(drawer.getBatch(), "1/4 pi: " + MathHelper.QUARTER_PI, x, y + 25);
+                font.getFont(30, Color.SLATE).draw(drawer.getBatch(), "3/4 pi: " + MathHelper.QUARTER_PI * 3, x, y + 50);
+                font.getFont(30, Color.SLATE).draw(drawer.getBatch(), "5/4 pi: " + MathHelper.QUARTER_PI * 5, x, y + 75);
+                font.getFont(30, Color.SLATE).draw(drawer.getBatch(), "7/4 pi: " + MathHelper.QUARTER_PI * 7, x, y + 100);
+                font.getFont(30, Color.SLATE).draw(drawer.getBatch(), "angle draw: " + centerAngle, x, y + 125);
+                Vec2 pos3 = MathHelper.continueFromAngle(pos, centerAngle, 48);
+                drawer.line(x, y, (float)pos3.x, (float)pos3.y, Color.SLATE, 4);
+                drawer.line((float)pos.x, (float)pos.y, (float)(pos.x + size.x * xMul), (float)pos.y, Color.RED, 2);
+                drawer.line((float)pos.x, (float)pos.y, (float)pos.x, (float)(pos.y + size.y * yMul), Color.GREEN, 2);
+            }
         }
     }
 }

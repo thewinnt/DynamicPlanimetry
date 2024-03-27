@@ -83,6 +83,15 @@ public abstract class Line extends Shape {
     }
 
     @Override
+    public void replaceShape(Shape old, Shape neo) {
+        if (old == this.a) {
+            this.a.setPoint((PointProvider)neo);
+        } else if (old == this.b) {
+            this.b.setPoint((PointProvider)neo);
+        }
+    }
+
+    @Override
     public CompoundTag writeNbt(SavingContext context) {
         CompoundTag nbt = new CompoundTag();
         nbt.putLong("a", this.a.getId());

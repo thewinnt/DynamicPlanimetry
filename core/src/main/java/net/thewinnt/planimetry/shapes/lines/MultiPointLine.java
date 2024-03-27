@@ -154,6 +154,16 @@ public class MultiPointLine extends Shape {
     }
 
     @Override
+    public void replaceShape(Shape old, Shape neo) {
+        for (int i = 0; i < points.size(); i++) {
+            if (points.get(i) == old) {
+                points.set(i, (PointProvider)neo);
+                break;
+            }
+        }
+    }
+
+    @Override
     public String getTypeName() {
         return "shape.polygonal_chain";
     }

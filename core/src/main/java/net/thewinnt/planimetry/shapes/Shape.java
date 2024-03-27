@@ -83,6 +83,18 @@ public abstract class Shape implements ComponentRepresentable {
         this.dependents.remove(shape);
     }
 
+    /**
+     * Called when a shape related to this shape is being replaced by another one. <b>DO NOT</b> change the
+     * shapes' dependency data here. This has already been done before this method was called.
+     * @param old a shape related to this shape. Never equals to {@code this}. Always present in either
+     * {@code dependencies} or {@code dependents}. When checking, which exactly shape is this, use {@code ==}
+     * instead of {@code .equals()}.
+     * @param neo the shape that the old one is being replaced by
+     * @throws IllegalArgumentException if anything's wrong with the provided shape
+     * @throws ClassCastException if the new shape's class does not match what is needed for this shape.
+     */
+    public abstract void replaceShape(Shape old, Shape neo);
+
     public abstract void move(Vec2 delta);
     public abstract void move(double dx, double dy);
     public abstract boolean canMove();

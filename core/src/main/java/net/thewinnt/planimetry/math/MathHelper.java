@@ -69,4 +69,26 @@ public class MathHelper {
         Vec2 zero = point.subtract(center);
         return Math.atan2(zero.y, zero.x);
     }
+
+    public static double normalizeAngle(double angle) {
+        if (angle > Math.PI) {
+            angle %= DOUBLE_PI;
+            if (angle > Math.PI) return angle - DOUBLE_PI;
+            return angle;
+        };
+        if (angle < -Math.PI) {
+            angle %= DOUBLE_PI;
+            if (angle < -Math.PI) return angle + DOUBLE_PI;
+        }
+        return angle;
+    }
+
+    public static boolean isAngleBetween(double a, double b, double test) {
+        double max = Math.max(a, b); // > 0
+        double min = Math.min(a, b); // < 0
+        if (a > 0 && b > 0) return min < test && test < max;
+        if (a < 0 && b < 0) return min < test && test < max;
+        if (max - min < Math.PI) return min < test && test < max; // 0 arc
+        return test > max || test < min; // pi arc 
+    }
 }

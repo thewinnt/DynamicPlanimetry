@@ -12,6 +12,7 @@ import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Circle;
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.relative.AngleOffsetPoint;
 import net.thewinnt.planimetry.shapes.point.relative.CirclePoint;
 import net.thewinnt.planimetry.ui.properties.Property;
@@ -114,5 +115,13 @@ public class CircleTangentLine extends InfiniteLine {
     @Override
     public void move(double dx, double dy) {
         this.a.move(dx, dy);
+    }
+
+    @Override
+    public void replaceShape(Shape old, Shape neo) {
+        super.replaceShape(old, neo);
+        if (old == circle) {
+            this.setCircle((Circle)neo);
+        }
     }
 }

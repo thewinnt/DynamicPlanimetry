@@ -9,6 +9,7 @@ import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
@@ -153,6 +154,13 @@ public class AngleOffsetPoint extends PointProvider {
 
     public void setStart(PointProvider start) {
         this.start = start;
+    }
+
+    @Override
+    public void replaceShape(Shape old, Shape neo) {
+        if (old == this.start) {
+            this.setStart(((PointProvider)start));
+        }
     }
 
     public static AngleOffsetPoint fromPoints(PointProvider startPos, PointProvider thisPos) {

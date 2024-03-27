@@ -32,7 +32,7 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Circle extends Shape {
-    public final PointProvider center;
+    public PointProvider center;
     private boolean keepRadius = false;
     public Supplier<Double> radius;
     private PointProvider radiusPoint;
@@ -123,6 +123,17 @@ public class Circle extends Shape {
             }
         }
         this.keepRadius = keepRadius;
+    }
+
+    @Override
+    public void replaceShape(Shape old, Shape neo) {
+        if (old == center) {
+            this.center.removeMovementListener(radiusMove);
+            this.center = (PointProvider)neo;
+            this.center.addMovementListener(radiusMove);
+        } else if (old == radiusPoint) {
+            setRadiusPoint(radiusPoint);
+        }
     }
 
     @Override

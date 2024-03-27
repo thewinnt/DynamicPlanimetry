@@ -12,6 +12,7 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.NameComponent;
@@ -21,7 +22,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public abstract class PointProvider extends Shape {
     protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
     protected NameComponent name;
-    public boolean shouldRender = true;
+    public boolean shouldRender = true; // TODO: make this a property
 
     public PointProvider(Drawing drawing) {
         super(drawing);
@@ -96,6 +97,9 @@ public abstract class PointProvider extends Shape {
     public void setName(NameComponent name) {
         this.name = name;
     }
+
+    @Override
+    public void replaceShape(Shape old, Shape neo) {} // most points don't have dependencies
 
     @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
