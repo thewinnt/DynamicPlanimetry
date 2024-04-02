@@ -113,11 +113,11 @@ public class AngleOffsetPoint extends PointProvider {
         if (nbt.containsCompound("name")) {
             NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
             AngleOffsetPoint output = new AngleOffsetPoint(context.getDrawing(), point, angle, offset, name);
-            output.shouldRender = shouldRender;
+            output.setShouldRender(shouldRender);
             return output;
         }
         AngleOffsetPoint output = new AngleOffsetPoint(context.getDrawing(), point, angle, offset);
-        output.shouldRender = shouldRender;
+        output.setShouldRender(shouldRender);
         return output;
     }
 
@@ -127,7 +127,7 @@ public class AngleOffsetPoint extends PointProvider {
     }
 
     @Override
-    public Collection<Property<?>> getProperties() {
+    public Collection<Property<?>> moreProperties() {
         if (nameOverride != null) return List.of(sourceDescription, angleProperty, offsetProperty);
         return List.of(sourceDescription, angleProperty, offsetProperty, nameProperty);
     }

@@ -1,5 +1,8 @@
 package net.thewinnt.planimetry.shapes.factories;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.ShapeData;
@@ -32,7 +35,7 @@ public class LimitedPolygonFactory extends ShapeFactory {
             this.point1 = getOrCreatePoint(x, y);
             this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
             this.line = new MultiPointLine(board.getDrawing(), point1, nextPoint);
-            board.addShape(point1);
+            this.addShape(point1);
             this.addShape(nextPoint);
             this.addShape(line);
             return false;
@@ -79,5 +82,10 @@ public class LimitedPolygonFactory extends ShapeFactory {
     @Override
     public Component getName() {
         return Component.translatable(ShapeData.polygonName(limit), limit);
+    }
+
+    @Override
+    public Collection<Component> getActionHint() {
+        return List.of(Component.translatable("shape.factory.hint.limited_polygon.add_points"));
     }
 }

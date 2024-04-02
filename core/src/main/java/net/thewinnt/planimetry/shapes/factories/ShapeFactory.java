@@ -45,6 +45,11 @@ public abstract class ShapeFactory {
     public abstract Component getName();
 
     /**
+     * @return a hint on what to do next to continue creating the shape
+     */
+    public abstract Collection<Component> getActionHint();
+
+    /**
      * Executed upon finishing the shape creation, once isDone() turns true.
      */
     public void onFinish() {}
@@ -55,17 +60,38 @@ public abstract class ShapeFactory {
     public void onRender(double mx, double my) {}
 
     /**
+     * Executed when the shape creation is cancelled, after the shapes are deleted from the drawing
+     */
+    public void onCancel() {}
+
+    /**
      * @return the shapes being added by this factory
      */
-    public Collection<Shape> getSuggestedShapes() {
+    public List<Shape> getSuggestedShapes() {
         return addingShapes;
     };
 
+    /**
+     * Call this to finish the shape creation early. {@link #onFinish()} will be called after this.
+     */
+    protected final void finish() {
+        this.board.finishCreation();
+    }
+
+    /**
+     * Adds a shape to the board and to the suggestions list
+     * @param shape the shape to add
+     */
     protected void addShape(Shape shape) {
         this.board.addShape(shape);
         this.addingShapes.add(shape);
     }
 
+    /**
+     * Replaces a shape with a different one, updating its dependencies and stuff
+     * @param old the shape to remove
+     * @param neo the shape to put there instead
+     */
     protected void replaceShape(Shape old, Shape neo) {
         this.board.replaceShape(old, neo);
         this.addingShapes.remove(old);

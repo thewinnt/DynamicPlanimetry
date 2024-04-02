@@ -26,7 +26,11 @@ public class MousePoint extends PointProvider {
     @Override
     public Vec2 getPosition() {
         DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
-        return new Vec2(board.xb(Gdx.input.getX()), board.yb(Gdx.input.getY()));
+        return positionFilter(new Vec2(board.xb(Gdx.input.getX()), board.yb(Gdx.input.getY())));
+    }
+
+    protected Vec2 positionFilter(Vec2 mouse) {
+        return mouse;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class MousePoint extends PointProvider {
     @Override public void move(double dx, double dy) {}
 
     @Override
-    public Collection<Property<?>> getProperties() {
+    public Collection<Property<?>> moreProperties() {
         return List.of();
     }
 

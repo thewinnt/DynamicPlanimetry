@@ -1,5 +1,8 @@
 package net.thewinnt.planimetry.shapes.factories;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.shapes.display.angle.PointAngleMarker;
@@ -38,5 +41,16 @@ public class PointAngleMarkerFactory extends ShapeFactory {
     @Override
     public Component getName() {
         return Component.translatable("shape.factory.angle_marker.point");
+    }
+
+    @Override
+    public Collection<Component> getActionHint() {
+        if (a == null) {
+            return List.of(Component.translatable("shape.factory.hint.point_angle_marker.point1"));
+        } else if (b == null) {
+            return List.of(Component.translatable("shape.factory.hint.point_angle_marker.point2"));
+        } else {
+            return List.of(Component.translatable("shape.factory.hint.point_angle_marker.point3"));
+        }
     }
 }

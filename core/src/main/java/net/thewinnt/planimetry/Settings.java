@@ -195,7 +195,7 @@ public class Settings {
     }
 
     public void fromNbt(CompoundTag nbt) {
-        if (nbt == null) return;
+        if (nbt == null) nbt = new CompoundTag(); // needed to load defaults
         try {
             this.theme.setValue(NbtUtil.getOptionalInt(nbt, "theme", 0) == 1 ? DynamicPlanimetry.THEME_DARK : DynamicPlanimetry.THEME_LIGHT);
             this.displayPresicion.setValue((double)NbtUtil.getOptionalByte(nbt, "display_precision", (byte)3));

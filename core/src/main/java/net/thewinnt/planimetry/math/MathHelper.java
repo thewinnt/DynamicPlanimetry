@@ -38,6 +38,10 @@ public class MathHelper {
         return Math.abs((b.x - a.x)*(a.y - point.y) - (a.x - point.x)*(b.y - a.y)) / a.distanceTo(b);
     }
 
+    public static double distanceToLineSigned(Vec2 a, Vec2 b, Vec2 point) {
+        return ((b.x - a.x)*(a.y - point.y) - (a.x - point.x)*(b.y - a.y)) / a.distanceTo(b);
+    }
+
     public static double distanceToSegment(Vec2 a, Vec2 b, Vec2 point) {
         double distance = distanceToLine(a, b, point);
         double slope = (a.y - b.y) / (a.x - b.x);

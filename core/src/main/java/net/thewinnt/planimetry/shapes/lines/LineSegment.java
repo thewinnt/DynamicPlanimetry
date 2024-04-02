@@ -14,8 +14,11 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
+import net.thewinnt.planimetry.shapes.point.relative.LineSegmentCenter;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
+import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
@@ -83,6 +86,18 @@ public class LineSegment extends Line {
         EnclosingProperty b = new EnclosingProperty(this.b.getName(), this.b.getProperties());
         DisplayProperty length = new DisplayProperty(Component.translatable("property.line_segment.length"), () -> Component.number(this.a.getPosition().distanceTo(this.b.getPosition())));
         return List.of(a, b, length);
+    }
+
+    @Override
+    public Collection<Function<?>> getFunctions() {
+        Collection<Function<?>> output = super.getFunctions();
+        output.add(new BasicNamedFunction<>(drawing, this, s -> {
+            LineSegmentCenter center = new LineSegmentCenter(drawing, s);
+            center.setShouldRender(false);
+            drawing.addShape(center);
+            drawing.addShape(new AngledInfiniteLine(drawing, this, center, MathHelper.HALF_PI));
+        }, Component.translatable("function.line_segment.create_perpendicular_bisector"), Component.translatable("function.line_segment.create_perpendicular_bisector.action")));
+        return output;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package net.thewinnt.planimetry.shapes.factories;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.shapes.Circle;
@@ -15,7 +18,6 @@ public class CircleFactory extends ShapeFactory {
     private PointReference point = null;
     private boolean addCenter = true;
     private boolean addRadius;
-    private boolean addSecondaryPoint;
     private boolean keepRadius = true;
 
     public CircleFactory(DrawingBoard board) {
@@ -29,12 +31,12 @@ public class CircleFactory extends ShapeFactory {
             PointProvider center = getOrCreatePoint(x, y);
             this.addShape(new Circle(board.getDrawing(), center, point, keepRadius));
             if (addCenter) this.addShape(center);
-            if (addSecondaryPoint || addRadius) this.addShape(point);
+            this.addShape(point);
             if (addRadius) this.addShape(new LineSegment(board.getDrawing(), center, point));
             return false;
         } else if (this.point.getPoint() instanceof MousePoint) {
             this.point.setPoint(getOrCreatePoint(x, y));
-            this.point.shouldRender = false;
+            this.point.getPoint().setShouldRender(false);
         }
         return true;
     }
@@ -62,15 +64,6 @@ public class CircleFactory extends ShapeFactory {
         return this;
     }
 
-    public boolean getAddSecondaryPoint() {
-        return addSecondaryPoint;
-    }
-
-    public CircleFactory setAddSecondaryPoint(boolean addSecondaryPoint) {
-        this.addSecondaryPoint = addSecondaryPoint;
-        return this;
-    }
-
     public boolean getKeepRadius() {
         return keepRadius;
     }
@@ -83,5 +76,14 @@ public class CircleFactory extends ShapeFactory {
     @Override
     public Component getName() {
         return Component.translatable("shape.factory.circle");
+    }
+
+    @Override
+    public Collection<Component> getActionHint() {
+        if (point == null) {
+            return List.of(Component.translatable("shape.factory.hint.circle.choose_center"));
+        } else {
+            return List.of(Component.translatable("shape.factory.hint.circle.choose_radius"));
+        }
     }
 }

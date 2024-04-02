@@ -1,5 +1,8 @@
 package net.thewinnt.planimetry.shapes.factories;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.shapes.lines.Line;
@@ -37,5 +40,10 @@ public class ParallelLineFactory extends ShapeFactory {
     @Override
     public Component getName() {
         return Component.translatable("shape.factory.parallel_line");
+    }
+
+    @Override
+    public Collection<Component> getActionHint() {
+        return List.of(Component.translatable("shape.factory.hint.parallel_line.place"));
     }
 }

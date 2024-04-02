@@ -146,7 +146,7 @@ public class MultiPointLine extends Shape {
     @Override
     public Component getName() {
         if (nameOverride != null) return nameOverride;
-        ArrayList<Component> output = new ArrayList<>();
+        ArrayList<Component> output = new ArrayList<>(this.points.size());
         for (PointProvider i : this.points) {
             output.add(i.getNameComponent());
         }

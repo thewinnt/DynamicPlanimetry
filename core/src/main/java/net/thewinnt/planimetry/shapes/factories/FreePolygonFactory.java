@@ -1,5 +1,10 @@
 package net.thewinnt.planimetry.shapes.factories;
 
+import java.util.Collection;
+import java.util.List;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.ShapeData;
@@ -27,7 +32,7 @@ public class FreePolygonFactory extends ShapeFactory {
             this.point1 = getOrCreatePoint(x, y);
             this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
             this.line = new MultiPointLine(board.getDrawing(), point1, nextPoint);
-            board.addShape(point1);
+            this.addShape(point1);
             this.addShape(nextPoint);
             this.addShape(line);
             return false;
@@ -67,7 +72,24 @@ public class FreePolygonFactory extends ShapeFactory {
     }
 
     @Override
+    public void onRender(double mx, double my) {
+        if (this.line != null && this.line.points.size() >= 3 && (Gdx.input.isKeyJustPressed(Keys.ENTER) || Gdx.input.isKeyJustPressed(Keys.NUMPAD_ENTER))) {
+            finish();
+        }
+    }
+
+    @Override
     public Component getName() {
         return Component.translatable("Freeform polygon");
+    }
+
+    @Override
+    public Collection<Component> getActionHint() {
+        if (this.line == null) {
+            return List.of(Component.translatable("shape.factory.hint.free_polygon.start"));
+        } else if (this.line.points.size() < 3) {
+            return List.of(Component.translatable("shape.factory.hint.free_polygon.add_points"));
+        }
+        return List.of(Component.translatable("shape.factory.hint.free_polygon.add_points"), Component.translatable("shape.factory.hint.free_polygon.finish_creation"));
     }
 }

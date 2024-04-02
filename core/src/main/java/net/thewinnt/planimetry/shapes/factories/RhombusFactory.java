@@ -1,5 +1,8 @@
 package net.thewinnt.planimetry.shapes.factories;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.math.Vec2;
@@ -51,5 +54,10 @@ public class RhombusFactory extends ShapeFactory {
     @Override
     public Component getName() {
         return Component.translatable("shape.factory.rhombus");
+    }
+
+    @Override
+    public Collection<Component> getActionHint() {
+        return List.of(Component.literal("Don't use this"));
     }
 }

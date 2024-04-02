@@ -25,6 +25,7 @@ import net.thewinnt.planimetry.shapes.factories.CircleFactory;
 import net.thewinnt.planimetry.shapes.factories.FreePolygonFactory;
 import net.thewinnt.planimetry.shapes.factories.LimitedPolygonFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory;
+import net.thewinnt.planimetry.shapes.factories.MultiPointLineFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.factories.PointAngleMarkerFactory;
 import net.thewinnt.planimetry.shapes.factories.PointFactory;
@@ -100,6 +101,7 @@ public class EditorScreen extends FlatUIScreen {
         output.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                board.cancelCreation();
                 board.startCreation(factory.get());
             }
         });
@@ -116,6 +118,7 @@ public class EditorScreen extends FlatUIScreen {
         Button createLine = shapeCreationButton("ui.edit.create.infinite_line", Size.SMALL, () -> new LineFactory(board, LineType.INFINITE));
         Button createRay = shapeCreationButton("ui.edit.create.ray", Size.SMALL, () -> new LineFactory(board, LineType.RAY));
         Button createLineSegment = shapeCreationButton("ui.edit.create.line_segment", Size.SMALL, () -> new LineFactory(board, LineType.SEGMENT));
+        Button createMultiPointLine = shapeCreationButton("ui.edit.create.polygonal_chain", Size.SMALL, () -> new MultiPointLineFactory(board));
         Button createCircle = shapeCreationButton("ui.edit.create.circle", Size.SMALL, () -> new CircleFactory(board));
         Button createPolygon = shapeCreationButton("ui.edit.create.polygon", Size.SMALL, () -> new FreePolygonFactory(board));
         Button createTriangle = shapeCreationButton("ui.edit.create.triangle", Size.SMALL, () -> new LimitedPolygonFactory(board, 3));
@@ -178,7 +181,7 @@ public class EditorScreen extends FlatUIScreen {
         List<Actor> creations = new ArrayList<>();
         creations.add(createPoint);
         creations.add(createCircle);
-        creations.add(new DropdownLayout(List.of(createLine, createLineSegment, createRay), styles, Component.translatable("ui.edit.create.group.lines"), Size.SMALL, false));
+        creations.add(new DropdownLayout(List.of(createLine, createLineSegment, createRay, createMultiPointLine), styles, Component.translatable("ui.edit.create.group.lines"), Size.SMALL, false));
         creations.add(new DropdownLayout(List.of(createPolygon, createTriangle), styles, Component.translatable("ui.edit.create.group.polygons"), Size.SMALL, false));
         creations.add(new DropdownLayout(List.of(createPointAngleMarker), styles, Component.translatable("ui.edit.create.group.markers"), Size.SMALL, false));
         creation.setActor(new DropdownLayout(creations, styles, Component.translatable("ui.edit.create.title"), Size.SMALL, true));

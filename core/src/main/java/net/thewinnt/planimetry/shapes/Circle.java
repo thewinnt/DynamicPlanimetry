@@ -19,6 +19,7 @@ import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.factories.CircleTangentFactory;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
+import net.thewinnt.planimetry.shapes.point.relative.CirclePoint;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
@@ -28,6 +29,7 @@ import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -92,7 +94,7 @@ public class Circle extends Shape {
             if (!this.drawing.hasShape(this.center)) {
                 this.center.render(drawer, SelectionStatus.NONE, font, board);
             }
-            if (!this.drawing.hasShape(this.radiusPoint)) {
+            if (this.radiusPoint != null && !this.drawing.hasShape(this.radiusPoint)) {
                 this.radiusPoint.render(drawer, SelectionStatus.NONE, font, board);
             }
         }
@@ -100,10 +102,16 @@ public class Circle extends Shape {
 
     public void setRadiusPoint(PointProvider point) {
         if (this.radiusPoint != null) this.center.removeMovementListener(this.radiusMove);
-        this.radiusMove = point::move;
-        if (this.keepRadius) this.center.addMovementListener(radiusMove);
+        if (point != null) {
+            this.radiusMove = point::move;
+            if (this.keepRadius) this.center.addMovementListener(radiusMove);
+            this.radius = () -> point.getPosition().distanceTo(center.getPosition());
+        } else {
+            double radius = this.radius.get();
+            this.radius = () -> radius;
+            this.radiusMove = null;
+        }
         this.radiusPoint = point;
-        this.radius = () -> point.getPosition().distanceTo(center.getPosition());
     }
 
     public boolean getKeepRadius() {
@@ -157,11 +165,15 @@ public class Circle extends Shape {
     public Collection<Function<?>> getFunctions() {
         Collection<Function<?>> functions = new ArrayList<>();
         DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
-        if (this.radiusPoint != null && (!this.drawing.hasShape(this.radiusPoint) || !this.radiusPoint.shouldRender())) {
+        if (this.radiusPoint != null) {
             functions.add(new BasicNamedFunction<>(drawing, this, s -> {
-                drawing.addShape(radiusPoint);
-                radiusPoint.shouldRender = true;
-            }, Component.translatable("function.circle.add_radius_point"), Component.translatable("function.circle.add_radius_point.action")));
+                Component component = radiusPoint.getNameComponent();
+                PointProvider old = radiusPoint;
+                setRadiusPoint(null); // remove the radius point before it gets replaced
+                if (component instanceof NameComponent name) {
+                    drawing.replaceShape(old, new CirclePoint(drawing, s, MathHelper.polarAngle(center.getPosition(), old.getPosition()), name));
+                }
+            }, Component.translatable("function.circle.disconnect_radius"), Component.translatable("function.circle.disconnect_radius.action")));
         }
         functions.add(new BasicNamedFunction<>(drawing, this, s -> board.startCreation(new CircleTangentFactory(board, Circle.this)), Component.translatable("function.circle.create_tangent"), Component.translatable("function.circle.create_tangent.action")));
         functions.addAll(super.getFunctions());

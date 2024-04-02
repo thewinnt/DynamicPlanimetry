@@ -20,6 +20,7 @@ public class ShapeData {
     public static final ShapeDeserializer<TangentOffsetPoint> TANGENT_OFFSET_POINT = register("tangent_offset_point", TangentOffsetPoint::readNbt);
     public static final ShapeDeserializer<AngleOffsetPoint> ANGLE_OFFSET_POINT = register("angle_offset_point", AngleOffsetPoint::readNbt);
     public static final ShapeDeserializer<CirclePoint> CIRCLE_POINT = register("circle_point", CirclePoint::readNbt);
+    public static final ShapeDeserializer<LineSegmentCenter> LINE_SEGMENT_CENTER = register("line_segment_center", LineSegmentCenter::readNbt);
 
     // LINES
     public static final ShapeDeserializer<InfiniteLine> INFINITE_LINE = register("infinite_line", InfiniteLine::readNbt);

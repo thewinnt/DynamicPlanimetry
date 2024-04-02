@@ -1,5 +1,8 @@
 package net.thewinnt.planimetry.shapes.factories;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.math.MathHelper;
@@ -27,6 +30,7 @@ public class CircleTangentFactory extends ShapeFactory {
         if (getOrCreatePoint(x, y).getPoint() instanceof CirclePoint point) {
             this.newLine.a.setPoint(point);
         }
+        addShape(this.newLine.a);
         isDone = true;
         return true;
     }
@@ -44,5 +48,10 @@ public class CircleTangentFactory extends ShapeFactory {
     @Override
     public Component getName() {
         return Component.translatable("shape.factory.tangent", circle.getName());
+    }
+
+    @Override
+    public Collection<Component> getActionHint() {
+        return List.of(Component.translatable("shape.factory.hint.circle_tangent.place"));
     }
 }

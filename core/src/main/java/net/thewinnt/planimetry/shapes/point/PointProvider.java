@@ -1,6 +1,7 @@
 package net.thewinnt.planimetry.shapes.point;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -12,6 +13,7 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -22,7 +24,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public abstract class PointProvider extends Shape {
     protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
     protected NameComponent name;
-    public boolean shouldRender = true; // TODO: make this a property
+    protected final BooleanProperty shouldRender = new BooleanProperty(Component.translatable("property.point.should_render"), true); // TODO: make this a property
 
     public PointProvider(Drawing drawing) {
         super(drawing);
@@ -75,7 +77,11 @@ public abstract class PointProvider extends Shape {
 
     @Override
     public boolean shouldRender() {
-        return shouldRender;
+        return shouldRender.getValue();
+    }
+
+    public void setShouldRender(boolean shouldRender) {
+        this.shouldRender.setValue(shouldRender);
     }
 
     @Override
@@ -89,6 +95,10 @@ public abstract class PointProvider extends Shape {
         return name;
     }
 
+    public NameComponent getNameComponentNullable() {
+        return name;
+    }
+
     @Override
     public String getTypeName() {
         return "shape.point";
@@ -97,6 +107,16 @@ public abstract class PointProvider extends Shape {
     public void setName(NameComponent name) {
         this.name = name;
     }
+
+    @Override
+    public Collection<Property<?>> getProperties() {
+        Collection<Property<?>> properties = super.getProperties();
+        properties.add(shouldRender);
+        properties.addAll(moreProperties());
+        return properties;
+    }
+
+    protected abstract Collection<Property<?>> moreProperties();
 
     @Override
     public void replaceShape(Shape old, Shape neo) {} // most points don't have dependencies

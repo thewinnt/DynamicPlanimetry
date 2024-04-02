@@ -13,7 +13,10 @@ import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Circle;
+import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
+import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
+import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.NameComponentProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
@@ -107,9 +110,20 @@ public class CirclePoint extends PointProvider {
     }
 
     @Override
-    public Collection<Property<?>> getProperties() {
+    public Collection<Property<?>> moreProperties() {
         angleProperty.setValue(Settings.get().toUnit(angle));
         return List.of(circleProperty, angleProperty, nameProperty);
+    }
+
+    @Override
+    public Collection<Function<?>> getFunctions() {
+        Collection<Function<?>> output = super.getFunctions();
+        if (this.dependents.isEmpty()) {
+            output.add(new BasicNamedFunction<>(drawing, this, point -> {
+                drawing.replaceShape(point, new Point(drawing, getPosition(), getNameComponentNullable()));
+            }, Component.translatable("function.circle_point.disconnect"), Component.translatable("function.circle_point.disconnect.action")));
+        }
+        return output;
     }
 
     @Override
@@ -134,11 +148,11 @@ public class CirclePoint extends PointProvider {
         if (nbt.containsCompound("name")) {
             NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
             CirclePoint output = new CirclePoint(context.getDrawing(), circle, angle, name);
-            output.shouldRender = shouldRender;
+            output.setShouldRender(shouldRender);
             return output;
         }
         CirclePoint output = new CirclePoint(context.getDrawing(), circle, angle);
-        output.shouldRender = shouldRender;
+        output.setShouldRender(shouldRender);
         return output;
     }
 }

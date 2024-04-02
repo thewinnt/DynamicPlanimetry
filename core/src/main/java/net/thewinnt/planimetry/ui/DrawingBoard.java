@@ -87,8 +87,10 @@ public class DrawingBoard extends Actor {
                 if (creatingShape == null) {
                     setSelection(getHoveredShape(mx, my));
                 } else if (creatingShape.isDone() || creatingShape.click(event, xb(mx), yb(my))) {
-                    creatingShape.onFinish();
-                    creatingShape = null;
+                    if (creatingShape != null) { // it becomes null on finish() calls
+                        creatingShape.onFinish();
+                        creatingShape = null;
+                    }
                 }
                 event.handle();
             }
@@ -131,6 +133,8 @@ public class DrawingBoard extends Actor {
                     // if defaultIgnoreDependencies, inverts ignoreDependencies
                     selection.delete(onlyThis != selection.defaultIgnoreDependencies(), force);
                     return true;
+                } else if (keycode == Keys.ESCAPE && creatingShape != null) {
+                    cancelCreation();
                 }
                 return false;
             }
@@ -297,7 +301,15 @@ public class DrawingBoard extends Actor {
             font.getFont(50, Color.MAROON).draw(batch, "selected: " + selection, x(5), y(115));
         }
         if (creatingShape != null) {
+            final float lineHeight = font.getFont(Gdx.graphics.getHeight() / Size.MEDIUM.factor, Color.BLACK).getLineHeight();
             Component.translatable("ui.edit.board.creating_shape", creatingShape.getName()).draw(batch, font, Size.MEDIUM, Theme.current().textUI(), x(5), y(getHeight() - 5));
+            Component.translatable("ui.edit.board.creating_shape.cancel_hint").draw(batch, font, Size.MEDIUM, Theme.current().textUI(), x(5), y(getHeight() - 5 - lineHeight));
+            // TODO creation cancelling
+            float y = y(getHeight() - 5 - lineHeight);
+            for (Component i : creatingShape.getActionHint()) {
+                y -= lineHeight;
+                i.draw(batch, font, Size.MEDIUM, Theme.current().textUI(), x(5), y);
+            }
         }
     }
 
@@ -465,6 +477,22 @@ public class DrawingBoard extends Actor {
     public void startCreation(ShapeFactory factory) {
         this.creatingShape = factory;
         this.selection = null;
+    }
+
+    public void finishCreation() {
+        this.creatingShape.onFinish();
+        this.creatingShape = null;
+    }
+
+    public void cancelCreation() {
+        if (creatingShape != null) {
+            List<Shape> shapes = creatingShape.getSuggestedShapes();
+            for (int i = shapes.size() - 1; i >= 0; i--) {
+                shapes.get(i).delete(false, true);
+            }
+            creatingShape.onCancel();
+            creatingShape = null;
+        }
     }
 
     public void addSelectionListener(Consumer<Shape> listener) {

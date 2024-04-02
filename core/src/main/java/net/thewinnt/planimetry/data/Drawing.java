@@ -133,10 +133,12 @@ public class Drawing {
         for (Shape i : old.getDependencies()) {
             neo.addDependency(i);
             i.removeDepending(old);
+            i.replaceShape(old, neo);
         }
         for (Shape i : old.getDependingShapes()) {
             neo.addDepending(i);
             i.removeDependency(old);
+            i.replaceShape(old, neo);
         }
         // both must either be both points, or both not points since they go to different lists
         if (old instanceof PointProvider != neo instanceof PointProvider) {

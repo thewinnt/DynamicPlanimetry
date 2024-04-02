@@ -90,7 +90,7 @@ public class Point extends PointProvider {
     }
 
     @Override
-    public Collection<Property<?>> getProperties() {
+    public Collection<Property<?>> moreProperties() {
         if (nameOverride != null) return List.of(property);
         return List.of(property, componentProperty);
     }
@@ -110,7 +110,7 @@ public class Point extends PointProvider {
         nbt.putDouble("x", this.position.x);
         nbt.putDouble("y", this.position.y);
         nbt.put("name", name.toNbt());
-        NbtUtil.writeBoolean(nbt, "should_render", shouldRender);
+        NbtUtil.writeBoolean(nbt, "should_render", shouldRender());
         return nbt;
     }
 
@@ -121,11 +121,11 @@ public class Point extends PointProvider {
         if (nbt.containsCompound("name")) {
             NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
             Point output = new Point(context.getDrawing(), new Vec2(x, y), name);
-            output.shouldRender = shouldRender;
+            output.setShouldRender(shouldRender);
             return output;
         }
         Point output = new Point(context.getDrawing(), new Vec2(x, y));
-        output.shouldRender = shouldRender;
+        output.setShouldRender(shouldRender);
         return output;
     }
 }

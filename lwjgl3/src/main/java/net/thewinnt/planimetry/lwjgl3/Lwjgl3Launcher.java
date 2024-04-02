@@ -1,7 +1,6 @@
 package net.thewinnt.planimetry.lwjgl3;
 
 import java.io.File;
-import java.util.Arrays;
 import java.io.IOException;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;

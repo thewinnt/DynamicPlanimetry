@@ -1,5 +1,8 @@
 package net.thewinnt.planimetry.shapes.factories;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.Settings;
@@ -18,11 +21,15 @@ public class AngledLineFactory extends ShapeFactory {
 
     public AngledLineFactory(DrawingBoard board, Line originalLine, double angle) {
         super(board);
-        this.point = new PointReference(new MousePoint(board.getDrawing()));
+        this.point = new PointReference(createMousePoint());
         this.newLine = new AngledInfiniteLine(board.getDrawing(), originalLine, point, Settings.get().toRadians(angle));
         this.name = Component.translatable("shape.factory.angled_line", originalLine.getName());
         addShape(newLine);
         addShape(point);
+    }
+
+    protected MousePoint createMousePoint() {
+        return new MousePoint(board.getDrawing());
     }
 
     @Override
@@ -40,5 +47,10 @@ public class AngledLineFactory extends ShapeFactory {
     @Override
     public Component getName() {
         return name;
+    }
+
+    @Override
+    public Collection<Component> getActionHint() {
+        return List.of(Component.translatable("shape.factory.hint.angled_line.click"));
     }
 }

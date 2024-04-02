@@ -35,16 +35,16 @@ public class AngledInfiniteLine extends InfiniteLine {
     private double angle;
     private PointProvider point;
 
-    public AngledInfiniteLine(Drawing drawing, Line baseLine, PointProvider point, double angleDeg) {
-        super(drawing, point, new AngleOffsetPoint(drawing, point, Math.atan(baseLine.getSlope()) + angleDeg, 1, DUMMY_NAME));
+    public AngledInfiniteLine(Drawing drawing, Line baseLine, PointProvider point, double angleRad) {
+        super(drawing, point, new AngleOffsetPoint(drawing, point, Math.atan(baseLine.getSlope()) + angleRad, 1, DUMMY_NAME));
         this.b.getPoint().setNameOverride(HELPER_POINT);
-        this.b.getPoint().shouldRender = false;
+        this.b.getPoint().setShouldRender(false);
         this.base = baseLine;
         this.point = point;
-        this.angle = angleDeg;
+        this.angle = angleRad;
         this.sourceProperty = new ShapeProperty(SOURCE_PROPERTY, drawing, baseLine, shape -> shape != this && shape instanceof Line && !(shape instanceof AngledInfiniteLine));
         this.sourceProperty.addValueChangeListener(shape -> setBase((Line)shape)); // we know shape is a line, because we filtered it beforehand
-        this.angleProperty = new NumberProperty(ANGLE_PROPERTY, Settings.get().toUnit(angleDeg));
+        this.angleProperty = new NumberProperty(ANGLE_PROPERTY, Settings.get().toUnit(angleRad));
         this.angleProperty.addValueChangeListener(newAngle -> {
             AngledInfiniteLine.this.angle = Settings.get().toRadians(newAngle);
             ((AngleOffsetPoint)b.getPoint()).setAngle(Math.atan(base.getSlope()) + angle);

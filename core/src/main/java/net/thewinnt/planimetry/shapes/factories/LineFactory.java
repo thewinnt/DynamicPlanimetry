@@ -1,5 +1,8 @@
 package net.thewinnt.planimetry.shapes.factories;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.data.Drawing;
@@ -97,5 +100,14 @@ public class LineFactory extends ShapeFactory {
     @Override
     public Component getName() {
         return type.name;
+    }
+
+    @Override
+    public Collection<Component> getActionHint() {
+        if (point1 == null) {
+            return List.of(Component.translatable("shape.factory.hint.line.point1"));
+        } else {
+            return List.of(Component.translatable("shape.factory.hint.line.point2"));
+        }
     }
 }

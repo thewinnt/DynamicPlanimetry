@@ -1,5 +1,10 @@
 package net.thewinnt.planimetry.shapes.factories;
 
+import java.util.Collection;
+import java.util.List;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
@@ -10,7 +15,6 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class MultiPointLineFactory extends ShapeFactory {
-    // TODO finish this
     private PointProvider point1;
     private PointReference nextPoint;
     private MultiPointLine line;
@@ -26,7 +30,7 @@ public class MultiPointLineFactory extends ShapeFactory {
             this.point1 = getOrCreatePoint(x, y);
             this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
             this.line = new MultiPointLine(board.getDrawing(), point1, nextPoint);
-            board.addShape(point1);
+            this.addShape(point1);
             this.addShape(nextPoint);
             this.addShape(line);
             return false;
@@ -40,6 +44,10 @@ public class MultiPointLineFactory extends ShapeFactory {
             this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
             this.addShape(this.nextPoint);
             this.line.addPoint(this.nextPoint);
+            if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)) {
+                finish();
+                return true;
+            }
             return false;
         }
     }
@@ -50,13 +58,25 @@ public class MultiPointLineFactory extends ShapeFactory {
     }
 
     @Override
+    public void onRender(double mx, double my) {
+        if (Gdx.input.isKeyJustPressed(Keys.ENTER) || Gdx.input.isKeyJustPressed(Keys.NUMPAD_ENTER) && point1 != null) {
+            finish();
+        }
+    }
+
+    @Override
     public void onFinish() {
         this.line.points.remove(this.nextPoint);
         board.removeShape(this.nextPoint);
     }
 
     @Override
+    public Collection<Component> getActionHint() {
+        return List.of(Component.translatable("shape.factory.hint.polygonal_chain.add_points"), Component.translatable("shape.factory.hint.polygonal_chain.finish_creation"));
+    }
+
+    @Override
     public Component getName() {
-        return Component.translatable("Freeform polygon");
+        return Component.translatable("shape.factory.polygonal_chain");
     }
 }

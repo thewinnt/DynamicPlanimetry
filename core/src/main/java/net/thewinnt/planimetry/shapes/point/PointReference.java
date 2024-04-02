@@ -1,6 +1,7 @@
 package net.thewinnt.planimetry.shapes.point;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
@@ -95,6 +96,11 @@ public class PointReference extends PointProvider {
     }
 
     @Override
+    protected Collection<Property<?>> moreProperties() {
+        return List.of();
+    }
+
+    @Override
     public Component getName() {
         return this.point.getName();
     }
@@ -132,7 +138,7 @@ public class PointReference extends PointProvider {
 
     @Override
     public boolean shouldRender() {
-        return point.shouldRender() && this.shouldRender;
+        return point.shouldRender() && this.shouldRender.getValue();
     }
 
     @Override
