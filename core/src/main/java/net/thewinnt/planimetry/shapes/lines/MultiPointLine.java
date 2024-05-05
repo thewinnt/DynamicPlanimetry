@@ -12,10 +12,12 @@ import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
+import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
+import net.thewinnt.planimetry.shapes.polygons.Polygon;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.Property;
@@ -27,6 +29,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class MultiPointLine extends Shape {
     public final List<PointProvider> points;
+    private LineSegment[] segmentCache;
 
     public MultiPointLine(Drawing drawing, PointProvider... points) {
         super(drawing);
@@ -51,6 +54,7 @@ public class MultiPointLine extends Shape {
         this.points.add(point);
         this.addDependency(point);
         point.addDepending(this);
+        segmentCache = null;
     }
 
     public List<PointProvider> getPoints() {
@@ -81,7 +85,7 @@ public class MultiPointLine extends Shape {
     public double distanceToMouse(Vec2 point, DrawingBoard board) {
         double minDist = Double.MAX_VALUE;
         for (int i = 0; i < points.size() - 1; i++) {
-            double cache = MathHelper.distanceToLine(points.get(i).getPosition(), points.get(i + 1).getPosition(), point);
+            double cache = MathHelper.distanceToSegment(points.get(i).getPosition(), points.get(i + 1).getPosition(), point);
             if (cache < minDist) {
                 minDist = cache;
             }
@@ -93,7 +97,7 @@ public class MultiPointLine extends Shape {
     public double distanceToMouse(double x, double y, DrawingBoard board) {
         double minDist = Double.MAX_VALUE;
         for (int i = 0; i < points.size() - 1; i++) {
-            double cache = MathHelper.distanceToLine(points.get(i).getPosition(), points.get(i + 1).getPosition(), new Vec2(x, y));
+            double cache = MathHelper.distanceToSegment(points.get(i).getPosition(), points.get(i + 1).getPosition(), new Vec2(x, y));
             if (cache < minDist) {
                 minDist = cache;
             }
@@ -146,11 +150,11 @@ public class MultiPointLine extends Shape {
     @Override
     public Component getName() {
         if (nameOverride != null) return nameOverride;
-        ArrayList<Component> output = new ArrayList<>(this.points.size());
-        for (PointProvider i : this.points) {
-            output.add(i.getNameComponent());
+        Component[] output = new Component[this.points.size()];
+        for (int i = 0; i < output.length; i++) {
+            output[i] = this.points.get(i).getNameComponent();
         }
-        return Component.translatable(getTypeName(), output.toArray());
+        return Component.translatable(getTypeName(), Component.of(output));
     }
 
     @Override
@@ -158,6 +162,7 @@ public class MultiPointLine extends Shape {
         for (int i = 0; i < points.size(); i++) {
             if (points.get(i) == old) {
                 points.set(i, (PointProvider)neo);
+                segmentCache = null;
                 break;
             }
         }
@@ -216,5 +221,33 @@ public class MultiPointLine extends Shape {
     @Override
     public boolean canMove() {
         return true;
+    }
+
+    public LineSegment[] dummyLineSegments() {
+        if (segmentCache == null) {
+            if (this instanceof Polygon) {
+                segmentCache = new LineSegment[this.points.size()];
+                segmentCache[0] = new LineSegment(DUMMY_DRAWING, points.get(0), points.get(points.size()));
+                for (int i = 1; i < segmentCache.length; i++) {
+                    segmentCache[i] = new LineSegment(DUMMY_DRAWING, points.get(i - 1), points.get(i));
+                }
+            } else {
+                segmentCache = new LineSegment[this.points.size() - 1];
+                for (int i = 1; i < segmentCache.length; i++) {
+                    segmentCache[i - 1] = new LineSegment(DUMMY_DRAWING, points.get(i - 1), points.get(i));
+                }
+            }
+        }
+        return segmentCache;
+    }
+
+    @Override
+    public boolean intersects(AABB aabb) {
+        for (LineSegment i : dummyLineSegments()) {
+            for (LineSegment j : aabb.asLineSegments()) {
+                if (i.intersection(j).isPresent()) return true;
+            }
+        }
+        return false;
     }
 }

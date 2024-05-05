@@ -47,7 +47,6 @@ public class LineFactory extends ShapeFactory {
 
     @Override
     public boolean click(InputEvent event, double x, double y) {
-        this.board.setSelection(null);
         if (point2 == null) {
             this.point1 = getOrCreatePoint(x, y);
             this.point2 = new PointReference(new MousePoint(board.getDrawing()));

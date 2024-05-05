@@ -40,6 +40,7 @@ public class Drawing {
     private long creationTime;
     private long lastEditTime;
     private boolean changed = false;
+    private boolean isUnsaved = false;
     boolean isLoading = false;
 
     public Drawing() {
@@ -193,6 +194,7 @@ public class Drawing {
     public void update() {
         lastEditTime = System.currentTimeMillis();
         changed = true;
+        isUnsaved = true;
     }
 
     public boolean hasChanged() {
@@ -209,8 +211,9 @@ public class Drawing {
         return name;
     }
 
-    public void setName(String name) {
+    public Drawing setName(String name) {
         this.name = name;
+        return this;
     }
 
     public boolean shouldUseDashesForNaming() {
@@ -238,6 +241,10 @@ public class Drawing {
         } else {
             return Gdx.files.local("drawings/" + filename + ".dpd").path();
         }
+    }
+
+    public boolean isUnsaved() {
+        return isUnsaved;
     }
 
     public void addSwapListener(BiConsumer<Shape, Shape> listener) {
@@ -294,6 +301,7 @@ public class Drawing {
         }
         try {
             DynamicPlanimetry.NBT.toFile(nbt, file.file(), CompressionType.GZIP);
+            isUnsaved = false;
         } catch (IOException e) {
             Notifications.addNotification("Error saving file: " + e.getMessage(), 5000);
         }

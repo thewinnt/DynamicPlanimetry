@@ -31,7 +31,7 @@ public class MainMenuScreen extends FlatUIScreen {
         table.setFillParent(true);
 
         Table buttons = new Table();
-        
+
         // the font size is 201 because with 200 the letters 'a', 'c' and 'e' don't show up :(
         // painful, i know
         LabelStyle style_title = new LabelStyle(app.getBoldFont(201, Theme.current().textUI()), Theme.current().textUI());

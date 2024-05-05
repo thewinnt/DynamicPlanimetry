@@ -15,9 +15,11 @@ import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.data.SavingContext;
+import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.factories.CircleTangentFactory;
+import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.relative.CirclePoint;
 import net.thewinnt.planimetry.ui.DrawingBoard;
@@ -238,5 +240,15 @@ public class Circle extends Shape {
     @Override
     public boolean canMove() {
         return true;
+    }
+
+    @Override
+    public boolean intersects(AABB aabb) {
+        for (LineSegment i : aabb.asLineSegments()) {
+            if (MathHelper.distanceToLine(i.a.getPosition(), i.b.getPosition(), center.getPosition()) <= radius.get()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

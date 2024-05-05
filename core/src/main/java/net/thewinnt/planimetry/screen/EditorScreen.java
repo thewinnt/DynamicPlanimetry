@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -25,8 +27,8 @@ import net.thewinnt.planimetry.shapes.factories.CircleFactory;
 import net.thewinnt.planimetry.shapes.factories.FreePolygonFactory;
 import net.thewinnt.planimetry.shapes.factories.LimitedPolygonFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory;
-import net.thewinnt.planimetry.shapes.factories.MultiPointLineFactory;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
+import net.thewinnt.planimetry.shapes.factories.MultiPointLineFactory;
 import net.thewinnt.planimetry.shapes.factories.PointAngleMarkerFactory;
 import net.thewinnt.planimetry.shapes.factories.PointFactory;
 import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
@@ -36,6 +38,7 @@ import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.DropdownLayout;
+import net.thewinnt.planimetry.ui.properties.PropertyEntry;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.text.Component;
 
@@ -50,12 +53,13 @@ public class EditorScreen extends FlatUIScreen {
     private ScrollPane properties;
     private Table functions;
     private Table actions;
-    private Container<Window> saveOverlay;
+    private Container<Window> windowOverlays;
 
+    private Actor selectionToggle; 
     private TextButton exitToMenu;
     private TextButton goSettings;
     private TextButton save;
-    private Window saveDialog;
+    private Window currentDialog;
 
     public EditorScreen(DynamicPlanimetry app) {
         super(app);
@@ -74,7 +78,7 @@ public class EditorScreen extends FlatUIScreen {
         properties = new ScrollPane(null);
         functions = new Table();
         actions = new Table();
-        saveOverlay = new Container<>();
+        windowOverlays = new Container<>();
         rebuildUI(board.getSelection());
         settings = new ShapeSettingsBackground(drawer, creation, properties);
 
@@ -87,7 +91,7 @@ public class EditorScreen extends FlatUIScreen {
         stage.addActor(properties);
         stage.addActor(functions);
         stage.addActor(actions);
-        stage.addActor(saveOverlay);
+        stage.addActor(windowOverlays);
     }
 
     private Button leftAlignedButton(String translation, Size size, boolean active) {
@@ -108,7 +112,7 @@ public class EditorScreen extends FlatUIScreen {
         return output;
     }
 
-    public void rebuildUI(Shape selection) {
+    public void rebuildUI(List<Shape> selections) {
         // TABLES
         functions.reset();
         actions.reset();
@@ -124,6 +128,7 @@ public class EditorScreen extends FlatUIScreen {
         Button createTriangle = shapeCreationButton("ui.edit.create.triangle", Size.SMALL, () -> new LimitedPolygonFactory(board, 3));
         Button createPointAngleMarker = shapeCreationButton("ui.edit.create.angle_marker.point", Size.SMALL, () -> new PointAngleMarkerFactory(board));
 
+        selectionToggle = new PropertyEntry(Settings.get().ctrlSelection, styles, Size.SMALL);
         exitToMenu = new TextButton(DynamicPlanimetry.translate("ui.edit.exit_to_menu"), styles.getButtonStyle(Size.SMALL, true));
         goSettings = new TextButton(DynamicPlanimetry.translate("ui.edit.settings"), styles.getButtonStyle(Size.SMALL, true));
         save = new TextButton(DynamicPlanimetry.translate("ui.edit.save"), styles.getButtonStyle(Size.SMALL, true));
@@ -147,9 +152,9 @@ public class EditorScreen extends FlatUIScreen {
         save.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                saveDialog = new Window(DynamicPlanimetry.translate("ui.save.title"), styles.getWindowStyle(Size.MEDIUM));
-                saveDialog.getTitleLabel().getStyle().background = styles.pressed;
-                saveDialog.row().row();
+                currentDialog = new Window(" " + DynamicPlanimetry.translate("ui.save.title"), styles.getWindowStyle(Size.MEDIUM));
+                currentDialog.getTitleLabel().getStyle().background = styles.pressed;
+                currentDialog.row().row();
 
                 String willBeSavedAs = DynamicPlanimetry.translate("ui.save.filename", app.getDrawing().withFilename(app.getDrawing().getName(), false).getFilename());
                 Label filename = new Label(willBeSavedAs, styles.getLabelStyle(Size.VERY_SMALL));
@@ -166,15 +171,26 @@ public class EditorScreen extends FlatUIScreen {
                     public void changed(ChangeEvent event, Actor actor) {
                         app.getDrawing().setName(namePicker.getText());
                         app.getDrawing().save(namePicker.getText(), false);
-                        saveOverlay.setActor(null);
+                        windowOverlays.setActor(null);
                     }
                 });
 
-                saveDialog.add(new Label(DynamicPlanimetry.translate("ui.save.drawing_name"), styles.getLabelStyle(Size.SMALL))).pad(Gdx.graphics.getHeight() / 40f, 5, 0, 5);
-                saveDialog.add(namePicker).expand().fill().pad(Gdx.graphics.getHeight() / 40f + 5, 5, 0, 5).row();;
-                saveDialog.add(filename).colspan(2).pad(5).row();
-                saveDialog.add(save).colspan(2).pad(5);
-                saveOverlay.setActor(saveDialog);
+                TextButton cancel = new TextButton(DynamicPlanimetry.translate("ui.save.cancel"), styles.getButtonStyle(Size.SMALL, true));
+                cancel.addListener(new ChangeListener() {
+                    public void changed(ChangeEvent event, Actor actor) {
+                        windowOverlays.setActor(null);
+                    };
+                });
+
+                currentDialog.add(new Label(DynamicPlanimetry.translate("ui.save.drawing_name"), styles.getLabelStyle(Size.SMALL))).pad(Gdx.graphics.getHeight() / 40f, 5, 0, 5);
+                currentDialog.add(namePicker).expand().fill().pad(Gdx.graphics.getHeight() / 40f + 5, 5, 0, 5).row();
+                currentDialog.add(filename).colspan(2).pad(5).row();
+                HorizontalGroup group = new HorizontalGroup();
+                group.center().expand().pad(5).fill().space(5);
+                group.addActor(save);
+                group.addActor(cancel);
+                currentDialog.add(group).colspan(2).expand().fill();
+                windowOverlays.setActor(currentDialog);
             }
         });
         // ADDING TO TABLES
@@ -186,7 +202,8 @@ public class EditorScreen extends FlatUIScreen {
         creations.add(new DropdownLayout(List.of(createPointAngleMarker), styles, Component.translatable("ui.edit.create.group.markers"), Size.SMALL, false));
         creation.setActor(new DropdownLayout(creations, styles, Component.translatable("ui.edit.create.title"), Size.SMALL, true));
 
-        if (selection != null) {
+        if (selections.size() == 1) {
+            Shape selection = selections.get(0);
             selectedShapeName.setActor(new ComponentLabel(Component.translatable("ui.edit.properties.title"), app::getBoldFont, Size.MEDIUM));
             properties.setActor(new PropertyLayout(selection.getProperties(), styles, selection.getName(), Size.SMALL, true));
             Collection<Function<?>> shapeFunctions = selection.getFunctions();
@@ -197,11 +214,15 @@ public class EditorScreen extends FlatUIScreen {
                     functions.add(i.setupActors(styles)).expandX().fillX().row();
                 }
             }
+        } else if (selections.size() > 1) {
+            selectedShapeName.setActor(new ComponentLabel(Component.translatable("ui.edit.selection.multiple", selections.size()), app::getBoldFont, Size.MEDIUM));
+            properties.setActor(null);
         } else {
             selectedShapeName.setActor(null);
             properties.setActor(null);
         }
 
+        actions.add(selectionToggle).expand().fill().colspan(3).pad(5, 5, 5, 0).row();
         actions.add(exitToMenu).expand().fill().pad(5, 5, 5, 0);
         actions.add(goSettings).expand().fill().pad(5, 5, 5, 0);
         actions.add(save).expand().fill().pad(5);
@@ -253,9 +274,9 @@ public class EditorScreen extends FlatUIScreen {
         actions.setSize(height * 0.5f, actions.getPrefHeight());
         actions.setPosition(delimiter, 0);
 
-        saveOverlay.setSize(width, height);
-        saveOverlay.setPosition(0, 0);
-        saveOverlay.center().fill(false);
+        windowOverlays.setSize(width, height);
+        windowOverlays.setPosition(0, 0);
+        windowOverlays.center().fill(false);
     }
 
     @Override public void customRender() {}

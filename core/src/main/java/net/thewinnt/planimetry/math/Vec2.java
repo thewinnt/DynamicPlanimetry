@@ -87,6 +87,16 @@ public class Vec2 {
         return new Vec2(this.x + (other.x - this.x) * progress, this.y + (other.y - this.y) * progress);
     }
 
+    public Vec2 withX(double x) {
+        if (x == this.x) return this;
+        return new Vec2(x, this.y);
+    }
+
+    public Vec2 withY(double y) {
+        if (y == this.y) return this;
+        return new Vec2(this.x, y);
+    }
+
     @Override
     public boolean equals(Object o) {
         return o != null && o instanceof Vec2 other && other.x == this.x && other.y == this.y;

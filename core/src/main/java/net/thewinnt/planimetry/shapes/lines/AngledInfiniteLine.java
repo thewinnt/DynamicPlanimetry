@@ -42,7 +42,7 @@ public class AngledInfiniteLine extends InfiniteLine {
         this.base = baseLine;
         this.point = point;
         this.angle = angleRad;
-        this.sourceProperty = new ShapeProperty(SOURCE_PROPERTY, drawing, baseLine, shape -> shape != this && shape instanceof Line && !(shape instanceof AngledInfiniteLine));
+        this.sourceProperty = new ShapeProperty(SOURCE_PROPERTY, drawing, baseLine, shape -> shape instanceof Line && !(shape instanceof AngledInfiniteLine));
         this.sourceProperty.addValueChangeListener(shape -> setBase((Line)shape)); // we know shape is a line, because we filtered it beforehand
         this.angleProperty = new NumberProperty(ANGLE_PROPERTY, Settings.get().toUnit(angleRad));
         this.angleProperty.addValueChangeListener(newAngle -> {

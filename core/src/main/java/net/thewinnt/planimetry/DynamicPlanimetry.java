@@ -9,13 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.zip.Deflater;
 import java.util.MissingFormatArgumentException;
+import java.util.zip.Deflater;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -77,7 +77,9 @@ public class DynamicPlanimetry extends Game {
         new Color(0xAAAAAAFF), // grid hint
         new Color(0x808080FF), // grid center
         new Color(0x202020FF), // angle marker
-        new Color(0x202020FF)  // angle marker text
+        new Color(0x202020FF), // angle marker text
+        new Color(0x00C0FFFF), // selection box outline
+        new Color(0x00C0FF40)  // selection box fill
     );
 
     public static final Theme THEME_DARK = new Theme(
@@ -106,7 +108,9 @@ public class DynamicPlanimetry extends Game {
         new Color(0x505050FF), // grid hint
         new Color(0x000000FF), // grid center
         new Color(0xE0E0E0FF), // angle marker
-        new Color(0xF0F0F0FF)  // angle marker text
+        new Color(0xF0F0F0FF), // angle marker text
+        new Color(0x00C0FFFF), // selection box outline
+        new Color(0x00C0FF40)  // selection box fill
     );
 
     public static final Theme[] BUILT_IN_THEMES = new Theme[]{THEME_LIGHT, THEME_DARK};
@@ -118,6 +122,7 @@ public class DynamicPlanimetry extends Game {
 
     // settings
     public static final Settings SETTINGS = new Settings();
+    private static float DISPLAY_SCALING = 1;
     private final Map<String, Language> languages = new HashMap<>();
     private final SettingsIO settingsFile;
 
@@ -220,8 +225,10 @@ public class DynamicPlanimetry extends Game {
                 languages.put(language.getId(), language);
             }
         }
-        for (Language i : languages.values()) {
-            System.out.println(i);
+        if (isDebug()) {
+            for (Language i : languages.values()) {
+                System.out.println(i);
+            }
         }
         SETTINGS.initLanguages(languages);
     }
@@ -256,8 +263,8 @@ public class DynamicPlanimetry extends Game {
         super.pause();
     }
 
-    public BitmapFont getFont(int size, Color color) {
-        return getFont(new FontType(size, color));
+    public BitmapFont getFont(float size, Color color) {
+        return getFont(new FontType((int)(size), color));
     }
 
     public BitmapFont getFont(FontType type) {
@@ -274,8 +281,8 @@ public class DynamicPlanimetry extends Game {
         return out;
     }
 
-    public BitmapFont getBoldFont(int size, Color color) {
-        return getBoldFont(new FontType(size, color));
+    public BitmapFont getBoldFont(float size, Color color) {
+        return getBoldFont(new FontType((int)(size), color));
     }
 
     public BitmapFont getBoldFont(FontType type) {
@@ -352,6 +359,7 @@ public class DynamicPlanimetry extends Game {
     }
 
     public static DynamicPlanimetry getInstance() {
+        if (Gdx.app == null) return null;
         return (DynamicPlanimetry)Gdx.app.getApplicationListener();
     }
 
@@ -369,5 +377,13 @@ public class DynamicPlanimetry extends Game {
         } catch (MissingFormatArgumentException e) {
             throw new IllegalArgumentException(String.format("Exception formatting string %s, arguments: %s", string, Arrays.toString(args)), e);
         }
+    }
+    
+    public static float getDisplayScaling() {
+        return DISPLAY_SCALING;
+    }
+
+    /* package-private */ static void setDisplayScaling(float displayScaling) {
+        DynamicPlanimetry.DISPLAY_SCALING = displayScaling;
     }
 }

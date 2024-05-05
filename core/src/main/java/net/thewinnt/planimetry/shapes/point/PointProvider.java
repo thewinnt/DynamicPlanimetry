@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import com.badlogic.gdx.graphics.Color;
 
 import net.thewinnt.planimetry.data.Drawing;
+import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -24,7 +25,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public abstract class PointProvider extends Shape {
     protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
     protected NameComponent name;
-    protected final BooleanProperty shouldRender = new BooleanProperty(Component.translatable("property.point.should_render"), true); // TODO: make this a property
+    protected final BooleanProperty shouldRender = new BooleanProperty(Component.translatable("property.point.should_render"), true);
 
     public PointProvider(Drawing drawing) {
         super(drawing);
@@ -65,6 +66,11 @@ public abstract class PointProvider extends Shape {
     @Override
     public double distanceToMouse(double x, double y, DrawingBoard board) {
         return getPosition().distanceTo(x, y);
+    }
+
+    @Override
+    public boolean intersects(AABB aabb) {
+        return aabb.contains(getPosition());
     }
 
     public void addMovementListener(Consumer<Vec2> listener) {

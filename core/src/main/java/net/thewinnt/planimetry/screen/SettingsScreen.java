@@ -55,11 +55,11 @@ public class SettingsScreen extends FlatUIScreen {
         this.title.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), Align.top);
         this.goBack.setPosition(10, Gdx.graphics.getHeight() - 10, Align.topLeft);
         this.settings.setPosition(10, 10);
-        this.settings.setSize(Gdx.graphics.getWidth() - 20, Gdx.graphics.getHeight() - this.title.getPrefHeight());
+        this.settings.setSize(Gdx.graphics.getWidth() - 20, Gdx.graphics.getHeight() - this.title.getPrefHeight() - 10);
 
         this.settings.setActor(DynamicPlanimetry.SETTINGS.getLayout(styles));
     }
-    
+
     @Override public void addActorsAboveFps() {}
     @Override public void customRender() {}
 }

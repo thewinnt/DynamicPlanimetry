@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
@@ -78,5 +79,13 @@ public class MultiPointLineFactory extends ShapeFactory {
     @Override
     public Component getName() {
         return Component.translatable("shape.factory.polygonal_chain");
+    }
+
+    @Override
+    public List<Shape> getShapeWhitelist() {
+        if (point1 != null) {
+            return List.of(point1);
+        }
+        return List.of();
     }
 }

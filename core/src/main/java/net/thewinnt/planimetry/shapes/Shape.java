@@ -10,6 +10,7 @@ import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
+import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
@@ -21,6 +22,8 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public abstract class Shape implements ComponentRepresentable {
+    /** A dummy drawing for any shapes used for math */
+    public static final Drawing DUMMY_DRAWING = new Drawing().setName("$DP_DUMMY");
     /** A list of shapes that this shape depends on */
     protected final ArrayList<Shape> dependencies = new ArrayList<>();
     /** A list of shapes that depend on this shape */
@@ -38,6 +41,11 @@ public abstract class Shape implements ComponentRepresentable {
     public abstract boolean contains(double x, double y);
     public abstract double distanceToMouse(Vec2 point, DrawingBoard board);
     public abstract double distanceToMouse(double x, double y, DrawingBoard board);
+    public abstract boolean intersects(AABB aabb);
+    //  {
+    //     // TODO implement sometime
+    //     return false;
+    // }
 
     /**
      * Renders the shape

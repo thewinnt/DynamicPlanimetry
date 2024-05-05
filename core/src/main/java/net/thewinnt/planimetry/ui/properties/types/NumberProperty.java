@@ -29,6 +29,7 @@ public class NumberProperty extends Property<Double> {
     private OptionalDouble minValue = OptionalDouble.empty();
     private Predicate<Double> filter;
     private boolean isWhole;
+    private boolean liveUpdates = true;
 
     public NumberProperty() {
         super(Component.empty());
@@ -56,7 +57,6 @@ public class NumberProperty extends Property<Double> {
     @Override
     public void setValue(Double value) {
         if (filter == null || filter.test(value)) {
-            this.value = value;
             if (isWhole) {
                 value = (double)Math.round(value);
             }
@@ -65,9 +65,16 @@ public class NumberProperty extends Property<Double> {
             } else if (minValue.isPresent() && value < minValue.getAsDouble()) {
                 value = minValue.getAsDouble();
             }
-            for (Consumer<Double> i : this.listeners) {
-                i.accept(value);
+            this.value = value;
+            if (liveUpdates) {
+                realUpdate();
             }
+        }
+    }
+
+    private void realUpdate() {
+        for (Consumer<Double> i : this.listeners) {
+            i.accept(value);
         }
     }
 
@@ -113,6 +120,7 @@ public class NumberProperty extends Property<Double> {
                     Notifications.addNotification("Invalid number: " + doubleField.getText(), 1000);
                 }
                 doubleField.setText(String.format((Locale)null, "%." + DynamicPlanimetry.SETTINGS.getDisplayPresicion() + "f", value));
+                realUpdate();
             }
 
             @Override
@@ -143,19 +151,19 @@ public class NumberProperty extends Property<Double> {
         this.listeners.add(listener);
     }
 
-    public NumberProperty withMax(OptionalDouble maxValue) {
-        if (minValue.isPresent() && maxValue.isPresent() && maxValue.getAsDouble() < minValue.getAsDouble()) {
+    public NumberProperty withMax(double maxValue) {
+        if (minValue.isPresent() && maxValue < minValue.getAsDouble()) {
             throw new IllegalArgumentException("Max value must not be smaller than min value");
         }
-        this.maxValue = maxValue;
+        this.maxValue = OptionalDouble.of(maxValue);
         return this;
     }
 
-    public NumberProperty withMin(OptionalDouble minValue) {
-        if (maxValue.isPresent() && minValue.isPresent() && minValue.getAsDouble() > maxValue.getAsDouble()) {
+    public NumberProperty withMin(double minValue) {
+        if (maxValue.isPresent() && minValue > maxValue.getAsDouble()) {
             throw new IllegalArgumentException("Min value must not be larger than max value");
         }
-        this.minValue = minValue;
+        this.minValue = OptionalDouble.of(minValue);
         return this;
     }
 
@@ -166,6 +174,11 @@ public class NumberProperty extends Property<Double> {
 
     public NumberProperty filtered(Predicate<Double> filter) {
         this.filter = filter;
+        return this;
+    }
+
+    public NumberProperty noLiveUpdates() {
+        this.liveUpdates = false;
         return this;
     }
 }

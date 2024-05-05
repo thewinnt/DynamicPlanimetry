@@ -5,10 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalDouble;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.data.Language;
@@ -22,29 +20,25 @@ import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.Property;
-import net.thewinnt.planimetry.ui.properties.PropertyEntry;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
 import net.thewinnt.planimetry.ui.properties.types.ActionProperty;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
+import net.thewinnt.planimetry.ui.properties.types.OptionProperty;
 import net.thewinnt.planimetry.ui.properties.types.SelectionProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class Settings {
-    public static final CustomLayout PROPERTY_LAYOUT = new CustomLayout() {
-        @Override
-        public void layout(Actor actor, PropertyEntry entry) {
-            actor.setBounds((Gdx.graphics.getWidth() - 20) * 3 / 4, 2, (Gdx.graphics.getWidth() - 20) / 4 - 10, entry.getHeight() - 4);
-        }
-    };
+    public static final CustomLayout PROPERTY_LAYOUT = (actor, entry) -> actor.setBounds((Gdx.graphics.getWidth() - 20) * 3 / 4, 2, (Gdx.graphics.getWidth() - 20) / 4 - 10, entry.getHeight() - 4);
     private final SelectionProperty<Theme> theme = new SelectionProperty<>(DynamicPlanimetry.THEME_LIGHT, Component.translatable("settings.theme"), DynamicPlanimetry.BUILT_IN_THEMES);
-    private final NumberProperty displayPresicion = new NumberProperty(Component.translatable("settings.display_precision"), 3).withMin(OptionalDouble.of(1)).withMax(OptionalDouble.of(127)).requireWholeNumbers(true);
+    private final NumberProperty displayPresicion = new NumberProperty(Component.translatable("settings.display_precision"), 3).withMin(1).withMax(127).requireWholeNumbers(true);
     private final SelectionProperty<AngleType> angleUnits = new SelectionProperty<>(AngleType.DEGREES, Component.translatable("settings.angle_unit"), AngleType.values());
     private final SelectionProperty<ShapeMovementPredicate> moveShapes = new SelectionProperty<>(ShapeMovementPredicate.ONLY_POINTS, Component.translatable("settings.move_without_selection"), ShapeMovementPredicate.values());
     private final BooleanProperty showGrid = new BooleanProperty(Component.translatable("settings.show_grid"), true);
     private final BooleanProperty isDebug = new BooleanProperty(Component.translatable("settings.debug_mode"), false);
     private final BooleanProperty fullscreen = new BooleanProperty(Component.translatable("settings.fullscreen"), false);
+    private final NumberProperty displayScaling = new NumberProperty(Component.translatable("settings.scaling"), 1).withMin(0.125).withMax(8).noLiveUpdates();
     private SelectionProperty<Language> language;
     private final ActionProperty reloadLanguages = new ActionProperty(Component.translatable("settings.reload_languages"), Component.translatable("settings.reload_languages.action"), () -> {
         if (Gdx.app != null) {
@@ -54,6 +48,7 @@ public class Settings {
             app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
         }
     });
+    public final OptionProperty ctrlSelection = new OptionProperty(Component.translatable("settings.use_ctrl_for_selection"), true).setOnTrue(Component.translatable("settings.use_ctrl_for_selection.true")).setOnFalse(Component.translatable("settings.use_ctrl_for_selection.false"));
     private String currentLanguage;
     private byte mathPrecision = -23;
     private SortingType lastSortingType = SortingType.BY_EDITING_TIME;
@@ -65,6 +60,7 @@ public class Settings {
         angleUnits.layoutOverride = PROPERTY_LAYOUT;
         moveShapes.layoutOverride = PROPERTY_LAYOUT;
         reloadLanguages.layoutOverride = PROPERTY_LAYOUT;
+        displayScaling.layoutOverride = PROPERTY_LAYOUT;
         theme.addValueChangeListener(theme -> {
             if (Gdx.app != null) {
                 DynamicPlanimetry app = DynamicPlanimetry.getInstance();
@@ -77,6 +73,12 @@ public class Settings {
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
             } else {
                 Gdx.graphics.setWindowedMode(1280, 720);
+            }
+        });
+        displayScaling.addValueChangeListener(value -> {
+            DynamicPlanimetry.setDisplayScaling(value.floatValue());
+            if (Gdx.app != null) {
+                DynamicPlanimetry.getInstance().settingsScreen.show();
             }
         });
     }
@@ -156,7 +158,7 @@ public class Settings {
     }
 
     public PropertyLayout getLayout(StyleSet styles) {
-        ArrayList<Property<?>> properties = new ArrayList<>(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen, language));
+        ArrayList<Property<?>> properties = new ArrayList<>(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen, language, displayScaling));
         if (isDebug()) {
             properties.add(isDebug);
             properties.add(reloadLanguages);
@@ -204,9 +206,11 @@ public class Settings {
             this.mathPrecision = NbtUtil.getOptionalByte(nbt, "math_precision", (byte)-23);
             this.showGrid.setValue(NbtUtil.getOptionalBoolean(nbt, "show_grid", true));
             this.lastSortingType = SortingType.valueOf(NbtUtil.getOptionalString(nbt, "last_sorting_type", "by_editing_time").toUpperCase());
-            this.lastSortingOrder = NbtUtil.getOptionalBoolean(nbt, "is_reverse_sort", false);
+            this.lastSortingOrder = NbtUtil.getOptionalBoolean(nbt, "is_reverse_sort", true);
             this.currentLanguage = NbtUtil.getOptionalString(nbt, "language", "ru_ru");
             this.isDebug.setValue(NbtUtil.getOptionalBoolean(nbt, "debug_mode", false));
+            this.displayScaling.setValue(NbtUtil.getOptionalDouble(nbt, "display_scaling", 1));
+            this.ctrlSelection.setValue(NbtUtil.getOptionalBoolean(nbt, "ctrl_selection", true));
         } catch (Exception e) {
             Notifications.addNotification(DynamicPlanimetry.translate("error.settings.load_failed", e.getMessage()), 15000);
             e.printStackTrace();
@@ -226,6 +230,8 @@ public class Settings {
         NbtUtil.writeBoolean(nbt, "is_reverse_sort", lastSortingOrder);
         NbtUtil.writeBoolean(nbt, "debug_mode", isDebug.getValue());
         nbt.putString("language", currentLanguage);
+        nbt.putDouble("display_scaling", displayScaling.getValue());
+        NbtUtil.writeBoolean(nbt, "ctrl_selection", ctrlSelection.getValue());
         try {
             DynamicPlanimetry.NBT.toFile(nbt, file);
         } catch (IOException e) {

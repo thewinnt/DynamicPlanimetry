@@ -32,7 +32,9 @@ public record Theme(
     Color gridHint,
     Color gridCenter,
     Color angleMarker,
-    Color textAngleMarker
+    Color textAngleMarker,
+    Color selectionOutline,
+    Color selectionFill
 ) implements ComponentRepresentable {
     public static Theme current() {
         return DynamicPlanimetry.SETTINGS.getTheme();

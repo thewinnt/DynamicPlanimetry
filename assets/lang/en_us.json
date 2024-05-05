@@ -72,8 +72,12 @@
     "settings.move_without_selection": "Move without selection",
     "settings.reload_languages.action": "Reload",
     "settings.reload_languages": "Reload languages",
+    "settings.scaling": "GUI scale",
     "settings.show_grid": "Show grid",
     "settings.theme": "Theme",
+    "settings.use_ctrl_for_selection": "Drag action",
+    "settings.use_ctrl_for_selection.true": "Panning",
+    "settings.use_ctrl_for_selection.false": "Selecting",
     "shape.angle_marker.point": "Angle %1$s%2$s%3$s",
     "shape.circle_tangent": "Tangent to circle %1$s at point %2$s",
     "shape.circle": "Circle %s",
@@ -165,11 +169,14 @@
     "ui.main.load": "Load",
     "ui.main.new_drawing": "New drawing",
     "ui.main.settings": "Settings",
+    "ui.save.cancel": "Cancel",
     "ui.save.drawing_name": "Drawing name",
     "ui.save.filename": "Will be saved in %s",
     "ui.save.save": "Save",
     "ui.save.title": "Saving",
     "ui.settings.exit": "< Back",
-    "ui.settings.title": "Settings"
+    "ui.settings.title": "Settings",
+    "true": "<true>",
+    "false": "<false>"
   }
 }

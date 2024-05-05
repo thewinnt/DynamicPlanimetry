@@ -71,6 +71,10 @@ public abstract class ShapeFactory {
         return addingShapes;
     };
 
+    public List<Shape> getShapeWhitelist() {
+        return List.of();
+    }
+
     /**
      * Call this to finish the shape creation early. {@link #onFinish()} will be called after this.
      */

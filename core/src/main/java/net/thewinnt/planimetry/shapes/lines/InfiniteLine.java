@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.shapes.lines;
 
+import java.util.Optional;
 import java.util.function.DoubleFunction;
 
 import com.badlogic.gdx.graphics.Color;
@@ -76,6 +77,20 @@ public class InfiniteLine extends Line {
     @Override
     public String getTypeName() {
         return "shape.infinite_line";
+    }
+
+    @Override
+    public Optional<Vec2> intersection(Line other) {
+        switch (other.getType()) {
+            case INFINITE:
+                return intersectInf(other);
+            case RAY:
+            case SEGMENT:
+                return intersectInf(other).filter(other::contains);
+            default:
+                break;
+        }
+        return Optional.empty();
     }
 
     @Override

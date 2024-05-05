@@ -41,7 +41,7 @@ public class PropertyLayout extends WidgetGroup {
             this.list = null;
         }
 
-        // pane.setupOverscroll(Gdx.graphics.getHeight() / Size.MEDIUM.factor * 1.1f, 10, 200);
+        // pane.setupOverscroll(Gdx.graphics.getHeight() / Size.MEDIUM.getFactor() * 1.1f, 10, 200);
 
         this.propertyList = new VerticalGroup().top().left().expand().fill().pad(2, 5, 2, 5);
         this.propertyList.setFillParent(true);

@@ -1,6 +1,7 @@
 package net.thewinnt.planimetry.shapes.lines;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.DoubleFunction;
 import java.util.stream.Stream;
 

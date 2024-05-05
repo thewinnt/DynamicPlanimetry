@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.drawable.CheckboxDrawable;
 import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -90,44 +91,44 @@ public class StyleSet {
         windowStyles.clear();
         for (Size size : Size.values()) {
             // text button styles
-            TextButtonStyle textButtonStyle = new TextButtonStyle(normal, pressed, normal, font.getFont(height / size.factor, Theme.current().textButton()));
+            TextButtonStyle textButtonStyle = new TextButtonStyle(normal, pressed, normal, font.getFont(height / size.getFactor(), Theme.current().textButton()));
             textButtonStyle.over = over;
             textButtonStyle.checkedOver = over;
             buttonStyles.put(new StyleType(size, true), textButtonStyle);
-            textButtonStyle = new TextButtonStyle(disabled, disabled, disabled, font.getFont(height / size.factor, Theme.current().textInactive()));
+            textButtonStyle = new TextButtonStyle(disabled, disabled, disabled, font.getFont(height / size.getFactor(), Theme.current().textInactive()));
             buttonStyles.put(new StyleType(size, false), textButtonStyle);
 
             // toggleable text button styles
-            textButtonStyle = new TextButtonStyle(normal, pressed, pressed, font.getFont(height / size.factor, Theme.current().textButton()));
+            textButtonStyle = new TextButtonStyle(normal, pressed, pressed, font.getFont(height / size.getFactor(), Theme.current().textButton()));
             textButtonStyle.over = over;
             textButtonStyle.checkedOver = normal;
             textButtonStyle.checkedDown = over;
             buttonStylesToggleable.put(size, textButtonStyle);
 
             // text field styles
-            TextFieldStyle textFieldStyle = new TextFieldStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), cursor, selection, field);
+            TextFieldStyle textFieldStyle = new TextFieldStyle(font.getFont(height / size.getFactor(), Theme.current().textButton()), Theme.current().textButton(), cursor, selection, field);
             textFieldStyle.messageFontColor = Color.GRAY;
-            textFieldStyle.messageFont = font.getFont(height / size.factor, Color.GRAY);
+            textFieldStyle.messageFont = font.getFont(height / size.getFactor(), Color.GRAY);
             textFieldStyles.put(new StyleType(size, true), textFieldStyle);
-            textFieldStyle = new TextFieldStyle(font.getFont(height / size.factor, Theme.current().inactive()), Theme.current().inactive(), cursorInactive, selectionInactive, fieldInactive);
+            textFieldStyle = new TextFieldStyle(font.getFont(height / size.getFactor(), Theme.current().inactive()), Theme.current().inactive(), cursorInactive, selectionInactive, fieldInactive);
             textFieldStyle.messageFontColor = Color.GRAY;
-            textFieldStyle.messageFont = font.getFont(height / size.factor, Color.GRAY);
+            textFieldStyle.messageFont = font.getFont(height / size.getFactor(), Color.GRAY);
             textFieldStyles.put(new StyleType(size, false), textFieldStyle);
 
             // list styles
             ScrollPaneStyle paneStyle = new ScrollPaneStyle(fullBlack, fullBlack, fullWhite, fullBlack, fullWhite);
-            ListStyle innerStyle = new ListStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), Theme.current().textButton(), selectionOver);
+            ListStyle innerStyle = new ListStyle(font.getFont(height / size.getFactor(), Theme.current().textButton()), Theme.current().textButton(), Theme.current().textButton(), selectionOver);
             innerStyle.over = selectionOver;
             innerStyle.background = normal;
             innerStyle.down = new RectangleDrawable(drawer).withColors(Theme.current().pressed(), null);
-            SelectBoxStyle listStyle = new SelectBoxStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), normal, paneStyle, innerStyle);
+            SelectBoxStyle listStyle = new SelectBoxStyle(font.getFont(height / size.getFactor(), Theme.current().textButton()), Theme.current().textButton(), normal, paneStyle, innerStyle);
             listStyle.backgroundOver = over;
             listStyle.backgroundDisabled = disabled;
             listStyle.backgroundOpen = pressed;
             listStyles.put(size, listStyle);
 
             // label styles
-            labelStyles.put(size, new LabelStyle(font.getFont(height / size.factor, Theme.current().textUI()), null));
+            labelStyles.put(size, new LabelStyle(font.getFont(height / size.getFactor(), Theme.current().textUI()), null));
 
             // checkbox styles
             ButtonStyle checkBoxStyle = new ButtonStyle(normal, pressed, checkboxNormal);
@@ -139,7 +140,7 @@ public class StyleSet {
             checkboxStyles.put(new StyleType(size, false), checkBoxStyle);
 
             // window styles
-            this.windowStyles.put(size, new WindowStyle(font.getFont(height / size.factor, Theme.current().textButton()), Theme.current().textButton(), normal));
+            this.windowStyles.put(size, new WindowStyle(font.getFont(height / size.getFactor(), Theme.current().textButton()), Theme.current().textButton(), normal));
         }
         // scroll pane style
         this.scrollPaneStyleNoBg = new ScrollPaneStyle(null, fullOutline, fullMain, fullOutline, fullMain);
@@ -197,7 +198,7 @@ public class StyleSet {
         SMALL(26),
         VERY_SMALL(36);
 
-        public final int factor;
+        private final int factor;
 
         private Size(int factor) {
             this.factor = factor;
@@ -221,6 +222,10 @@ public class StyleSet {
                 case LARGE -> VERY_LARGE;
                 default -> SUPER_LARGE;
             };
+        }
+
+        public float getFactor() {
+            return factor / DynamicPlanimetry.getDisplayScaling();
         }
     }
 }

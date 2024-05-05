@@ -12,10 +12,18 @@
         },
         {
             "type": "java",
-            "name": "Lwjgl3Launcher",
+            "name": "Run app",
             "request": "launch",
             "mainClass": "net.thewinnt.planimetry.lwjgl3.Lwjgl3Launcher",
             "projectName": "DynamicPlanimetry-lwjgl3"
+        },
+        {
+            "type": "java",
+            "name": "Debug app",
+            "request": "launch",
+            "mainClass": "net.thewinnt.planimetry.lwjgl3.Lwjgl3Launcher",
+            "projectName": "DynamicPlanimetry-lwjgl3",
+            "args": "--debug"
         }
     ]
 }

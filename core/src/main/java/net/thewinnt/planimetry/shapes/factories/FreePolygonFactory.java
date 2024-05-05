@@ -8,6 +8,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
@@ -91,5 +92,13 @@ public class FreePolygonFactory extends ShapeFactory {
             return List.of(Component.translatable("shape.factory.hint.free_polygon.add_points"));
         }
         return List.of(Component.translatable("shape.factory.hint.free_polygon.add_points"), Component.translatable("shape.factory.hint.free_polygon.finish_creation"));
+    }
+    
+    @Override
+    public List<Shape> getShapeWhitelist() {
+        if (point1 != null) {
+            return List.of(point1);
+        }
+        return List.of();
     }
 }

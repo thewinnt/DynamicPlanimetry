@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.Drawing;
+import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -39,12 +40,14 @@ public abstract class AngleMarker extends Shape {
     @Override public boolean contains(double x, double y) { return false; }
     @Override public void move(Vec2 delta) {}
     @Override public void move(double dx, double dy) {}
+    @Override public boolean intersects(AABB aabb) { return false; }
 
     @Override
     public double distanceToMouse(Vec2 point, DrawingBoard board) {
         Vec2 start = getStartPoint();
+        point = point.lerp(start, (30 / board.getScale()) / point.distanceTo(start));
         double distance = point.distanceTo(start);
-        if (MathHelper.isAngleBetween(getAngleA(), getAngleB(), MathHelper.polarAngle(start, point))) return distance / 2;
+        if (MathHelper.isAngleBetween(getAngleA(), getAngleB(), MathHelper.polarAngle(start, point))) return distance;
         return Double.POSITIVE_INFINITY;
     }
 
@@ -60,7 +63,7 @@ public abstract class AngleMarker extends Shape {
         output.add(displayValue);
         return output;
     }
-    
+
     @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
         // init variables
@@ -93,26 +96,26 @@ public abstract class AngleMarker extends Shape {
 
         // draw arc
         if (MathHelper.roughlyEquals(angFull, MathHelper.HALF_PI)) {
-            Vec2 targPoint = board.boardToGlobal(MathHelper.continueFromAngle(center, centerAngle, 24 / board.getScale() * Math.sqrt(2)));
-            Vec2 p1 = board.boardToGlobal(MathHelper.continueFromAngle(center, angleA, 24 / board.getScale()));
-            Vec2 p2 = board.boardToGlobal(MathHelper.continueFromAngle(center, angleB, 24 / board.getScale()));
+            Vec2 targPoint = board.boardToGlobal(MathHelper.continueFromAngle(center, centerAngle, 30 / board.getScale() * Math.sqrt(2)));
+            Vec2 p1 = board.boardToGlobal(MathHelper.continueFromAngle(center, angleA, 30 / board.getScale()));
+            Vec2 p2 = board.boardToGlobal(MathHelper.continueFromAngle(center, angleB, 30 / board.getScale()));
             drawer.path(Array.with(p1.toVector2f(), targPoint.toVector2f(), p2.toVector2f()), getThickness(board.getScale()), true);
         } else {
             if (angle < 0) {
-                drawer.arc(x, y, 24, angleA, -angle, getThickness(board.getScale()));
+                drawer.arc(x, y, 30, angleA, -angle, getThickness(board.getScale()));
             } else if (angle < Math.PI && angleB >= angleA) {
-                drawer.arc(x, y, 24, angleA, (float)(Math.PI - angle), getThickness(board.getScale()));
+                drawer.arc(x, y, 30, angleA, (float)(Math.PI - angle), getThickness(board.getScale()));
             } else if (angle < Math.PI && angleB < angleA) {
-                drawer.arc(x, y, 24, angleB, angle, getThickness(board.getScale()));
+                drawer.arc(x, y, 30, angleB, angle, getThickness(board.getScale()));
             } else {
-                drawer.arc(x, y, 24, angleA, (float)(MathHelper.DOUBLE_PI - angle), getThickness(board.getScale()));
+                drawer.arc(x, y, 30, angleA, (float)(MathHelper.DOUBLE_PI - angle), getThickness(board.getScale()));
             }
         }
-        
+
         // draw text
         if (displayValue.getValue()) {
             Component marker = Component.angle(angFull);
-            Vec2 pos = MathHelper.continueFromAngle(new Vec2(x, y), centerAngle, 20);
+            Vec2 pos = MathHelper.continueFromAngle(new Vec2(x, y), centerAngle, 30);
             Vec2 size = marker.getSize(font, Size.SMALL);
             double yMul, xMul;
             // offset the text for beauty
@@ -126,7 +129,7 @@ public abstract class AngleMarker extends Shape {
                 xMul = 0;
                 yMul = (Math.sin(centerAngle) * Math.sqrt(2) + 1) / 2;
             } else {
-                xMul = Math.sin(centerAngle + MathHelper.QUARTER_PI); 
+                xMul = Math.sin(centerAngle + MathHelper.QUARTER_PI);
                 yMul = 0;
             }
             Vec2 pos2 = pos.add(size.x * xMul, size.y * yMul);

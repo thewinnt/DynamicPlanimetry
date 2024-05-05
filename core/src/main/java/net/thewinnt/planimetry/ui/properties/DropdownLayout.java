@@ -41,7 +41,7 @@ public class DropdownLayout extends WidgetGroup {
             this.list = null;
         }
 
-        // pane.setupOverscroll(Gdx.graphics.getHeight() / Size.MEDIUM.factor * 1.1f, 10, 200);
+        // pane.setupOverscroll(Gdx.graphics.getHeight() / Size.MEDIUM.getFactor() * 1.1f, 10, 200);
 
         this.actorList = new VerticalGroup().top().left().expand().fill().pad(0, 5, 3, 5);
         this.actorList.setFillParent(true);

@@ -30,8 +30,8 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
 
     @Override
     public Vec2 drawGetSize(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
-        BitmapFont fontMain = font.getFont(Gdx.graphics.getHeight() / size.factor, color);
-        BitmapFont fontAdditional = font.getFont(Gdx.graphics.getHeight() / size.factor / 2, color);
+        BitmapFont fontMain = font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()), color);
+        BitmapFont fontAdditional = font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()) / 2, color);
         GlyphLayout layoutMain = fontMain.draw(batch, ALLOWED_NAMES[letter], x, y);
         float x2 = layoutMain.width + 2;
         float indexLength;
@@ -47,8 +47,8 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
     
     @Override
     public void draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
-        BitmapFont fontMain = font.getFont(Gdx.graphics.getHeight() / size.factor, color);
-        BitmapFont fontAdditional = font.getFont(Gdx.graphics.getHeight() / size.factor / 2, color);
+        BitmapFont fontMain = font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()), color);
+        BitmapFont fontAdditional = font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()) / 2, color);
         GlyphLayout layoutMain = fontMain.draw(batch, ALLOWED_NAMES[letter], x, y);
         float x2 = layoutMain.width + 2;
         if (index != 0) {
@@ -59,8 +59,8 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
 
     @Override
     public Vec2 getSize(FontProvider font, Size size) {
-        BitmapFont fontMain = font.getFont(Gdx.graphics.getHeight() / size.factor, Theme.current().textButton());
-        BitmapFont fontAdditional = font.getFont(Gdx.graphics.getHeight() / size.factor / 2, Theme.current().textButton());
+        BitmapFont fontMain = font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()), Theme.current().textButton());
+        BitmapFont fontAdditional = font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()) / 2, Theme.current().textButton());
         float w1 = FontUtils.getTextLength(fontMain, ALLOWED_NAMES[letter]) + 2;
         float w2;
         if (index != 0) {

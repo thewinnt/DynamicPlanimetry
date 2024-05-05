@@ -4,37 +4,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
-import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.layout.BasicLayout;
 import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
-import net.thewinnt.planimetry.ui.properties.layout.SquareLayout;
 import net.thewinnt.planimetry.ui.text.Component;
 
-public class BooleanProperty extends Property<Boolean> {
+public class OptionProperty extends BooleanProperty {
     private final List<Consumer<Boolean>> listeners = new ArrayList<>();
+    private Component onTrue = Component.translatable("true");
+    private Component onFalse = Component.translatable("false");
     private boolean value;
 
-    public BooleanProperty() {
+    public OptionProperty() {
         super(Component.empty());
     }
 
-    public BooleanProperty(boolean value) {
+    public OptionProperty(boolean value) {
         this();
         this.value = value;
     }
 
-    public BooleanProperty(Component name) {
+    public OptionProperty(Component name) {
         super(name);
     }
 
-    public BooleanProperty(Component name, boolean value) {
+    public OptionProperty(Component name, boolean value) {
         super(name);
         this.value = value;
     }
@@ -57,36 +57,38 @@ public class BooleanProperty extends Property<Boolean> {
         }
     }
 
+    public OptionProperty setOnTrue(Component onTrue) {
+        this.onTrue = onTrue;
+        return this;
+    }
+
+    public OptionProperty setOnFalse(Component onFalse) {
+        this.onFalse = onFalse;
+        return this;
+    }
+
     @Override
     public Table getActorSetup(StyleSet styles, Size size) {
         Table table = new Table();
-        Button checkbox = new Button(styles.getCheckboxStyle(size, true)) {
-            @Override
-            public float getPrefHeight() {
-                return Gdx.graphics.getHeight() / size.getFactor();
-            }
-
-            @Override
-            public float getPrefWidth() {
-                return Gdx.graphics.getHeight() / size.getFactor();
-            }
-        };
-        checkbox.setChecked(value);
-        checkbox.addListener(new ChangeListener() {
+        String text = value ? onTrue.toString() : onFalse.toString();
+        TextButton button = new TextButton(text, styles.getButtonStyle(size, true));
+        button.setChecked(value);
+        button.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                value = checkbox.isChecked();
+                value = button.isChecked();
+                button.setText(value ? onTrue.toString() : onFalse.toString());
                 for (Consumer<Boolean> i : listeners) {
                     i.accept(value);
                 }
             }
         });
-        table.add(checkbox).expand().fill();
+        table.add(button).expand().fill();
         return table;
     }
 
     @Override
     public CustomLayout getLayout() {
-        return SquareLayout.INSTANCE;
+        return BasicLayout.INSTANCE;
     }
 }
