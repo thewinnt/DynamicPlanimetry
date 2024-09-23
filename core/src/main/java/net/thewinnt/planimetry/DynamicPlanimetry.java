@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -255,7 +256,9 @@ public class DynamicPlanimetry extends Game {
         for (BitmapFont i : fonts_bold.values()) {
             i.dispose();
         }
-        SETTINGS.toNbt(settingsFile.getSettingsFile());
+        if (settingsFile != null) {
+            SETTINGS.toNbt(settingsFile.getSettingsFile());
+        }
     }
 
     @Override
@@ -378,7 +381,7 @@ public class DynamicPlanimetry extends Game {
             throw new IllegalArgumentException(String.format("Exception formatting string %s, arguments: %s", string, Arrays.toString(args)), e);
         }
     }
-    
+
     public static float getDisplayScaling() {
         return DISPLAY_SCALING;
     }

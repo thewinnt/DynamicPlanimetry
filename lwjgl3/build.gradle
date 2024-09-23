@@ -32,7 +32,6 @@ dependencies {
   implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
   implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
   implementation project(':core')
-  implementation "dev.dewy:nbt:1.5.1"
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-backend-lwjgl3:$graalHelperVersion"
@@ -49,14 +48,6 @@ run {
 
   if (os.contains('mac')) jvmArgs += "-XstartOnFirstThread"
 }
-
-task appDebug {
-  doLast {
-    run.args = ["--debug"]
-  }
-}
-
-appDebug.finalizedBy run
 
 jar {
 // sets the name of the .jar file this produces to the name of the game or app, with the version after.

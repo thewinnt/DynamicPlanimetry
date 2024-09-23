@@ -34,11 +34,11 @@ configure(subprojects - project(':android')) {
   // From https://lyze.dev/2021/04/29/libGDX-Internal-Assets-List/
   // The article can be helpful when using assets.txt in your project.
   tasks.register('generateAssetList') {
-    inputs.dir("${project.rootDir}/assets/")
-    // projectFolder/assets
-    File assetsFolder = new File("${project.rootDir}/assets/")
-    // projectFolder/assets/assets.txt
-    File assetsFile = new File(assetsFolder, "assets.txt")
+    inputs.dir("${project.rootDir}/assets/lang")
+    // projectFolder/assets/lang
+    File assetsFolder = new File("${project.rootDir}/assets/lang")
+    // projectFolder/assets/lang/langs.txt
+    File assetsFile = new File(assetsFolder, "langs.txt")
     // delete that file in case we've already created it
     assetsFile.delete()
 
@@ -58,7 +58,7 @@ configure(subprojects - project(':android')) {
 
 subprojects {
   version = '$projectVersion'
-  ext.appName = 'Dynamic Planimetry'
+  ext.appName = 'DynamicPlanimetry'
   repositories {
     mavenCentral()
     maven { url 'https://s01.oss.sonatype.org' }
@@ -70,4 +70,4 @@ subprojects {
   }
 }
 
-eclipse.project.name = 'Dynamic Planimetry' + '-parent'
+eclipse.project.name = 'DynamicPlanimetry' + '-parent'
