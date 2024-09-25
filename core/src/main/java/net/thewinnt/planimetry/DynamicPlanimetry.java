@@ -1,6 +1,5 @@
 package net.thewinnt.planimetry;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ import dev.dewy.nbt.Nbt;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.Language;
-import net.thewinnt.planimetry.data.SettingsIO;
+import net.thewinnt.planimetry.data.PlatformAbstractions;
 import net.thewinnt.planimetry.screen.EditorScreen;
 import net.thewinnt.planimetry.screen.FileSelectionScreen;
 import net.thewinnt.planimetry.screen.FlatUIScreen;
@@ -125,7 +124,7 @@ public class DynamicPlanimetry extends Game {
     public static final Settings SETTINGS = new Settings();
     private static float DISPLAY_SCALING = 1;
     private final Map<String, Language> languages = new HashMap<>();
-    private final SettingsIO settingsFile;
+    private static PlatformAbstractions PLATFORM;
 
     // data
     private Drawing currentDrawing;
@@ -167,10 +166,10 @@ public class DynamicPlanimetry extends Game {
     public static final DateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
     public static final DateFormat AUTOSAVE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss.SSS");
 
-    public DynamicPlanimetry(CompoundTag settings, SettingsIO io, boolean forceDebug) {
+    public DynamicPlanimetry(CompoundTag settings, PlatformAbstractions platform, boolean forceDebug) {
         super();
         SETTINGS.fromNbt(settings);
-        this.settingsFile = io;
+        DynamicPlanimetry.PLATFORM = platform;
         if (forceDebug) {
             SETTINGS.setDebug();
         }
@@ -256,8 +255,8 @@ public class DynamicPlanimetry extends Game {
         for (BitmapFont i : fonts_bold.values()) {
             i.dispose();
         }
-        if (settingsFile != null) {
-            SETTINGS.toNbt(settingsFile.getSettingsFile());
+        if (PLATFORM != null) {
+            SETTINGS.toNbt(PLATFORM.getSettingsFile());
         }
     }
 
@@ -364,6 +363,10 @@ public class DynamicPlanimetry extends Game {
     public static DynamicPlanimetry getInstance() {
         if (Gdx.app == null) return null;
         return (DynamicPlanimetry)Gdx.app.getApplicationListener();
+    }
+
+    public static PlatformAbstractions platform() {
+        return DynamicPlanimetry.PLATFORM;
     }
 
     public static boolean isDebug() {

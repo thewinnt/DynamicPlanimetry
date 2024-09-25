@@ -40,7 +40,7 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication(CompoundTag settings, boolean debug) {
-        return new Lwjgl3Application(new DynamicPlanimetry(settings, () -> new File("./settings.dat"), debug), getDefaultConfiguration());
+        return new Lwjgl3Application(new DynamicPlanimetry(settings, new DesktopPlatform(), debug), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

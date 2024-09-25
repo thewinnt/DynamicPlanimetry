@@ -105,7 +105,7 @@ public class DrawingBoard extends Actor {
                 if (creatingShape == null) {
                     Shape hovered = getHoveredShape(mx, my);
                     if (hovered != null) {
-                        if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT)) { 
+                        if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT)) {
                             addSelection(getHoveredShape(mx, my));
                         } else {
                             setSelection(List.of(getHoveredShape(mx, my)));
@@ -528,8 +528,10 @@ public class DrawingBoard extends Actor {
 
     public void setSelection(List<Shape> shapes) {
         selection.clear();
-        if (shapes.stream().allMatch(drawing::hasShape)) {
-            selection.addAll(shapes);
+        if (shapes != null) {
+            if (shapes.stream().allMatch(drawing::hasShape)) {
+                selection.addAll(shapes);
+            }
         }
         for (Consumer<List<Shape>> i : this.selectionListeners) {
             i.accept(selection);

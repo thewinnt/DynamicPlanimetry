@@ -107,16 +107,18 @@ public class FileSelectionScreen extends FlatUIScreen {
                 app.setScreen(DynamicPlanimetry.MAIN_MENU);
             }
         });
-        this.openSaveFolder.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                try {
-                    java.awt.Desktop.getDesktop().open(new File(Gdx.files.getLocalStoragePath() + "drawings"));
-                } catch (IOException e) {
-                    Notifications.addNotification(DynamicPlanimetry.translate("error.load_file.cannot_open_folder", e.getMessage()), 5000);
+        if (DynamicPlanimetry.platform().canOpenDrawingFolder()) {
+            this.openSaveFolder.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    try {
+                        DynamicPlanimetry.platform().openDrawingFolder();
+                    } catch (Exception e) {
+                        Notifications.addNotification(DynamicPlanimetry.translate("error.load_file.cannot_open_folder", e.getMessage()), 5000);
+                    }
                 }
-            }
-        });
+            });
+        }
 
         this.update.addListener(new ChangeListener() {
             @Override
@@ -227,7 +229,9 @@ public class FileSelectionScreen extends FlatUIScreen {
         sortingTable.add(new PropertyEntry(isReverse, styles, Size.MEDIUM)).expand().fill().left();
 
         controlPanel.reset();
-        controlPanel.add(openSaveFolder).expand().fill().pad(5).uniform();
+        if (DynamicPlanimetry.platform().canOpenDrawingFolder()) {
+            controlPanel.add(openSaveFolder).expand().fill().pad(5).uniform();
+        }
         controlPanel.add(open).expand().fill().pad(5).uniform();
         if (isRenaming) {
             controlPanel.add(nameField).expand().fill().pad(5).uniform();
