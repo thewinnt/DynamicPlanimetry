@@ -10,6 +10,7 @@ import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
+import net.thewinnt.planimetry.data.registry.Identifier;
 import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.DrawingBoard;
@@ -187,7 +188,7 @@ public abstract class Shape implements ComponentRepresentable {
     public static Shape fromNbt(CompoundTag nbt, LoadingContext context) {
         String type = nbt.getString("type").getValue();
         long id = nbt.getLong("id").getValue();
-        Shape shape = ShapeData.getDeserializer(type).deserialize(nbt, context);
+        Shape shape = ShapeData.getDeserializer(new Identifier(type)).deserialize(nbt, context);
         shape.setId(id);
         if (nbt.containsCompound("name_override")) {
             shape.setNameOverride(Component.fromNbt(nbt.getCompound("name_override")));
@@ -198,7 +199,7 @@ public abstract class Shape implements ComponentRepresentable {
     public final CompoundTag toNbt(SavingContext context) {
         CompoundTag nbt = this.writeNbt(context);
         nbt.putLong("id", this.id);
-        nbt.putString("type", ShapeData.getShapeType(this.getDeserializer()));
+        nbt.putString("type", ShapeData.getShapeType(this.getDeserializer()).toString());
         if (nameOverride != null) {
             nbt.put("name_override", nameOverride.toNbt());
         }

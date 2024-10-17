@@ -159,7 +159,7 @@ public class Settings {
 
     public PropertyLayout getLayout(StyleSet styles) {
         ArrayList<Property<?>> properties = new ArrayList<>(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen, language, displayScaling));
-        if (isDebug()) {
+        if (isDebug() || DynamicPlanimetry.platform().forceShowDebug()) {
             properties.add(isDebug);
             properties.add(reloadLanguages);
         }

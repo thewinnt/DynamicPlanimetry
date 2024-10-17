@@ -1,4 +1,4 @@
-package net.thewinnt.planimetry.data;
+package net.thewinnt.planimetry.platform;
 
 import java.io.File;
 
@@ -7,4 +7,5 @@ public interface PlatformAbstractions {
     boolean forceShowDebug();
     boolean canOpenDrawingFolder();
     void openDrawingFolder();
+    boolean isSmallScreen();
 }

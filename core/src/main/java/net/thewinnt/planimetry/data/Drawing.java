@@ -2,10 +2,7 @@ package net.thewinnt.planimetry.data;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -16,6 +13,7 @@ import dev.dewy.nbt.io.CompressionType;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import dev.dewy.nbt.tags.collection.ListTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.data.update.DataUpdater;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
@@ -264,10 +262,13 @@ public class Drawing {
         output.putString("name", name);
         output.putLong("creation_time", creationTime);
         output.putLong("last_edit_time", lastEditTime);
+        output.putInt("data_version", DynamicPlanimetry.DATA_VERSION);
         return output;
     }
 
     public static Drawing fromNbt(CompoundTag nbt) {
+        nbt = DataUpdater.updateDrawing(nbt); // will do stuff in the future
+        if (nbt == null) return null;
         String name = nbt.getString("name").getValue();
         long creationTime = nbt.getLong("creation_time").getValue();
         long lastEditTime = nbt.getLong("last_edit_time").getValue();
@@ -288,6 +289,27 @@ public class Drawing {
         this.withFilename(filename, isAbsolute).save();
     }
 
+    public void saveAs(File file) {
+        try {
+            Random random = new Random();
+            while (file.exists()) {
+                file = new File(randomizeName(file.getPath(), random));
+            }
+            DynamicPlanimetry.NBT.toFile(this.toNbt(), file, CompressionType.GZIP);
+        } catch (IOException e) {
+            Notifications.addNotification("Error saving file: " + e.getMessage(), 5000);
+            e.printStackTrace();
+        }
+    }
+
+    private static String randomizeName(String path, Random random) {
+        if (path.endsWith(".dpd")) {
+            path = path.substring(0, path.length() - 4) + random.nextInt() + ".dpd";
+            return path;
+        }
+        return path + random.nextInt();
+    }
+
     public void save() {
         CompoundTag nbt = this.toNbt();
         FileHandle file;
@@ -304,6 +326,7 @@ public class Drawing {
             isUnsaved = false;
         } catch (IOException e) {
             Notifications.addNotification("Error saving file: " + e.getMessage(), 5000);
+            e.printStackTrace();
         }
     }
 
@@ -313,6 +336,17 @@ public class Drawing {
             return Drawing.fromNbt(nbt).withFilename(filenameAbsolute, true);
         } catch (IOException e) {
             Notifications.addNotification("Error loading file: " + e.getMessage(), 5000);
+            return null;
+        }
+    }
+
+    public static Drawing load(File file) {
+        try {
+            CompoundTag nbt = DynamicPlanimetry.NBT.fromFile(file);
+            return Drawing.fromNbt(nbt).withFilename(file.getAbsolutePath(), true);
+        } catch (IOException e) {
+            Notifications.addNotification("Error loading file: " + e.getMessage(), 5000);
+            e.printStackTrace();
             return null;
         }
     }

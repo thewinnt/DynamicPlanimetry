@@ -2,7 +2,7 @@ package net.thewinnt.planimetry.lwjgl3;
 
 import com.badlogic.gdx.Gdx;
 
-import net.thewinnt.planimetry.data.PlatformAbstractions;
+import net.thewinnt.planimetry.platform.PlatformAbstractions;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -23,7 +23,7 @@ public class DesktopPlatform implements PlatformAbstractions {
 
     @Override
     public boolean canOpenDrawingFolder() {
-        return true;
+        return false;
     }
 
     @Override
@@ -33,5 +33,10 @@ public class DesktopPlatform implements PlatformAbstractions {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean isSmallScreen() {
+        return false;
     }
 }

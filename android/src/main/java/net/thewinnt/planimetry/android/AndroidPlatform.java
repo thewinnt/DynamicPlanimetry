@@ -30,4 +30,9 @@ public class AndroidPlatform implements PlatformAbstractions {
 
     @Override
     public void openDrawingFolder() {}
+
+    @Override
+    public boolean isSmallScreen() {
+        return true;
+    }
 }

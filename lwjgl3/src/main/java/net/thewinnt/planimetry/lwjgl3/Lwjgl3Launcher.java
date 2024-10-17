@@ -10,6 +10,7 @@ import dev.dewy.nbt.Nbt;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Notifications;
+import org.lwjgl.glfw.GLFWDropCallback;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -40,7 +41,7 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication(CompoundTag settings, boolean debug) {
-        return new Lwjgl3Application(new DynamicPlanimetry(settings, new DesktopPlatform(), debug), getDefaultConfiguration());
+        return new Lwjgl3Application(new DynamicPlanimetry(settings, new DesktopPlatform(), new DesktopIO(), debug), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

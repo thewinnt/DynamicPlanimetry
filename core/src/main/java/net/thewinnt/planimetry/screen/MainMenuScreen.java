@@ -36,7 +36,7 @@ public class MainMenuScreen extends FlatUIScreen {
         // painful, i know
         LabelStyle style_title = new LabelStyle(app.getBoldFont(201, Theme.current().textUI()), Theme.current().textUI());
         Label title = new Label("Dynamic Planimetry", style_title);
-        Label version = new Label(Component.literal("v. 0.1"), style_fps);
+        Label version = new Label(Component.literal(DynamicPlanimetry.APP_VERSION), style_fps);
 
         TextButtonStyle buttonStyle = styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true);
         TextButton create = new TextButton(app.getDrawing() == null ? CREATE_DRAWING.toString() : NEW_DRAWING.toString(), buttonStyle);

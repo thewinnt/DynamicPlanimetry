@@ -1,8 +1,13 @@
 package net.thewinnt.planimetry.screen;
 
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.nio.file.Files;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -19,6 +24,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import com.sun.nio.file.ExtendedCopyOption;
+import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.data.Drawing;
@@ -46,6 +53,8 @@ public class FileSelectionScreen extends FlatUIScreen {
     // control buttons
     private Table controlPanel;
     private TextButton openSaveFolder;
+    private TextButton exportFile;
+    private TextButton importFile;
     private TextButton rename;
     private TextButton update;
     private TextButton open;
@@ -88,9 +97,11 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.pane = new ScrollPane(files, paneStyle);
 
         this.openSaveFolder = new TextButton(DynamicPlanimetry.translate("ui.load_file.open_folder"), styles.getButtonStyle(Size.MEDIUM, true));
+        this.exportFile = new TextButton(DynamicPlanimetry.translate("ui.load_file.export"), styles.getButtonStyle(Size.MEDIUM, false));
+        this.importFile = new TextButton(DynamicPlanimetry.translate("ui.load_file.import"), styles.getButtonStyle(Size.MEDIUM, true));
         this.rename = new TextButton(DynamicPlanimetry.translate("ui.load_file.rename"), styles.getButtonStyle(Size.MEDIUM, false));
         this.update = new TextButton(DynamicPlanimetry.translate("ui.load_file.update"), styles.getButtonStyle(Size.MEDIUM, true));
-        this.open = new TextButton(DynamicPlanimetry.translate("ui.load_file.open_file"), styles.getButtonStyle(Size.MEDIUM, true));
+        this.open = new TextButton(DynamicPlanimetry.translate("ui.load_file.open_file"), styles.getButtonStyle(Size.MEDIUM, false));
 
         this.nameField = new TextField("", styles.getTextFieldStyle(Size.MEDIUM, true));
         this.setName = new TextButton(DynamicPlanimetry.translate("ui.load_file.rename.done"), styles.getButtonStyle(Size.MEDIUM, true));
@@ -118,7 +129,47 @@ public class FileSelectionScreen extends FlatUIScreen {
                     }
                 }
             });
+        } else {
+            this.exportFile.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    if (selection != null) {
+                        File file = DynamicPlanimetry.io().suggestSave();
+                        if (file != null && (!file.exists() || file.canWrite())) {
+                            CompoundTag nbt = selection.toNbt();
+                            try {
+                                DynamicPlanimetry.NBT.toFile(nbt, file);
+                            } catch (IOException e) {
+                                Notifications.addNotification(DynamicPlanimetry.translate("error.load_file.export", e.getMessage()), 0);
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            });
         }
+
+        this.importFile.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                List<File> file = DynamicPlanimetry.io().suggestOpen();
+                if (file != null && !file.isEmpty()) {
+                    for (File i : file) {
+                        if (i != null && i.canRead()) {
+                            Path drawingPath = Path.of(Gdx.files.getLocalStoragePath(), "drawings", i.getName());
+                            System.out.println(drawingPath);
+                            Drawing drawing = Drawing.load(i);
+                            if (drawing != null) {
+                                drawing.saveAs(drawingPath.toFile());
+                                DynamicPlanimetry.getInstance().getAllDrawings().add(drawing);
+                            } else {
+                                Notifications.addNotification("Error loading drawing", 5000);
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         this.update.addListener(new ChangeListener() {
             @Override
@@ -133,7 +184,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.open.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (open.getStyle() != styles.getButtonStyle(Size.MEDIUM, isRenaming)) {
+                if (open.getStyle() != styles.getButtonStyle(Size.MEDIUM, isRenaming) && selection != null) {
                     app.setDrawing(selection, true);
                     app.editorScreen.hide();
                     app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
@@ -144,9 +195,11 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.rename.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                isRenaming = true;
-                rename.setStyle(styles.getButtonStyle(Size.MEDIUM, isRenaming));
-                show();
+                if (selection != null) {
+                    isRenaming = true;
+                    rename.setStyle(styles.getButtonStyle(Size.MEDIUM, isRenaming));
+                    show();
+                }
             }
         });
 
@@ -211,9 +264,13 @@ public class FileSelectionScreen extends FlatUIScreen {
         this.title.setStyle(styles.getLabelStyle(Size.LARGE));
         this.pane.setStyle(paneStyle);
 
+        this.importFile.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
+        this.exportFile.setDisabled(selection == null);
+        this.exportFile.setStyle(styles.getButtonStyle(Size.MEDIUM, selection != null));
         this.openSaveFolder.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
         this.update.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
-        this.open.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
+        this.open.setDisabled(selection == null);
+        this.open.setStyle(styles.getButtonStyle(Size.MEDIUM, selection != null));
 
         this.nameField.setStyle(styles.getTextFieldStyle(Size.MEDIUM, true));
         this.setName.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
@@ -231,7 +288,11 @@ public class FileSelectionScreen extends FlatUIScreen {
         controlPanel.reset();
         if (DynamicPlanimetry.platform().canOpenDrawingFolder()) {
             controlPanel.add(openSaveFolder).expand().fill().pad(5).uniform();
+            // TODO export file instead
+        } else {
+            controlPanel.add(exportFile).expand().fill().pad(5).uniform();
         }
+        controlPanel.add(importFile).expand().fill().pad(5).uniform();
         controlPanel.add(open).expand().fill().pad(5).uniform();
         if (isRenaming) {
             controlPanel.add(nameField).expand().fill().pad(5).uniform();
@@ -269,7 +330,7 @@ public class FileSelectionScreen extends FlatUIScreen {
         List<Drawing> drawings = app.getAllDrawings();
         drawings.sort(sortingType.getValue().getComparator(isReverse.getValue()));
         files.clear();
-        if (drawings == null || drawings.isEmpty()) {
+        if (drawings.isEmpty()) {
             files.add(new Label(DynamicPlanimetry.translate("ui.load_file.no_files"), styles.getLabelStyle(Size.LARGE))).fill().center();
         } else {
             for (Drawing i : drawings) {

@@ -1,5 +1,8 @@
 package net.thewinnt.planimetry;
 
+import net.thewinnt.planimetry.data.registry.Identifier;
+import net.thewinnt.planimetry.data.registry.Registries;
+import net.thewinnt.planimetry.data.registry.Registry;
 import net.thewinnt.planimetry.shapes.Circle;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.ShapeDeserializer;
@@ -8,11 +11,8 @@ import net.thewinnt.planimetry.shapes.lines.*;
 import net.thewinnt.planimetry.shapes.point.*;
 import net.thewinnt.planimetry.shapes.point.relative.*;
 import net.thewinnt.planimetry.shapes.polygons.*;
-import net.thewinnt.planimetry.util.HashBiMap;
 
 public class ShapeData {
-    private static final HashBiMap<String, ShapeDeserializer<?>> SHAPE_TYPES = new HashBiMap<>();
-
     // POINTS
     public static final ShapeDeserializer<Point> POINT_SIMPLE = register("point_simple", Point::readNbt);
     public static final ShapeDeserializer<MousePoint> MOUSE_POINT = register("mouse_point", MousePoint::readNbt);
@@ -41,17 +41,17 @@ public class ShapeData {
     // ANGLE MARKERS
     public static final ShapeDeserializer<PointAngleMarker> POINT_ANGLE_MARKER = register("point_angle_marker", PointAngleMarker::readNbt);
 
+    @SuppressWarnings("unchecked")
     public static <T extends Shape> ShapeDeserializer<T> register(String name, ShapeDeserializer<T> deserializer) {
-        SHAPE_TYPES.put(name, deserializer);
-        return deserializer;
+        return ((ShapeDeserializer<T>)Registry.register(Registries.SHAPE_DESERIALIZER, deserializer, new Identifier(name)));
     }
 
-    public static ShapeDeserializer<?> getDeserializer(String name) {
-        return SHAPE_TYPES.get(name);
+    public static ShapeDeserializer<?> getDeserializer(Identifier name) {
+        return Registries.SHAPE_DESERIALIZER.byName(name);
     }
 
-    public static String getShapeType(ShapeDeserializer<?> deserializer) {
-        return SHAPE_TYPES.getKey(deserializer);
+    public static Identifier getShapeType(ShapeDeserializer<?> deserializer) {
+        return Registries.SHAPE_DESERIALIZER.getName(deserializer);
     }
 
     public static Polygon asSpecificPolygon(Polygon generic) {
@@ -68,4 +68,6 @@ public class ShapeData {
         }
         return "shape.factory.polygon.sized.n";
     }
+
+    public static void init() {}
 }

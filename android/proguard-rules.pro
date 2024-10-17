@@ -23,6 +23,7 @@
 
 -dontwarn android.support.**
 -dontwarn com.badlogic.gdx.backends.android.AndroidFragmentApplication
+-dontwarn lombok.NonNull
 
 # Needed by the gdx-controllers official extension.
 -keep class com.badlogic.gdx.controllers.android.AndroidControllers

@@ -181,3 +181,4 @@ settings.dat
 *.pptx
 *.ppt
 *.txt
+hs_err_pid*

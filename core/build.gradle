@@ -8,6 +8,7 @@ dependencies {
   implementation "dev.dewy:nbt:1.5.1"
   implementation 'com.google.code.gson:gson:2.11.0'
   implementation 'io.github.jbock-java:either:1.5.2'
+  implementation 'it.unimi.dsi:fastutil:8.5.14'
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"

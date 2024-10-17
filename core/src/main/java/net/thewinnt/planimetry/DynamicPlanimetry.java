@@ -31,7 +31,8 @@ import dev.dewy.nbt.Nbt;
 import dev.dewy.nbt.tags.collection.CompoundTag;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.Language;
-import net.thewinnt.planimetry.data.PlatformAbstractions;
+import net.thewinnt.planimetry.platform.NativeIO;
+import net.thewinnt.planimetry.platform.PlatformAbstractions;
 import net.thewinnt.planimetry.screen.EditorScreen;
 import net.thewinnt.planimetry.screen.FileSelectionScreen;
 import net.thewinnt.planimetry.screen.FlatUIScreen;
@@ -45,6 +46,8 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class DynamicPlanimetry extends Game {
     // public constants
+    public static final int DATA_VERSION = 0; // public testing - release 0.2
+    public static final String APP_VERSION = "v. 0.2 (dev build)";
     public static final int MAIN_MENU = 0;
     public static final int EDITOR_SCREEN = 1;
     public static final int FILE_SELECTION_SCREEN = 2;
@@ -118,13 +121,13 @@ public class DynamicPlanimetry extends Game {
     // general stuff
     public final List<Screen> screenByIds = new ArrayList<>();
     public String last_fps = "FPS: ..."; // the last reading of the fps counter
-    public static boolean IS_MOBILE = false;
 
     // settings
     public static final Settings SETTINGS = new Settings();
     private static float DISPLAY_SCALING = 1;
     private final Map<String, Language> languages = new HashMap<>();
     private static PlatformAbstractions PLATFORM;
+    private static NativeIO NATIVE_IO;
 
     // data
     private Drawing currentDrawing;
@@ -166,10 +169,11 @@ public class DynamicPlanimetry extends Game {
     public static final DateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
     public static final DateFormat AUTOSAVE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss.SSS");
 
-    public DynamicPlanimetry(CompoundTag settings, PlatformAbstractions platform, boolean forceDebug) {
+    public DynamicPlanimetry(CompoundTag settings, PlatformAbstractions platform, NativeIO io, boolean forceDebug) {
         super();
         SETTINGS.fromNbt(settings);
         DynamicPlanimetry.PLATFORM = platform;
+        DynamicPlanimetry.NATIVE_IO = io;
         if (forceDebug) {
             SETTINGS.setDebug();
         }
@@ -367,6 +371,10 @@ public class DynamicPlanimetry extends Game {
 
     public static PlatformAbstractions platform() {
         return DynamicPlanimetry.PLATFORM;
+    }
+
+    public static NativeIO io() {
+        return DynamicPlanimetry.NATIVE_IO;
     }
 
     public static boolean isDebug() {

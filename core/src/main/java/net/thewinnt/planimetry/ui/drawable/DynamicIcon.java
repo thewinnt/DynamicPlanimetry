@@ -46,7 +46,7 @@ public abstract class DynamicIcon extends ShapeDrawerDrawable {
             drawer.filledCircle(x(14), y(35), 1.5f);
         }
     };
-    
+
     public static final DynamicIcon DOWN_TRIANGLE = new DynamicIcon() {
         @Override
         public void render(float x, float y, float size) {

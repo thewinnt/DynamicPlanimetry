@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.badlogic.gdx.Gdx;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -60,13 +62,15 @@ public class DrawingBoard extends Actor {
                 selection.set(selection.indexOf(old), neo);
             }
         });
-        this.addListener(new ActorGestureListener(DynamicPlanimetry.IS_MOBILE ? 20 : 2, 0.4f, 1.1f, Integer.MAX_VALUE) {
+        this.addListener(new ActorGestureListener(DynamicPlanimetry.platform().isSmallScreen() ? 20 : 2, 0.4f, 1.1f, Integer.MAX_VALUE) {
             @Override
-            public void zoom(InputEvent event, float initialDistance, float distance) {
+            public void pinch(InputEvent event, Vector2 finger1a, Vector2 finger2a, Vector2 finger1b, Vector2 finger2b) {
                 int mx = Gdx.input.getX();
                 int my = Gdx.input.getY();
+                double distance1 = finger1a.dst(finger2a);
+                double distance2 = finger1b.dst(finger2b);
                 Vec2 distanceOld = offset.subtract(xb(mx), yb(my));
-                scale /= (distance / initialDistance);
+                scale /= (distance2 / distance1);
                 Vec2 distanceNew = offset.subtract(xb(mx), yb(my));
                 offset = offset.add(distanceNew.subtract(distanceOld).mul(scale));
                 event.handle();
@@ -93,7 +97,7 @@ public class DrawingBoard extends Actor {
                     selectionEndB = new Vec2(xb(mx), yb(my));
                     AABB range = new AABB(panStartB, selectionEndB);
                     selection.clear();
-                    selection.addAll(drawing.points.stream().filter(t -> t.intersects(range)).toList());
+                    selection.addAll(drawing.points.stream().filter(t -> t.intersects(range)).collect(Collectors.toUnmodifiableList()));
                 }
                 event.handle();
             }
@@ -136,7 +140,7 @@ public class DrawingBoard extends Actor {
 
                 movingShapes.clear();
                 if (!isPanning && !selection.isEmpty()) {
-                    movingShapes.addAll(selection.stream().anyMatch(i -> i.distanceToMouse(xb(mx), yb(my), DrawingBoard.this) <= 16 / scale) ? selection.stream().filter(Shape::canMove).toList() : List.of());
+                    movingShapes.addAll(selection.stream().anyMatch(i -> i.distanceToMouse(xb(mx), yb(my), DrawingBoard.this) <= 16 / scale) ? selection.stream().filter(Shape::canMove).collect(Collectors.toUnmodifiableList()) : List.of());
                 } else if (!isPanning) {
                     movingShapes.add(getHoveredShape(mx, my, Settings.get().getShapeMovementPredicate()));
                 }
@@ -318,7 +322,7 @@ public class DrawingBoard extends Actor {
         for (Shape i : this.drawing.shapes) {
             if (i.shouldRender()) i.render(drawer, SelectionStatus.NONE, font, this);
         }
-        for (Shape i : nonPointSelected.toList()) {
+        for (Shape i : nonPointSelected.collect(Collectors.toUnmodifiableList())) {
             i.render(drawer, SelectionStatus.SELECTED, font, this);
         }
         if (hovered != null && !(hovered instanceof PointProvider)) {
@@ -328,7 +332,7 @@ public class DrawingBoard extends Actor {
             if (selection == i || hovered == i || !i.shouldRender()) continue;
             i.render(drawer, SelectionStatus.NONE, font, this);
         }
-        for (Shape i : pointSelected.toList()) i.render(drawer, SelectionStatus.SELECTED, font, this);
+        for (Shape i : pointSelected.collect(Collectors.toUnmodifiableList())) i.render(drawer, SelectionStatus.SELECTED, font, this);
         if (hovered instanceof PointProvider) hovered.render(drawer, hovered == selection ? SelectionStatus.SELECTED : SelectionStatus.HOVERED, font, this);
         if (panStart != null && selectionEnd != null) {
             AABB aabb = new AABB(panStart, selectionEnd);
@@ -407,7 +411,7 @@ public class DrawingBoard extends Actor {
     }
 
     public Collection<Shape> getShapes() {
-        return Stream.concat(this.drawing.points.stream(), this.drawing.shapes.stream()).toList();
+        return Stream.concat(this.drawing.points.stream(), this.drawing.shapes.stream()).collect(Collectors.toUnmodifiableList());
     }
 
     public Shape getHoveredShape(double mx, double my) {
