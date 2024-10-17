@@ -2,7 +2,7 @@ package net.thewinnt.planimetry.android;
 
 import android.content.Context;
 
-import net.thewinnt.planimetry.data.PlatformAbstractions;
+import net.thewinnt.planimetry.platform.PlatformAbstractions;
 
 import java.io.File;
 

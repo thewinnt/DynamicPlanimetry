@@ -35,6 +35,6 @@ public class AndroidLauncher extends AndroidApplication {
         }
 
         // TODO android IO
-        initialize(new DynamicPlanimetry(nbt, platform, null, true), configuration);
+        initialize(new DynamicPlanimetry(nbt, platform, new AndroidIO(), true), configuration);
     }
 }

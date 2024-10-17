@@ -23,7 +23,7 @@ public class DesktopPlatform implements PlatformAbstractions {
 
     @Override
     public boolean canOpenDrawingFolder() {
-        return false;
+        return true;
     }
 
     @Override

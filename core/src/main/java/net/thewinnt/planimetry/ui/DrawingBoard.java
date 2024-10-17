@@ -49,6 +49,8 @@ public class DrawingBoard extends Actor {
     private Vec2 selectionEnd = null;
     private Vec2 panStartB = null;
     private Vec2 selectionEndB = null;
+    private Vector2 finger1a;
+    private Vector2 finger2a;
     private Vec2 offset = Vec2.ZERO;
     private ShapeFactory creatingShape;
     private boolean isPanning = false;
@@ -67,12 +69,16 @@ public class DrawingBoard extends Actor {
             public void pinch(InputEvent event, Vector2 finger1a, Vector2 finger2a, Vector2 finger1b, Vector2 finger2b) {
                 int mx = Gdx.input.getX();
                 int my = Gdx.input.getY();
+                if (DrawingBoard.this.finger1a != null) finger1a = DrawingBoard.this.finger1a;
+                if (DrawingBoard.this.finger2a != null) finger2a = DrawingBoard.this.finger2a;
                 double distance1 = finger1a.dst(finger2a);
                 double distance2 = finger1b.dst(finger2b);
                 Vec2 distanceOld = offset.subtract(xb(mx), yb(my));
                 scale /= (distance2 / distance1);
                 Vec2 distanceNew = offset.subtract(xb(mx), yb(my));
                 offset = offset.add(distanceNew.subtract(distanceOld).mul(scale));
+                DrawingBoard.this.finger1a = finger1b;
+                DrawingBoard.this.finger2a = finger2b;
                 event.handle();
             }
 
@@ -131,6 +137,8 @@ public class DrawingBoard extends Actor {
                 isPanning = false;
                 panStart = null;
                 selectionEnd = null;
+                finger1a = null;
+                finger2a = null;
             }
 
             @Override

@@ -24,12 +24,15 @@ import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class DesktopIO implements NativeIO {
     private final String workDir;
+    private final DragAndDropWrapper dragAndDrop;
 
-    public DesktopIO() {
+    public DesktopIO(DragAndDropWrapper dragAndDrop) {
+        this.dragAndDrop = dragAndDrop;
         this.workDir = System.getProperty("user.dir") + "/";
     }
 
@@ -108,7 +111,12 @@ public class DesktopIO implements NativeIO {
     }
 
     @Override
-    public void allowDragAndDrop(Supplier<List<File>> listener) {
+    public void allowDragAndDrop(Consumer<List<File>> listener) {
+        this.dragAndDrop.setListener(listener);
+    }
 
+    @Override
+    public void removeDragAndDrop() {
+        this.dragAndDrop.setListener(null);
     }
 }

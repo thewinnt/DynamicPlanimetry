@@ -41,10 +41,11 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication(CompoundTag settings, boolean debug) {
-        return new Lwjgl3Application(new DynamicPlanimetry(settings, new DesktopPlatform(), new DesktopIO(), debug), getDefaultConfiguration());
+        DragAndDropWrapper dragAndDrop = new DragAndDropWrapper();
+        return new Lwjgl3Application(new DynamicPlanimetry(settings, new DesktopPlatform(), new DesktopIO(dragAndDrop), debug), getDefaultConfiguration(dragAndDrop));
     }
 
-    private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
+    private static Lwjgl3ApplicationConfiguration getDefaultConfiguration(DragAndDropWrapper dragAndDrop) {
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
         configuration.setTitle("Dynamic Planimetry");
         configuration.useVsync(true);
@@ -55,6 +56,7 @@ public class Lwjgl3Launcher {
         //// You may also need to configure GPU drivers to fully disable Vsync; this can cause screen tearing.
         configuration.setWindowedMode(1280, 720);
         configuration.setWindowIcon("logo.png");
+        configuration.setWindowListener(dragAndDrop);
         return configuration;
     }
 }
