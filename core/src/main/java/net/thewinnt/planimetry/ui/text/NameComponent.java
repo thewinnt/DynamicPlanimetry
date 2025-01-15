@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.Theme;
@@ -44,7 +44,7 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
         fontMain.draw(batch, "'".repeat(dashes), x + x2 - 2, y + 2);
         return new Vec2(x2 + Math.max(indexLength, FontUtils.getTextLength(fontMain, "'".repeat(dashes))), fontMain.getLineHeight());
     }
-    
+
     @Override
     public void draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
         BitmapFont fontMain = font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()), color);
@@ -83,13 +83,13 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
 
     @Override
     public ComponentDeserializer<?> getDeserializer() {
-        return ComponentRegistry.NAME;
+        return Components.NAME;
     }
 
     public static NameComponent readNbt(CompoundTag nbt) {
-        byte letter = nbt.getByte("letterId").byteValue();
-        int index = nbt.getInt("index").intValue();
-        short dashes = nbt.getShort("dashes").shortValue();
+        byte letter = nbt.getByte("letterId");
+        int index = nbt.getInt("index");
+        short dashes = nbt.getShort("dashes");
         return new NameComponent(letter, index, dashes);
     }
 }

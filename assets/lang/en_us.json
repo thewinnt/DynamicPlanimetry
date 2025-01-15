@@ -155,6 +155,7 @@
     "ui.edit.properties.title": "Properties",
     "ui.edit.save": "Save",
     "ui.edit.settings": "Settings",
+    "ui.load_file.entry.delete_file": "Delete",
     "ui.load_file.entry.creation_time": "Creation time: %s",
     "ui.load_file.entry.edit_time": "Edit time: %s",
     "ui.load_file.export": "Export",

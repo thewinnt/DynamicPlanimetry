@@ -1,6 +1,6 @@
 package net.thewinnt.planimetry.data.update;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 
 public class DataUpdater {
     public static CompoundTag updateDrawing(CompoundTag input) {

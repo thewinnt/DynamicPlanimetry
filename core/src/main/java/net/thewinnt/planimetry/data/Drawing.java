@@ -9,9 +9,9 @@ import java.util.stream.Stream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
-import dev.dewy.nbt.io.CompressionType;
-import dev.dewy.nbt.tags.collection.CompoundTag;
-import dev.dewy.nbt.tags.collection.ListTag;
+import net.querz.nbt.io.NBTUtil;
+import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.ListTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.update.DataUpdater;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -255,9 +255,9 @@ public class Drawing {
 
     public CompoundTag toNbt() {
         CompoundTag output = new CompoundTag();
-        ListTag<CompoundTag> shapes = new ListTag<>();
         SavingContext context = new SavingContext(Stream.concat(this.shapes.stream(), this.points.stream()).toList());
-        shapes = new ListTag<>("shapes", new ArrayList<>(context.save()));
+        ListTag<CompoundTag> shapes = new ListTag<>(CompoundTag.class);
+        shapes.addAll(context.save());
         output.put("shapes", shapes);
         output.putString("name", name);
         output.putLong("creation_time", creationTime);
@@ -269,10 +269,10 @@ public class Drawing {
     public static Drawing fromNbt(CompoundTag nbt) {
         nbt = DataUpdater.updateDrawing(nbt); // will do stuff in the future
         if (nbt == null) return null;
-        String name = nbt.getString("name").getValue();
-        long creationTime = nbt.getLong("creation_time").getValue();
-        long lastEditTime = nbt.getLong("last_edit_time").getValue();
-        ListTag<CompoundTag> shapes = nbt.getList("shapes");
+        String name = nbt.getString("name");
+        long creationTime = nbt.getLong("creation_time");
+        long lastEditTime = nbt.getLong("last_edit_time");
+        ListTag<CompoundTag> shapes = nbt.getListTag("shapes").asCompoundTagList();
         LoadingContext context = new LoadingContext(shapes);
         Drawing output = context.getDrawing();
         output.setName(name);
@@ -295,7 +295,7 @@ public class Drawing {
             while (file.exists()) {
                 file = new File(randomizeName(file.getPath(), random));
             }
-            DynamicPlanimetry.NBT.toFile(this.toNbt(), file, CompressionType.GZIP);
+            NBTUtil.write(this.toNbt(), file);
         } catch (IOException e) {
             Notifications.addNotification("Error saving file: " + e.getMessage(), 5000);
             e.printStackTrace();
@@ -312,17 +312,17 @@ public class Drawing {
 
     public void save() {
         CompoundTag nbt = this.toNbt();
-        FileHandle file;
+        File file;
         if (filename == null) {
             filename = "autosave " + DynamicPlanimetry.AUTOSAVE_DATE_FORMAT.format(new Date(System.currentTimeMillis()));
         }
         if (isFileAbsolute) {
-            file = Gdx.files.absolute(filename);
+            file = new File(filename);
         } else {
-            file = Gdx.files.local("drawings/" + filename + ".dpd");
+            file = DynamicPlanimetry.io().dataFile("drawings/" + filename + ".dpd");
         }
         try {
-            DynamicPlanimetry.NBT.toFile(nbt, file.file(), CompressionType.GZIP);
+            NBTUtil.write(nbt, file);
             isUnsaved = false;
         } catch (IOException e) {
             Notifications.addNotification("Error saving file: " + e.getMessage(), 5000);
@@ -332,7 +332,7 @@ public class Drawing {
 
     public static Drawing load(String filenameAbsolute) {
         try {
-            CompoundTag nbt = DynamicPlanimetry.NBT.fromFile(new File(filenameAbsolute));
+            CompoundTag nbt = ((CompoundTag) NBTUtil.read(filenameAbsolute).getTag());
             return Drawing.fromNbt(nbt).withFilename(filenameAbsolute, true);
         } catch (IOException e) {
             Notifications.addNotification("Error loading file: " + e.getMessage(), 5000);
@@ -342,7 +342,8 @@ public class Drawing {
 
     public static Drawing load(File file) {
         try {
-            CompoundTag nbt = DynamicPlanimetry.NBT.fromFile(file);
+            // TODO fix files being open
+            CompoundTag nbt = ((CompoundTag) NBTUtil.read(file).getTag());
             return Drawing.fromNbt(nbt).withFilename(file.getAbsolutePath(), true);
         } catch (IOException e) {
             Notifications.addNotification("Error loading file: " + e.getMessage(), 5000);

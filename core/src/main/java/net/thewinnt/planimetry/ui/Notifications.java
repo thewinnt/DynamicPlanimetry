@@ -42,7 +42,7 @@ public class Notifications extends Actor implements Disposable {
         final float x1 = 20;
         final float x2 = Gdx.graphics.getWidth() - 20;
         float y = Gdx.graphics.getHeight() - 20;
-        float targ_y = y;
+        float targ_y;
         List<Notification> removals = new ArrayList<>();
         for (int i = 0; i < NOTIFICATIONS.size(); i++) {
             PositionedText cache = caches.get(i);
@@ -88,7 +88,7 @@ public class Notifications extends Actor implements Disposable {
             cache.draw(batch);
             y = targ_y - cache.height - 40;
         }
-        if (removals.size() > 0) {
+        if (!removals.isEmpty()) {
             NOTIFICATIONS.removeAll(removals);
             updateCaches();
         }

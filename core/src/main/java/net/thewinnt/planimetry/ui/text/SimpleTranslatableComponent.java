@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
@@ -45,7 +45,7 @@ public record SimpleTranslatableComponent(String key) implements Component, Char
         BitmapFont fnt = font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()), Color.BLACK);
         return new Vec2(FontUtils.getTextLength(fnt, toString()), fnt.getLineHeight());
     }
-    
+
     @Override
     public String toString() {
         return DynamicPlanimetry.getInstance().getCurrentLanguage().get(key);
@@ -60,10 +60,10 @@ public record SimpleTranslatableComponent(String key) implements Component, Char
 
     @Override
     public ComponentDeserializer<?> getDeserializer() {
-        return ComponentRegistry.SIMPLE_TRANSLATABLE;
+        return Components.SIMPLE_TRANSLATABLE;
     }
 
     public static SimpleTranslatableComponent readNbt(CompoundTag nbt) {
-        return new SimpleTranslatableComponent(nbt.getString("key").getValue());
+        return new SimpleTranslatableComponent(nbt.getString("key"));
     }
 }

@@ -19,6 +19,11 @@ public class Vec2 {
         this.y = other.y;
     }
 
+    public Vec2(Vector2 other) {
+        this.x = other.x;
+        this.y = other.y;
+    }
+
     public double length() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
@@ -85,6 +90,16 @@ public class Vec2 {
 
     public Vec2 lerp(Vec2 other, double progress) {
         return new Vec2(this.x + (other.x - this.x) * progress, this.y + (other.y - this.y) * progress);
+    }
+
+    public Vec2 normalize() {
+        double maxv = Math.abs(Math.max(x, y));
+        return new Vec2(x / maxv, y / maxv);
+    }
+
+    public Vec2 unit() {
+        double length = this.length();
+        return new Vec2(x / length, y / length);
     }
 
     public Vec2 withX(double x) {

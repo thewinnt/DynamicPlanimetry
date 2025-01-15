@@ -164,6 +164,7 @@
     "ui.edit.save": "Сохранить",
     "ui.edit.settings": "Настройки",
     "ui.edit.selection.multiple": "(несколько объектов)",
+    "ui.load_file.entry.delete_file": "Удалить",
     "ui.load_file.entry.creation_time": "Время создания: %s",
     "ui.load_file.entry.edit_time": "Последнее изменение: %s",
     "ui.load_file.export": "Экспорт",

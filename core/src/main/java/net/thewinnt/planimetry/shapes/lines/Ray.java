@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import com.badlogic.gdx.graphics.Color;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -28,7 +28,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public class Ray extends Line {
     private boolean startFromA = true;
     private BooleanProperty startProperty = new BooleanProperty(Component.translatable("property.ray.start_from_a"), startFromA);
-    
+
     public Ray(Drawing drawing, PointProvider a, PointProvider b) {
         super(drawing, a, b);
         startProperty.addValueChangeListener(value -> startFromA = value);
@@ -144,9 +144,9 @@ public class Ray extends Line {
     }
 
     public static Ray readNbt(CompoundTag nbt, LoadingContext context) {
-        PointReference a = (PointReference)context.resolveShape(nbt.getLong("a").getValue());
-        PointReference b = (PointReference)context.resolveShape(nbt.getLong("b").getValue());
-        boolean startFromA = nbt.getByte("start_from_a").getValue() > 0;
+        PointReference a = (PointReference)context.resolveShape(nbt.getLong("a"));
+        PointReference b = (PointReference)context.resolveShape(nbt.getLong("b"));
+        boolean startFromA = nbt.getByte("start_from_a") > 0;
         Ray output = new Ray(context.getDrawing(), a, b);
         output.startFromA = startFromA;
         return output;

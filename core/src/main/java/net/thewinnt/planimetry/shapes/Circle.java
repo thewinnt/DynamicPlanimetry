@@ -8,7 +8,8 @@ import java.util.function.Supplier;
 
 import com.badlogic.gdx.graphics.Color;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.LongTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
@@ -214,13 +215,13 @@ public class Circle extends Shape {
     }
 
     public static Circle readNbt(CompoundTag nbt, LoadingContext context) {
-        PointProvider center = (PointProvider)context.resolveShape(nbt.getLong("center").getValue());
-        if (nbt.containsLong("radius")) {
-            PointProvider radius = (PointProvider)context.resolveShape(nbt.getLong("radius").getValue());
+        PointProvider center = (PointProvider)context.resolveShape(nbt.getLong("center"));
+        if (nbt.containsKey("radius") && nbt.get("radius") instanceof LongTag longTag) {
+            PointProvider radius = (PointProvider)context.resolveShape(longTag.asLong());
             boolean keepRadius = NbtUtil.getBoolean(nbt, "keep_radius");
             return new Circle(context.getDrawing(), center, radius, keepRadius);
         } else {
-            double radius = nbt.getDouble("radius").getValue();
+            double radius = nbt.getDouble("radius");
             return new Circle(context.getDrawing(), center, radius);
         }
     }

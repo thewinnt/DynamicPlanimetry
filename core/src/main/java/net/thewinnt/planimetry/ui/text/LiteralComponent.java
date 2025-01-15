@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
@@ -46,7 +46,7 @@ public record LiteralComponent(String text) implements Component, CharSequence {
         BitmapFont fnt = font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()), Color.BLACK);
         return new Vec2(FontUtils.getTextLength(fnt, text), fnt.getLineHeight());
     }
-    
+
     @Override
     public String toString() {
         return text;
@@ -61,10 +61,10 @@ public record LiteralComponent(String text) implements Component, CharSequence {
 
     @Override
     public ComponentDeserializer<?> getDeserializer() {
-        return ComponentRegistry.LITERAL;
+        return Components.LITERAL;
     }
 
     public static LiteralComponent readNbt(CompoundTag nbt) {
-        return new LiteralComponent(nbt.getString("text").getValue());
+        return new LiteralComponent(nbt.getString("text"));
     }
 }

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
@@ -72,10 +72,10 @@ public class ComplexTranslatableComponent implements Component, CharSequence {
 
     @Override
     public ComponentDeserializer<?> getDeserializer() {
-        return ComponentRegistry.COMPLEX_TRANSLATABLE;
+        return Components.COMPLEX_TRANSLATABLE;
     }
 
     public static ComplexTranslatableComponent readNbt(CompoundTag nbt) {
-        return new ComplexTranslatableComponent(nbt.getString("key").getValue());
+        return new ComplexTranslatableComponent(nbt.getString("key"));
     }
 }

@@ -5,7 +5,7 @@ import java.util.function.DoubleFunction;
 
 import com.badlogic.gdx.graphics.Color;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -99,8 +99,8 @@ public class InfiniteLine extends Line {
     }
 
     public static InfiniteLine readNbt(CompoundTag nbt, LoadingContext context) {
-        PointReference a = (PointReference)context.resolveShape(nbt.getLong("a").getValue());
-        PointReference b = (PointReference)context.resolveShape(nbt.getLong("b").getValue());
+        PointReference a = (PointReference)context.resolveShape(nbt.getLong("a"));
+        PointReference b = (PointReference)context.resolveShape(nbt.getLong("b"));
         return new InfiniteLine(context.getDrawing(), a, b);
     }
 

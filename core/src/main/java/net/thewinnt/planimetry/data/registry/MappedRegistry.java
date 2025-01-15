@@ -16,7 +16,6 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
     protected final Map<T, Identifier> names = new HashMap<>();
     protected final Int2ObjectMap<T> elementById = new Int2ObjectOpenHashMap<>();
     protected final Object2IntMap<T> ids = new Object2IntOpenHashMap<>();
-    protected final Map<Identifier, Holder<T>> holdersByName = new HashMap<>();
     protected boolean frozen;
     private int idMapper = 0;
 
@@ -29,7 +28,6 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
         this.elementById.put(idMapper, element);
         this.names.put(element, id);
         this.ids.put(element, idMapper);
-        this.holdersByName.put(id, new Holder.Direct<>(id, element));
         idMapper++;
         return element;
     }
@@ -69,7 +67,7 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
     }
 
     @Override
-    public Stream<Holder<T>> stream() {
-        return holdersByName.values().stream();
+    public Stream<T> stream() {
+        return elementById.values().stream();
     }
 }

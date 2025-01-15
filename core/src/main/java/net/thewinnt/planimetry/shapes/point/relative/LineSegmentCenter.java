@@ -3,7 +3,7 @@ package net.thewinnt.planimetry.shapes.point.relative;
 import java.util.Collection;
 import java.util.List;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -87,10 +87,10 @@ public class LineSegmentCenter extends PointProvider {
     public ShapeDeserializer<?> getDeserializer() {
         return ShapeData.LINE_SEGMENT_CENTER;
     }
-    
-    
+
+
     public static LineSegmentCenter readNbt(CompoundTag nbt, LoadingContext context) {
-        Line line = (Line)context.resolveShape(nbt.getLong("line").longValue());
+        Line line = (Line)context.resolveShape(nbt.getLong("line"));
         return new LineSegmentCenter(context.getDrawing(), line);
     }
 }

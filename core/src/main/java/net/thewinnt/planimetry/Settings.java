@@ -1,14 +1,9 @@
 package net.thewinnt.planimetry;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.badlogic.gdx.Gdx;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.io.NBTUtil;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.data.Language;
 import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.settings.AngleType;
@@ -28,6 +23,12 @@ import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.OptionProperty;
 import net.thewinnt.planimetry.ui.properties.types.SelectionProperty;
 import net.thewinnt.planimetry.ui.text.Component;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Settings {
     public static final CustomLayout PROPERTY_LAYOUT = (actor, entry) -> actor.setBounds((Gdx.graphics.getWidth() - 20) * 3 / 4, 2, (Gdx.graphics.getWidth() - 20) / 4 - 10, entry.getHeight() - 4);
@@ -211,10 +212,10 @@ public class Settings {
             this.isDebug.setValue(NbtUtil.getOptionalBoolean(nbt, "debug_mode", false));
             this.displayScaling.setValue(NbtUtil.getOptionalDouble(nbt, "display_scaling", 1));
             this.ctrlSelection.setValue(NbtUtil.getOptionalBoolean(nbt, "ctrl_selection", true));
+            DynamicPlanimetry.setDisplayScaling(displayScaling.getValue().floatValue());
         } catch (Exception e) {
             Notifications.addNotification(DynamicPlanimetry.translate("error.settings.load_failed", e.getMessage()), 15000);
             e.printStackTrace();
-            return;
         }
     }
 
@@ -233,7 +234,7 @@ public class Settings {
         nbt.putDouble("display_scaling", displayScaling.getValue());
         NbtUtil.writeBoolean(nbt, "ctrl_selection", ctrlSelection.getValue());
         try {
-            DynamicPlanimetry.NBT.toFile(nbt, file);
+            NBTUtil.write(nbt, file);
         } catch (IOException e) {
             Notifications.addNotification(DynamicPlanimetry.translate("error.settings.save_failed", e.getMessage()), 5000);
             e.printStackTrace();

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;

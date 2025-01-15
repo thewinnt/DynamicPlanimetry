@@ -1,16 +1,10 @@
 package net.thewinnt.planimetry.lwjgl3;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Null;
-
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.platform.NativeIO;
 import net.thewinnt.planimetry.ui.Notifications;
-
-import javax.swing.*;
-
 import org.lwjgl.PointerBuffer;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.nfd.NFDFilterItem;
@@ -18,14 +12,15 @@ import org.lwjgl.util.nfd.NFDPathSetEnum;
 import org.lwjgl.util.nfd.NativeFileDialog;
 
 import java.io.File;
-import java.lang.management.MemoryUsage;
-import java.nio.Buffer;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class DesktopIO implements NativeIO {
     private final String workDir;
@@ -46,9 +41,8 @@ public class DesktopIO implements NativeIO {
         return Path.of(workDir, dir).toFile().listFiles();
     }
 
-    @Null
     @Override
-    public File suggestSave() {
+    public void suggestSave(Consumer<FileOutputStream> consumer) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             NFDFilterItem.Buffer filters = NFDFilterItem.malloc(1);
             filters.get(0)
@@ -63,18 +57,20 @@ public class DesktopIO implements NativeIO {
                 case NativeFileDialog.NFD_OKAY:
                     File output = new File(path.getStringUTF8(0));
                     NativeFileDialog.NFD_FreePath(path.get(0));
-                    // TODO see https://github.com/LWJGL/lwjgl3/blob/3.3.3/modules/samples/src/test/java/org/lwjgl/demo/util/nfd/HelloNFD.java
-                    return output;
+                    try (FileOutputStream stream = new FileOutputStream(output)) {
+                        consumer.accept(stream);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
                 case NativeFileDialog.NFD_ERROR:
                     Notifications.addNotification(DynamicPlanimetry.translate("error.file_open", NativeFileDialog.NFD_GetError()), 7500);
-                default:
-                    return null;
             }
         }
     }
 
     @Override
-    public List<File> suggestOpen() {
+    public void suggestOpen(Consumer<List<File>> consumer) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             NFDFilterItem.Buffer filters = NFDFilterItem.malloc(2);
             filters.get(0)
@@ -101,11 +97,10 @@ public class DesktopIO implements NativeIO {
                     }
                     NativeFileDialog.NFD_PathSet_FreeEnum(pathSetEnum);
                     NativeFileDialog.NFD_PathSet_Free(pathSet);
-                    return output;
+                    consumer.accept(output);
+                    break;
                 case NativeFileDialog.NFD_ERROR:
                     Notifications.addNotification(DynamicPlanimetry.translate("error.file_open", NativeFileDialog.NFD_GetError()), 7500);
-                default:
-                    return null;
             }
         }
     }
@@ -118,5 +113,15 @@ public class DesktopIO implements NativeIO {
     @Override
     public void removeDragAndDrop() {
         this.dragAndDrop.setListener(null);
+    }
+
+    @Override
+    public void deleteFile(File file) {
+        try {
+            Files.delete(file.toPath());
+        } catch (IOException e) {
+            Notifications.addNotification("Error deleting file: " + e.getMessage(), 5000);
+            e.printStackTrace();
+        }
     }
 }

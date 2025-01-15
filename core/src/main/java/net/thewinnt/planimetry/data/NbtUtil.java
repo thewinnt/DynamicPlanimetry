@@ -1,6 +1,6 @@
 package net.thewinnt.planimetry.data;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.math.Vec2;
 
 public class NbtUtil {
@@ -15,39 +15,39 @@ public class NbtUtil {
     }
 
     public static Vec2 readVec2(CompoundTag nbt, String name) {
-        CompoundTag tag = nbt.getCompound(name);
-        double x = tag.getDouble("x").getValue();
-        double y = tag.getDouble("y").getValue();
+        CompoundTag tag = nbt.getCompoundTag(name);
+        double x = tag.getDouble("x");
+        double y = tag.getDouble("y");
         return new Vec2(x, y);
     }
 
     public static double getOptionalDouble(CompoundTag tag, String name, double fallback) {
-        if (!tag.contains(name)) return fallback;
-        return tag.getDouble(name).doubleValue();
+        if (!tag.containsKey(name)) return fallback;
+        return tag.getDouble(name);
     }
 
     public static int getOptionalInt(CompoundTag tag, String name, int fallback) {
-        if (!tag.contains(name)) return fallback;
-        return tag.getInt(name).intValue();
+        if (!tag.containsKey(name)) return fallback;
+        return tag.getInt(name);
     }
 
     public static byte getOptionalByte(CompoundTag tag, String name, byte fallback) {
-        if (!tag.contains(name)) return fallback;
-        return tag.getByte(name).byteValue();
+        if (!tag.containsKey(name)) return fallback;
+        return tag.getByte(name);
     }
 
     public static String getOptionalString(CompoundTag tag, String name, String fallback) {
-        if (!tag.contains(name)) return fallback;
-        return tag.getString(name).getValue();
+        if (!tag.containsKey(name)) return fallback;
+        return tag.getString(name);
     }
 
     public static boolean getOptionalBoolean(CompoundTag tag, String name, boolean fallback) {
-        if (!tag.contains(name)) return fallback;
-        return tag.getByte(name).byteValue() != 0;
+        if (!tag.containsKey(name)) return fallback;
+        return tag.getByte(name) != 0;
     }
 
     public static boolean getBoolean(CompoundTag tag, String name) {
-        return tag.getByte(name).byteValue() != 0;
+        return tag.getByte(name) != 0;
     }
 
     public static void writeBoolean(CompoundTag tag, String name, boolean value) {

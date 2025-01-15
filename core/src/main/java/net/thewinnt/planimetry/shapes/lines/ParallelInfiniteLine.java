@@ -3,7 +3,7 @@ package net.thewinnt.planimetry.shapes.lines;
 import java.util.Collection;
 import java.util.List;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -52,8 +52,8 @@ public class ParallelInfiniteLine extends InfiniteLine {
     }
 
     public static ParallelInfiniteLine readNbt(CompoundTag nbt, LoadingContext context) {
-        Line base = (Line)context.resolveShape(nbt.getLong("base").getValue());
-        PointProvider point = (PointProvider)context.resolveShape(nbt.getLong("point").getValue());
+        Line base = (Line)context.resolveShape(nbt.getLong("base"));
+        PointProvider point = (PointProvider)context.resolveShape(nbt.getLong("point"));
         return new ParallelInfiniteLine(context.getDrawing(), base, point);
     }
 

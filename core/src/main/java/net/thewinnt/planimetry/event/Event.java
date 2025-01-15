@@ -1,6 +1,6 @@
 package net.thewinnt.planimetry.event;
 
-public class Event {
+public abstract class Event {
     private boolean canceled;
 
     public Event() {}

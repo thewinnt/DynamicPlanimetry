@@ -41,17 +41,16 @@ public class ShapeData {
     // ANGLE MARKERS
     public static final ShapeDeserializer<PointAngleMarker> POINT_ANGLE_MARKER = register("point_angle_marker", PointAngleMarker::readNbt);
 
-    @SuppressWarnings("unchecked")
     public static <T extends Shape> ShapeDeserializer<T> register(String name, ShapeDeserializer<T> deserializer) {
-        return ((ShapeDeserializer<T>)Registry.register(Registries.SHAPE_DESERIALIZER, deserializer, new Identifier(name)));
+        return Registry.register(Registries.SHAPE_TYPE, deserializer, new Identifier(name));
     }
 
     public static ShapeDeserializer<?> getDeserializer(Identifier name) {
-        return Registries.SHAPE_DESERIALIZER.byName(name);
+        return Registries.SHAPE_TYPE.byName(name);
     }
 
     public static Identifier getShapeType(ShapeDeserializer<?> deserializer) {
-        return Registries.SHAPE_DESERIALIZER.getName(deserializer);
+        return Registries.SHAPE_TYPE.getName(deserializer);
     }
 
     public static Polygon asSpecificPolygon(Polygon generic) {

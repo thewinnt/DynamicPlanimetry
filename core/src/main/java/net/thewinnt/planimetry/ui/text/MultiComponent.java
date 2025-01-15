@@ -6,8 +6,8 @@ import java.util.Collection;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
-import dev.dewy.nbt.tags.collection.ListTag;
+import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.ListTag;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -44,7 +44,7 @@ public class MultiComponent implements Component {
         }
         return new Vec2(offx, height);
     }
-    
+
     @Override
     public void draw(Batch batch, FontProvider font, Size fontSize, Color color, float x, float y) {
         float offx = 0;
@@ -58,7 +58,7 @@ public class MultiComponent implements Component {
     @Override
     public CompoundTag writeNbt() {
         CompoundTag output = new CompoundTag();
-        ListTag<CompoundTag> list = new ListTag<>();
+        ListTag<CompoundTag> list = new ListTag<>(CompoundTag.class);
         for (Component i : this.components) {
             list.add(i.toNbt());
         }
@@ -68,11 +68,11 @@ public class MultiComponent implements Component {
 
     @Override
     public ComponentDeserializer<?> getDeserializer() {
-        return ComponentRegistry.MULTIPLE;
+        return Components.MULTIPLE;
     }
 
     public static MultiComponent readNbt(CompoundTag nbt) {
-        ListTag<CompoundTag> list = nbt.getList("components");
+        ListTag<CompoundTag> list = nbt.getListTag("components").asCompoundTagList();
         ArrayList<Component> components = new ArrayList<>(list.size());
         for (CompoundTag i : list) {
             components.add(Component.fromNbt(i));

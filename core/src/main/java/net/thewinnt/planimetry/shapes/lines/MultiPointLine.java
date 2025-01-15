@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.badlogic.gdx.graphics.Color;
 
-import dev.dewy.nbt.tags.array.LongArrayTag;
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.LongArrayTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -192,7 +192,7 @@ public class MultiPointLine extends Shape {
     }
 
     protected static List<PointProvider> pointsFromNbt(CompoundTag nbt, LoadingContext context) {
-        LongArrayTag points = nbt.getLongArray("points");
+        long[] points = nbt.getLongArray("points");
         List<PointProvider> output = new ArrayList<>();
         for (long i : points) {
             output.add((PointProvider)context.resolveShape(i));

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleFunction;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.AABB;

@@ -25,6 +25,14 @@ public final class Identifier {
         }
     }
 
+    public String toLanguageKey(String prefix) {
+        return prefix + '.' + namespace + '.' + path.replace('/', '.');
+    }
+
+    public String toLanguageKey(String prefix, String postfix) {
+        return prefix + '.' + namespace + '.' + path.replace('/', '.') + '.' + postfix;
+    }
+
     public static String validatePath(String path) {
         for (char i : path.toCharArray()) {
             if (!ALLOWED_CHARACTERS.contains(String.valueOf(i))) {

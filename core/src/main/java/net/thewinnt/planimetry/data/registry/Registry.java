@@ -7,13 +7,13 @@ public interface Registry<T> {
     T byName(Identifier id);
     Identifier getName(T element);
     int getId(T element);
-    Stream<Holder<T>> stream();
+    Stream<T> stream();
 
-    public static <T> T register(Registry<T> registry, T element, Identifier id) {
+    public static <T> T register(Registry<? super T> registry, T element, Identifier id) {
         return ((MutableRegistry<T>) registry).register(id, element);
     }
 
-    public static <T> T register(Registry<T> registry, T element, String id) {
+    public static <T> T register(Registry<? super T> registry, T element, String id) {
         return register(registry, element, new Identifier(id));
     }
 }

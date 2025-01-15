@@ -7,7 +7,7 @@ import java.util.List;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.math.Vec2;
@@ -22,18 +22,19 @@ public interface Component extends ComponentRepresentable {
     /**
      * @deprecated use {@link #toNbt()} for actual saving
      */
-    @Deprecated CompoundTag writeNbt();
+    @Deprecated
+    CompoundTag writeNbt();
     ComponentDeserializer<?> getDeserializer();
 
     public default CompoundTag toNbt() {
         CompoundTag nbt = this.writeNbt();
-        nbt.putString("type", ComponentRegistry.getComponentType(this.getDeserializer()));
+        nbt.putString("type", Components.getComponentType(this.getDeserializer()).toString());
         return nbt;
     }
 
     public static Component fromNbt(CompoundTag nbt) {
-        String type = nbt.getString("type").getValue();
-        return ComponentRegistry.getDeserializer(type).deserialize(nbt);
+        String type = nbt.getString("type");
+        return Components.getDeserializer(type).deserialize(nbt);
     }
 
     public static Component empty() {
@@ -135,7 +136,7 @@ public interface Component extends ComponentRepresentable {
 
         @Override
         public ComponentDeserializer<?> getDeserializer() {
-            return ComponentRegistry.EMPTY;
+            return Components.EMPTY;
         }
 
         public static Empty readNbt(CompoundTag nbt) {

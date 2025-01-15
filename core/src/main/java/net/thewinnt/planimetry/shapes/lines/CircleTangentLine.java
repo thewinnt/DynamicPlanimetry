@@ -3,7 +3,7 @@ package net.thewinnt.planimetry.shapes.lines;
 import java.util.Collection;
 import java.util.List;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
@@ -94,8 +94,8 @@ public class CircleTangentLine extends InfiniteLine {
     }
 
     public static CircleTangentLine readNbt(CompoundTag nbt, LoadingContext context) {
-        Circle a = (Circle)context.resolveShape(nbt.getLong("circle").getValue());
-        double angle = nbt.getDouble("angle").doubleValue();
+        Circle a = (Circle)context.resolveShape(nbt.getLong("circle"));
+        double angle = nbt.getDouble("angle");
         return new CircleTangentLine(context.getDrawing(), a, angle);
     }
 

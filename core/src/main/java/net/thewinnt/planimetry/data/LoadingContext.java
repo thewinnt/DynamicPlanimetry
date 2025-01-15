@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.shapes.Shape;
 
 public class LoadingContext {
@@ -16,7 +16,7 @@ public class LoadingContext {
         this.drawing = new Drawing();
         this.drawing.isLoading = true;
         for (CompoundTag i : saveData) {
-            this.saveData.put(i.getLong("id").getValue(), i);
+            this.saveData.put(i.getLong("id"), i);
         }
     }
 

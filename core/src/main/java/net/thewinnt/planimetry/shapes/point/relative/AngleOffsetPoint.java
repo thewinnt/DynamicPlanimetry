@@ -1,6 +1,6 @@
 package net.thewinnt.planimetry.shapes.point.relative;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
@@ -106,12 +106,12 @@ public class AngleOffsetPoint extends PointProvider {
     }
 
     public static AngleOffsetPoint readNbt(CompoundTag nbt, LoadingContext context) {
-        double angle = nbt.getDouble("angle").getValue();
-        double offset = nbt.getDouble("offset").getValue();
-        PointProvider point = (PointProvider)context.resolveShape(nbt.getLong("point").longValue());
+        double angle = nbt.getDouble("angle");
+        double offset = nbt.getDouble("offset");
+        PointProvider point = (PointProvider)context.resolveShape(nbt.getLong("point"));
         boolean shouldRender = NbtUtil.getOptionalBoolean(nbt, "should_render", true);
-        if (nbt.containsCompound("name")) {
-            NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
+        if (nbt.containsKey("name")) {
+            NameComponent name = NameComponent.readNbt(nbt.getCompoundTag("name"));
             AngleOffsetPoint output = new AngleOffsetPoint(context.getDrawing(), point, angle, offset, name);
             output.setShouldRender(shouldRender);
             return output;

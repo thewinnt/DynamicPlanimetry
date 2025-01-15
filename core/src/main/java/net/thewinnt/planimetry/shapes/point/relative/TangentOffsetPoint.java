@@ -5,7 +5,7 @@ import static net.thewinnt.planimetry.ui.text.Component.literal;
 import java.util.Collection;
 import java.util.List;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -107,11 +107,11 @@ public class TangentOffsetPoint extends PointProvider {
     }
 
     public static TangentOffsetPoint readNbt(CompoundTag nbt, LoadingContext context) {
-        double angle = nbt.getDouble("angle").getValue();
-        double offset = nbt.getDouble("offset").getValue();
-        PointProvider point = (PointProvider)context.resolveShape(nbt.getLong("point").longValue());
-        if (nbt.containsCompound("name")) {
-            NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
+        double angle = nbt.getDouble("angle");
+        double offset = nbt.getDouble("offset");
+        PointProvider point = (PointProvider)context.resolveShape(nbt.getLong("point"));
+        if (nbt.containsKey("name")) {
+            NameComponent name = NameComponent.readNbt(nbt.getCompoundTag("name"));
             return new TangentOffsetPoint(context.getDrawing(), point, angle, offset, name);
         }
         return new TangentOffsetPoint(context.getDrawing(), point, angle, offset);

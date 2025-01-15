@@ -2,7 +2,7 @@ package net.thewinnt.planimetry.shapes.polygons;
 
 import java.util.List;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -97,7 +97,7 @@ public class Tetragon extends Polygon {
     public String getTypeName() {
         return "shape.polygon.4";
     }
-    
+
     @Override
     public ShapeDeserializer<?> getDeserializer() {
         return ShapeData.TRIANGLE;

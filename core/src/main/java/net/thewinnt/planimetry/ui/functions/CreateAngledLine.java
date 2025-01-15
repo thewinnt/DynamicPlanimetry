@@ -30,5 +30,5 @@ public class CreateAngledLine extends BasicPropertyFunction<Line> {
             Map.of("angle", new NumberProperty(PROPERTY, Settings.get().toUnit(MathHelper.HALF_PI)))
         );
     }
-    
+
 }

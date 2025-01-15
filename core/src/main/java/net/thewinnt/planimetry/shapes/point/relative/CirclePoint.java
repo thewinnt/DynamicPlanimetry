@@ -3,7 +3,7 @@ package net.thewinnt.planimetry.shapes.point.relative;
 import java.util.Collection;
 import java.util.List;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
@@ -142,11 +142,11 @@ public class CirclePoint extends PointProvider {
     }
 
     public static CirclePoint readNbt(CompoundTag nbt, LoadingContext context) {
-        Circle circle = (Circle) context.resolveShape(nbt.getLong("circle").longValue());
-        double angle = nbt.getDouble("angle").doubleValue();
+        Circle circle = (Circle) context.resolveShape(nbt.getLong("circle"));
+        double angle = nbt.getDouble("angle");
         boolean shouldRender = NbtUtil.getOptionalBoolean(nbt, "should_render", true);
-        if (nbt.containsCompound("name")) {
-            NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
+        if (nbt.containsKey("name")) {
+            NameComponent name = NameComponent.readNbt(nbt.getCompoundTag("name"));
             CirclePoint output = new CirclePoint(context.getDrawing(), circle, angle, name);
             output.setShouldRender(shouldRender);
             return output;

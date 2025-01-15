@@ -1,17 +1,5 @@
 package net.thewinnt.planimetry;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingFormatArgumentException;
-import java.util.zip.Deflater;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -27,10 +15,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import dev.dewy.nbt.Nbt;
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.Language;
+import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.platform.NativeIO;
 import net.thewinnt.planimetry.platform.PlatformAbstractions;
 import net.thewinnt.planimetry.screen.EditorScreen;
@@ -41,9 +29,24 @@ import net.thewinnt.planimetry.screen.SettingsScreen;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.text.Component;
+
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.MissingFormatArgumentException;
+import java.util.zip.Deflater;
+
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+@SuppressWarnings("SimpleDateFormat")
 public class DynamicPlanimetry extends Game {
     // public constants
     public static final int DATA_VERSION = 0; // public testing - release 0.2
@@ -52,7 +55,6 @@ public class DynamicPlanimetry extends Game {
     public static final int EDITOR_SCREEN = 1;
     public static final int FILE_SELECTION_SCREEN = 2;
     public static final int SETTINGS_SCREEN = 3;
-    public static final Nbt NBT = new Nbt();
     public static final Gson GSON = new GsonBuilder().create();
     public static final Theme THEME_LIGHT = new Theme(
         Component.translatable("theme.builtin.light"),
@@ -119,6 +121,7 @@ public class DynamicPlanimetry extends Game {
     public static final Theme[] BUILT_IN_THEMES = new Theme[]{THEME_LIGHT, THEME_DARK};
 
     // general stuff
+    private static DynamicPlanimetry INSTANCE;
     public final List<Screen> screenByIds = new ArrayList<>();
     public String last_fps = "FPS: ..."; // the last reading of the fps counter
 
@@ -170,13 +173,15 @@ public class DynamicPlanimetry extends Game {
     public static final DateFormat AUTOSAVE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss.SSS");
 
     public DynamicPlanimetry(CompoundTag settings, PlatformAbstractions platform, NativeIO io, boolean forceDebug) {
-        super();
+        DynamicPlanimetry.INSTANCE = this;
         SETTINGS.fromNbt(settings);
         DynamicPlanimetry.PLATFORM = platform;
         DynamicPlanimetry.NATIVE_IO = io;
         if (forceDebug) {
             SETTINGS.setDebug();
         }
+        Registries.init();
+        FreeTypeFontGenerator.setMaxTextureSize(FreeTypeFontGenerator.NO_MAXIMUM);
     }
 
     @Override
@@ -185,6 +190,15 @@ public class DynamicPlanimetry extends Game {
         gen_bold = new FreeTypeFontGenerator(Gdx.files.internal("dhmbold.ttf"));
         fonts_default = new HashMap<>();
         fonts_bold = new HashMap<>();
+
+        try {
+            Gdx.files.local("drawings").mkdirs();
+            Gdx.files.local("screenshots").mkdirs();
+        } catch (Exception e) {
+            if (isDebug()) {
+                Notifications.addNotification(e.getMessage(), 7500);
+            }
+        }
 
         reloadLanguages();
 
@@ -196,14 +210,6 @@ public class DynamicPlanimetry extends Game {
         setScreen(MAIN_MENU);
         if (isDebug()) {
             Notifications.addNotification("Включён режим отладки", 2000);
-        }
-        try {
-            Gdx.files.local("drawings").mkdirs();
-            Gdx.files.local("screenshots").mkdirs();
-        } catch (Exception e) {
-            if (isDebug()) {
-                Notifications.addNotification(e.getMessage(), 7500);
-            }
         }
     }
 
@@ -325,11 +331,11 @@ public class DynamicPlanimetry extends Game {
 
     public void preloadDrawings(String folder) {
         ArrayList<Drawing> drawings = new ArrayList<>();
-        for (FileHandle i : Gdx.files.absolute(folder).list()) {
+        for (File i : NATIVE_IO.listFiles(folder)) {
             try {
-                drawings.add(Drawing.load(i.path()));
+                drawings.add(Drawing.load(i));
             } catch (Exception | StackOverflowError e) {
-                Notifications.addNotification("Ошибка при загрузке файла (" + i.nameWithoutExtension() + "):  " + e.getMessage(), 5000);
+                Notifications.addNotification("Ошибка при загрузке файла (" + i.getPath() + "):  " + e.getMessage(), 5000);
                 e.printStackTrace();
             }
         }
@@ -365,8 +371,7 @@ public class DynamicPlanimetry extends Game {
     }
 
     public static DynamicPlanimetry getInstance() {
-        if (Gdx.app == null) return null;
-        return (DynamicPlanimetry)Gdx.app.getApplicationListener();
+        return INSTANCE;
     }
 
     public static PlatformAbstractions platform() {

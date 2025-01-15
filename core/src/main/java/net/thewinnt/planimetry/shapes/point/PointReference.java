@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
@@ -162,7 +162,7 @@ public class PointReference extends PointProvider {
     }
 
     public static PointReference readNbt(CompoundTag nbt, LoadingContext context) {
-        return new PointReference((PointProvider)context.resolveShape(nbt.getLong("point").getValue()));
+        return new PointReference((PointProvider)context.resolveShape(nbt.getLong("point")));
     }
 
     @Override

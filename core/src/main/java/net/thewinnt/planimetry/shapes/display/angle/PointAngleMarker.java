@@ -1,6 +1,6 @@
 package net.thewinnt.planimetry.shapes.display.angle;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -13,7 +13,7 @@ import net.thewinnt.planimetry.ui.text.Component;
 
 public class PointAngleMarker extends AngleMarker {
     private PointProvider a, b, c;
-    
+
     public PointAngleMarker(Drawing drawing, PointProvider a, PointProvider b, PointProvider c) {
         super(drawing);
         this.a = a;
@@ -80,9 +80,9 @@ public class PointAngleMarker extends AngleMarker {
     }
 
     public static PointAngleMarker readNbt(CompoundTag nbt, LoadingContext context) {
-        PointProvider a = (PointProvider)context.resolveShape(nbt.getLong("a").longValue());
-        PointProvider b = (PointProvider)context.resolveShape(nbt.getLong("main").longValue());
-        PointProvider c = (PointProvider)context.resolveShape(nbt.getLong("b").longValue());
+        PointProvider a = (PointProvider)context.resolveShape(nbt.getLong("a"));
+        PointProvider b = (PointProvider)context.resolveShape(nbt.getLong("main"));
+        PointProvider c = (PointProvider)context.resolveShape(nbt.getLong("b"));
         return new PointAngleMarker(context.getDrawing(), a, b, c);
     }
 

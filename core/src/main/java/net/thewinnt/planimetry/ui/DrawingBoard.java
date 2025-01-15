@@ -3,6 +3,7 @@ package net.thewinnt.planimetry.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -19,12 +20,14 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Logger;
 
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.AABB;
+import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
@@ -44,13 +47,13 @@ public class DrawingBoard extends Actor {
     private final List<Consumer<List<Shape>>> selectionListeners = new ArrayList<>();
     private final List<Shape> selection = new ArrayList<>();
     private final List<Shape> movingShapes = new ArrayList<>();
+    private double scaleO = Math.pow(1.25, 15); // pixels per unit
     private double scale = Math.pow(1.25, 15); // pixels per unit
     private Vec2 panStart = null;
     private Vec2 selectionEnd = null;
     private Vec2 panStartB = null;
     private Vec2 selectionEndB = null;
-    private Vector2 finger1a;
-    private Vector2 finger2a;
+    private Vec2 offsetO;
     private Vec2 offset = Vec2.ZERO;
     private ShapeFactory creatingShape;
     private boolean isPanning = false;
@@ -67,18 +70,22 @@ public class DrawingBoard extends Actor {
         this.addListener(new ActorGestureListener(DynamicPlanimetry.platform().isSmallScreen() ? 20 : 2, 0.4f, 1.1f, Integer.MAX_VALUE) {
             @Override
             public void pinch(InputEvent event, Vector2 finger1a, Vector2 finger2a, Vector2 finger1b, Vector2 finger2b) {
-                int mx = Gdx.input.getX();
-                int my = Gdx.input.getY();
-                if (DrawingBoard.this.finger1a != null) finger1a = DrawingBoard.this.finger1a;
-                if (DrawingBoard.this.finger2a != null) finger2a = DrawingBoard.this.finger2a;
+                Gdx.app.log("DrawingBoard", String.format("Got pinch event: %s -> %s / %s -> %s", finger1a, finger1b, finger2a, finger2b));
+                if (offsetO == null) offsetO = offset;
+                if (scaleO == -1) scaleO = scale;
+                Gdx.app.log("DrawingBoard", String.format("Turned into: %s -> %s / %s -> %s", finger1a, finger1b, finger2a, finger2b));
                 double distance1 = finger1a.dst(finger2a);
                 double distance2 = finger1b.dst(finger2b);
-                Vec2 distanceOld = offset.subtract(xb(mx), yb(my));
-                scale /= (distance2 / distance1);
-                Vec2 distanceNew = offset.subtract(xb(mx), yb(my));
-                offset = offset.add(distanceNew.subtract(distanceOld).mul(scale));
-                DrawingBoard.this.finger1a = finger1b;
-                DrawingBoard.this.finger2a = finger2b;
+                Vec2 f1a = new Vec2(finger1a);
+                Vec2 f1b = new Vec2(finger1b);
+                Vec2 f2a = new Vec2(finger2a);
+                Vec2 f2b = new Vec2(finger2b);
+                Vec2 center1 = f1a.lerp(f2a, 0.5);
+                Vec2 center2 = f1b.lerp(f2b, 0.5);
+                Vec2 diff = new Vec2(center2.subtract(center1));
+                Gdx.app.log("DrawingBoard", String.format(Locale.ROOT, "dist1: %.2f, dist2: %.2f, diff: %s", distance1, distance2, diff));
+                offset = offsetO.subtract(diff);
+                scale = scaleO / (distance1 / distance2);
                 event.handle();
             }
 
@@ -137,8 +144,8 @@ public class DrawingBoard extends Actor {
                 isPanning = false;
                 panStart = null;
                 selectionEnd = null;
-                finger1a = null;
-                finger2a = null;
+                offsetO = null;
+                scaleO = -1;
             }
 
             @Override

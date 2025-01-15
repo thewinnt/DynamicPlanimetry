@@ -3,7 +3,7 @@ package net.thewinnt.planimetry.shapes.lines;
 import java.util.Collection;
 import java.util.List;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
@@ -92,9 +92,9 @@ public class AngledInfiniteLine extends InfiniteLine {
     }
 
     public static AngledInfiniteLine readNbt(CompoundTag nbt, LoadingContext context) {
-        Line base = (Line)context.resolveShape(nbt.getLong("base").getValue());
-        PointProvider point = (PointProvider)context.resolveShape(nbt.getLong("point").getValue());
-        double angle = nbt.getDouble("angle").doubleValue();
+        Line base = (Line)context.resolveShape(nbt.getLong("base"));
+        PointProvider point = (PointProvider)context.resolveShape(nbt.getLong("point"));
+        double angle = nbt.getDouble("angle");
         return new AngledInfiniteLine(context.getDrawing(), base, point, angle);
     }
 

@@ -3,7 +3,7 @@ package net.thewinnt.planimetry.shapes.point;
 import java.util.Collection;
 import java.util.List;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -115,11 +115,11 @@ public class Point extends PointProvider {
     }
 
     public static Point readNbt(CompoundTag nbt, LoadingContext context) {
-        double x = nbt.getDouble("x").getValue();
-        double y = nbt.getDouble("y").getValue();
+        double x = nbt.getDouble("x");
+        double y = nbt.getDouble("y");
         boolean shouldRender = NbtUtil.getOptionalBoolean(nbt, "should_render", true);
-        if (nbt.containsCompound("name")) {
-            NameComponent name = NameComponent.readNbt(nbt.getCompound("name"));
+        if (nbt.containsKey("name")) {
+            NameComponent name = NameComponent.readNbt(nbt.getCompoundTag("name"));
             Point output = new Point(context.getDrawing(), new Vec2(x, y), name);
             output.setShouldRender(shouldRender);
             return output;

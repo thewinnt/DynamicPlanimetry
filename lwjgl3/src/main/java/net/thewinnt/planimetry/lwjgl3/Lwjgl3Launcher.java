@@ -6,11 +6,10 @@ import java.io.IOException;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
-import dev.dewy.nbt.Nbt;
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.io.NBTUtil;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Notifications;
-import org.lwjgl.glfw.GLFWDropCallback;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -30,7 +29,7 @@ public class Lwjgl3Launcher {
         CompoundTag nbt = null;
         if (settingsFile.exists() && settingsFile.canRead()) {
             try {
-                nbt = new Nbt().fromFile(settingsFile);
+                nbt = ((CompoundTag) NBTUtil.read(settingsFile).getTag());
             } catch (IOException e) {
                 Notifications.addNotification("Couldn't load settings: " + e.getMessage(), 5000);
                 e.printStackTrace();

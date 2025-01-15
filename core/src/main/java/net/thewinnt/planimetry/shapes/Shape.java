@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import dev.dewy.nbt.tags.collection.CompoundTag;
+import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
@@ -186,12 +186,12 @@ public abstract class Shape implements ComponentRepresentable {
     }
 
     public static Shape fromNbt(CompoundTag nbt, LoadingContext context) {
-        String type = nbt.getString("type").getValue();
-        long id = nbt.getLong("id").getValue();
+        String type = nbt.getString("type");
+        long id = nbt.getLong("id");
         Shape shape = ShapeData.getDeserializer(new Identifier(type)).deserialize(nbt, context);
         shape.setId(id);
-        if (nbt.containsCompound("name_override")) {
-            shape.setNameOverride(Component.fromNbt(nbt.getCompound("name_override")));
+        if (nbt.containsKey("name_override")) {
+            shape.setNameOverride(Component.fromNbt(nbt.getCompoundTag("name_override")));
         }
         return shape;
     }
