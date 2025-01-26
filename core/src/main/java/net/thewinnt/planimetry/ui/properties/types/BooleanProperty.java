@@ -63,12 +63,12 @@ public class BooleanProperty extends Property<Boolean> {
         Button checkbox = new Button(styles.getCheckboxStyle(size, true)) {
             @Override
             public float getPrefHeight() {
-                return Gdx.graphics.getHeight() / size.getFactor();
+                return size.lines(1);
             }
 
             @Override
             public float getPrefWidth() {
-                return Gdx.graphics.getHeight() / size.getFactor();
+                return size.lines(1);
             }
         };
         checkbox.setChecked(value);

@@ -24,7 +24,7 @@ public class DropdownLayout extends WidgetGroup {
         super();
         this.pane = new Container<>();
         if (name != null) {
-            this.list = new ListSwitch(name, styles, size);
+            this.list = new ListSwitch(name, styles, size, StyleSet::getButtonStyleToggleable);
             list.setChecked(open);
             list.addListener(new ChangeListener() {
                 @Override

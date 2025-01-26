@@ -20,7 +20,7 @@ public class DisplayProperty extends Property<Component> {
 
     public DisplayProperty(Component name) {
         super(name);
-        this.data = () -> Component.empty();
+        this.data = Component::empty;
     }
 
     public DisplayProperty(Component name, Component data) {

@@ -1,6 +1,9 @@
 package net.thewinnt.planimetry.data.registry;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -12,6 +15,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 public class MappedRegistry<T> implements MutableRegistry<T> {
     // TODO minecraft-like registries
     // TODO plugin system
+    public final Identifier id;
     protected final Map<Identifier, T> elementByName = new HashMap<>();
     protected final Map<T, Identifier> names = new HashMap<>();
     protected final Int2ObjectMap<T> elementById = new Int2ObjectOpenHashMap<>();
@@ -19,7 +23,9 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
     protected boolean frozen;
     private int idMapper = 0;
 
-    public MappedRegistry() {}
+    public MappedRegistry(Identifier id) {
+        this.id = id;
+    }
 
     @Override
     public T register(Identifier id, T element) {
@@ -69,5 +75,20 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
     @Override
     public Stream<T> stream() {
         return elementById.values().stream();
+    }
+
+    @Override
+    public Iterable<T> elements() {
+        return this.elementByName.values();
+    }
+
+    @Override
+    public Iterable<Identifier> ids() {
+        return this.elementByName.keySet();
+    }
+
+    @Override
+    public Identifier id() {
+        return id;
     }
 }

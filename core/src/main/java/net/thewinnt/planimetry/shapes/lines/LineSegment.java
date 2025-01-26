@@ -21,7 +21,7 @@ import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
-import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
+import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -82,8 +82,8 @@ public class LineSegment extends Line {
 
     @Override
     public Collection<Property<?>> getProperties() {
-        EnclosingProperty a = new EnclosingProperty(this.a.getName(), this.a.getProperties());
-        EnclosingProperty b = new EnclosingProperty(this.b.getName(), this.b.getProperties());
+        PropertyGroup a = new PropertyGroup(this.a.getName(), this.a.getProperties());
+        PropertyGroup b = new PropertyGroup(this.b.getName(), this.b.getProperties());
         DisplayProperty length = new DisplayProperty(Component.translatable("property.line_segment.length"), () -> Component.number(this.a.getPosition().distanceTo(this.b.getPosition())));
         return List.of(a, b, length);
     }

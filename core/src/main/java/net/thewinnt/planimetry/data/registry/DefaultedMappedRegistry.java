@@ -3,7 +3,8 @@ package net.thewinnt.planimetry.data.registry;
 public class DefaultedMappedRegistry<T> extends MappedRegistry<T> {
     private final T defaultElement;
 
-    public DefaultedMappedRegistry(T defaultElement) {
+    public DefaultedMappedRegistry(Identifier id, T defaultElement) {
+        super(id);
         this.defaultElement = defaultElement;
     }
 

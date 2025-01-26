@@ -32,18 +32,18 @@ public record LiteralComponent(String text) implements Component, CharSequence {
 
     @Override
     public Vec2 drawGetSize(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
-        GlyphLayout layout = font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()), color).draw(batch, text, x, y);
-        return new Vec2(layout.width, font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()), color).getLineHeight());
+        GlyphLayout layout = font.getFont((int)(size.lines(1)), color).draw(batch, text, x, y);
+        return new Vec2(layout.width, font.getFont((int)(size.lines(1)), color).getLineHeight());
     }
 
     @Override
     public void draw(Batch batch, FontProvider font, Size size, Color color, float x, float y) {
-        font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()), color).draw(batch, text, x, y);
+        font.getFont((int)(size.lines(1)), color).draw(batch, text, x, y);
     }
 
     @Override
     public Vec2 getSize(FontProvider font, Size size) {
-        BitmapFont fnt = font.getFont((int)(Gdx.graphics.getHeight() / size.getFactor()), Color.BLACK);
+        BitmapFont fnt = font.getFont((int)(size.lines(1)), Color.BLACK);
         return new Vec2(FontUtils.getTextLength(fnt, text), fnt.getLineHeight());
     }
 

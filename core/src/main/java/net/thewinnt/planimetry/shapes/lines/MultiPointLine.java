@@ -22,7 +22,7 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
-import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
+import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -109,7 +109,7 @@ public class MultiPointLine extends Shape {
     public Collection<Property<?>> getProperties() {
         List<Property<?>> properties = new ArrayList<>();
         for (PointProvider i : points) {
-            properties.add(new EnclosingProperty(i.getName(), i.getProperties()));
+            properties.add(new PropertyGroup(i.getName(), i.getProperties()));
         }
         properties.add(new DisplayProperty(Component.translatable("property.polygonal_chain.length"), () -> Component.number(getPerimeter())));
         return properties;

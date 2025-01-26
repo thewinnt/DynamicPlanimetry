@@ -29,6 +29,7 @@ public abstract class Property<T> {
 
     public abstract void addValueChangeListener(Consumer<T> listener);
     public abstract WidgetGroup getActorSetup(StyleSet styles, Size size);
+
     public abstract T getValue();
     public abstract void setValue(T value);
 }

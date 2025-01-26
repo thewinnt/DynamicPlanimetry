@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -159,7 +160,7 @@ public class DrawingBoard extends Actor {
                 } else if (!isPanning) {
                     movingShapes.add(getHoveredShape(mx, my, Settings.get().getShapeMovementPredicate()));
                 }
-                movingShapes.removeIf(shape -> shape == null);
+                movingShapes.removeIf(Objects::isNull);
                 getStage().setKeyboardFocus(DrawingBoard.this);
             }
         });

@@ -21,7 +21,7 @@ import net.thewinnt.planimetry.ui.functions.CreateParallelLine;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.functions.LineTypeConversion;
 import net.thewinnt.planimetry.ui.properties.Property;
-import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
+import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public abstract class Line extends Shape {
@@ -75,8 +75,8 @@ public abstract class Line extends Shape {
     @Override
     public Collection<Property<?>> getProperties() {
         return List.of(
-            new EnclosingProperty(this.a.getName(), this.a.getProperties()),
-            new EnclosingProperty(this.b.getName(), this.b.getProperties())
+            new PropertyGroup(this.a.getName(), this.a.getProperties()),
+            new PropertyGroup(this.b.getName(), this.b.getProperties())
         );
     }
 

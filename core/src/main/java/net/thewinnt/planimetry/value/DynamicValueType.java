@@ -1,15 +1,12 @@
 package net.thewinnt.planimetry.value;
 
 import net.querz.nbt.tag.CompoundTag;
-import net.querz.nbt.tag.Tag;
 import net.thewinnt.planimetry.point.ValueContext;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.Random;
 
-public interface DynamicValueSerializer<T extends DynamicValue> {
+public interface DynamicValueType<T extends DynamicValue> {
     T fromNbt(CompoundTag tag);
     CompoundTag toNbt(T value);
 

@@ -1,8 +1,10 @@
 package net.thewinnt.planimetry.ui.properties;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
@@ -17,14 +19,17 @@ import net.thewinnt.planimetry.ui.text.Component;
 
 public class PropertyLayout extends WidgetGroup {
     private final Container<VerticalGroup> pane;
-    private final VerticalGroup propertyList;
     public final ListSwitch list;
 
-    public PropertyLayout(Collection<Property<?>> properties, StyleSet styles, Component name, Size size, boolean open) {
+    public PropertyLayout(Collection<? extends Property<?>> properties, StyleSet styles, Component name, Size size, boolean open) {
+        this(properties, styles, name, size, open, StyleSet::getButtonStyleToggleable);
+    }
+
+    public PropertyLayout(Collection<? extends Property<?>> properties, StyleSet styles, Component name, Size size, boolean open, BiFunction<StyleSet, Size, Button.ButtonStyle> styleGetter) {
         super();
         this.pane = new Container<>();
         if (name != null) {
-            this.list = new ListSwitch(name, styles, size);
+            this.list = new ListSwitch(name, styles, size, styleGetter);
             list.setChecked(open);
             list.addListener(new ChangeListener() {
                 @Override
@@ -43,10 +48,10 @@ public class PropertyLayout extends WidgetGroup {
 
         // pane.setupOverscroll(Gdx.graphics.getHeight() / Size.MEDIUM.getFactor() * 1.1f, 10, 200);
 
-        this.propertyList = new VerticalGroup().top().left().expand().fill().pad(2, 5, 2, 5);
-        this.propertyList.setFillParent(true);
+        VerticalGroup propertyList = new VerticalGroup().top().left().expand().fill().pad(2, 5, 2, 5);
+        propertyList.setFillParent(true);
         for (Property<?> i : properties) {
-            this.propertyList.addActor(new PropertyEntry(i, styles, size));
+            propertyList.addActor(new PropertyEntry(i, styles, size));
         }
         this.pane.setActor(propertyList);
         this.pane.align(Align.bottomLeft);

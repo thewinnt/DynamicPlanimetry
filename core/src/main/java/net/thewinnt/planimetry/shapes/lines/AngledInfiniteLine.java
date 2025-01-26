@@ -15,7 +15,7 @@ import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.relative.AngleOffsetPoint;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.Property;
-import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
+import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.ShapeProperty;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -72,7 +72,7 @@ public class AngledInfiniteLine extends InfiniteLine {
     @Override
     public Collection<Property<?>> getProperties() {
         this.angleProperty.setValue(Settings.get().toUnit(angle));
-        return List.of(sourceProperty, angleProperty, new EnclosingProperty(point.getName(), point.getProperties()));
+        return List.of(sourceProperty, angleProperty, new PropertyGroup(point.getName(), point.getProperties()));
     }
 
     @Override

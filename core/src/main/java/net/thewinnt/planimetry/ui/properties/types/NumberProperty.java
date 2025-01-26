@@ -79,6 +79,7 @@ public class NumberProperty extends Property<Double> {
     }
 
     @Override
+    @SuppressWarnings("CheckResult") // we need the parseDouble to
     public Table getActorSetup(StyleSet styles, Size size) {
         String fieldText;
         if (!isWhole) {
@@ -89,7 +90,7 @@ public class NumberProperty extends Property<Double> {
         TextField doubleField = new TextField(fieldText, styles.getTextFieldStyle(size, true)) {
             @Override
             public float getPrefWidth() {
-                return Gdx.graphics.getHeight() / 30;
+                return Gdx.graphics.getHeight() / 30f;
             }
         };
         doubleField.setTextFieldFilter((textField, character) -> {

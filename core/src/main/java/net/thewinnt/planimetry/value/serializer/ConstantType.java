@@ -2,13 +2,13 @@ package net.thewinnt.planimetry.value.serializer;
 
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.util.Util;
-import net.thewinnt.planimetry.value.DynamicValueSerializer;
+import net.thewinnt.planimetry.value.DynamicValueType;
 import net.thewinnt.planimetry.value.type.ConstantValue;
 
-public class ConstantSerializer implements DynamicValueSerializer<ConstantValue> {
-    public static final ConstantSerializer INSTANCE = new ConstantSerializer();
+public class ConstantType implements DynamicValueType<ConstantValue> {
+    public static final ConstantType INSTANCE = new ConstantType();
 
-    private ConstantSerializer() {}
+    private ConstantType() {}
 
     @Override
     public ConstantValue fromNbt(CompoundTag tag) {

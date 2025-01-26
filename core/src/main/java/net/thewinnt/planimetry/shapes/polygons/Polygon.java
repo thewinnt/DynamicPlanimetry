@@ -19,7 +19,7 @@ import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
-import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
+import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -100,7 +100,7 @@ public class Polygon extends MultiPointLine {
         recalculateAngles();
         var prev = super.getProperties();
         prev.add(new DisplayProperty(Component.translatable("property.polygon.area"), () -> Component.number(getArea())));
-        prev.add(new EnclosingProperty(Component.translatable("property.polygon.angles"), angles));
+        prev.add(new PropertyGroup(Component.translatable("property.polygon.angles"), angles));
         return prev;
     }
 

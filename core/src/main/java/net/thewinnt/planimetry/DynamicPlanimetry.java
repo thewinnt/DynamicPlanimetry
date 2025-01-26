@@ -21,6 +21,7 @@ import net.thewinnt.planimetry.data.Language;
 import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.platform.NativeIO;
 import net.thewinnt.planimetry.platform.PlatformAbstractions;
+import net.thewinnt.planimetry.screen.DebugSettingsScreen;
 import net.thewinnt.planimetry.screen.EditorScreen;
 import net.thewinnt.planimetry.screen.FileSelectionScreen;
 import net.thewinnt.planimetry.screen.FlatUIScreen;
@@ -55,6 +56,7 @@ public class DynamicPlanimetry extends Game {
     public static final int EDITOR_SCREEN = 1;
     public static final int FILE_SELECTION_SCREEN = 2;
     public static final int SETTINGS_SCREEN = 3;
+    public static final int DEBUG_SETTINGS_SCREEN = 4;
     public static final Gson GSON = new GsonBuilder().create();
     public static final Theme THEME_LIGHT = new Theme(
         Component.translatable("theme.builtin.light"),
@@ -142,6 +144,7 @@ public class DynamicPlanimetry extends Game {
     public EditorScreen editorScreen;
     public FileSelectionScreen fileSelectionScreen;
     public SettingsScreen settingsScreen;
+    public DebugSettingsScreen debugSettingsScreen;
 
     // font stuff
     private FreeTypeFontGenerator gen_default;
@@ -206,6 +209,7 @@ public class DynamicPlanimetry extends Game {
         editorScreen = registerScreen(new EditorScreen(this));
         fileSelectionScreen = registerScreen(new FileSelectionScreen(this));
         settingsScreen = registerScreen(new SettingsScreen(this));
+        debugSettingsScreen = registerScreen(new DebugSettingsScreen(this));
         setDrawing(null, false);
         setScreen(MAIN_MENU);
         if (isDebug()) {

@@ -29,7 +29,7 @@ import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
-import net.thewinnt.planimetry.ui.properties.types.EnclosingProperty;
+import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.NameComponent;
@@ -153,14 +153,14 @@ public class Circle extends Shape {
             BooleanProperty keep = new BooleanProperty(Component.translatable("property.circle.keep_radius"), keepRadius);
             keep.addValueChangeListener(Circle.this::setKeepRadius);
             return List.of(
-                new EnclosingProperty(Component.translatable("property.circle.group.center_point"), this.center.getProperties()),
-                new EnclosingProperty(Component.translatable("property.circle.group.radius_point"), this.radiusPoint.getProperties()),
+                new PropertyGroup(Component.translatable("property.circle.group.center_point"), this.center.getProperties()),
+                new PropertyGroup(Component.translatable("property.circle.group.radius_point"), this.radiusPoint.getProperties()),
                 keep
             );
         } else {
             NumberProperty radius = new NumberProperty(Component.translatable("property.circle.radius"), this.radius.get());
             radius.addValueChangeListener(r -> Circle.this.radius = () -> r);
-            return List.of(new EnclosingProperty(Component.translatable("property.circle.group.center_point"), this.center.getProperties()), radius);
+            return List.of(new PropertyGroup(Component.translatable("property.circle.group.center_point"), this.center.getProperties()), radius);
         }
     }
 

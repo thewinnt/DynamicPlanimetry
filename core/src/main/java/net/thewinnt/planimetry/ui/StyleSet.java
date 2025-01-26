@@ -46,6 +46,7 @@ public class StyleSet {
     public final RectangleDrawable fullMain;
     private final Map<StyleType, TextButtonStyle> buttonStyles = new HashMap<>();
     private final Map<Size, TextButtonStyle> buttonStylesToggleable = new EnumMap<>(Size.class);
+    private final Map<Size, TextButtonStyle> buttonStylesNoBg = new EnumMap<>(Size.class);
     private final Map<StyleType, TextFieldStyle> textFieldStyles = new HashMap<>();
     private final Map<Size, SelectBoxStyle> listStyles = new EnumMap<>(Size.class);
     private final Map<Size, LabelStyle> labelStyles = new EnumMap<>(Size.class);
@@ -79,7 +80,7 @@ public class StyleSet {
     }
 
     public void rebuild() {
-        rebuild(Gdx.graphics.getHeight());
+        rebuild(Math.min(Gdx.graphics.getHeight(), Gdx.graphics.getWidth()));
     }
 
     public void rebuild(final int height) {
@@ -104,6 +105,12 @@ public class StyleSet {
             textButtonStyle.checkedOver = normal;
             textButtonStyle.checkedDown = over;
             buttonStylesToggleable.put(size, textButtonStyle);
+
+            // buttons without bg
+            textButtonStyle = new TextButtonStyle(null, null, null, font.getFont(height / size.getFactor(), Theme.current().textButton()));
+            textButtonStyle.over = selectionOver;
+            textButtonStyle.checkedOver = selectionOver;
+            buttonStylesNoBg.put(size, textButtonStyle);
 
             // text field styles
             TextFieldStyle textFieldStyle = new TextFieldStyle(font.getFont(height / size.getFactor(), Theme.current().textButton()), Theme.current().textButton(), cursor, selection, field);
@@ -152,6 +159,10 @@ public class StyleSet {
 
     public TextButtonStyle getButtonStyleToggleable(Size size) {
         return buttonStylesToggleable.get(size);
+    }
+
+    public TextButtonStyle getButtonStyleNoBg(Size size) {
+        return buttonStylesNoBg.get(size);
     }
 
     public TextFieldStyle getTextFieldStyle(Size size, boolean isActive) {
@@ -226,6 +237,10 @@ public class StyleSet {
 
         public float getFactor() {
             return factor / DynamicPlanimetry.getDisplayScaling();
+        }
+
+        public float lines(int lines) {
+            return Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) * lines / getFactor();
         }
     }
 }
