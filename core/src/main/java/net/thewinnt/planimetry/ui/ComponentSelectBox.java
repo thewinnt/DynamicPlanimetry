@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.drawable.DynamicIcon;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -68,6 +67,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
         if (getBackgroundDrawable() != null) {
             getBackgroundDrawable().draw(batch, getX(), getY(), getWidth(), getHeight());
         }
+        DynamicIcon.drawer.setColor(Theme.current().outline());
         if (iconSizeOverride == 0) {
             if (this.open) {
                 DynamicIcon.DOWN_TRIANGLE.draw(batch, getX(), getY() + 2, getHeight() - 4, getHeight() - 4);
@@ -76,7 +76,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
             }
             textGetter.apply(getSelected()).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, this.size, Theme.current().textButton(), getX() + getHeight(), getY() + getHeight() * 3 / 4);
         } else {
-            if (this.open){
+            if (this.open) {
                 DynamicIcon.DOWN_TRIANGLE.draw(batch, getX(), getY() + iconSizeOverride / 2, iconSizeOverride, iconSizeOverride);
             } else {
                 DynamicIcon.RIGHT_TRIANGLE.draw(batch, getX(), getY() + iconSizeOverride / 2, iconSizeOverride, iconSizeOverride);

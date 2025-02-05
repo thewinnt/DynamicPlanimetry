@@ -1,6 +1,5 @@
 package net.thewinnt.planimetry.ui.text;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -10,7 +9,7 @@ import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.util.FontProvider;
 
 public record NameComponent(byte letter, int index, short dashes) implements Component {

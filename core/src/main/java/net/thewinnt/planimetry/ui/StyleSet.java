@@ -16,9 +16,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 
-import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.drawable.CheckboxDrawable;
+import net.thewinnt.planimetry.ui.drawable.DynamicIcon;
 import net.thewinnt.planimetry.ui.drawable.RectangleDrawable;
+import net.thewinnt.planimetry.ui.drawable.RectangledIconDrawable;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -42,6 +43,18 @@ public class StyleSet {
     public final RectangleDrawable checkboxPressed;
     public final RectangleDrawable checkboxOver;
     public final RectangleDrawable checkboxDisabled;
+    public final RectangleDrawable closeNormal;
+    public final RectangleDrawable closePressed;
+    public final RectangleDrawable closeOver;
+    public final RectangleDrawable closeDisabled;
+    public final RectangleDrawable minimizeNormal;
+    public final RectangleDrawable minimizePressed;
+    public final RectangleDrawable minimizeOver;
+    public final RectangleDrawable minimizeDisabled;
+    public final RectangleDrawable maximizeNormal;
+    public final RectangleDrawable maximizePressed;
+    public final RectangleDrawable maximizeOver;
+    public final RectangleDrawable maximizeDisabled;
     public final RectangleDrawable fullOutline;
     public final RectangleDrawable fullMain;
     private final Map<StyleType, TextButtonStyle> buttonStyles = new HashMap<>();
@@ -51,8 +64,12 @@ public class StyleSet {
     private final Map<Size, SelectBoxStyle> listStyles = new EnumMap<>(Size.class);
     private final Map<Size, LabelStyle> labelStyles = new EnumMap<>(Size.class);
     private final Map<StyleType, ButtonStyle> checkboxStyles = new HashMap<>();
+    private final Map<StyleType, ButtonStyle> closeStyles = new HashMap<>();
+    private final Map<StyleType, ButtonStyle> minimizeStyles = new HashMap<>();
+    private final Map<StyleType, ButtonStyle> maximizeStyles = new HashMap<>();
     private final Map<Size, WindowStyle> windowStyles = new EnumMap<>(Size.class);
     private ScrollPaneStyle scrollPaneStyleNoBg;
+    private int height;
 
     public StyleSet(ShapeDrawer drawer, FontProvider font) {
         this.drawer = drawer;
@@ -74,6 +91,18 @@ public class StyleSet {
         this.checkboxOver = new CheckboxDrawable(drawer).withColors(Theme.current().main(), Theme.current().outline());
         this.checkboxPressed = new CheckboxDrawable(drawer).withColors(Theme.current().pressed(), Theme.current().outline());
         this.checkboxDisabled = new CheckboxDrawable(drawer).withColors(Theme.current().pressed(), Theme.current().inactive());
+        this.closeNormal = new RectangledIconDrawable(drawer, DynamicIcon.CLOSE).withColors(Theme.current().button(), Theme.current().outline());
+        this.closeOver = new RectangledIconDrawable(drawer, DynamicIcon.CLOSE).withColors(Theme.current().main(), Theme.current().outline());
+        this.closePressed = new RectangledIconDrawable(drawer, DynamicIcon.CLOSE).withColors(Theme.current().pressed(), Theme.current().outline());
+        this.closeDisabled = new RectangledIconDrawable(drawer, DynamicIcon.CLOSE).withColors(Theme.current().pressed(), Theme.current().inactive());
+        this.minimizeNormal = new RectangledIconDrawable(drawer, DynamicIcon.MINIMIZE).withColors(Theme.current().button(), Theme.current().outline());
+        this.minimizeOver = new RectangledIconDrawable(drawer, DynamicIcon.MINIMIZE).withColors(Theme.current().main(), Theme.current().outline());
+        this.minimizePressed = new RectangledIconDrawable(drawer, DynamicIcon.MINIMIZE).withColors(Theme.current().pressed(), Theme.current().outline());
+        this.minimizeDisabled = new RectangledIconDrawable(drawer, DynamicIcon.MINIMIZE).withColors(Theme.current().pressed(), Theme.current().inactive());
+        this.maximizeNormal = new RectangledIconDrawable(drawer, DynamicIcon.DOWN_TRIANGLE).withColors(Theme.current().button(), Theme.current().outline());
+        this.maximizeOver = new RectangledIconDrawable(drawer, DynamicIcon.DOWN_TRIANGLE).withColors(Theme.current().main(), Theme.current().outline());
+        this.maximizePressed = new RectangledIconDrawable(drawer, DynamicIcon.DOWN_TRIANGLE).withColors(Theme.current().pressed(), Theme.current().outline());
+        this.maximizeDisabled = new RectangledIconDrawable(drawer, DynamicIcon.DOWN_TRIANGLE).withColors(Theme.current().pressed(), Theme.current().inactive());
         this.fullOutline = new CheckboxDrawable(drawer).withColors(Theme.current().outline(), Theme.current().outline());
         this.fullMain = new CheckboxDrawable(drawer).withColors(Theme.current().main(), Theme.current().main());
         rebuild();
@@ -90,102 +119,137 @@ public class StyleSet {
         labelStyles.clear();
         checkboxStyles.clear();
         windowStyles.clear();
-        for (Size size : Size.values()) {
-            // text button styles
-            TextButtonStyle textButtonStyle = new TextButtonStyle(normal, pressed, normal, font.getFont(height / size.getFactor(), Theme.current().textButton()));
-            textButtonStyle.over = over;
-            textButtonStyle.checkedOver = over;
-            buttonStyles.put(new StyleType(size, true), textButtonStyle);
-            textButtonStyle = new TextButtonStyle(disabled, disabled, disabled, font.getFont(height / size.getFactor(), Theme.current().textInactive()));
-            buttonStyles.put(new StyleType(size, false), textButtonStyle);
-
-            // toggleable text button styles
-            textButtonStyle = new TextButtonStyle(normal, pressed, pressed, font.getFont(height / size.getFactor(), Theme.current().textButton()));
-            textButtonStyle.over = over;
-            textButtonStyle.checkedOver = normal;
-            textButtonStyle.checkedDown = over;
-            buttonStylesToggleable.put(size, textButtonStyle);
-
-            // buttons without bg
-            textButtonStyle = new TextButtonStyle(null, null, null, font.getFont(height / size.getFactor(), Theme.current().textButton()));
-            textButtonStyle.over = selectionOver;
-            textButtonStyle.checkedOver = selectionOver;
-            buttonStylesNoBg.put(size, textButtonStyle);
-
-            // text field styles
-            TextFieldStyle textFieldStyle = new TextFieldStyle(font.getFont(height / size.getFactor(), Theme.current().textButton()), Theme.current().textButton(), cursor, selection, field);
-            textFieldStyle.messageFontColor = Color.GRAY;
-            textFieldStyle.messageFont = font.getFont(height / size.getFactor(), Color.GRAY);
-            textFieldStyles.put(new StyleType(size, true), textFieldStyle);
-            textFieldStyle = new TextFieldStyle(font.getFont(height / size.getFactor(), Theme.current().inactive()), Theme.current().inactive(), cursorInactive, selectionInactive, fieldInactive);
-            textFieldStyle.messageFontColor = Color.GRAY;
-            textFieldStyle.messageFont = font.getFont(height / size.getFactor(), Color.GRAY);
-            textFieldStyles.put(new StyleType(size, false), textFieldStyle);
-
-            // list styles
-            ScrollPaneStyle paneStyle = new ScrollPaneStyle(fullBlack, fullBlack, fullWhite, fullBlack, fullWhite);
-            ListStyle innerStyle = new ListStyle(font.getFont(height / size.getFactor(), Theme.current().textButton()), Theme.current().textButton(), Theme.current().textButton(), selectionOver);
-            innerStyle.over = selectionOver;
-            innerStyle.background = normal;
-            innerStyle.down = new RectangleDrawable(drawer).withColors(Theme.current().pressed(), null);
-            SelectBoxStyle listStyle = new SelectBoxStyle(font.getFont(height / size.getFactor(), Theme.current().textButton()), Theme.current().textButton(), normal, paneStyle, innerStyle);
-            listStyle.backgroundOver = over;
-            listStyle.backgroundDisabled = disabled;
-            listStyle.backgroundOpen = pressed;
-            listStyles.put(size, listStyle);
-
-            // label styles
-            labelStyles.put(size, new LabelStyle(font.getFont(height / size.getFactor(), Theme.current().textUI()), null));
-
-            // checkbox styles
-            ButtonStyle checkBoxStyle = new ButtonStyle(normal, pressed, checkboxNormal);
-            checkBoxStyle.checkedDown = checkboxPressed;
-            checkBoxStyle.checkedOver = checkboxOver;
-            checkBoxStyle.over = over;
-            checkboxStyles.put(new StyleType(size, true), checkBoxStyle);
-            checkBoxStyle = new ButtonStyle(disabled, disabled, checkboxDisabled);
-            checkboxStyles.put(new StyleType(size, false), checkBoxStyle);
-
-            // window styles
-            this.windowStyles.put(size, new WindowStyle(font.getFont(height / size.getFactor(), Theme.current().textButton()), Theme.current().textButton(), normal));
-        }
-        // scroll pane style
-        this.scrollPaneStyleNoBg = new ScrollPaneStyle(null, fullOutline, fullMain, fullOutline, fullMain);
+        this.height = height;
     }
 
     public TextButtonStyle getButtonStyle(Size size, boolean isActive) {
-        return buttonStyles.get(new StyleType(size, isActive));
+        return buttonStyles.computeIfAbsent(new StyleType(size, isActive), type -> {
+            if (type.isActive) {
+                TextButtonStyle textButtonStyle = new TextButtonStyle(normal, pressed, normal, font.getFont(height / type.size.getFactor(), Theme.current().textButton()));
+                textButtonStyle.over = over;
+                textButtonStyle.checkedOver = over;
+                return textButtonStyle;
+            } else {
+                return new TextButtonStyle(disabled, disabled, disabled, font.getFont(height / type.size.getFactor(), Theme.current().textInactive()));
+            }
+        });
     }
 
     public TextButtonStyle getButtonStyleToggleable(Size size) {
-        return buttonStylesToggleable.get(size);
+        return buttonStylesToggleable.computeIfAbsent(size, s -> {
+            TextButtonStyle textButtonStyle = new TextButtonStyle(normal, pressed, pressed, font.getFont(height / s.getFactor(), Theme.current().textButton()));
+            textButtonStyle.over = over;
+            textButtonStyle.checkedOver = normal;
+            textButtonStyle.checkedDown = over;
+            return textButtonStyle;
+        });
     }
 
     public TextButtonStyle getButtonStyleNoBg(Size size) {
-        return buttonStylesNoBg.get(size);
+        return buttonStylesNoBg.computeIfAbsent(size, s -> {
+            TextButtonStyle textButtonStyle = new TextButtonStyle(null, null, null, font.getFont(height / s.getFactor(), Theme.current().textButton()));
+            textButtonStyle.over = selectionOver;
+            textButtonStyle.checkedOver = selectionOver;
+            return textButtonStyle;
+        });
     }
 
     public TextFieldStyle getTextFieldStyle(Size size, boolean isActive) {
-        return textFieldStyles.get(new StyleType(size, isActive));
+        return textFieldStyles.computeIfAbsent(new StyleType(size, isActive), type -> {
+            if (type.isActive) {
+                TextFieldStyle textFieldStyle = new TextFieldStyle(font.getFont(height / type.size.getFactor(), Theme.current().textButton()), Theme.current().textButton(), cursor, selection, field);
+                textFieldStyle.messageFontColor = Color.GRAY;
+                textFieldStyle.messageFont = font.getFont(height / type.size.getFactor(), Color.GRAY);
+                return textFieldStyle;
+            } else {
+                TextFieldStyle textFieldStyle = new TextFieldStyle(font.getFont(height / type.size.getFactor(), Theme.current().inactive()), Theme.current().inactive(), cursorInactive, selectionInactive, fieldInactive);
+                textFieldStyle.messageFontColor = Color.GRAY;
+                textFieldStyle.messageFont = font.getFont(height / type.size.getFactor(), Color.GRAY);
+                return textFieldStyle;
+            }
+        });
     }
 
     public SelectBoxStyle getListStyle(Size size) {
-        return listStyles.get(size);
+        return listStyles.computeIfAbsent(size, s -> {
+            ScrollPaneStyle paneStyle = new ScrollPaneStyle(fullBlack, fullBlack, fullWhite, fullBlack, fullWhite);
+            ListStyle innerStyle = new ListStyle(font.getFont(height / s.getFactor(), Theme.current().textButton()), Theme.current().textButton(), Theme.current().textButton(), selectionOver);
+            innerStyle.over = selectionOver;
+            innerStyle.background = normal;
+            innerStyle.down = new RectangleDrawable(drawer).withColors(Theme.current().pressed(), null);
+            SelectBoxStyle listStyle = new SelectBoxStyle(font.getFont(height / s.getFactor(), Theme.current().textButton()), Theme.current().textButton(), normal, paneStyle, innerStyle);
+            listStyle.backgroundOver = over;
+            listStyle.backgroundDisabled = disabled;
+            listStyle.backgroundOpen = pressed;
+            return listStyle;
+        });
     }
 
     public LabelStyle getLabelStyle(Size size) {
-        return labelStyles.get(size);
+        return labelStyles.computeIfAbsent(size, s -> new LabelStyle(font.getFont(height / s.getFactor(), Theme.current().textUI()), null));
     }
 
     public ButtonStyle getCheckboxStyle(Size size, boolean isActive) {
-        return checkboxStyles.get(new StyleType(size, isActive));
+        return checkboxStyles.computeIfAbsent(new StyleType(size, isActive), type -> {
+            if (type.isActive) {
+                ButtonStyle checkBoxStyle = new ButtonStyle(normal, pressed, checkboxNormal);
+                checkBoxStyle.checkedDown = checkboxPressed;
+                checkBoxStyle.checkedOver = checkboxOver;
+                checkBoxStyle.over = over;
+                return checkBoxStyle;
+            } else {
+                return new ButtonStyle(disabled, disabled, checkboxDisabled);
+            }
+        });
+    }
+
+    public ButtonStyle getCloseStyle(Size size, boolean isActive) {
+        return closeStyles.computeIfAbsent(new StyleType(size, isActive), type -> {
+            if (type.isActive) {
+                ButtonStyle style = new ButtonStyle(closeNormal, closePressed, closeNormal);
+                style.over = closeOver;
+                style.checkedOver = closeOver;
+                return style;
+            } else {
+                return new ButtonStyle(closeDisabled, closeDisabled, closeDisabled);
+            }
+        });
+    }
+
+    public ButtonStyle getMinimizeStyle(Size size, boolean isActive) {
+        return minimizeStyles.computeIfAbsent(new StyleType(size, isActive), type -> {
+            if (type.isActive) {
+                ButtonStyle style = new ButtonStyle(minimizeNormal, minimizePressed, minimizeNormal);
+                style.over = minimizeOver;
+                style.checkedOver = minimizeOver;
+                return style;
+            } else {
+                return new ButtonStyle(minimizeDisabled, minimizeDisabled, minimizeDisabled);
+            }
+        });
+    }
+
+    public ButtonStyle getMaximizeStyle(Size size, boolean isActive) {
+        return maximizeStyles.computeIfAbsent(new StyleType(size, isActive), type -> {
+            if (type.isActive) {
+                ButtonStyle style = new ButtonStyle(maximizeNormal, maximizePressed, maximizeNormal);
+                style.over = maximizeOver;
+                style.checkedOver = maximizeOver;
+                return style;
+            } else {
+                return new ButtonStyle(maximizeDisabled, maximizeDisabled, maximizeDisabled);
+            }
+        });
     }
 
     public WindowStyle getWindowStyle(Size size) {
-        return windowStyles.get(size);
+        return windowStyles.computeIfAbsent(size, s -> new WindowStyle(font.getFont(height / size.getFactor(), Theme.current().textButton()), Theme.current().textButton(), normal));
     }
 
     public ScrollPaneStyle getScrollPaneStyleNoBg() {
+        if (scrollPaneStyleNoBg == null) {
+            scrollPaneStyleNoBg = new ScrollPaneStyle(null, fullOutline, fullMain, fullOutline, fullMain);
+        }
         return scrollPaneStyleNoBg;
     }
 
@@ -199,48 +263,10 @@ public class StyleSet {
         return new TextButtonStyle(disabled, disabled, disabled, font);
     }
 
+    public int getHeight() {
+        return height;
+    }
+
     public static record StyleType(Size size, boolean isActive) {}
 
-    public static enum Size {
-        SUPER_LARGE(9),
-        VERY_LARGE(12),
-        LARGE(17),
-        MEDIUM(22),
-        SMALL(26),
-        VERY_SMALL(36);
-
-        private final int factor;
-
-        private Size(int factor) {
-            this.factor = factor;
-        }
-
-        public Size smaller() {
-            return switch (this) {
-                case SUPER_LARGE -> VERY_LARGE;
-                case VERY_LARGE -> LARGE;
-                case LARGE -> MEDIUM;
-                case MEDIUM -> SMALL;
-                default -> VERY_SMALL;
-            };
-        }
-
-        public Size larger() {
-            return switch (this) {
-                case VERY_SMALL -> SMALL;
-                case SMALL -> MEDIUM;
-                case MEDIUM -> LARGE;
-                case LARGE -> VERY_LARGE;
-                default -> SUPER_LARGE;
-            };
-        }
-
-        public float getFactor() {
-            return factor / DynamicPlanimetry.getDisplayScaling();
-        }
-
-        public float lines(int lines) {
-            return Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) * lines / getFactor();
-        }
-    }
 }

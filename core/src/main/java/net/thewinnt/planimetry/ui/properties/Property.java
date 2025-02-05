@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.properties.layout.BasicLayout;
 import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
 import net.thewinnt.planimetry.ui.text.Component;

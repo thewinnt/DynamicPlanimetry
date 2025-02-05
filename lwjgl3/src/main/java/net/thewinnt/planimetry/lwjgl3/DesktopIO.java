@@ -1,18 +1,6 @@
 package net.thewinnt.planimetry.lwjgl3;
 
-import com.badlogic.gdx.utils.Null;
-import net.thewinnt.planimetry.DynamicPlanimetry;
-import net.thewinnt.planimetry.platform.NativeIO;
-import net.thewinnt.planimetry.ui.Notifications;
-import org.lwjgl.PointerBuffer;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.util.nfd.NFDFilterItem;
-import org.lwjgl.util.nfd.NFDPathSetEnum;
-import org.lwjgl.util.nfd.NativeFileDialog;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -21,6 +9,17 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.util.nfd.NFDFilterItem;
+import org.lwjgl.util.nfd.NFDPathSetEnum;
+import org.lwjgl.util.nfd.NativeFileDialog;
+
+import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.platform.NativeIO;
+import net.thewinnt.planimetry.ui.Notifications;
 
 public class DesktopIO implements NativeIO {
     private final String workDir;

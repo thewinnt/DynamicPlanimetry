@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.ListTag;
 import net.thewinnt.planimetry.math.Vec2;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.util.FontProvider;
 
 public class MultiComponent implements Component {

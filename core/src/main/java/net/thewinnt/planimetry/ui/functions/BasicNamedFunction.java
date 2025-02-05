@@ -13,7 +13,7 @@ import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class BasicNamedFunction<T extends Shape> extends Function<T> {

@@ -1,9 +1,6 @@
 package net.thewinnt.planimetry.data.registry;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 

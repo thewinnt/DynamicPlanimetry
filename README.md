@@ -17,13 +17,13 @@
 - ОС:
   - Windows 7 или новее
   - Android 8 или новее
-- Java 17 (для ПК)
+- Java 21 (для ПК)
 - ~30 МБ свободного места (~100 МБ для сборки)
 
 ## Сборка
 В папке репозитория выполнить команду `./gradlew build` (или `gradlew build` в командной строке Windows). Скачаются
 все необходимые библиотеки. Готовый jar-файл для ПК будет в `lwjgl3/build/libs/`, APK-файл будет в
-`android/build/outputs/apk/release`. Необходима Java 17.
+`android/build/outputs/apk/release`. Необходима Java 21.
 
 Чтобы просто запустить программу, можно написать `./gradlew run` (или `gradlew run` в командной строке Windows).
 

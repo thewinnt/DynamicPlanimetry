@@ -12,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
 import net.querz.nbt.io.NBTSerializer;
-import net.querz.nbt.io.NBTUtil;
 import net.querz.nbt.io.NamedTag;
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
@@ -21,7 +20,7 @@ import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.SaveEntry;
 import net.thewinnt.planimetry.ui.SaveEntry.SortingType;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.properties.PropertyEntry;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.types.SelectionProperty;
@@ -303,7 +302,6 @@ public class FileSelectionScreen extends FlatUIScreen {
         } else {
             if (DynamicPlanimetry.platform().canOpenDrawingFolder()) {
                 controlPanel.add(openSaveFolder).expand().fill().pad(5).uniform();
-                // TODO export file instead
             } else {
                 controlPanel.add(exportFile).expand().fill().pad(5).uniform();
             }

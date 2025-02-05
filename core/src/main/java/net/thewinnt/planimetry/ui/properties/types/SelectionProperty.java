@@ -1,6 +1,7 @@
 package net.thewinnt.planimetry.ui.properties.types;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -13,14 +14,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.ui.ComponentSelectBox;
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
 
 public class SelectionProperty<T> extends Property<T> {
     private final List<Consumer<T>> listeners = new ArrayList<>();
-    private T[] options;
+    private Collection<T> options;
     private T selected;
     private Function<T, Component> componentProvider = t -> {
         if (t instanceof ComponentRepresentable component) return component.toComponent();
@@ -29,10 +30,20 @@ public class SelectionProperty<T> extends Property<T> {
 
     public SelectionProperty(Component name, T[] options) {
         super(name);
-        this.options = options;
+        this.options = List.of(options);
     }
 
     public SelectionProperty(T selected, Component name, T[] options) {
+        this(name, options);
+        this.selected = selected;
+    }
+
+    public SelectionProperty(Component name, Collection<T> options) {
+        super(name);
+        this.options = options;
+    }
+
+    public SelectionProperty(T selected, Component name, Collection<T> options) {
         this(name, options);
         this.selected = selected;
     }
@@ -63,7 +74,7 @@ public class SelectionProperty<T> extends Property<T> {
     @Override
     public WidgetGroup getActorSetup(StyleSet styles, Size size) {
         Table output = new Table();
-        SelectBox<T> selector = new ComponentSelectBox<>(styles.getListStyle(size), List.of(options), componentProvider, size);
+        SelectBox<T> selector = new ComponentSelectBox<>(styles.getListStyle(size), options, componentProvider, size);
         selector.setSelected(selected);
         selector.addListener(new ChangeListener() {
             @Override

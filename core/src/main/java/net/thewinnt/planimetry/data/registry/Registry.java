@@ -1,6 +1,5 @@
 package net.thewinnt.planimetry.data.registry;
 
-import java.util.Iterator;
 import java.util.stream.Stream;
 
 public interface Registry<T> {
@@ -13,6 +12,7 @@ public interface Registry<T> {
     Iterable<T> elements();
     Iterable<Identifier> ids();
 
+    @SuppressWarnings("unchecked")
     public static <T> T register(Registry<? super T> registry, T element, Identifier id) {
         return ((MutableRegistry<T>) registry).register(id, element);
     }

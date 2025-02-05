@@ -12,7 +12,7 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.SaveEntry.SortingType;
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
@@ -65,8 +65,10 @@ public class Settings {
         theme.addValueChangeListener(theme -> {
             if (Gdx.app != null) {
                 DynamicPlanimetry app = DynamicPlanimetry.getInstance();
-                app.setScreen(DynamicPlanimetry.MAIN_MENU);
-                app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
+                if (!app.screenByIds.isEmpty()) {
+                    app.setScreen(DynamicPlanimetry.MAIN_MENU);
+                    app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
+                }
             }
         });
         fullscreen.addValueChangeListener(isFullscreen -> {

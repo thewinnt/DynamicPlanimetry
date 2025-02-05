@@ -3,13 +3,13 @@ package net.thewinnt.planimetry.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.text.Component;
 
@@ -20,6 +20,13 @@ public class MainMenuScreen extends FlatUIScreen {
     public static final CharSequence SETTINGS = Component.translatable("ui.main.settings");
     public static final CharSequence EXIT = Component.translatable("ui.main.exit");
     public static final CharSequence CONTINUE = Component.translatable("ui.main.continue");
+    private Label title;
+    private Label version;
+    private TextButton load;
+    private TextButton go_settings;
+    private TextButton exit;
+    private TextButton newDrawing;
+    private TextButton create;
 
     public MainMenuScreen(DynamicPlanimetry app) {
         super(app);
@@ -32,17 +39,16 @@ public class MainMenuScreen extends FlatUIScreen {
 
         Table buttons = new Table();
 
-        // the font size is 201 because with 200 the letters 'a', 'c' and 'e' don't show up :(
-        // painful, i know
-        LabelStyle style_title = new LabelStyle(app.getBoldFont(201, Theme.current().textUI()), Theme.current().textUI());
-        Label title = new Label("Dynamic Planimetry", style_title);
-        Label version = new Label(Component.literal(DynamicPlanimetry.APP_VERSION), style_fps);
+        title = new Label("Dynamic Planimetry", styles.getLabelStyle(Size.EXTREMELY_LARGE));
+        version = new Label(Component.literal(DynamicPlanimetry.APP_VERSION), styles.getLabelStyle(Size.MEDIUM));
 
-        TextButtonStyle buttonStyle = styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true);
-        TextButton create = new TextButton(app.getDrawing() == null ? CREATE_DRAWING.toString() : NEW_DRAWING.toString(), buttonStyle);
-        TextButton load = new TextButton(LOAD.toString(), buttonStyle);
-        TextButton go_settings = new TextButton(SETTINGS.toString(), styles.createButtonStyle(app.getFont(85, Theme.current().textButton()), true));
-        TextButton exit = new TextButton(EXIT.toString(), buttonStyle);
+        TextButtonStyle buttonStyle = new TextButtonStyle(styles.normal, styles.pressed, styles.normal, app.getFont(styles.getHeight() / Size.VERY_LARGE.getFactor(), Theme.current().textButton()));
+        buttonStyle.over = styles.over;
+        buttonStyle.checkedOver = styles.over;
+        create = new TextButton(app.getDrawing() == null ? CREATE_DRAWING.toString() : NEW_DRAWING.toString(), buttonStyle);
+        load = new TextButton(LOAD.toString(), buttonStyle);
+        go_settings = new TextButton(SETTINGS.toString(), buttonStyle);
+        exit = new TextButton(EXIT.toString(), buttonStyle);
 
         create.setSize(30, 70);
         load.setSize(300, 70);
@@ -81,7 +87,7 @@ public class MainMenuScreen extends FlatUIScreen {
         });
 
         if (app.getDrawing() != null) {
-            TextButton newDrawing = new TextButton(CONTINUE.toString(), buttonStyle);
+            newDrawing = new TextButton(CONTINUE.toString(), buttonStyle);
             newDrawing.setSize(605, 70);
             newDrawing.addListener(new ChangeListener() {
                 @Override
@@ -89,20 +95,20 @@ public class MainMenuScreen extends FlatUIScreen {
                     app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
                 }
             });
-            buttons.add(newDrawing).uniform().prefWidth(605).colspan(2).padBottom(5).row();
+            buttons.add(newDrawing).uniform().fill().prefWidth(605).colspan(2).padBottom(5).row();
         }
-        buttons.add(create).uniform().prefWidth(300);
-        buttons.add(load).uniform().prefWidth(300).padLeft(5);
+        buttons.add(create).uniform().fill().prefWidth(300);
+        buttons.add(load).uniform().fill().prefWidth(300).padLeft(5);
         buttons.row();
-        buttons.add(go_settings).uniform().prefWidth(300).padTop(5);
-        buttons.add(exit).uniform().prefWidth(300).padTop(5).padLeft(5);
+        buttons.add(go_settings).uniform().fill().prefWidth(300).padTop(5);
+        buttons.add(exit).uniform().fill().prefWidth(300).padTop(5).padLeft(5);
 
         table.add(title).expandY();
         table.row();
         table.add(buttons).expandY().top();
 
         version.setPosition(4, 0);
-        this.repositionFps(4, 35);
+        this.repositionFps(4, version.getHeight());
 
         stage.addActor(table);
         stage.addActor(version);
@@ -111,6 +117,23 @@ public class MainMenuScreen extends FlatUIScreen {
     @Override
     public void show() {
         super.show();
+
+        title.setStyle(styles.getLabelStyle(Size.EXTREMELY_LARGE));
+        version.setStyle(styles.getLabelStyle(Size.MEDIUM));
+        version.setSize(version.getPrefWidth(), version.getPrefHeight());
+
+        TextButtonStyle buttonStyle = new TextButtonStyle(styles.normal, styles.pressed, styles.normal, app.getFont(styles.getHeight() / Size.VERY_LARGE.getFactor(), Theme.current().textButton()));
+        buttonStyle.over = styles.over;
+        buttonStyle.checkedOver = styles.over;
+
+        load.setStyle(buttonStyle);
+        go_settings.setStyle(buttonStyle);
+        exit.setStyle(buttonStyle);
+        if (newDrawing != null) newDrawing.setStyle(buttonStyle);
+        create.setStyle(buttonStyle);
+
+        version.setPosition(4, 0);
+        this.repositionFps(4, version.getHeight());
     }
 
     @Override public void customRender() {}

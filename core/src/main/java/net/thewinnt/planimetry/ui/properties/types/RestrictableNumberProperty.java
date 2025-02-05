@@ -2,10 +2,11 @@ package net.thewinnt.planimetry.ui.properties.types;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.Locale;
 import java.util.OptionalDouble;
-import java.util.function.Predicate;
+import java.util.function.Consumer;
+import java.util.function.DoublePredicate;
+import java.util.function.DoubleSupplier;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -21,60 +22,60 @@ import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
 
-public class NumberProperty extends Property<Double> {
+public class RestrictableNumberProperty extends Property<Double> {
     private final List<Consumer<Double>> listeners = new ArrayList<>();
-    private double prevValue;
-    private double value;
+    private double prevSuccess;
+    private DoubleSupplier value;
+    private DoublePredicate setter;
     private OptionalDouble maxValue = OptionalDouble.empty();
     private OptionalDouble minValue = OptionalDouble.empty();
-    private Predicate<Double> filter;
     private boolean isWhole;
     private boolean liveUpdates = true;
 
-    public NumberProperty() {
+    public RestrictableNumberProperty() {
         super(Component.empty());
     }
 
-    public NumberProperty(double value) {
+    public RestrictableNumberProperty(DoubleSupplier value, DoublePredicate setter) {
         super(Component.empty());
         this.value = value;
+        this.setter = setter;
     }
 
-    public NumberProperty(Component name) {
-        super(name);
-    }
-
-    public NumberProperty(Component name, double value) {
+    public RestrictableNumberProperty(Component name, DoubleSupplier value, DoublePredicate setter) {
         super(name);
         this.value = value;
+        this.setter = setter;
     }
 
     @Override
     public Double getValue() {
-        return value;
+        return value.getAsDouble();
     }
 
     @Override
     public void setValue(Double value) {
-        if (filter == null || filter.test(value)) {
-            if (isWhole) {
-                value = (double)Math.round(value);
-            }
-            if (maxValue.isPresent() && value > maxValue.getAsDouble()) {
-                value = maxValue.getAsDouble();
-            } else if (minValue.isPresent() && value < minValue.getAsDouble()) {
-                value = minValue.getAsDouble();
-            }
-            this.value = value;
+        if (isWhole) {
+            value = (double)Math.round(value);
+        }
+        if (maxValue.isPresent() && value > maxValue.getAsDouble()) {
+            value = maxValue.getAsDouble();
+        } else if (minValue.isPresent() && value < minValue.getAsDouble()) {
+            value = minValue.getAsDouble();
+        }
+        if (setter.test(value)) {
+            this.prevSuccess = value;
             if (liveUpdates) {
                 realUpdate();
             }
+        } else {
         }
     }
 
     private void realUpdate() {
+        double val = value.getAsDouble();
         for (Consumer<Double> i : this.listeners) {
-            i.accept(value);
+            i.accept(val);
         }
     }
 
@@ -85,7 +86,7 @@ public class NumberProperty extends Property<Double> {
         if (!isWhole) {
             fieldText = String.format((Locale)null, "%." + DynamicPlanimetry.SETTINGS.getDisplayPresicion() + "f", value);
         } else {
-            fieldText = String.valueOf((long)value);
+            fieldText = String.valueOf((long)value.getAsDouble());
         }
         TextField doubleField = new TextField(fieldText, styles.getTextFieldStyle(size, true)) {
             @Override
@@ -107,8 +108,8 @@ public class NumberProperty extends Property<Double> {
         });
         doubleField.setTextFieldListener((textField, c) -> {
             try {
-                prevValue = value;
                 setValue(Double.valueOf(doubleField.getText()));
+                prevSuccess = value.getAsDouble();
             } catch (NumberFormatException e) {}
         });
         doubleField.addListener(new InputListener() {
@@ -117,7 +118,7 @@ public class NumberProperty extends Property<Double> {
                 try {
                     setValue(Double.valueOf(doubleField.getText()));
                 } catch (NumberFormatException e) {
-                    value = prevValue;
+                    setter.test(prevSuccess);
                     Notifications.addNotification("Invalid number: " + doubleField.getText(), 1000);
                 }
                 doubleField.setText(String.format((Locale)null, "%." + DynamicPlanimetry.SETTINGS.getDisplayPresicion() + "f", value));
@@ -152,7 +153,7 @@ public class NumberProperty extends Property<Double> {
         this.listeners.add(listener);
     }
 
-    public NumberProperty withMax(double maxValue) {
+    public RestrictableNumberProperty withMax(double maxValue) {
         if (minValue.isPresent() && maxValue < minValue.getAsDouble()) {
             throw new IllegalArgumentException("Max value must not be smaller than min value");
         }
@@ -160,7 +161,7 @@ public class NumberProperty extends Property<Double> {
         return this;
     }
 
-    public NumberProperty withMin(double minValue) {
+    public RestrictableNumberProperty withMin(double minValue) {
         if (maxValue.isPresent() && minValue > maxValue.getAsDouble()) {
             throw new IllegalArgumentException("Min value must not be larger than max value");
         }
@@ -168,17 +169,12 @@ public class NumberProperty extends Property<Double> {
         return this;
     }
 
-    public NumberProperty requireWholeNumbers(boolean require) {
+    public RestrictableNumberProperty requireWholeNumbers(boolean require) {
         this.isWhole = require;
         return this;
     }
 
-    public NumberProperty filtered(Predicate<Double> filter) {
-        this.filter = filter;
-        return this;
-    }
-
-    public NumberProperty noLiveUpdates() {
+    public RestrictableNumberProperty noLiveUpdates() {
         this.liveUpdates = false;
         return this;
     }

@@ -5,10 +5,10 @@ import net.thewinnt.planimetry.util.Util;
 import net.thewinnt.planimetry.value.DynamicValueType;
 import net.thewinnt.planimetry.value.type.ConstantValue;
 
-public class ConstantType implements DynamicValueType<ConstantValue> {
-    public static final ConstantType INSTANCE = new ConstantType();
+public class ConstantValueType implements DynamicValueType<ConstantValue> {
+    public static final ConstantValueType INSTANCE = new ConstantValueType();
 
-    private ConstantType() {}
+    private ConstantValueType() {}
 
     @Override
     public ConstantValue fromNbt(CompoundTag tag) {

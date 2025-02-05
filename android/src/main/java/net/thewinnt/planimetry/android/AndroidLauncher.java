@@ -2,6 +2,7 @@ package net.thewinnt.planimetry.android;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -31,8 +32,8 @@ public class AndroidLauncher extends AndroidApplication {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration configuration = new AndroidApplicationConfiguration();
-        configuration.useImmersiveMode = true; // Recommended, but not required.
-
+//        configuration.useImmersiveMode = true; // Recommended, but not required.
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         AndroidPlatform platform = new AndroidPlatform(this.getBaseContext());
         File settings = platform.getSettingsFile();
         CompoundTag nbt = null;

@@ -3,12 +3,10 @@ package net.thewinnt.planimetry.ui;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 
-import net.thewinnt.planimetry.ui.StyleSet.Size;
 import net.thewinnt.planimetry.ui.drawable.DynamicIcon;
 import net.thewinnt.planimetry.ui.text.Component;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -25,6 +23,7 @@ public class ListSwitch extends Button {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
+        drawer.setColor(Theme.current().outline());
         if (isChecked()) {
             DynamicIcon.DOWN_TRIANGLE.drawShapes(drawer, getX(), getY(), getHeight(), getHeight());
         } else {

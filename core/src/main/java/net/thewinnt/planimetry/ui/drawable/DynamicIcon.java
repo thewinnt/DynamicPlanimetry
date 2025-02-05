@@ -39,7 +39,6 @@ public abstract class DynamicIcon extends ShapeDrawerDrawable {
         @Override
         public void render(float x, float y, float size) {
             super.render(x, y, size);
-            drawer.setColor(Theme.current().outline());
             drawer.path(new float[]{x(14), y(7), x(28), y(21), x(14), y(35)}, 3, JoinType.NONE, true);
             drawer.filledCircle(x(14), y(7), 1.5f);
             drawer.filledCircle(x(28), y(21), 1.5f);
@@ -51,11 +50,27 @@ public abstract class DynamicIcon extends ShapeDrawerDrawable {
         @Override
         public void render(float x, float y, float size) {
             super.render(x, y, size);
-            drawer.setColor(Theme.current().outline());
             drawer.path(new float[]{x(7), y(14), x(21), y(28), x(35), y(14)}, 3, JoinType.NONE, true);
             drawer.filledCircle(x(7), y(14), 1.5f);
             drawer.filledCircle(x(21), y(28), 1.5f);
             drawer.filledCircle(x(35), y(14), 1.5f);
+        }
+    };
+
+    public static final DynamicIcon CLOSE = new DynamicIcon() {
+        @Override
+        public void render(float x, float y, float size) {
+            super.render(x, y, size);
+            drawer.line(x(4), y(4), x(38), y(38), 3);
+            drawer.line(x(4), y(38), x(4), y(38), 3);
+        }
+    };
+
+    public static final DynamicIcon MINIMIZE = new DynamicIcon() {
+        @Override
+        public void render(float x, float y, float size) {
+            super.render(x, y, size);
+            drawer.line(x(4), y(21), x(38), y(21), 3);
         }
     };
 

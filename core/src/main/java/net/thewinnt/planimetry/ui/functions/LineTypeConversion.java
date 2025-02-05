@@ -16,7 +16,7 @@ import net.thewinnt.planimetry.shapes.lines.Line;
 import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.ComponentSelectBox;
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class LineTypeConversion extends Function<Line> {

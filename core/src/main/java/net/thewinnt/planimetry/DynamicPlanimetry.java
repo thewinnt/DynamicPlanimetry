@@ -86,7 +86,10 @@ public class DynamicPlanimetry extends Game {
         new Color(0x202020FF), // angle marker
         new Color(0x202020FF), // angle marker text
         new Color(0x00C0FFFF), // selection box outline
-        new Color(0x00C0FF40)  // selection box fill
+        new Color(0x00C0FF40), // selection box fill
+        new Color(0xD86C6CFF), // close button
+        new Color(0xFF7F7FFF), // close button (hovered)
+        new Color(0xB25959FF)  // close button (pressed)
     );
 
     public static final Theme THEME_DARK = new Theme(
@@ -117,7 +120,10 @@ public class DynamicPlanimetry extends Game {
         new Color(0xE0E0E0FF), // angle marker
         new Color(0xF0F0F0FF), // angle marker text
         new Color(0x00C0FFFF), // selection box outline
-        new Color(0x00C0FF40)  // selection box fill
+        new Color(0x00C0FF40), // selection box fill
+        new Color(0xB25959FF), // close button
+        new Color(0xCC6666FF), // close button (hovered)
+        new Color(0x994C4CFF)  // close button (pressed)
     );
 
     public static final Theme[] BUILT_IN_THEMES = new Theme[]{THEME_LIGHT, THEME_DARK};

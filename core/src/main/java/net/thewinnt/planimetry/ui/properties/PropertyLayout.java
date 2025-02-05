@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Align;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.ListSwitch;
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class PropertyLayout extends WidgetGroup {

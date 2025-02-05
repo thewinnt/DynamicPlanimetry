@@ -34,12 +34,15 @@ public record Theme(
     Color angleMarker,
     Color textAngleMarker,
     Color selectionOutline,
-    Color selectionFill
+    Color selectionFill,
+    Color closeButton,
+    Color closeButtonHover,
+    Color closeButtonPress
 ) implements ComponentRepresentable {
     public static Theme current() {
         return DynamicPlanimetry.SETTINGS.getTheme();
     }
-    
+
     @Override
     public Component toComponent() {
         return name;

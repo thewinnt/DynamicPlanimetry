@@ -13,6 +13,7 @@ import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.data.registry.Registry;
 import net.thewinnt.planimetry.settings.DebugFlag;
 import net.thewinnt.planimetry.ui.Notifications;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
@@ -40,13 +41,13 @@ public class DebugSettingsScreen extends FlatUIScreen {
 
     @Override
     public void addActorsBelowFps() {
-        this.goBack = new Label(EXIT, styles.getLabelStyle(StyleSet.Size.MEDIUM));
+        this.goBack = new Label(EXIT, styles.getLabelStyle(Size.MEDIUM));
 
         List<BooleanProperty> list = new ArrayList<>();
         for (DebugFlag i : DebugFlag.values()) {
             list.add(DebugFlag.getOrCreateFlag(i));
         }
-        flags1 = () -> new PropertyLayout(list, styles, FLAGS, StyleSet.Size.MEDIUM, true, StyleSet::getButtonStyleNoBg);
+        flags1 = () -> new PropertyLayout(list, styles, FLAGS, Size.MEDIUM, true, StyleSet::getButtonStyleNoBg);
 
         registryData1 = new ArrayList<>();
         for (Registry<?> i : Registries.ROOT.elements()) {
@@ -75,8 +76,8 @@ public class DebugSettingsScreen extends FlatUIScreen {
     @Override
     public void show() {
         super.show();
-        Notifications.addNotification("Debug flags don't save at the moment", 2000);
-        this.goBack.setStyle(styles.getLabelStyle(StyleSet.Size.MEDIUM));
+        Notifications.addNotification("Debug flags don't work at the moment", 2000);
+        this.goBack.setStyle(styles.getLabelStyle(Size.MEDIUM));
         this.goBack.setPosition(10, Gdx.graphics.getHeight() - 10, Align.topLeft);
 
         flags.setPosition(10, Gdx.graphics.getHeight() / 2f - 5);
@@ -86,7 +87,7 @@ public class DebugSettingsScreen extends FlatUIScreen {
         registryData.setSize(Gdx.graphics.getWidth() - 20, Gdx.graphics.getHeight() / 2f - 15);
 
         this.flags.setActor(flags1.get());
-        this.registryData.setActor(new PropertyLayout(registryData1, styles, REGISTRY_DATA, StyleSet.Size.MEDIUM, true));
+        this.registryData.setActor(new PropertyLayout(registryData1, styles, REGISTRY_DATA, Size.MEDIUM, true));
     }
 
     @Override public void customRender() {}

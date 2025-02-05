@@ -8,14 +8,12 @@ import java.util.function.Supplier;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
@@ -35,7 +33,8 @@ import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
 import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
-import net.thewinnt.planimetry.ui.StyleSet.Size;
+import net.thewinnt.planimetry.ui.Size;
+import net.thewinnt.planimetry.ui.Window;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.DropdownLayout;
 import net.thewinnt.planimetry.ui.properties.PropertyEntry;
@@ -48,18 +47,17 @@ public class EditorScreen extends FlatUIScreen {
     private double lastScale = -1;
     private Vec2 lastOffset = null;
 
-    private ScrollPane creation;
-    private ScrollPane selectedShapeName;
-    private ScrollPane properties;
+    private ScrollPane creation; // TODO text buttons for this
+    private ScrollPane selectedShapeName; // TODO icons for this
+    private ScrollPane properties; // TODO make them undockable
     private Table functions;
     private Table actions;
-    private Container<Window> windowOverlays;
 
-    private Actor selectionToggle; 
+    private Actor selectionToggle;
     private TextButton exitToMenu;
     private TextButton goSettings;
     private TextButton save;
-    private Window currentDialog;
+    private Window saveDialog;
 
     public EditorScreen(DynamicPlanimetry app) {
         super(app);
@@ -78,7 +76,6 @@ public class EditorScreen extends FlatUIScreen {
         properties = new ScrollPane(null);
         functions = new Table();
         actions = new Table();
-        windowOverlays = new Container<>();
         rebuildUI(board.getSelection());
         settings = new ShapeSettingsBackground(drawer, creation, properties);
 
@@ -91,7 +88,6 @@ public class EditorScreen extends FlatUIScreen {
         stage.addActor(properties);
         stage.addActor(functions);
         stage.addActor(actions);
-        stage.addActor(windowOverlays);
     }
 
     private Button leftAlignedButton(String translation, Size size, boolean active) {
@@ -152,9 +148,8 @@ public class EditorScreen extends FlatUIScreen {
         save.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                currentDialog = new Window(" " + DynamicPlanimetry.translate("ui.save.title"), styles.getWindowStyle(Size.MEDIUM));
-                currentDialog.getTitleLabel().getStyle().background = styles.pressed;
-                currentDialog.row().row();
+                saveDialog = new Window(styles, Component.translatable("ui.save.title"), false);
+                Table table = new Table();
 
                 String willBeSavedAs = DynamicPlanimetry.translate("ui.save.filename", app.getDrawing().withFilename(app.getDrawing().getName(), false).getFilename());
                 Label filename = new Label(willBeSavedAs, styles.getLabelStyle(Size.VERY_SMALL));
@@ -171,26 +166,37 @@ public class EditorScreen extends FlatUIScreen {
                     public void changed(ChangeEvent event, Actor actor) {
                         app.getDrawing().setName(namePicker.getText());
                         app.getDrawing().save(namePicker.getText(), false);
-                        windowOverlays.setActor(null);
+                        saveDialog.remove();
                     }
                 });
 
                 TextButton cancel = new TextButton(DynamicPlanimetry.translate("ui.save.cancel"), styles.getButtonStyle(Size.SMALL, true));
                 cancel.addListener(new ChangeListener() {
                     public void changed(ChangeEvent event, Actor actor) {
-                        windowOverlays.setActor(null);
-                    };
+                        saveDialog.remove();
+                    }
+
+                    ;
                 });
 
-                currentDialog.add(new Label(DynamicPlanimetry.translate("ui.save.drawing_name"), styles.getLabelStyle(Size.SMALL))).pad(Gdx.graphics.getHeight() / 40f, 5, 0, 5);
-                currentDialog.add(namePicker).expand().fill().pad(Gdx.graphics.getHeight() / 40f + 5, 5, 0, 5).row();
-                currentDialog.add(filename).colspan(2).pad(5).row();
+                Label nameLabel = new Label(DynamicPlanimetry.translate("ui.save.drawing_name"), styles.getLabelStyle(Size.SMALL));
+                table.add(nameLabel).pad(Gdx.graphics.getHeight() / 40f, 5, 0, 5);
+                table.add(namePicker).expand().fill().pad(Gdx.graphics.getHeight() / 40f + 5, 5, 0, 5).row();
+                table.add(filename).colspan(2).pad(5).row();
                 HorizontalGroup group = new HorizontalGroup();
                 group.center().expand().pad(5).fill().space(5);
                 group.addActor(save);
                 group.addActor(cancel);
-                currentDialog.add(group).colspan(2).expand().fill();
-                windowOverlays.setActor(currentDialog);
+                table.add(group).colspan(2).expand().fill();
+                saveDialog.setActor(table);
+                saveDialog.setRestyler(actor1 -> {
+                    filename.setStyle(styles.getLabelStyle(Size.VERY_SMALL));
+                    namePicker.setStyle(styles.getTextFieldStyle(Size.SMALL, true));
+                    save.setStyle(styles.getButtonStyle(Size.SMALL, true));
+                    cancel.setStyle(styles.getButtonStyle(Size.SMALL, true));
+                    nameLabel.setStyle(styles.getLabelStyle(Size.SMALL));
+                });
+                stage.addActor(saveDialog);
             }
         });
         // ADDING TO TABLES
@@ -226,6 +232,10 @@ public class EditorScreen extends FlatUIScreen {
         actions.add(exitToMenu).expand().fill().pad(5, 5, 5, 0);
         actions.add(goSettings).expand().fill().pad(5, 5, 5, 0);
         actions.add(save).expand().fill().pad(5);
+
+        if (saveDialog != null) {
+            saveDialog.invalidate();
+        }
     }
 
     @Override
@@ -241,13 +251,13 @@ public class EditorScreen extends FlatUIScreen {
 
         final float width = Gdx.graphics.getWidth();
         final float height = Gdx.graphics.getHeight();
-        final float delimiter = width - height * 0.5f;
+        final float delimiter = width - height * 0.6f;
 
         board.setPosition(0, 0);
         board.setSize(delimiter, height);
 
         settings.setPosition(delimiter, 0);
-        settings.setSize(height * 0.5f, height);
+        settings.setSize(height * 0.6f, height);
 
         rebuildUI(board.getSelection());
 
@@ -257,30 +267,31 @@ public class EditorScreen extends FlatUIScreen {
     public void layout() {
         final float width = Gdx.graphics.getWidth();
         final float height = Gdx.graphics.getHeight();
-        final float delimiter = width - height * 0.5f;
+        final float delimiter = width - height * 0.6f;
 
-        creation.setSize(height * 0.5f - 10, creation.getPrefHeight());
+        creation.setSize(height * 0.6f - 10, creation.getPrefHeight());
         creation.setPosition(delimiter + 5, height - creation.getHeight() - 5);
 
-        selectedShapeName.setSize(height * 0.5f - 10, selectedShapeName.getPrefHeight());
+        selectedShapeName.setSize(height * 0.6f - 10, selectedShapeName.getPrefHeight());
         selectedShapeName.setPosition(delimiter + 5, height - creation.getHeight() - selectedShapeName.getHeight() - 15);
 
-        properties.setSize((int)(height * 0.5f) - 4, Math.min(properties.getPrefHeight(), height * 0.4f));
+        properties.setSize((int) (height * 0.6f) - 4, Math.min(properties.getPrefHeight(), height * 0.4f));
         properties.setPosition(delimiter + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - 15);
 
-        functions.setSize(height * 0.5f - 4, Math.min(functions.getPrefHeight(), height * 0.4f));
+        functions.setSize(height * 0.6f - 4, Math.min(functions.getPrefHeight(), height * 0.4f));
         functions.setPosition(delimiter + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - functions.getHeight() - 25);
 
-        actions.setSize(height * 0.5f, actions.getPrefHeight());
+        actions.setSize(height * 0.6f, actions.getPrefHeight());
         actions.setPosition(delimiter, 0);
-
-        windowOverlays.setSize(width, height);
-        windowOverlays.setPosition(0, 0);
-        windowOverlays.center().fill(false);
     }
 
-    @Override public void customRender() {}
-    @Override public void addActorsAboveFps() {}
+    @Override
+    public void customRender() {
+    }
+
+    @Override
+    public void addActorsAboveFps() {
+    }
 
     public DrawingBoard getBoard() {
         return board;

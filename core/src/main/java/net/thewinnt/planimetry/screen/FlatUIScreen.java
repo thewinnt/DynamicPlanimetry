@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.ScrollManager;
+import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.drawable.DynamicIcon;
@@ -29,7 +30,6 @@ public abstract class FlatUIScreen implements Screen {
     private Texture texture;
     protected ShapeDrawer drawer;
     protected StyleSet styles;
-    protected LabelStyle style_fps;
 
     private Label fps;
     private Label mem_usage;
@@ -61,13 +61,12 @@ public abstract class FlatUIScreen implements Screen {
         TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
         this.drawer = new ShapeDrawer(stage.getBatch(), region);
 
-        this.style_fps = new LabelStyle(app.getBoldFont(DynamicPlanimetry.FPS), getFpsColor());
         this.styles = new StyleSet(drawer, app::getBoldFont);
 
         if (notifications != null) notifications.dispose();
 
-        fps = new Label(app.last_fps, style_fps);
-        mem_usage = new Label("Mem: N/A", style_fps);
+        fps = new Label(app.last_fps, styles.getLabelStyle(Size.MEDIUM));
+        mem_usage = new Label("Mem: N/A", styles.getLabelStyle(Size.MEDIUM));
         notifications = new Notifications(drawer, app::getBoldFont);
         scrollManager = new ScrollManager();
 
@@ -92,12 +91,16 @@ public abstract class FlatUIScreen implements Screen {
         if (hiddenBefore) initActors();
         hiddenBefore = false;
         Gdx.input.setInputProcessor(stage);
+        styles.rebuild();
+        fps.setStyle(styles.getLabelStyle(Size.MEDIUM));
+        mem_usage.setStyle(styles.getLabelStyle(Size.MEDIUM));
+        fps.setSize(fps.getPrefWidth(), fps.getPrefHeight());
+        mem_usage.setSize(mem_usage.getPrefWidth(), mem_usage.getPrefHeight());
         fps.setPosition(fps_x, fps_y, Align.bottomLeft);
-        mem_usage.setPosition(fps_x, fps_y + 40, Align.bottomLeft);
+        mem_usage.setPosition(fps_x, fps_y + fps.getHeight(), Align.bottomLeft);
         notifications.setPosition(0, 0);
         notifications.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         notifications.updateCaches();
-        styles.rebuild();
     }
 
     @Override
@@ -155,6 +158,9 @@ public abstract class FlatUIScreen implements Screen {
     public void repositionFps(float x, float y) {
         fps_x = x;
         fps_y = y;
+        
+        fps.setPosition(fps_x, fps_y, Align.bottomLeft);
+        mem_usage.setPosition(fps_x, fps_y + fps.getHeight(), Align.bottomLeft);
     }
 
     public ShapeDrawer getDrawer() {

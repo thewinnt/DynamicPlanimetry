@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
-import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.settings.DebugFlag;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -99,7 +98,7 @@ public class Notifications extends Actor implements Disposable {
     public void updateCaches() {
         caches.clear();
         float y = Gdx.graphics.getHeight() - 20;
-        BitmapFont font = this.font.getFont(StyleSet.Size.MEDIUM.lines(1), Theme.current().textButton());
+        BitmapFont font = this.font.getFont(Size.MEDIUM.lines(1), Theme.current().textButton());
         for (Notification i : NOTIFICATIONS) {
             this.layout.setText(font, i.entry, 0, i.entry.length(), Theme.current().textButton(), getWidth() - 40, Align.center, true, null);
             BitmapFontCache cache = font.newFontCache();
