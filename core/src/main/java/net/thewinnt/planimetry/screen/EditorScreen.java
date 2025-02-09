@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
@@ -46,6 +47,7 @@ public class EditorScreen extends FlatUIScreen {
     private ShapeSettingsBackground settings;
     private double lastScale = -1;
     private Vec2 lastOffset = null;
+    private float splitPos; // TODO dockable windows
 
     private ScrollPane creation; // TODO text buttons for this
     private ScrollPane selectedShapeName; // TODO icons for this
@@ -92,7 +94,7 @@ public class EditorScreen extends FlatUIScreen {
 
     private Button leftAlignedButton(String translation, Size size, boolean active) {
         Button output = new Button(styles.getButtonStyle(size, active));
-        output.add(new ComponentLabel(Component.translatable(translation), styles.font, size)).expand().fill();
+        output.add(new ComponentLabel(Component.translatable(translation), styles.font, size)).padLeft(3).expand().fill();
         return output;
     }
 
@@ -228,7 +230,7 @@ public class EditorScreen extends FlatUIScreen {
             properties.setActor(null);
         }
 
-        actions.add(selectionToggle).expand().fill().colspan(3).pad(5, 5, 5, 0).row();
+//        actions.add(selectionToggle).expand().fill().colspan(3).pad(5, 5, 5, 0).row();
         actions.add(exitToMenu).expand().fill().pad(5, 5, 5, 0);
         actions.add(goSettings).expand().fill().pad(5, 5, 5, 0);
         actions.add(save).expand().fill().pad(5);
@@ -251,13 +253,13 @@ public class EditorScreen extends FlatUIScreen {
 
         final float width = Gdx.graphics.getWidth();
         final float height = Gdx.graphics.getHeight();
-        final float delimiter = width - height * 0.6f;
+        splitPos = width - height * Settings.get().getEditPaneScale() / 2;
 
         board.setPosition(0, 0);
-        board.setSize(delimiter, height);
+        board.setSize(splitPos, height);
 
-        settings.setPosition(delimiter, 0);
-        settings.setSize(height * 0.6f, height);
+        settings.setPosition(splitPos, 0);
+        settings.setSize(width - splitPos, height);
 
         rebuildUI(board.getSelection());
 
@@ -267,22 +269,22 @@ public class EditorScreen extends FlatUIScreen {
     public void layout() {
         final float width = Gdx.graphics.getWidth();
         final float height = Gdx.graphics.getHeight();
-        final float delimiter = width - height * 0.6f;
+        splitPos = width - height * Settings.get().getEditPaneScale() / 2;
 
-        creation.setSize(height * 0.6f - 10, creation.getPrefHeight());
-        creation.setPosition(delimiter + 5, height - creation.getHeight() - 5);
+        creation.setSize(width - splitPos - 10, creation.getPrefHeight());
+        creation.setPosition(splitPos + 5, height - creation.getHeight() - 5);
 
-        selectedShapeName.setSize(height * 0.6f - 10, selectedShapeName.getPrefHeight());
-        selectedShapeName.setPosition(delimiter + 5, height - creation.getHeight() - selectedShapeName.getHeight() - 15);
+        selectedShapeName.setSize(width - splitPos - 10, selectedShapeName.getPrefHeight());
+        selectedShapeName.setPosition(splitPos + 5, height - creation.getHeight() - selectedShapeName.getHeight() - 15);
 
-        properties.setSize((int) (height * 0.6f) - 4, Math.min(properties.getPrefHeight(), height * 0.4f));
-        properties.setPosition(delimiter + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - 15);
+        properties.setSize((int) (width - splitPos) - 4, Math.min(properties.getPrefHeight(), height * 0.4f));
+        properties.setPosition(splitPos + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - 15);
 
-        functions.setSize(height * 0.6f - 4, Math.min(functions.getPrefHeight(), height * 0.4f));
-        functions.setPosition(delimiter + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - functions.getHeight() - 25);
+        functions.setSize(width - splitPos - 4, Math.min(functions.getPrefHeight(), height * 0.4f));
+        functions.setPosition(splitPos + 2, height - creation.getHeight() - selectedShapeName.getHeight() - properties.getHeight() - functions.getHeight() - 25);
 
-        actions.setSize(height * 0.6f, actions.getPrefHeight());
-        actions.setPosition(delimiter, 0);
+        actions.setSize(width - splitPos, actions.getPrefHeight());
+        actions.setPosition(splitPos, 0);
     }
 
     @Override

@@ -65,6 +65,7 @@ public class SettingsScreen extends FlatUIScreen {
         super.show();
         this.title.setStyle(styles.getLabelStyle(Size.LARGE));
         this.goBack.setStyle(styles.getLabelStyle(Size.MEDIUM));
+        this.debugSettings.setStyle(styles.getButtonStyle(Size.MEDIUM, true));
 
         this.title.setPosition(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight(), Align.top);
         this.goBack.setPosition(10, Gdx.graphics.getHeight() - 10, Align.topLeft);

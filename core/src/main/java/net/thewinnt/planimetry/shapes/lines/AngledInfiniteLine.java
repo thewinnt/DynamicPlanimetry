@@ -62,7 +62,9 @@ public class AngledInfiniteLine extends InfiniteLine {
     }
 
     public void setBase(Line base) {
-        this.base.removeDepending(this);
+        if (!this.base.isConverting) {
+            this.base.removeDepending(this);
+        }
         this.removeDependency(this.base);
         this.base = base;
         base.addDepending(this);

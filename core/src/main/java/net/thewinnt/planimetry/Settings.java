@@ -40,6 +40,7 @@ public class Settings {
     private final BooleanProperty isDebug = new BooleanProperty(Component.translatable("settings.debug_mode"), false);
     private final BooleanProperty fullscreen = new BooleanProperty(Component.translatable("settings.fullscreen"), false);
     private final NumberProperty displayScaling = new NumberProperty(Component.translatable("settings.scaling"), 1).withMin(0.125).withMax(8).noLiveUpdates();
+    private final NumberProperty editPanelScale = new NumberProperty(Component.translatable("settings.edit_pane_scale"), 1).withMin(0.1);
     private SelectionProperty<Language> language;
     private final ActionProperty reloadLanguages = new ActionProperty(Component.translatable("settings.reload_languages"), Component.translatable("settings.reload_languages.action"), () -> {
         if (Gdx.app != null) {
@@ -62,6 +63,7 @@ public class Settings {
         moveShapes.layoutOverride = PROPERTY_LAYOUT;
         reloadLanguages.layoutOverride = PROPERTY_LAYOUT;
         displayScaling.layoutOverride = PROPERTY_LAYOUT;
+        editPanelScale.layoutOverride = PROPERTY_LAYOUT;
         theme.addValueChangeListener(theme -> {
             if (Gdx.app != null) {
                 DynamicPlanimetry app = DynamicPlanimetry.getInstance();
@@ -160,11 +162,21 @@ public class Settings {
         showGrid.setValue(value);
     }
 
+    public float getEditPaneScale() {
+        return editPanelScale.getValue().floatValue();
+    }
+
+    public void setEditPanelScale(double value) {
+        editPanelScale.setValue(value);
+    }
+
     public PropertyLayout getLayout(StyleSet styles) {
-        ArrayList<Property<?>> properties = new ArrayList<>(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen, language, displayScaling));
+        ArrayList<Property<?>> properties = new ArrayList<>(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen, language, displayScaling, editPanelScale));
         if (isDebug() || DynamicPlanimetry.platform().forceShowDebug()) {
             properties.add(isDebug);
-            properties.add(reloadLanguages);
+            if (isDebug()) {
+                properties.add(reloadLanguages);
+            }
         }
         return new PropertyLayout(properties, styles, null, Size.MEDIUM, true);
     }
@@ -214,6 +226,7 @@ public class Settings {
             this.isDebug.setValue(NbtUtil.getOptionalBoolean(nbt, "debug_mode", false));
             this.displayScaling.setValue(NbtUtil.getOptionalDouble(nbt, "display_scaling", 1));
             this.ctrlSelection.setValue(NbtUtil.getOptionalBoolean(nbt, "ctrl_selection", true));
+            this.editPanelScale.setValue(NbtUtil.getOptionalDouble(nbt, "edit_pane_scale", 1));
             DynamicPlanimetry.setDisplayScaling(displayScaling.getValue().floatValue());
         } catch (Exception e) {
             Notifications.addNotification(DynamicPlanimetry.translate("error.settings.load_failed", e.getMessage()), 15000);
@@ -235,6 +248,7 @@ public class Settings {
         nbt.putString("language", currentLanguage);
         nbt.putDouble("display_scaling", displayScaling.getValue());
         NbtUtil.writeBoolean(nbt, "ctrl_selection", ctrlSelection.getValue());
+        nbt.putDouble("edit_pane_scale", editPanelScale.getValue());
         try {
             NBTUtil.write(nbt, file);
         } catch (IOException e) {

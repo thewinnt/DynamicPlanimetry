@@ -28,8 +28,8 @@ public class SaveEntry extends Button {
         this.editTime = editTime;
         this.filename = filename;
         this.nameLabel = new Label(name, styles.getLabelStyle(Size.MEDIUM));
-        ComponentLabel creationTimeLabel = new ComponentLabel(Component.translatable("ui.load_file.entry.creation_time", TIME_FORMAT.format(new Date(creationTime))), DynamicPlanimetry.getInstance()::getBoldFont, Size.SMALL);
-        ComponentLabel editTimeLabel = new ComponentLabel(Component.translatable("ui.load_file.entry.edit_time", TIME_FORMAT.format(new Date(editTime))), DynamicPlanimetry.getInstance()::getBoldFont, Size.SMALL);
+        ComponentLabel creationTimeLabel = new ComponentLabel(Component.translatable("ui.load_file.entry.creation_time", TIME_FORMAT.format(new Date(creationTime))), DynamicPlanimetry.getInstance()::getFont, Size.SMALL);
+        ComponentLabel editTimeLabel = new ComponentLabel(Component.translatable("ui.load_file.entry.edit_time", TIME_FORMAT.format(new Date(editTime))), DynamicPlanimetry.getInstance()::getFont, Size.SMALL);
         Label filenameLabel = new Label("(" + filename + ")", styles.getLabelStyle(Size.SMALL));
         this.add(nameLabel).padLeft(5).padRight(10);
         this.add(filenameLabel).padRight(5).expand().fill().row();
@@ -43,10 +43,10 @@ public class SaveEntry extends Button {
     }
 
     public static enum SortingType {
-        BY_NAME(Component.translatable("sorting.by_name"), (o1, o2) -> o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase())),
-        BY_CREATION_TIME(Component.translatable("sorting.by_creation_time"), Comparator.comparingLong(value -> value.getCreationTime())),
-        BY_EDITING_TIME(Component.translatable("sorting.by_editing_time"), Comparator.comparingLong(value -> value.getLastEditTime())),
-        BY_FILE_NAME(Component.translatable("sorting.by_filename"), (o1, o2) -> o1.getFilename().compareTo(o2.getFilename()));
+        BY_NAME(Component.translatable("sorting.by_name"), Comparator.comparing(o -> o.getName().toLowerCase())),
+        BY_CREATION_TIME(Component.translatable("sorting.by_creation_time"), Comparator.comparingLong(Drawing::getCreationTime)),
+        BY_EDITING_TIME(Component.translatable("sorting.by_editing_time"), Comparator.comparingLong(Drawing::getLastEditTime)),
+        BY_FILE_NAME(Component.translatable("sorting.by_filename"), Comparator.comparing(Drawing::getFilename));
 
         private final CharSequence name;
         private final Comparator<Drawing> comparator;

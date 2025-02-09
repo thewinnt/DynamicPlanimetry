@@ -3,6 +3,8 @@ package net.thewinnt.planimetry.shapes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
@@ -26,9 +28,9 @@ public abstract class Shape implements ComponentRepresentable {
     /** A dummy drawing for any shapes used for math */
     public static final Drawing DUMMY_DRAWING = new Drawing().setName("$DP_DUMMY");
     /** A list of shapes that this shape depends on */
-    protected final ArrayList<Shape> dependencies = new ArrayList<>();
+    protected final Set<Shape> dependencies = new HashSet<>();
     /** A list of shapes that depend on this shape */
-    protected final ArrayList<Shape> dependents = new ArrayList<>();
+    protected final Set<Shape> dependents = new HashSet<>();
     protected final Drawing drawing;
     private long id;
     protected Component nameOverride;
@@ -151,7 +153,7 @@ public abstract class Shape implements ComponentRepresentable {
     public abstract String getTypeName();
 
     /** @deprecated use {@link #toNbt(SavingContext)} for saving instead, as this provides incomplete data */
-    @Deprecated public abstract CompoundTag writeNbt(SavingContext context);
+    @Deprecated protected abstract CompoundTag writeNbt(SavingContext context);
     public abstract ShapeDeserializer<?> getDeserializer();
 
     public boolean shouldRender() {
@@ -173,7 +175,7 @@ public abstract class Shape implements ComponentRepresentable {
         return (float)Math.min(Math.max(1, Math.cbrt(scale)), 4);
     }
 
-    private final void setId(long id) {
+    private void setId(long id) {
         this.id = id;
     }
 
@@ -212,14 +214,14 @@ public abstract class Shape implements ComponentRepresentable {
         return getName();
     }
 
-    public static enum SelectionStatus {
+    public enum SelectionStatus {
         NONE,
         HOVERED,
         SELECTED
     }
 
     @FunctionalInterface
-    public static interface ShapeDeserializer<T extends Shape> {
+    public interface ShapeDeserializer<T extends Shape> {
         T deserialize(CompoundTag nbt, LoadingContext context);
     }
 }

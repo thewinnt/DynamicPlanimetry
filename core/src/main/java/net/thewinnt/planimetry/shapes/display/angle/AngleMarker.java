@@ -95,7 +95,7 @@ public abstract class AngleMarker extends Shape {
         if (centerAngle > Math.PI) centerAngle = centerAngle - MathHelper.DOUBLE_PI;
 
         // draw arc
-        if (MathHelper.roughlyEquals(angFull, MathHelper.HALF_PI)) {
+        if (MathHelper.veryRoughlyEquals(angFull, MathHelper.HALF_PI)) {
             Vec2 targPoint = board.boardToGlobal(MathHelper.continueFromAngle(center, centerAngle, 30 / board.getScale() * Math.sqrt(2)));
             Vec2 p1 = board.boardToGlobal(MathHelper.continueFromAngle(center, angleA, 30 / board.getScale()));
             Vec2 p2 = board.boardToGlobal(MathHelper.continueFromAngle(center, angleB, 30 / board.getScale()));

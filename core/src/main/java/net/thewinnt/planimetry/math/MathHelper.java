@@ -1,5 +1,7 @@
 package net.thewinnt.planimetry.math;
 
+import net.thewinnt.planimetry.Settings;
+
 /** A class containing some utility math functions, mostly geometry-related. */
 public class MathHelper {
     public static final double QUARTER_PI = Math.PI / 4;
@@ -12,6 +14,12 @@ public class MathHelper {
         a = Double.longBitsToDouble(Double.doubleToRawLongBits(a) & 0xffffffffffff0000l);
         b = Double.longBitsToDouble(Double.doubleToRawLongBits(b) & 0xffffffffffff0000l);
         return (Double.doubleToRawLongBits(Math.abs(a - b)) & 0xffffffffffff0000l) == 0;
+        // return Math.abs(a - b) < Math.pow(2, DynamicPlanimetry.SETTINGS.getMathPrecision());
+    }
+
+    public static boolean veryRoughlyEquals(double a, double b) {
+        double factor = Math.pow(10, -Settings.get().getDisplayPresicion());
+        return Math.abs(a - b) < factor;
         // return Math.abs(a - b) < Math.pow(2, DynamicPlanimetry.SETTINGS.getMathPrecision());
     }
 
@@ -94,6 +102,6 @@ public class MathHelper {
         if (a > 0 && b > 0) return min < test && test < max;
         if (a < 0 && b < 0) return min < test && test < max;
         if (max - min < Math.PI) return min < test && test < max; // 0 arc
-        return test > max || test < min; // pi arc 
+        return test > max || test < min; // pi arc
     }
 }

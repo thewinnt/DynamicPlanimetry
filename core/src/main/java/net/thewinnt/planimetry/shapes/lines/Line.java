@@ -27,6 +27,7 @@ import net.thewinnt.planimetry.ui.text.Component;
 public abstract class Line extends Shape {
     public final PointReference a;
     public final PointReference b;
+    protected boolean isConverting;
 
     public Line(Drawing drawing, PointProvider a, PointProvider b) {
         super(drawing);
@@ -169,5 +170,9 @@ public abstract class Line extends Shape {
     @Override
     public boolean canMove() {
         return true;
+    }
+
+    public void startConverion() {
+        this.isConverting = true;
     }
 }

@@ -51,7 +51,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public class DynamicPlanimetry extends Game {
     // public constants
     public static final int DATA_VERSION = 0; // public testing - release 0.2
-    public static final String APP_VERSION = "v. 0.2 (dev build)";
+    public static final String APP_VERSION = "v. 0.1.1";
     public static final int MAIN_MENU = 0;
     public static final int EDITOR_SCREEN = 1;
     public static final int FILE_SELECTION_SCREEN = 2;

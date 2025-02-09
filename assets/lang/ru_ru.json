@@ -77,6 +77,7 @@
     "settings.debug.notification_debug": "Отладка уведомлений",
     "settings.debug.registry_data": "Данные реестров",
     "settings.display_precision": "Точность отображения чисел (знаков после запятой)",
+    "settings.edit_pane_scale": "Ширина панели свойств",
     "settings.fullscreen": "Полный экран",
     "settings.language": "Язык",
     "settings.move_without_selection.all": "Все",
@@ -171,7 +172,7 @@
     "ui.edit.save": "Сохранить",
     "ui.edit.settings": "Настройки",
     "ui.edit.selection.multiple": "(несколько объектов)",
-    "ui.load_file.entry.delete_file": "Удалить",
+    "ui.load_file.delete_file": "Удалить",
     "ui.load_file.entry.creation_time": "Время создания: %s",
     "ui.load_file.entry.edit_time": "Последнее изменение: %s",
     "ui.load_file.export": "Экспорт",
@@ -200,6 +201,7 @@
     "ui.save.title": "Сохранение",
     "ui.settings.exit": "< Назад",
     "ui.settings.title": "Настройки",
+    "ui.settings.debug": "Параметры отладки",
     "true": "<истина>",
     "false": "<ложь>"
   }
