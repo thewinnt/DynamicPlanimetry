@@ -50,8 +50,8 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 @SuppressWarnings("SimpleDateFormat")
 public class DynamicPlanimetry extends Game {
     // public constants
-    public static final int DATA_VERSION = 0; // public testing - release 0.2
-    public static final String APP_VERSION = "v. 0.1.1";
+    public static final int DATA_VERSION = 1; // public testing - release 0.2
+    public static final String APP_VERSION = "v. 0.2";
     public static final int MAIN_MENU = 0;
     public static final int EDITOR_SCREEN = 1;
     public static final int FILE_SELECTION_SCREEN = 2;
@@ -71,6 +71,7 @@ public class DynamicPlanimetry extends Game {
         new Color(0x0060FFB0), // selection background
         new Color(0xC0C0C0FF), // delimiter
         new Color(0x2D2D2DFF), // inactive
+        new Color(0xFFFFFFFF), // board
         new Color(0x000000FF), // shape
         new Color(0x00C0FFFF), // shape hovered
         new Color(0x0080FFFF), // shape selected
@@ -105,6 +106,7 @@ public class DynamicPlanimetry extends Game {
         new Color(0x0060FFB0), // selection background
         new Color(0x303030FF), // delimiter
         new Color(0x2D2D2DFF), // inactive
+        new Color(0x1F1F1FFF), // board
         new Color(0xEEEEEEFF), // shape
         new Color(0x00C0FFFF), // shape hovered
         new Color(0x0080FFFF), // shape selected

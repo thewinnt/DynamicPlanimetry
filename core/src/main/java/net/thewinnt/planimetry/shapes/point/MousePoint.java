@@ -57,7 +57,7 @@ public class MousePoint extends PointProvider {
     }
 
     @Override
-    public ShapeDeserializer<MousePoint> getDeserializer() {
+    public ShapeDeserializer<MousePoint> type() {
         return ShapeData.MOUSE_POINT;
     }
 

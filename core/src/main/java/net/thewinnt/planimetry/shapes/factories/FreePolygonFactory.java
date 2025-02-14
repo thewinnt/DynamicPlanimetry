@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.shapes.Shape;
-import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
+import net.thewinnt.planimetry.shapes.lines.PolygonalChain;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
@@ -20,7 +20,7 @@ import net.thewinnt.planimetry.ui.text.Component;
 public class FreePolygonFactory extends ShapeFactory {
     private PointProvider point1;
     private PointReference nextPoint;
-    private MultiPointLine line;
+    private PolygonalChain line;
     private boolean isDone = false;
 
     public FreePolygonFactory(DrawingBoard board) {
@@ -32,7 +32,7 @@ public class FreePolygonFactory extends ShapeFactory {
         if (point1 == null) {
             this.point1 = getOrCreatePoint(x, y);
             this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
-            this.line = new MultiPointLine(board.getDrawing(), point1, nextPoint);
+            this.line = new PolygonalChain(board.getDrawing(), point1, nextPoint);
             this.addShape(point1);
             this.addShape(nextPoint);
             this.addShape(line);
@@ -93,7 +93,7 @@ public class FreePolygonFactory extends ShapeFactory {
         }
         return List.of(Component.translatable("shape.factory.hint.free_polygon.add_points"), Component.translatable("shape.factory.hint.free_polygon.finish_creation"));
     }
-    
+
     @Override
     public List<Shape> getShapeWhitelist() {
         if (point1 != null) {

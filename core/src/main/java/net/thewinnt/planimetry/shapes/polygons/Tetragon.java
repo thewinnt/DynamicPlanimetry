@@ -99,7 +99,7 @@ public class Tetragon extends Polygon {
     }
 
     @Override
-    public ShapeDeserializer<?> getDeserializer() {
+    public ShapeDeserializer<?> type() {
         return ShapeData.TRIANGLE;
     }
 

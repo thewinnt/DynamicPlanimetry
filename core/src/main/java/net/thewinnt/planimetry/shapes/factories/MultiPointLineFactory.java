@@ -8,7 +8,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.shapes.Shape;
-import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
+import net.thewinnt.planimetry.shapes.lines.PolygonalChain;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
@@ -18,7 +18,7 @@ import net.thewinnt.planimetry.ui.text.Component;
 public class MultiPointLineFactory extends ShapeFactory {
     private PointProvider point1;
     private PointReference nextPoint;
-    private MultiPointLine line;
+    private PolygonalChain line;
     private boolean isDone = false;
 
     public MultiPointLineFactory(DrawingBoard board) {
@@ -30,7 +30,7 @@ public class MultiPointLineFactory extends ShapeFactory {
         if (point1 == null) {
             this.point1 = getOrCreatePoint(x, y);
             this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
-            this.line = new MultiPointLine(board.getDrawing(), point1, nextPoint);
+            this.line = new PolygonalChain(board.getDrawing(), point1, nextPoint);
             this.addShape(point1);
             this.addShape(nextPoint);
             this.addShape(line);

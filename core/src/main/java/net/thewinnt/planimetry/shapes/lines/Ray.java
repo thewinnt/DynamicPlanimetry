@@ -1,9 +1,6 @@
 package net.thewinnt.planimetry.shapes.lines;
 
-import java.util.Collection;
-import java.util.Optional;
 import java.util.function.DoubleFunction;
-import java.util.stream.Stream;
 
 import com.badlogic.gdx.graphics.Color;
 
@@ -14,60 +11,44 @@ import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
+import net.thewinnt.planimetry.shapes.lines.definition.ray.RayDefinition;
+import net.thewinnt.planimetry.shapes.lines.definition.ray.TwoPointRay;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
-import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.properties.Property;
-import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Ray extends Line {
-    private boolean startFromA = true;
-    private BooleanProperty startProperty = new BooleanProperty(Component.translatable("property.ray.start_from_a"), startFromA);
+    private RayDefinition definition;
 
-    public Ray(Drawing drawing, PointProvider a, PointProvider b) {
-        super(drawing, a, b);
-        startProperty.addValueChangeListener(value -> startFromA = value);
+    public Ray(Drawing drawing, RayDefinition definition) {
+        super(drawing);
+        this.definition = definition;
     }
 
     @Override
     public boolean contains(double x, double y) {
-        boolean between = a.getPosition().distanceTo(x, y) + b.getPosition().distanceTo(x, y) - a.getPosition().distanceTo(b.getPosition()) < Math.pow(2, -23);
+        boolean between = point1().distanceTo(x, y) + point2().distanceTo(x, y) - point1().distanceTo(point2()) < Math.pow(2, -23);
         if (between) return true;
-        if (startFromA) {
-            Vec2 c = new Vec2(x, y);
-            return a.getPosition().distanceTo(b.getPosition()) + c.distanceTo(b.getPosition()) - a.getPosition().distanceTo(c) < Math.pow(2, -23);
-        } else {
-            Vec2 c = new Vec2(x, y);
-            return b.getPosition().distanceTo(a.getPosition()) + c.distanceTo(a.getPosition()) - b.getPosition().distanceTo(c) < Math.pow(2, -23);
-        }
+        Vec2 c = new Vec2(x, y);
+        return point1().distanceTo(point2()) + c.distanceTo(point2()) - point1().distanceTo(c) < Math.pow(2, -23);
     }
 
     @Override
     public boolean contains(Vec2 point) {
-        boolean between = a.getPosition().distanceTo(point) + b.getPosition().distanceTo(point) - a.getPosition().distanceTo(b.getPosition()) < Math.pow(2, -23);;
+        boolean between = point1().distanceTo(point) + point2().distanceTo(point) - point1().distanceTo(point2()) < Math.pow(2, -23);;
         if (between) return true;
-        if (startFromA) {
-            return a.getPosition().distanceTo(b.getPosition()) + point.distanceTo(b.getPosition()) - a.getPosition().distanceTo(point) < Math.pow(2, -23);
-        } else {
-            return b.getPosition().distanceTo(a.getPosition()) + point.distanceTo(a.getPosition()) - b.getPosition().distanceTo(point) < Math.pow(2, -23);
-        }
+        return point1().distanceTo(point2()) + point.distanceTo(point2()) - point1().distanceTo(point) < Math.pow(2, -23);
     }
 
     @Override
     public double distanceToMouse(Vec2 point, DrawingBoard board) {
         Vec2 a, b;
-        if (startFromA) {
-            a = this.a.getPosition();
-            b = this.b.getPosition();
-        } else {
-            a = this.b.getPosition();
-            b = this.a.getPosition();
-        }
+        a = this.point1();
+        b = this.point2();
         double distance = Math.abs((b.x - a.x)*(a.y - point.y) - (a.x - point.x)*(b.y - a.y)) / a.distanceTo(b);
         double slope = this.getSlope();
         if (!this.contains(MathHelper.perpendicular(point, slope, distance)) && !this.contains(MathHelper.perpendicular(point, slope, -distance))) {
@@ -83,21 +64,22 @@ public class Ray extends Line {
     }
 
     @Override
+    protected Vec2 point1() {
+        return definition.start();
+    }
+
+    @Override
+    protected Vec2 point2() {
+        return MathHelper.continueFromAngle(definition.start(), definition.direction(), 1);
+    }
+
+    @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
         DoubleFunction<Double> formula = compileFormula();
-        Color lineColor = switch (selection) {
-            default -> Theme.current().shape();
-            case HOVERED -> Theme.current().shapeHovered();
-            case SELECTED -> Theme.current().shapeSelected();
-        };
+        Color lineColor = this.getColor(selection);
         Vec2 a, b;
-        if (startFromA) {
-            a = this.a.getPosition();
-            b = this.b.getPosition();
-        } else {
-            a = this.b.getPosition();
-            b = this.a.getPosition();
-        }
+        a = this.point1();
+        b = this.point2();
         if (a.x == b.x) {
             float startY = board.by(a.y);
             float targHeight = a.y < b.y ? board.getY() + board.getHeight() : board.getY();
@@ -107,23 +89,15 @@ public class Ray extends Line {
         } else {
             drawer.line(board.getX(), board.by(formula.apply(board.minX())), board.bx(a.x), board.by(a.y), lineColor, getThickness(board.getScale()));
         }
-        if (selection == SelectionStatus.SELECTED) {
-            if (!board.getShapes().contains(this.a)) {
-                this.a.render(drawer, SelectionStatus.NONE, font, board);
-            }
-            if (!board.getShapes().contains(this.b)) {
-                this.b.render(drawer, SelectionStatus.NONE, font, board);
-            }
-        }
-    }
-
-    public void invert() {
-        this.startFromA = !this.startFromA;
     }
 
     @Override
-    public Collection<Property<?>> getProperties() {
-        return Stream.concat(super.getProperties().stream(), Stream.of(startProperty)).toList();
+    public Line convertTo(LineType other) {
+        return switch (other) {
+            case RAY -> this;
+            case INFINITE -> definition.asInfiniteLine(drawing);
+            case SEGMENT -> definition.asLineSegment(drawing);
+        };
     }
 
     @Override
@@ -132,28 +106,53 @@ public class Ray extends Line {
     }
 
     @Override
-    public ShapeDeserializer<?> getDeserializer() {
+    public ShapeDeserializer<?> type() {
         return ShapeData.RAY;
     }
 
     @Override
     public CompoundTag writeNbt(SavingContext context) {
-        CompoundTag nbt = super.writeNbt(context);
-        nbt.putByte("start_from_a", startFromA ? (byte)1 : (byte)0);
+        CompoundTag nbt = new CompoundTag();
+        nbt.put("definition", definition.toNbt(context));
         return nbt;
     }
 
     public static Ray readNbt(CompoundTag nbt, LoadingContext context) {
-        PointReference a = (PointReference)context.resolveShape(nbt.getLong("a"));
-        PointReference b = (PointReference)context.resolveShape(nbt.getLong("b"));
-        boolean startFromA = nbt.getByte("start_from_a") > 0;
-        Ray output = new Ray(context.getDrawing(), a, b);
-        output.startFromA = startFromA;
-        return output;
+        RayDefinition definition = RayDefinition.fromNbt(nbt, context);
+        return new Ray(context.getDrawing(), definition);
     }
 
     @Override
     public LineType getType() {
         return LineType.RAY;
+    }
+
+    @Override
+    public void replaceShape(Shape old, Shape neo) {
+        this.definition.replaceShape(old, neo);
+    }
+
+    @Override
+    public boolean canMove() {
+        return this.definition.canMove();
+    }
+
+    @Override
+    public Component getName() {
+        return this.definition.getName();
+    }
+
+    @Override
+    public void move(Vec2 delta) {
+        this.definition.move(delta);
+    }
+
+    @Override
+    public void move(double dx, double dy) {
+        this.definition.move(dx, dy);
+    }
+
+    public static Ray of(Drawing drawing, PointProvider a, PointProvider b) {
+        return new Ray(drawing, new TwoPointRay(a, b));
     }
 }

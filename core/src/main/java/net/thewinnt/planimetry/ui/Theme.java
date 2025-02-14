@@ -19,6 +19,7 @@ public record Theme(
     Color textSelectionBg,
     Color delimiter,
     Color inactive,
+    Color board,
     Color shape,
     Color shapeHovered,
     Color shapeSelected,

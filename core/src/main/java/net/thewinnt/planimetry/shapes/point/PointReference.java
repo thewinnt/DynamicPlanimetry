@@ -142,7 +142,7 @@ public class PointReference extends PointProvider {
     }
 
     @Override
-    public ShapeDeserializer<PointReference> getDeserializer() {
+    public ShapeDeserializer<PointReference> type() {
         return ShapeData.POINT_REFERENCE;
     }
 

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.MathHelper;
+import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
@@ -32,6 +33,12 @@ public abstract class PointProvider extends Shape {
         if (this.shouldAutoAssingnName()) {
             this.name = drawing.generateName(drawing.shouldUseDashesForNaming());
         }
+    }
+
+    @Override
+    public void onAdded() {
+        properties.add(shouldRender);
+        properties.addAll(moreProperties());
     }
 
     public PointProvider(Drawing drawing, NameComponent name) {
@@ -73,6 +80,29 @@ public abstract class PointProvider extends Shape {
         return aabb.contains(getPosition());
     }
 
+    @Override
+    public Collection<Vec2> intersections(Shape other) {
+        Vec2 pos = this.getPosition();
+        if (other.contains(pos)) {
+            return List.of(pos);
+        }
+        return List.of();
+    }
+
+    @Override
+    public Collection<Vec2> intersections(SegmentLike other) {
+        Vec2 pos = this.getPosition();
+        if (other.contains(pos)) {
+            return List.of(pos);
+        }
+        return List.of();
+    }
+
+    @Override
+    public Collection<SegmentLike> asSegments() {
+        return List.of();
+    }
+
     public void addMovementListener(Consumer<Vec2> listener) {
         this.movementListeners.add(listener);
     }
@@ -112,14 +142,6 @@ public abstract class PointProvider extends Shape {
 
     public void setName(NameComponent name) {
         this.name = name;
-    }
-
-    @Override
-    public Collection<Property<?>> getProperties() {
-        Collection<Property<?>> properties = super.getProperties();
-        properties.add(shouldRender);
-        properties.addAll(moreProperties());
-        return properties;
     }
 
     protected abstract Collection<Property<?>> moreProperties();

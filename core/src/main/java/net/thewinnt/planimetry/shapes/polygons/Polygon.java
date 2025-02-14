@@ -13,10 +13,9 @@ import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
-import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
+import net.thewinnt.planimetry.shapes.lines.PolygonalChain;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
@@ -24,7 +23,7 @@ import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public class Polygon extends MultiPointLine {
+public class Polygon extends PolygonalChain {
     public final List<DisplayProperty> angles = new ArrayList<>();
 
     public Polygon(Drawing drawing, PointProvider... points) {
@@ -150,11 +149,7 @@ public class Polygon extends MultiPointLine {
     @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
         super.render(drawer, selection, font, board);
-        Color lineColor = switch (selection) {
-            default -> Theme.current().shape();
-            case HOVERED -> Theme.current().shapeHovered();
-            case SELECTED -> Theme.current().shapeSelected();
-        };
+        Color lineColor = this.getColor(selection);
         Vec2 a, b;
         a = points.get(0).getPosition();
         b = points.get(points.size() - 1).getPosition();
@@ -170,7 +165,7 @@ public class Polygon extends MultiPointLine {
     }
 
     @Override
-    public ShapeDeserializer<?> getDeserializer() {
+    public ShapeDeserializer<?> type() {
         return ShapeData.POLYGON;
     }
 

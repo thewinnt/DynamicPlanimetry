@@ -2,7 +2,9 @@ package net.thewinnt.planimetry.shapes.lines;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.graphics.Color;
 
@@ -14,24 +16,24 @@ import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.MathHelper;
+import net.thewinnt.planimetry.math.Segment;
+import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.polygons.Polygon;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public class MultiPointLine extends Shape {
+public class PolygonalChain extends Shape {
     public final List<PointProvider> points;
-    private LineSegment[] segmentCache;
+    private List<SegmentLike> segmentCache;
 
-    public MultiPointLine(Drawing drawing, PointProvider... points) {
+    public PolygonalChain(Drawing drawing, PointProvider... points) {
         super(drawing);
         this.points = new ArrayList<>(points.length);
         for (PointProvider i : points) {
@@ -41,7 +43,7 @@ public class MultiPointLine extends Shape {
         }
     }
 
-    public MultiPointLine(Drawing drawing, Collection<PointProvider> points) {
+    public PolygonalChain(Drawing drawing, Collection<PointProvider> points) {
         super(drawing);
         this.points = new ArrayList<>(points);
         for (PointProvider i : this.points) {
@@ -106,13 +108,12 @@ public class MultiPointLine extends Shape {
     }
 
     @Override
-    public Collection<Property<?>> getProperties() {
-        List<Property<?>> properties = new ArrayList<>();
+    public void rebuildProperties() {
+        properties.clear();
         for (PointProvider i : points) {
             properties.add(new PropertyGroup(i.getName(), i.getProperties()));
         }
         properties.add(new DisplayProperty(Component.translatable("property.polygonal_chain.length"), () -> Component.number(getPerimeter())));
-        return properties;
     }
 
     public double getPerimeter() {
@@ -127,11 +128,7 @@ public class MultiPointLine extends Shape {
 
     @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
-        Color lineColor = switch (selection) {
-            default -> Theme.current().shape();
-            case HOVERED -> Theme.current().shapeHovered();
-            case SELECTED -> Theme.current().shapeSelected();
-        };
+        Color lineColor = this.getColor(selection);
         if (selection == SelectionStatus.SELECTED) {
             for (PointProvider i : points) {
                 if (!board.getShapes().contains(i)) {
@@ -174,7 +171,7 @@ public class MultiPointLine extends Shape {
     }
 
     @Override
-    public ShapeDeserializer<?> getDeserializer() {
+    public ShapeDeserializer<?> type() {
         return ShapeData.POLYGONAL_CHAIN;
     }
 
@@ -200,8 +197,8 @@ public class MultiPointLine extends Shape {
         return output;
     }
 
-    public static MultiPointLine readNbt(CompoundTag nbt, LoadingContext context) {
-        return new MultiPointLine(context.getDrawing(), pointsFromNbt(nbt, context));
+    public static PolygonalChain readNbt(CompoundTag nbt, LoadingContext context) {
+        return new PolygonalChain(context.getDrawing(), pointsFromNbt(nbt, context));
     }
 
     @Override
@@ -223,18 +220,19 @@ public class MultiPointLine extends Shape {
         return true;
     }
 
-    public LineSegment[] dummyLineSegments() {
+    @Override
+    public Collection<SegmentLike> asSegments() {
         if (segmentCache == null) {
             if (this instanceof Polygon) {
-                segmentCache = new LineSegment[this.points.size()];
-                segmentCache[0] = new LineSegment(DUMMY_DRAWING, points.get(0), points.get(points.size()));
-                for (int i = 1; i < segmentCache.length; i++) {
-                    segmentCache[i] = new LineSegment(DUMMY_DRAWING, points.get(i - 1), points.get(i));
+                segmentCache = new ArrayList<>(this.points.size());
+                segmentCache.set(0, new Segment(points.get(0).getPosition(), points.get(points.size()).getPosition()));
+                for (int i = 1; i < segmentCache.size(); i++) {
+                    segmentCache.set(i, new Segment(points.get(i - 1).getPosition(), points.get(i).getPosition()));
                 }
             } else {
-                segmentCache = new LineSegment[this.points.size() - 1];
-                for (int i = 1; i < segmentCache.length; i++) {
-                    segmentCache[i - 1] = new LineSegment(DUMMY_DRAWING, points.get(i - 1), points.get(i));
+                segmentCache = new ArrayList<>(this.points.size() - 1);
+                for (int i = 1; i < segmentCache.size(); i++) {
+                    segmentCache.set(i - 1, new Segment(points.get(i - 1).getPosition(), points.get(i).getPosition()));
                 }
             }
         }
@@ -243,11 +241,41 @@ public class MultiPointLine extends Shape {
 
     @Override
     public boolean intersects(AABB aabb) {
-        for (LineSegment i : dummyLineSegments()) {
-            for (LineSegment j : aabb.asLineSegments()) {
+        for (SegmentLike i : asSegments()) {
+            for (SegmentLike j : aabb.asLineSegments()) {
                 if (i.intersection(j).isPresent()) return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public Collection<Vec2> intersections(Shape other) {
+        Set<Vec2> output = new HashSet<>();
+        if (other instanceof Line line) {
+            for (SegmentLike i : this.asSegments()) {
+                line.intersect(i).ifPresent(output::add);
+            }
+        } else {
+            Collection<SegmentLike> segments = other.asSegments();
+            if (segments.isEmpty()) {
+                for (SegmentLike i : this.asSegments()) {
+                    output.addAll(other.intersections(i));
+                }
+            } else {
+                for (SegmentLike i : this.asSegments()) {
+                    for (SegmentLike j : segments) {
+                        i.intersection(j).ifPresent(output::add);
+                    }
+                }
+            }
+        }
+        return output;
+    }
+
+    @Override
+    public Collection<Vec2> intersections(SegmentLike other) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

@@ -78,8 +78,8 @@ public class MathHelper {
         return roughlyEquals(getSlope(ba, bb), getSlope(aa, ab));
     }
 
-    public static double polarAngle(Vec2 center, Vec2 point) {
-        Vec2 zero = point.subtract(center);
+    public static double angleTo(Vec2 from, Vec2 to ) {
+        Vec2 zero = to.subtract(from);
         return Math.atan2(zero.y, zero.x);
     }
 

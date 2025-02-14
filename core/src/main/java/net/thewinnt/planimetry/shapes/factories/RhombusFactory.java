@@ -6,7 +6,7 @@ import java.util.List;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.math.Vec2;
-import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
+import net.thewinnt.planimetry.shapes.lines.PolygonalChain;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
@@ -18,7 +18,7 @@ public class RhombusFactory extends ShapeFactory {
     private PointProvider point1;
     private PointReference point2;
     private PointReference point3;
-    private MultiPointLine line;
+    private PolygonalChain line;
     private boolean isDone = false;
 
     public RhombusFactory(DrawingBoard board, int limit) {
@@ -30,7 +30,7 @@ public class RhombusFactory extends ShapeFactory {
         if (point1 == null) {
             this.point1 = getOrCreatePoint(x, y);
             this.point2 = new PointReference(new MousePoint(board.getDrawing()));
-            this.line = new MultiPointLine(board.getDrawing(), point1, point2);
+            this.line = new PolygonalChain(board.getDrawing(), point1, point2);
             this.addShape(point1);
             this.addShape(point2);
             this.addShape(line);

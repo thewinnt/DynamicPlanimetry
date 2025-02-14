@@ -18,21 +18,18 @@ import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.MathHelper;
+import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.factories.CircleTangentFactory;
-import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
-import net.thewinnt.planimetry.shapes.point.relative.CirclePoint;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
-import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
+import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
-import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -86,11 +83,7 @@ public class Circle extends Shape {
     @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
         Vec2 center = this.center.getPosition();
-        Color lineColor = switch (selection) {
-            default -> Theme.current().shape();
-            case HOVERED -> Theme.current().shapeHovered();
-            case SELECTED -> Theme.current().shapeSelected();
-        };
+        Color lineColor = this.getColor(selection);
         drawer.setColor(lineColor);
         drawer.circle(board.bx(center.x), board.by(center.y), (float)(radius.get() * board.getScale()), getThickness(board.getScale()));
         if (selection == SelectionStatus.SELECTED) {
@@ -148,19 +141,19 @@ public class Circle extends Shape {
     }
 
     @Override
-    public Collection<Property<?>> getProperties() {
+    public void rebuildProperties() {
+        this.properties.clear();
         if (radiusPoint != null) {
             BooleanProperty keep = new BooleanProperty(Component.translatable("property.circle.keep_radius"), keepRadius);
             keep.addValueChangeListener(Circle.this::setKeepRadius);
-            return List.of(
-                new PropertyGroup(Component.translatable("property.circle.group.center_point"), this.center.getProperties()),
-                new PropertyGroup(Component.translatable("property.circle.group.radius_point"), this.radiusPoint.getProperties()),
-                keep
-            );
+            this.properties.add(new PropertyGroup(Component.translatable("property.circle.group.center_point"), this.center.getProperties()));
+            this.properties.add(new PropertyGroup(Component.translatable("property.circle.group.radius_point"), this.radiusPoint.getProperties()));
+            this.properties.add(keep);
         } else {
             NumberProperty radius = new NumberProperty(Component.translatable("property.circle.radius"), this.radius.get());
             radius.addValueChangeListener(r -> Circle.this.radius = () -> r);
-            return List.of(new PropertyGroup(Component.translatable("property.circle.group.center_point"), this.center.getProperties()), radius);
+            this.properties.add(new PropertyGroup(Component.translatable("property.circle.group.center_point"), this.center.getProperties()));
+            this.properties.add(radius);
         }
     }
 
@@ -168,16 +161,16 @@ public class Circle extends Shape {
     public Collection<Function<?>> getFunctions() {
         Collection<Function<?>> functions = new ArrayList<>();
         DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
-        if (this.radiusPoint != null) {
-            functions.add(new BasicNamedFunction<>(drawing, this, s -> {
-                Component component = radiusPoint.getNameComponent();
-                PointProvider old = radiusPoint;
-                setRadiusPoint(null); // remove the radius point before it gets replaced
-                if (component instanceof NameComponent name) {
-                    drawing.replaceShape(old, new CirclePoint(drawing, s, MathHelper.polarAngle(center.getPosition(), old.getPosition()), name));
-                }
-            }, Component.translatable("function.circle.disconnect_radius"), Component.translatable("function.circle.disconnect_radius.action")));
-        }
+        // if (this.radiusPoint != null) {
+        //     functions.add(new BasicNamedFunction<>(drawing, this, s -> {
+        //         Component component = radiusPoint.getNameComponent();
+        //         PointProvider old = radiusPoint;
+        //         setRadiusPoint(null); // remove the radius point before it gets replaced
+        //         if (component instanceof NameComponent name) {
+        //             drawing.replaceShape(old, new CirclePoint(drawing, s, MathHelper.polarAngle(center.getPosition(), old.getPosition()), name));
+        //         }
+        //     }, Component.translatable("function.circle.disconnect_radius"), Component.translatable("function.circle.disconnect_radius.action")));
+        // }
         functions.add(new BasicNamedFunction<>(drawing, this, s -> board.startCreation(new CircleTangentFactory(board, Circle.this)), Component.translatable("function.circle.create_tangent"), Component.translatable("function.circle.create_tangent.action")));
         functions.addAll(super.getFunctions());
         return functions;
@@ -195,7 +188,7 @@ public class Circle extends Shape {
     }
 
     @Override
-    public ShapeDeserializer<?> getDeserializer() {
+    public ShapeDeserializer<?> type() {
         return ShapeData.CIRCLE;
     }
 
@@ -245,11 +238,28 @@ public class Circle extends Shape {
 
     @Override
     public boolean intersects(AABB aabb) {
-        for (LineSegment i : aabb.asLineSegments()) {
-            if (MathHelper.distanceToLine(i.a.getPosition(), i.b.getPosition(), center.getPosition()) <= radius.get()) {
+        for (SegmentLike i : aabb.asLineSegments()) {
+            if (MathHelper.distanceToLine(i.point1(), i.point2(), center.getPosition()) <= radius.get()) {
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public Collection<Vec2> intersections(Shape other) {
+        // TODO Auto-generated method stub
+        return List.of();
+    }
+
+    @Override
+    public Collection<Vec2> intersections(SegmentLike other) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<SegmentLike> asSegments() {
+        return List.of();
     }
 }

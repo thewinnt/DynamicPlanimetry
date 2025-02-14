@@ -6,7 +6,7 @@ import java.util.List;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.ShapeData;
-import net.thewinnt.planimetry.shapes.lines.MultiPointLine;
+import net.thewinnt.planimetry.shapes.lines.PolygonalChain;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
@@ -18,7 +18,7 @@ public class LimitedPolygonFactory extends ShapeFactory {
     private final int limit;
     private PointProvider point1;
     private PointReference nextPoint;
-    private MultiPointLine line;
+    private PolygonalChain line;
     private boolean isDone = false;
 
     public LimitedPolygonFactory(DrawingBoard board, int limit) {
@@ -34,7 +34,7 @@ public class LimitedPolygonFactory extends ShapeFactory {
         if (point1 == null) {
             this.point1 = getOrCreatePoint(x, y);
             this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
-            this.line = new MultiPointLine(board.getDrawing(), point1, nextPoint);
+            this.line = new PolygonalChain(board.getDrawing(), point1, nextPoint);
             this.addShape(point1);
             this.addShape(nextPoint);
             this.addShape(line);

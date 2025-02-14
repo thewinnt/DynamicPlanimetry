@@ -27,6 +27,7 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.AABB;
+import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
@@ -241,6 +242,7 @@ public class DrawingBoard extends Actor {
         int mx = Gdx.input.getX();
         int my = Gdx.input.getY();
         int fontSize = (int)(Gdx.graphics.getHeight() / Size.MEDIUM.getFactor());
+        
         if (DynamicPlanimetry.SETTINGS.shouldShowGrid()) {
             double step = Math.abs(Math.max(getHeight(), getWidth()) / scale / 12); // detect full width
             int j = 0;
@@ -356,8 +358,8 @@ public class DrawingBoard extends Actor {
                 AABB range = new AABB(panStartB, selectionEndB);
                 font.getFont(fontSize, Color.FIREBRICK).draw(batch, "selb_a: " + range.min, x(5), y(getHeight() - 180));
                 font.getFont(fontSize, Color.FIREBRICK).draw(batch, "selb_b: " + range.max, x(5), y(getHeight() - 205));
-                for (LineSegment i : range.asLineSegments()) {
-                    i.render(drawer, SelectionStatus.HOVERED, font, this);
+                for (SegmentLike i : range.asLineSegments()) {
+                    drawer.line(i.point1().toBoardCoords(this), i.point2().toBoardCoords(this), Theme.current().shapeHovered(), 3);
                 }
             }
         }

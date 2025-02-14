@@ -28,12 +28,12 @@ public class PointAngleMarker extends AngleMarker {
 
     @Override
     public double getAngleA() {
-        return MathHelper.polarAngle(b.getPosition(), a.getPosition());
+        return MathHelper.angleTo(b.getPosition(), a.getPosition());
     }
 
     @Override
     public double getAngleB() {
-        return MathHelper.polarAngle(b.getPosition(), c.getPosition());
+        return MathHelper.angleTo(b.getPosition(), c.getPosition());
     }
 
     @Override
@@ -75,7 +75,7 @@ public class PointAngleMarker extends AngleMarker {
     }
 
     @Override
-    public ShapeDeserializer<?> getDeserializer() {
+    public ShapeDeserializer<?> type() {
         return ShapeData.POINT_ANGLE_MARKER;
     }
 

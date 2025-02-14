@@ -44,7 +44,7 @@ public class Triangle extends Polygon {
     }
 
     @Override
-    public ShapeDeserializer<?> getDeserializer() {
+    public ShapeDeserializer<?> type() {
         return ShapeData.TRIANGLE;
     }
 

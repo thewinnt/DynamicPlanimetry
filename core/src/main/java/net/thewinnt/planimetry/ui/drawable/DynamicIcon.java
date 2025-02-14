@@ -2,7 +2,6 @@ package net.thewinnt.planimetry.ui.drawable;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 
-import net.thewinnt.planimetry.ui.Theme;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 import space.earlygrey.shapedrawer.scene2d.ShapeDrawerDrawable;

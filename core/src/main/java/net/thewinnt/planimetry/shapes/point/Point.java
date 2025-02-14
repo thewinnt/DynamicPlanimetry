@@ -100,7 +100,7 @@ public class Point extends PointProvider {
         return true;
     }
     @Override
-    public ShapeDeserializer<Point> getDeserializer() {
+    public ShapeDeserializer<Point> type() {
         return ShapeData.POINT_SIMPLE;
     }
 

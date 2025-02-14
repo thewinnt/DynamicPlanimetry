@@ -2,6 +2,8 @@ package net.thewinnt.planimetry.math;
 
 import com.badlogic.gdx.math.Vector2;
 
+import net.thewinnt.planimetry.ui.DrawingBoard;
+
 /** An immutable 2D vector */
 public class Vec2 {
     public static final Vec2 ZERO = new Vec2(0, 0);
@@ -115,6 +117,10 @@ public class Vec2 {
     @Override
     public boolean equals(Object o) {
         return o != null && o instanceof Vec2 other && other.x == this.x && other.y == this.y;
+    }
+
+    public Vector2 toBoardCoords(DrawingBoard board) {
+        return new Vector2(board.bx(x), board.by(y));
     }
 
     public Vector2 toVector2f() {

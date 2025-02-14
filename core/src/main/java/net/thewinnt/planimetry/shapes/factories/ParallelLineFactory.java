@@ -5,23 +5,26 @@ import java.util.List;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
+import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.Line;
-import net.thewinnt.planimetry.shapes.lines.ParallelInfiniteLine;
+import net.thewinnt.planimetry.shapes.lines.definition.infinite.TwoPointInfiniteLine;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
+import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class ParallelLineFactory extends ShapeFactory {
-    private final Line newLine;
+    // private final Line newLine;
     private final PointReference point;
     private boolean isDone;
 
     public ParallelLineFactory(DrawingBoard board, Line originalLine) {
+        // TODO parallel lines
         super(board);
         this.point = new PointReference(new MousePoint(board.getDrawing()));
-        this.newLine = new ParallelInfiniteLine(board.getDrawing(), originalLine, point);
-        addShape(newLine);
+        // this.newLine = new ParallelInfiniteLine(board.getDrawing(), originalLine, point);
+        // addShape(newLine);
         addShape(point);
     }
 

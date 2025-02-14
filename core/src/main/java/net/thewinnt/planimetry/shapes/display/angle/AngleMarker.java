@@ -1,7 +1,7 @@
 package net.thewinnt.planimetry.shapes.display.angle;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
@@ -10,12 +10,12 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.MathHelper;
+import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.Size;
-import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -41,13 +41,16 @@ public abstract class AngleMarker extends Shape {
     @Override public void move(Vec2 delta) {}
     @Override public void move(double dx, double dy) {}
     @Override public boolean intersects(AABB aabb) { return false; }
+    @Override public Collection<Vec2> intersections(Shape other) { return List.of(); }
+    @Override public Collection<Vec2> intersections(SegmentLike other) { return List.of(); }
+    @Override public Collection<SegmentLike> asSegments() { return List.of(); }
 
     @Override
     public double distanceToMouse(Vec2 point, DrawingBoard board) {
         Vec2 start = getStartPoint();
         point = point.lerp(start, (30 / board.getScale()) / point.distanceTo(start));
         double distance = point.distanceTo(start);
-        if (MathHelper.isAngleBetween(getAngleA(), getAngleB(), MathHelper.polarAngle(start, point))) return distance;
+        if (MathHelper.isAngleBetween(getAngleA(), getAngleB(), MathHelper.angleTo(start, point))) return distance;
         return Double.POSITIVE_INFINITY;
     }
 
@@ -57,11 +60,10 @@ public abstract class AngleMarker extends Shape {
     }
 
     @Override
-    public Collection<Property<?>> getProperties() {
-        ArrayList<Property<?>> output = new ArrayList<>();
-        output.add(value);
-        output.add(displayValue);
-        return output;
+    public void rebuildProperties() {
+        this.properties.clear();
+        this.properties.add(value);
+        this.properties.add(displayValue);
     }
 
     @Override
@@ -74,11 +76,7 @@ public abstract class AngleMarker extends Shape {
         Vec2 center = getStartPoint();
         float x = board.bx(center.x);
         float y = board.by(center.y);
-        Color color = switch (selection) {
-            case NONE -> Theme.current().angleMarker();
-            case HOVERED -> Theme.current().shapeHovered();
-            case SELECTED -> Theme.current().shapeSelected();
-        };
+        Color color = this.getColor(selection);
         drawer.setColor(color);
 
         // detect center angle

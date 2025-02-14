@@ -2,12 +2,15 @@ package net.thewinnt.planimetry.data;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 
 import net.querz.nbt.io.NBTUtil;
 import net.querz.nbt.tag.CompoundTag;
@@ -105,6 +108,7 @@ public class Drawing {
             this.shapes.add(shape);
         }
         this.shapeIds.put(shape.getId(), shape);
+        shape.onAdded();
         updateIdRange(shape.getId());
     }
 
@@ -158,6 +162,7 @@ public class Drawing {
         this.allShapes.remove(shape);
         this.shapes.remove(shape);
         this.points.remove(shape);
+        shape.onRemoved();
     }
 
     public long getId(Shape shape) {
@@ -251,6 +256,21 @@ public class Drawing {
 
     public void clearSwapListeners() {
         this.swapListeners.clear();
+    }
+
+    public PointProvider getNearestPoint(double x, double y) {
+        PointProvider hovered = null;
+        double minDistance = Double.MAX_VALUE;
+        for (Shape i : this.points) {
+            if (i instanceof PointProvider point) {
+                double distance = point.distanceToMouse(x, y, null);
+                if (distance <= minDistance) {
+                    hovered = point;
+                    minDistance = distance;
+                }
+            }
+        }
+        return hovered;
     }
 
     public CompoundTag toNbt() {

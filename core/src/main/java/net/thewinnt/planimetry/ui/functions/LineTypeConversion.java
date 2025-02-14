@@ -42,8 +42,7 @@ public class LineTypeConversion extends Function<Line> {
         apply.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                shape.startConverion();
-                drawing.replaceShape(shape, targetType.create(drawing, shape.a, shape.b));
+                drawing.replaceShape(shape, shape.convertTo(targetType));
                 use();
             }
         });
