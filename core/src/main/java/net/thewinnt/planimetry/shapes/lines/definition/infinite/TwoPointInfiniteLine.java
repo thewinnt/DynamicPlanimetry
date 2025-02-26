@@ -65,18 +65,20 @@ public class TwoPointInfiniteLine extends InfiniteLineDefinition {
 
     @Override
     public Collection<Property<?>> properties() {
+        a.rebuildProperties();
+        b.rebuildProperties();
         ArrayList<Property<?>> output = new ArrayList<>();
         PropertyGroup point1 = new PropertyGroup(a.getName());
-        ShapeProperty setPoint1 = new ShapeProperty(Component.translatable("shape.generic.point_n", 1), a.getDrawing(), a, t -> (t instanceof PointProvider && t != a && t != b));
+        ShapeProperty setPoint1 = new ShapeProperty(Component.translatable("shape.generic.point_n", 1), a.getDrawing(), a, t -> (t instanceof PointProvider && t != b));
         setPoint1.addValueChangeListener(shape -> a = (PointProvider) shape);
         point1.addProperty(setPoint1);
         point1.addProperties(a.getProperties());
 
-        PropertyGroup point2 = new PropertyGroup(a.getName());
-        ShapeProperty setPoint2 = new ShapeProperty(Component.translatable("shape.generic.point_n", 1), a.getDrawing(), a, t -> (t instanceof PointProvider && t != a && t != b));
-        setPoint2.addValueChangeListener(shape -> a = (PointProvider) shape);
+        PropertyGroup point2 = new PropertyGroup(b.getName());
+        ShapeProperty setPoint2 = new ShapeProperty(Component.translatable("shape.generic.point_n", 1), b.getDrawing(), b, t -> (t instanceof PointProvider && t != a));
+        setPoint2.addValueChangeListener(shape -> b = (PointProvider) shape);
         point2.addProperty(setPoint2);
-        point2.addProperties(a.getProperties());
+        point2.addProperties(b.getProperties());
 
         output.add(point1);
         output.add(point2);

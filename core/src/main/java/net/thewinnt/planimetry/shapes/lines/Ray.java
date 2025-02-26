@@ -9,6 +9,7 @@ import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
+import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -17,6 +18,7 @@ import net.thewinnt.planimetry.shapes.lines.definition.ray.RayDefinition;
 import net.thewinnt.planimetry.shapes.lines.definition.ray.TwoPointRay;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.properties.types.RegistryElementProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -89,6 +91,13 @@ public class Ray extends Line {
         } else {
             drawer.line(board.getX(), board.by(formula.apply(board.minX())), board.bx(a.x), board.by(a.y), lineColor, getThickness(board.getScale()));
         }
+    }
+
+    @Override
+    public void rebuildProperties() {
+        this.properties.clear();
+        this.properties.add(new RegistryElementProperty<>(this.definition.type(), Component.translatable(this.getPropertyName("definition")), Registries.RAY_DEFITINION_TYPE));
+        this.properties.addAll(this.definition.properties());
     }
 
     @Override

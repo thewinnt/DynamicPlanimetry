@@ -94,7 +94,7 @@ public abstract class Shape implements ComponentRepresentable {
      */
     public abstract void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board);
 
-    public Collection<Property<?>> getProperties() {
+    public final Collection<Property<?>> getProperties() {
         // TODO make properties defined in shapes!
         return Collections.unmodifiableCollection(properties);
     }

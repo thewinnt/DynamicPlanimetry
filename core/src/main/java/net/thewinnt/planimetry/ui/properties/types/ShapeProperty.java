@@ -23,22 +23,22 @@ import net.thewinnt.planimetry.ui.text.Component;
 public class ShapeProperty extends Property<Shape> {
     private final List<Consumer<Shape>> listeners = new ArrayList<>();
     private final Drawing drawing;
-    private Predicate<Shape> canConnect;
-    private Shape attachment;
+    private Predicate<Shape> predicate;
+    private Shape shape;
 
     public ShapeProperty(Component name, Drawing drawing, Shape current) {
         super(name);
         this.drawing = drawing;
-        this.attachment = current;
+        this.shape = current;
     }
 
-    public ShapeProperty(Component name, Drawing drawing, Shape current, Predicate<Shape> canConnect) {
+    public ShapeProperty(Component name, Drawing drawing, Shape current, Predicate<Shape> predicate) {
         this(name, drawing, current);
-        this.canConnect = canConnect;
+        this.predicate = predicate;
     }
 
-    public void setConnectionPredicate(Predicate<Shape> canConnect) {
-        this.canConnect = canConnect;
+    public void setConnectionPredicate(Predicate<Shape> predicate) {
+        this.predicate = predicate;
     }
 
     @Override
@@ -48,8 +48,8 @@ public class ShapeProperty extends Property<Shape> {
 
     @Override
     public void setValue(Shape value) {
-        if (canConnect.test(value)) {
-            this.attachment = value;
+        if (predicate.test(value)) {
+            this.shape = value;
             for (Consumer<Shape> i : this.listeners) {
                 i.accept(value);
             }
@@ -58,15 +58,15 @@ public class ShapeProperty extends Property<Shape> {
 
     @Override
     public Shape getValue() {
-        return attachment;
+        return shape;
     }
 
     @Override
     public WidgetGroup getActorSetup(StyleSet styles, Size size) {
         Table output = new Table();
-        Collection<Shape> shapes = this.drawing.allShapes.stream().filter(canConnect).toList();
+        Collection<Shape> shapes = this.drawing.allShapes.stream().filter(predicate).toList();
         SelectBox<Shape> selector = new ComponentSelectBox<>(styles.getListStyle(size), shapes, Shape::getName, size);
-        selector.setSelected(attachment);
+        selector.setSelected(shape);
         selector.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

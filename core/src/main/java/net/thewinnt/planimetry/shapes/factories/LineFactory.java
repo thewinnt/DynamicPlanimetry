@@ -20,6 +20,7 @@ import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
 
 public class LineFactory extends ShapeFactory {
     private final LineType type;
+    private Line line;
     private PointReference point1;
     private PointReference point2;
     private boolean addedPoint1;
@@ -40,7 +41,8 @@ public class LineFactory extends ShapeFactory {
         } else {
             this.point1 = new PointReference(point1);
             this.point2 = new PointReference(new MousePoint(board.getDrawing()));
-            this.addShape(this.type.create(board.getDrawing(), new PointReference(point1), point2));
+            this.line = this.type.create(board.getDrawing(), new PointReference(point1), point2);
+            this.addShape(line);
             this.addedPoint1 = true;
         }
     }
@@ -56,7 +58,8 @@ public class LineFactory extends ShapeFactory {
             return true;
         }
         if (!this.addedPoint1) {
-            this.addShape(this.type.create(board.getDrawing(), point1, point2));
+            this.line = this.type.create(board.getDrawing(), point1, point2);
+            this.addShape(this.line);
             this.addShape(point1);
             addedPoint1 = true;
         }
@@ -66,6 +69,11 @@ public class LineFactory extends ShapeFactory {
     @Override
     public boolean isDone() {
         return point2 != null && point2.getPoint() instanceof Point;
+    }
+
+    @Override
+    public void onFinish() {
+        this.line.rebuildProperties();
     }
 
     public static enum LineType implements ComponentRepresentable {

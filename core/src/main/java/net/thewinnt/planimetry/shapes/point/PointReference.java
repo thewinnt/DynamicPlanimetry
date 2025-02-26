@@ -89,10 +89,12 @@ public class PointReference extends PointProvider {
     public PointProvider getPoint() {
         return point;
     }
-
+    
     @Override
-    public Collection<Property<?>> getProperties() {
-        return this.point.getProperties();
+    public void rebuildProperties() {
+        this.point.rebuildProperties();
+        this.properties.clear();
+        this.properties.addAll(this.point.getProperties());
     }
 
     @Override

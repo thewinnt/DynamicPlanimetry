@@ -35,15 +35,16 @@ public abstract class PointProvider extends Shape {
         }
     }
 
-    @Override
-    public void onAdded() {
-        properties.add(shouldRender);
-        properties.addAll(moreProperties());
-    }
-
     public PointProvider(Drawing drawing, NameComponent name) {
         super(drawing);
         this.name = name;
+    }
+
+    @Override
+    public void rebuildProperties() {
+        properties.clear();
+        properties.add(shouldRender);
+        properties.addAll(moreProperties());
     }
 
     public abstract Vec2 getPosition();

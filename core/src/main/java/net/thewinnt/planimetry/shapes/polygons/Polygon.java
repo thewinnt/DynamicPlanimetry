@@ -16,7 +16,6 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.lines.PolygonalChain;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -95,12 +94,11 @@ public class Polygon extends PolygonalChain {
     }
 
     @Override
-    public Collection<Property<?>> getProperties() {
+    public void rebuildProperties() {
         recalculateAngles();
-        var prev = super.getProperties();
-        prev.add(new DisplayProperty(Component.translatable("property.polygon.area"), () -> Component.number(getArea())));
-        prev.add(new PropertyGroup(Component.translatable("property.polygon.angles"), angles));
-        return prev;
+        super.rebuildProperties();
+        properties.add(new DisplayProperty(Component.translatable("property.polygon.area"), () -> Component.number(getArea())));
+        properties.add(new PropertyGroup(Component.translatable("property.polygon.angles"), angles));
     }
 
     @Override

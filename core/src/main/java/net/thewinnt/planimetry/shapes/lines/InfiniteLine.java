@@ -1,7 +1,5 @@
 package net.thewinnt.planimetry.shapes.lines;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleFunction;
 
@@ -125,7 +123,7 @@ public class InfiniteLine extends Line {
     @Override
     public void rebuildProperties() {
         this.properties.clear();
-        RegistryElementProperty<InfiniteLineType<?>> definitionType = new RegistryElementProperty<>(Component.translatable(this.getPropertyName("definition")), Registries.INFINITE_LINE_DEFINITION_TYPE);
+        RegistryElementProperty<InfiniteLineType<?>> definitionType = new RegistryElementProperty<>(this.definition.type(), Component.translatable(this.getPropertyName("definition")), Registries.INFINITE_LINE_DEFINITION_TYPE);
         this.properties.add(definitionType);
         this.properties.addAll(definition.properties());
         definitionType.addValueChangeListener(type -> {

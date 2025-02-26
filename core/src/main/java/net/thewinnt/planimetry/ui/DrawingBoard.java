@@ -559,6 +559,9 @@ public class DrawingBoard extends Actor {
 
     public void clearSelection() {
         selection.clear();
+        for (Consumer<List<Shape>> i : this.selectionListeners) {
+            i.accept(selection);
+        }
     }
 
     public void startCreation(ShapeFactory factory) {

@@ -39,8 +39,8 @@ public abstract class Line extends Shape {
         return x -> k * (x - a.x) + a.y;
     }
 
-    protected abstract Vec2 point1();
-    protected abstract Vec2 point2();
+    public abstract Vec2 point1();
+    public abstract Vec2 point2();
 
     @Override
     public Collection<Function<?>> getFunctions() {

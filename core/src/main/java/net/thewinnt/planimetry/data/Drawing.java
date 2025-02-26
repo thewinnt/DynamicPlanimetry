@@ -97,6 +97,7 @@ public class Drawing {
         } else if (!this.shapes.contains(shape)) {
             this.shapes.add(shape);
         }
+        shape.onAdded();
         this.shapeIds.put(shape.getId(), shape);
     }
 
@@ -147,6 +148,7 @@ public class Drawing {
         if (old instanceof PointProvider != neo instanceof PointProvider) {
             throw new IllegalArgumentException("Cannot replace a point with a non-point or vice-versa");
         }
+        boolean call = this.allShapes.contains(neo);
         // actually swap them
         if (neo instanceof PointProvider point) {
             this.points.set(this.points.indexOf(old), point);
@@ -155,6 +157,9 @@ public class Drawing {
         }
         this.allShapes.set(this.allShapes.indexOf(old), neo);
         this.swapListeners.forEach(listener -> listener.accept(old, neo));
+        if (call) {
+            neo.onAdded();
+        }
     }
 
     public void removeShape(Shape shape) {
