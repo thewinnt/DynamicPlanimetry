@@ -55,6 +55,11 @@ public class PropertyGroup extends Property<Property<?>> {
     }
 
     @Override
+    public boolean filterValue(Property<?> value) {
+        return false;
+    }
+
+    @Override
     public void addValueChangeListener(Consumer<Property<?>> listener) {
         throw new UnsupportedOperationException("A PropertyGroup does not accept listeners");
     }

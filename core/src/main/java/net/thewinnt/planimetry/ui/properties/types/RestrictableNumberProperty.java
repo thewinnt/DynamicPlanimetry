@@ -68,8 +68,30 @@ public class RestrictableNumberProperty extends Property<Double> {
             if (liveUpdates) {
                 realUpdate();
             }
-        } else {
         }
+    }
+
+    @Override
+    public void setValueSilent(Double value) {
+        if (isWhole) {
+            value = (double)Math.round(value);
+        }
+        if (maxValue.isPresent() && value > maxValue.getAsDouble()) {
+            value = maxValue.getAsDouble();
+        } else if (minValue.isPresent() && value < minValue.getAsDouble()) {
+            value = minValue.getAsDouble();
+        }
+        if (setter.test(value)) {
+            this.prevSuccess = value;
+            if (liveUpdates) {
+                realUpdate();
+            }
+        }
+    }
+
+    @Override
+    public boolean filterValue(Double value) {
+        return false;
     }
 
     private void realUpdate() {

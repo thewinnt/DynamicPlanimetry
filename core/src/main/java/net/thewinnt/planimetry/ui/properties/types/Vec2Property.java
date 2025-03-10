@@ -39,9 +39,20 @@ public class Vec2Property extends Property<Vec2> {
     }
 
     @Override
+    public void setValueSilent(Vec2 value) {
+        x.setValueSilent(value.x);
+        y.setValueSilent(value.y);
+    }
+
+    @Override
     public void addValueChangeListener(Consumer<Vec2> listener) {
         x.addValueChangeListener(ignore -> listener.accept(getValue()));
         y.addValueChangeListener(ignore -> listener.accept(getValue()));
+    }
+
+    @Override
+    public boolean filterValue(Vec2 value) {
+        return true;
     }
 
     @Override

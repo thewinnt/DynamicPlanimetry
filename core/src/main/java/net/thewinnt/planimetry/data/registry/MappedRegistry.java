@@ -1,6 +1,7 @@
 package net.thewinnt.planimetry.data.registry;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -13,10 +14,11 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
     // TODO minecraft-like registries
     // TODO plugin system
     public final Identifier id;
-    protected final Map<Identifier, T> elementByName = new HashMap<>();
+    protected final Map<Identifier, Holder<T>> elementByName = new HashMap<>();
     protected final Map<T, Identifier> names = new HashMap<>();
-    protected final Int2ObjectMap<T> elementById = new Int2ObjectOpenHashMap<>();
+    protected final Int2ObjectMap<Holder<T>> elementById = new Int2ObjectOpenHashMap<>();
     protected final Object2IntMap<T> ids = new Object2IntOpenHashMap<>();
+    protected final Map<T, Holder<T>> holders = new HashMap<>();
     protected boolean frozen;
     private int idMapper = 0;
 
@@ -27,10 +29,12 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
     @Override
     public T register(Identifier id, T element) {
         validateWrite();
-        this.elementByName.put(id, element);
-        this.elementById.put(idMapper, element);
+        Holder<T> holder = new Holder<>(element);
+        this.elementByName.put(id, holder);
+        this.elementById.put(idMapper, holder);
         this.names.put(element, id);
         this.ids.put(element, idMapper);
+        this.holders.put(element, holder);
         idMapper++;
         return element;
     }
@@ -46,13 +50,13 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
     }
 
     @Override
-    public T byId(int id) {
-        return this.elementById.get(id);
+    public T get(int id) {
+        return this.elementById.get(id).value();
     }
 
     @Override
-    public T byName(Identifier id) {
-        return this.elementByName.get(id);
+    public T get(Identifier id) {
+        return this.elementByName.get(id).value();
     }
 
     @Override
@@ -70,13 +74,18 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
     }
 
     @Override
+    public boolean contains(Identifier id) {
+        return this.elementByName.containsKey(id);
+    }
+
+    @Override
     public Stream<T> stream() {
-        return elementById.values().stream();
+        return elementById.values().stream().map(Holder::value);
     }
 
     @Override
     public Iterable<T> elements() {
-        return this.elementByName.values();
+        return this.holders.keySet();
     }
 
     @Override
@@ -85,7 +94,39 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
     }
 
     @Override
+    public Holder<T> getHolder(int id) {
+        return this.elementById.get(id);
+    }
+
+    @Override
+    public Holder<T> getHolder(Identifier id) {
+        return this.elementByName.get(id);
+    }
+
+    @Override
+    public Stream<Holder<T>> holders() {
+        return this.holders.values().stream();
+    }
+
+    @Override
+    public Holder<T> wrapAsHolder(T element) {
+        return this.holders.getOrDefault(element, new Holder<>(element));
+    }
+
+    @Override
     public Identifier id() {
         return id;
+    }
+
+    public void reloadTags(Map<TagKey<?>, List<Identifier>> tags) {
+        for (Holder<T> i : this.holders.values()) {
+            i.clearTags();
+        }
+        for (var i : tags.entrySet()) {
+            if (!i.getKey().registry().equals(this.id)) continue;
+            for (Identifier id : i.getValue()) {
+                this.getHolder(id).addTag(i.getKey());
+            }
+        }
     }
 }

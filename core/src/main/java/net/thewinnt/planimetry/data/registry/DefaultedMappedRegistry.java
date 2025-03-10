@@ -9,12 +9,12 @@ public class DefaultedMappedRegistry<T> extends MappedRegistry<T> {
     }
 
     @Override
-    public T byName(Identifier id) {
-        return this.elementByName.getOrDefault(id, defaultElement);
+    public T get(Identifier id) {
+        return this.elementByName.getOrDefault(id, this.wrapAsHolder(defaultElement)).value();
     }
 
     @Override
-    public T byId(int id) {
-        return this.elementById.getOrDefault(id, defaultElement);
+    public T get(int id) {
+        return this.elementById.getOrDefault(id, this.wrapAsHolder(defaultElement)).value();
     }
 }

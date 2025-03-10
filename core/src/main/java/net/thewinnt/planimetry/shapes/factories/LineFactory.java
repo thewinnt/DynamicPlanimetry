@@ -13,7 +13,6 @@ import net.thewinnt.planimetry.shapes.lines.Ray;
 import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
-import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
@@ -21,13 +20,13 @@ import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
 public class LineFactory extends ShapeFactory {
     private final LineType type;
     private Line line;
-    private PointReference point1;
-    private PointReference point2;
+    private PointProvider point1;
+    private PointProvider point2;
     private boolean addedPoint1;
 
     public LineFactory(DrawingBoard board, LineType type) {
         super(board);
-        this.point1 = new PointReference(new MousePoint(board.getDrawing()));
+        this.point1 = new MousePoint(board.getDrawing());
         this.type = type;
         this.addedPoint1 = false;
     }
@@ -36,12 +35,12 @@ public class LineFactory extends ShapeFactory {
         super(board);
         this.type = type;
         if (point1 == null) {
-            this.point1 = new PointReference(new MousePoint(board.getDrawing()));
+            this.point1 = new MousePoint(board.getDrawing());
             this.addedPoint1 = false;
         } else {
-            this.point1 = new PointReference(point1);
-            this.point2 = new PointReference(new MousePoint(board.getDrawing()));
-            this.line = this.type.create(board.getDrawing(), new PointReference(point1), point2);
+            this.point1 = point1;
+            this.point2 = new MousePoint(board.getDrawing());
+            this.line = this.type.create(board.getDrawing(), point1, point2);
             this.addShape(line);
             this.addedPoint1 = true;
         }
@@ -51,9 +50,11 @@ public class LineFactory extends ShapeFactory {
     public boolean click(InputEvent event, double x, double y) {
         if (point2 == null) {
             this.point1 = getOrCreatePoint(x, y);
-            this.point2 = new PointReference(new MousePoint(board.getDrawing()));
-        } else if (point2.getPoint() instanceof MousePoint) {
-            this.point2.setPoint(getOrCreatePoint(x, y).getPoint());
+            this.point2 = new MousePoint(board.getDrawing());
+        } else if (point2 instanceof MousePoint) {
+            PointProvider nextPoint = getOrCreatePoint(x, y);
+            this.line.replaceShape(point2, nextPoint);
+            this.point2 = nextPoint;
             this.addShape(point2);
             return true;
         }
@@ -68,7 +69,7 @@ public class LineFactory extends ShapeFactory {
 
     @Override
     public boolean isDone() {
-        return point2 != null && point2.getPoint() instanceof Point;
+        return point2 != null && point2 instanceof Point;
     }
 
     @Override

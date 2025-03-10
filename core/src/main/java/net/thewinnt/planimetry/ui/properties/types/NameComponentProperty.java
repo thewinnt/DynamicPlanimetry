@@ -1,6 +1,5 @@
 package net.thewinnt.planimetry.ui.properties.types;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -16,14 +15,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.ui.ComponentSelectBox;
 import net.thewinnt.planimetry.ui.Notifications;
-import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Size;
+import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.NameComponent;
 
 public class NameComponentProperty extends Property<NameComponent> {
-    private final List<Consumer<NameComponent>> listeners = new ArrayList<>();
     private byte letter;
     private int index;
     private short dashes;
@@ -61,6 +59,21 @@ public class NameComponentProperty extends Property<NameComponent> {
         for (Consumer<NameComponent> i : this.listeners) {
             i.accept(getValue());
         }
+    }
+
+    @Override
+    public void setValueSilent(NameComponent value) {
+        this.letter = value.letter();
+        this.index = value.index();
+        this.dashes = value.dashes();
+        for (Consumer<NameComponent> i : this.listeners) {
+            i.accept(getValue());
+        }
+    }
+
+    @Override
+    public boolean filterValue(NameComponent value) {
+        return true;
     }
 
     private void update() {

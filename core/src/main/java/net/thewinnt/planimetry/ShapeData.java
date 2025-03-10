@@ -38,7 +38,7 @@ public class ShapeData {
     }
 
     public static ShapeDeserializer<?> getDeserializer(Identifier name) {
-        return Registries.SHAPE_TYPE.byName(name);
+        return Registries.SHAPE_TYPE.get(name);
     }
 
     public static Identifier getShapeType(ShapeDeserializer<?> deserializer) {

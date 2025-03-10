@@ -36,6 +36,6 @@ public interface DynamicValue extends Cloneable {
 
     static DynamicValue fromNbt(CompoundTag nbt) {
         Identifier type = new Identifier(nbt.getString("type"));
-        return Registries.DYNAMIC_VALUE_TYPES.byName(type).fromNbt(nbt);
+        return Registries.DYNAMIC_VALUE_TYPES.get(type).fromNbt(nbt);
     }
 }

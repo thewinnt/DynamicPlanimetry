@@ -1,10 +1,8 @@
 package net.thewinnt.planimetry.ui.properties.types;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 import java.util.Locale;
 import java.util.OptionalDouble;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import com.badlogic.gdx.Gdx;
@@ -16,15 +14,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Notifications;
-import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Size;
+import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class NumberProperty extends Property<Double> {
-    private final List<Consumer<Double>> listeners = new ArrayList<>();
     private double prevValue;
-    private double value;
     private OptionalDouble maxValue = OptionalDouble.empty();
     private OptionalDouble minValue = OptionalDouble.empty();
     private Predicate<Double> filter;
@@ -50,11 +46,6 @@ public class NumberProperty extends Property<Double> {
     }
 
     @Override
-    public Double getValue() {
-        return value;
-    }
-
-    @Override
     public void setValue(Double value) {
         if (filter == null || filter.test(value)) {
             if (isWhole) {
@@ -72,10 +63,30 @@ public class NumberProperty extends Property<Double> {
         }
     }
 
+    @Override
+    public void setValueSilent(Double value) {
+        if (filter == null || filter.test(value)) {
+            if (isWhole) {
+                value = (double)Math.round(value);
+            }
+            if (maxValue.isPresent() && value > maxValue.getAsDouble()) {
+                value = maxValue.getAsDouble();
+            } else if (minValue.isPresent() && value < minValue.getAsDouble()) {
+                value = minValue.getAsDouble();
+            }
+            this.value = value;
+        }
+    }
+
     private void realUpdate() {
         for (Consumer<Double> i : this.listeners) {
             i.accept(value);
         }
+    }
+
+    @Override
+    public boolean filterValue(Double value) {
+        return false;
     }
 
     @Override
@@ -85,7 +96,7 @@ public class NumberProperty extends Property<Double> {
         if (!isWhole) {
             fieldText = String.format((Locale)null, "%." + DynamicPlanimetry.SETTINGS.getDisplayPresicion() + "f", value);
         } else {
-            fieldText = String.valueOf((long)value);
+            fieldText = String.valueOf(value.longValue());
         }
         TextField doubleField = new TextField(fieldText, styles.getTextFieldStyle(size, true)) {
             @Override

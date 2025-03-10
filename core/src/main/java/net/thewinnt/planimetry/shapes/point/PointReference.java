@@ -17,6 +17,7 @@ import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
+@Deprecated(forRemoval = true)
 public class PointReference extends PointProvider {
     private PointProvider point;
 

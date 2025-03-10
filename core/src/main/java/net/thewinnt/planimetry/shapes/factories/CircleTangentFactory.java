@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
-import net.thewinnt.planimetry.math.MathHelper;
-import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Circle;
 // import net.thewinnt.planimetry.shapes.lines.CircleTangentLine;
 import net.thewinnt.planimetry.shapes.lines.InfiniteLine;

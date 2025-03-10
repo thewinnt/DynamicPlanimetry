@@ -54,6 +54,11 @@ public class DisplayProperty extends Property<Component> {
     }
 
     @Override
+    public boolean filterValue(Component value) {
+        return false;
+    }
+
+    @Override
     public CustomLayout getLayout() {
         return RightAlignedLayout.INSTANCE;
     }

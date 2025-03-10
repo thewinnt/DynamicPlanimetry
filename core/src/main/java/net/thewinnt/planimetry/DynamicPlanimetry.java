@@ -15,10 +15,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
+import it.unimi.dsi.fastutil.Pair;
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.Language;
+import net.thewinnt.planimetry.data.registry.Identifier;
 import net.thewinnt.planimetry.data.registry.Registries;
+import net.thewinnt.planimetry.data.registry.TagKey;
 import net.thewinnt.planimetry.platform.NativeIO;
 import net.thewinnt.planimetry.platform.PlatformAbstractions;
 import net.thewinnt.planimetry.screen.DebugSettingsScreen;
@@ -42,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingFormatArgumentException;
+import java.util.Random;
 import java.util.zip.Deflater;
 
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -58,6 +62,7 @@ public class DynamicPlanimetry extends Game {
     public static final int SETTINGS_SCREEN = 3;
     public static final int DEBUG_SETTINGS_SCREEN = 4;
     public static final Gson GSON = new GsonBuilder().create();
+    public static final Random RANDOM = new Random();
     public static final Theme THEME_LIGHT = new Theme(
         Component.translatable("theme.builtin.light"),
         new Color(0xFFFFFFFF), // main
@@ -212,6 +217,7 @@ public class DynamicPlanimetry extends Game {
         }
 
         reloadLanguages();
+        reloadTags();
 
         mainMenu = registerScreen(new MainMenuScreen(this));
         editorScreen = registerScreen(new EditorScreen(this));
@@ -253,6 +259,20 @@ public class DynamicPlanimetry extends Game {
             }
         }
         SETTINGS.initLanguages(languages);
+    }
+
+    public void reloadTags() {
+        FileHandle tagList = Gdx.files.internal("tags/tags.txt");
+        if (tagList.exists()) {
+            String[] files = Gdx.files.internal("tags/tags.txt").readString("utf8").split("\n");
+            Map<TagKey<?>, List<Identifier>> tags = new HashMap<>();
+            for (String name : files) {
+                if (name.startsWith("#") || !name.endsWith(".json")) continue;
+                Pair<TagKey<?>, List<Identifier>> tag = TagKey.readJson(name);
+                tags.put(tag.left(), tag.right());
+            }
+            Registries.reloadTags(tags);
+        }
     }
 
     @Override

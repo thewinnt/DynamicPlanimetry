@@ -5,7 +5,6 @@ import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.data.registry.Registry;
 import net.thewinnt.planimetry.ui.text.Component.ComponentDeserializer;
 import net.thewinnt.planimetry.ui.text.Component.Empty;
-import net.thewinnt.planimetry.util.HashBiMap;
 
 public class Components {
     public static final ComponentDeserializer<Empty> EMPTY = register("empty", Empty::readNbt);
@@ -20,7 +19,7 @@ public class Components {
     }
 
     public static ComponentDeserializer<?> getDeserializer(String name) {
-        return Registries.COMPONENT_TYPE.byName(new Identifier(name));
+        return Registries.COMPONENT_TYPE.get(new Identifier(name));
     }
 
     public static Identifier getComponentType(ComponentDeserializer<?> deserializer) {

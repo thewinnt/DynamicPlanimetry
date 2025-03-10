@@ -1,5 +1,7 @@
 package net.thewinnt.planimetry.util;
 
+import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
 /** Contains some utility methods */
@@ -13,5 +15,23 @@ public class Util {
     public static <T> T make(T input, Consumer<T> operation) {
         operation.accept(input);
         return input;
+    }
+
+    public static <T> void shuffle(List<T> list, Random random) {
+        for (int i = 0; i < list.size(); i++) {
+            int index2 = random.nextInt(i);
+            T object1 = list.get(i);
+            list.set(i, list.get(index2));
+            list.set(index2, object1);
+        }
+    }
+
+    public static <T> void shuffle(T[] list, Random random) {
+        for (int i = 0; i < list.length; i++) {
+            int index2 = random.nextInt(i);
+            T object1 = list[i];
+            list[i] = list[index2];
+            list[index2] = object1;
+        }
     }
 }

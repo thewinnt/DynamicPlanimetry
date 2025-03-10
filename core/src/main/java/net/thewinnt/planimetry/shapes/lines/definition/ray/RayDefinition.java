@@ -38,7 +38,7 @@ public abstract class RayDefinition {
     }
 
     public static RayDefinition fromNbt(CompoundTag nbt, LoadingContext context) {
-        RayDefinitionType<?> type = Registries.RAY_DEFITINION_TYPE.byName(new Identifier(nbt.getString("type")));
+        RayDefinitionType<?> type = Registries.RAY_DEFITINION_TYPE.get(new Identifier(nbt.getString("type")));
         return type.fromNbt(nbt, context);
     }
 }

@@ -203,6 +203,9 @@
     "ui.settings.title": "Настройки",
     "ui.settings.debug": "Параметры отладки",
     "true": "<истина>",
-    "false": "<ложь>"
+    "false": "<ложь>",
+    "infinite_line_definition_type.dynamic_planimetry.parallel": "Параллельно другой",
+    "infinite_line_definition_type.dynamic_planimetry.two_points": "По двум точкам",
+    "shape.dynamic_planimetry.infinite_line.definition": "Определение"
   }
 }

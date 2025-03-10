@@ -66,12 +66,12 @@ public class Ray extends Line {
     }
 
     @Override
-    protected Vec2 point1() {
+    public Vec2 point1() {
         return definition.start();
     }
 
     @Override
-    protected Vec2 point2() {
+    public Vec2 point2() {
         return MathHelper.continueFromAngle(definition.start(), definition.direction(), 1);
     }
 
@@ -127,7 +127,7 @@ public class Ray extends Line {
     }
 
     public static Ray readNbt(CompoundTag nbt, LoadingContext context) {
-        RayDefinition definition = RayDefinition.fromNbt(nbt, context);
+        RayDefinition definition = RayDefinition.fromNbt(nbt.getCompoundTag("definition"), context);
         return new Ray(context.getDrawing(), definition);
     }
 

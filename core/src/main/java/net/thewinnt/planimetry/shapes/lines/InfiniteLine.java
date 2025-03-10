@@ -33,6 +33,9 @@ public class InfiniteLine extends Line {
     public InfiniteLine(Drawing drawing, InfiniteLineDefinition definition) {
         super(drawing);
         this.definition = definition;
+        if (this.definition != null) {
+            this.definition.setSource(this);
+        }
     }
 
     @Override
@@ -86,12 +89,12 @@ public class InfiniteLine extends Line {
     }
 
     @Override
-    protected Vec2 point1() {
+    public Vec2 point1() {
         return definition.point1();
     }
 
     @Override
-    protected Vec2 point2() {
+    public Vec2 point2() {
         return definition.point2();
     }
 
@@ -127,8 +130,13 @@ public class InfiniteLine extends Line {
         this.properties.add(definitionType);
         this.properties.addAll(definition.properties());
         definitionType.addValueChangeListener(type -> {
-            InfiniteLine.this.definition = type.convert(InfiniteLine.this.definition, drawing);
-            InfiniteLine.this.rebuildProperties();
+            try {
+                InfiniteLine.this.definition = type.convert(InfiniteLine.this.definition, drawing);
+                InfiniteLine.this.definition.setSource(InfiniteLine.this);
+                InfiniteLine.this.rebuildProperties();
+            } catch (RuntimeException e) {
+                definitionType.setValueSilent(type);
+            }
         });
     }
 

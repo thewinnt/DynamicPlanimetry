@@ -1,5 +1,7 @@
 package net.thewinnt.planimetry.ui.properties;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
@@ -12,10 +14,17 @@ import net.thewinnt.planimetry.ui.text.Component;
 
 public abstract class Property<T> {
     public final Component name;
+    protected final List<Consumer<T>> listeners = new ArrayList<>();
+    protected T value;
     public CustomLayout layoutOverride;
 
     public Property(Component name) {
         this.name = name;
+    }
+
+    public Property(Component name, T value) {
+        this(name);
+        this.value = value;
     }
 
     public Component getName() {
@@ -27,9 +36,29 @@ public abstract class Property<T> {
         return BasicLayout.INSTANCE;
     }
 
-    public abstract void addValueChangeListener(Consumer<T> listener);
-    public abstract WidgetGroup getActorSetup(StyleSet styles, Size size);
+    public void addValueChangeListener(Consumer<T> listener) {
+        this.listeners.add(listener);
+    }
 
-    public abstract T getValue();
-    public abstract void setValue(T value);
+    public abstract WidgetGroup getActorSetup(StyleSet styles, Size size);
+    public abstract boolean filterValue(T value);
+
+    public T getValue() {
+        return value;
+    }
+
+    public void setValue(T value) {
+        if (filterValue(value)) {
+            this.value = value;
+            for (Consumer<T> i : listeners) {
+                i.accept(value);
+            }
+        }
+    }
+
+    public void setValueSilent(T value) {
+        if (filterValue(value)) {
+            this.value = value;
+        }
+    }
 }

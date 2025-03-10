@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.badlogic.gdx.Gdx;
@@ -17,6 +18,7 @@ import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.ListTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.update.DataUpdater;
+import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.shapes.point.PointReference;
@@ -148,7 +150,7 @@ public class Drawing {
         if (old instanceof PointProvider != neo instanceof PointProvider) {
             throw new IllegalArgumentException("Cannot replace a point with a non-point or vice-versa");
         }
-        boolean call = this.allShapes.contains(neo);
+        boolean call = !this.allShapes.contains(neo);
         // actually swap them
         if (neo instanceof PointProvider point) {
             this.points.set(this.points.indexOf(old), point);
@@ -278,6 +280,10 @@ public class Drawing {
         return hovered;
     }
 
+    public PointProvider getNearestPoint(Vec2 point) {
+        return getNearestPoint(point.x, point.y);
+    }
+
     public CompoundTag toNbt() {
         CompoundTag output = new CompoundTag();
         SavingContext context = new SavingContext(Stream.concat(this.shapes.stream(), this.points.stream()).toList());
@@ -310,15 +316,19 @@ public class Drawing {
         return output;
     }
 
+    public Shape getRandom(Predicate<Shape> predicate) {
+        Shape[] shapes = this.allShapes.stream().filter(predicate).toArray(Shape[]::new);
+        return shapes[DynamicPlanimetry.RANDOM.nextInt(shapes.length)];
+    }
+
     public void save(String filename, boolean isAbsolute) {
         this.withFilename(filename, isAbsolute).save();
     }
 
     public void saveAs(File file) {
         try {
-            Random random = new Random();
             while (file.exists()) {
-                file = new File(randomizeName(file.getPath(), random));
+                file = new File(randomizeName(file.getPath(), DynamicPlanimetry.RANDOM));
             }
             NBTUtil.write(this.toNbt(), file);
         } catch (IOException e) {

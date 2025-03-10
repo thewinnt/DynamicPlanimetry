@@ -1,19 +1,18 @@
 package net.thewinnt.planimetry.value.type;
 
-import net.thewinnt.planimetry.point.ValueContext;
-import net.thewinnt.planimetry.shapes.point.PointProvider;
-import net.thewinnt.planimetry.ui.properties.Property;
-import net.thewinnt.planimetry.value.DynamicValue;
-import net.thewinnt.planimetry.value.DynamicValueType;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.DoubleBinaryOperator;
 import java.util.stream.Stream;
+
+import org.jetbrains.annotations.NotNull;
+
+import net.thewinnt.planimetry.point.ValueContext;
+import net.thewinnt.planimetry.shapes.point.PointProvider;
+import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.value.DynamicValue;
+import net.thewinnt.planimetry.value.DynamicValueType;
 
 public class DoubleArgumentValue implements DynamicValue {
     // TODO figure out properties

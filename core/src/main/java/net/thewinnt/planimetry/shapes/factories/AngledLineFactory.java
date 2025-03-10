@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
-import net.thewinnt.planimetry.Settings;
 // import net.thewinnt.planimetry.shapes.lines.AngledInfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.Line;
 import net.thewinnt.planimetry.shapes.point.MousePoint;

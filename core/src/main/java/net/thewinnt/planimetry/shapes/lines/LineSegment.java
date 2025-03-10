@@ -16,7 +16,6 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
-import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
@@ -182,8 +181,8 @@ public class LineSegment extends Line implements SegmentLike {
     }
 
     public static LineSegment readNbt(CompoundTag nbt, LoadingContext context) {
-        PointReference a = (PointReference)context.resolveShape(nbt.getLong("a"));
-        PointReference b = (PointReference)context.resolveShape(nbt.getLong("b"));
+        PointProvider a = (PointProvider)context.resolveShape(nbt.getLong("a"));
+        PointProvider b = (PointProvider)context.resolveShape(nbt.getLong("b"));
         return new LineSegment(context.getDrawing(), a, b);
     }
 

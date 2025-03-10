@@ -15,10 +15,11 @@ public class SavingContext {
         initialShapes = participants;
     }
 
-    public void addShape(Shape shape) {
+    public long addShape(Shape shape) {
         if (!saveData.containsKey(shape.getId())) {
             saveData.put(shape.getId(), shape.toNbt(this));
         }
+        return shape.getId();
     }
 
     public Collection<CompoundTag> save() {

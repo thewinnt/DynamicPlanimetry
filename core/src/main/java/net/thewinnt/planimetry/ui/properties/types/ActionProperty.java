@@ -16,12 +16,10 @@ import net.thewinnt.planimetry.ui.text.Component;
 
 public class ActionProperty extends Property<Runnable> {
     private final Component buttonName;
-    private Runnable action;
 
     public ActionProperty(Component name, Component buttonName, Runnable action) {
-        super(name);
+        super(name, action);
         this.buttonName = buttonName;
-        this.action = action;
     }
 
     @Override
@@ -30,13 +28,8 @@ public class ActionProperty extends Property<Runnable> {
     }
 
     @Override
-    public Runnable getValue() {
-        return action;
-    }
-
-    @Override
-    public void setValue(Runnable value) {
-        this.action = value;
+    public boolean filterValue(Runnable value) {
+        return true;
     }
 
     @Override
@@ -47,7 +40,7 @@ public class ActionProperty extends Property<Runnable> {
         apply.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                action.run();
+                value.run();
             }
         });
         table.add(apply).expand().fill();

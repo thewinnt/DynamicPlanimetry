@@ -53,7 +53,7 @@ public class DebugSettingsScreen extends FlatUIScreen {
         for (Registry<?> i : Registries.ROOT.elements()) {
             List<DisplayProperty> properties = new ArrayList<>();
             for (Identifier j : i.ids()) {
-                properties.add(new DisplayProperty(Component.literal(j.toString()), Component.literal(i.byName(j).toString())));
+                properties.add(new DisplayProperty(Component.literal(j.toString()), Component.literal(i.get(j).toString())));
             }
             registryData1.add(new PropertyGroup(Component.literal(i.id().toString()), properties));
         }

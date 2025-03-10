@@ -18,10 +18,9 @@ import net.thewinnt.planimetry.ui.text.Component;
 
 public class BooleanProperty extends Property<Boolean> {
     private final List<Consumer<Boolean>> listeners = new ArrayList<>();
-    private boolean value;
 
     public BooleanProperty() {
-        super(Component.empty());
+        this(Component.empty());
     }
 
     public BooleanProperty(boolean value) {
@@ -31,29 +30,16 @@ public class BooleanProperty extends Property<Boolean> {
 
     public BooleanProperty(Component name) {
         super(name);
+        this.value = Boolean.FALSE;
     }
 
     public BooleanProperty(Component name, boolean value) {
-        super(name);
-        this.value = value;
+        super(name, value);
     }
 
     @Override
-    public void addValueChangeListener(Consumer<Boolean> listener) {
-        this.listeners.add(listener);
-    }
-
-    @Override
-    public Boolean getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(Boolean value) {
-        this.value = value;
-        for (Consumer<Boolean> i : this.listeners) {
-            i.accept(value);
-        }
+    public boolean filterValue(Boolean value) {
+        return value != null;
     }
 
     @Override

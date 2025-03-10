@@ -20,13 +20,14 @@ public class LoadingContext {
         }
     }
 
-    public Shape resolveShape(long id) {
+    @SuppressWarnings("unchecked") // the caller will cast anyways
+    public <T extends Shape> T resolveShape(long id) {
         if (resolvedShapes.containsKey(id)) {
-            return resolvedShapes.get(id);
+            return (T) resolvedShapes.get(id);
         } else {
             Shape shape = Shape.fromNbt(saveData.get(id), this);
             resolvedShapes.put(id, shape);
-            return shape;
+            return (T) shape;
         }
     }
 
