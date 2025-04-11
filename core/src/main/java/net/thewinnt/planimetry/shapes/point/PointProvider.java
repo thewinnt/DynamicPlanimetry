@@ -18,6 +18,7 @@ import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.properties.types.NameComponentProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -27,24 +28,25 @@ public abstract class PointProvider extends Shape {
     protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
     protected NameComponent name;
     protected final BooleanProperty shouldRender = new BooleanProperty(Component.translatable("property.point.should_render"), true);
+    private final NameComponentProperty nameProperty;
 
     public PointProvider(Drawing drawing) {
         super(drawing);
-        if (this.shouldAutoAssingnName()) {
-            this.name = drawing.generateName(drawing.shouldUseDashesForNaming());
-        }
+        this.name = drawing.generateName(drawing.shouldUseDashesForNaming());
+        this.nameProperty = new NameComponentProperty(Component.translatable(getPropertyName("name")), name);
     }
 
     public PointProvider(Drawing drawing, NameComponent name) {
         super(drawing);
         this.name = name;
+        this.nameProperty = new NameComponentProperty(Component.translatable(getPropertyName("name")), name);
     }
 
     @Override
     public void rebuildProperties() {
         properties.clear();
         properties.add(shouldRender);
-        properties.addAll(moreProperties());
+        properties.add(nameProperty);
     }
 
     public abstract Vec2 getPosition();
@@ -52,6 +54,7 @@ public abstract class PointProvider extends Shape {
     public double getX() {
         return getPosition().x;
     }
+
     public double getY() {
         return getPosition().y;
     }
@@ -63,7 +66,8 @@ public abstract class PointProvider extends Shape {
 
     @Override
     public boolean contains(double x, double y) {
-        return MathHelper.roughlyEquals(getPosition().x, x) && MathHelper.roughlyEquals(getPosition().y, y);
+        Vec2 pos = getPosition();
+        return MathHelper.roughlyEquals(pos.x, x) && MathHelper.roughlyEquals(pos.y, y);
     }
 
     @Override
@@ -145,8 +149,6 @@ public abstract class PointProvider extends Shape {
         this.name = name;
     }
 
-    protected abstract Collection<Property<?>> moreProperties();
-
     @Override
     public void replaceShape(Shape old, Shape neo) {} // most points don't have dependencies
 
@@ -154,16 +156,16 @@ public abstract class PointProvider extends Shape {
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
         if (!board.hasShape(this)) {
             drawer.setColor(switch (selection) {
-                default -> Theme.current().utilityPoint();
                 case HOVERED -> Theme.current().utilityPointHovered();
                 case SELECTED -> Theme.current().utilityPointSelected();
+                default -> Theme.current().utilityPoint();
             });
             drawer.circle(board.bx(getPosition().x), board.by(getPosition().y), this.getThickness(board.getScale()) * 2, 2);
         } else {
             Color color = switch (selection) {
-                default -> Theme.current().point();
                 case HOVERED -> Theme.current().pointHovered();
                 case SELECTED -> Theme.current().pointSelected();
+                default -> Theme.current().point();
             };
             drawer.filledCircle(board.boardToGlobal(getPosition()).toVector2f(), this.getThickness(board.getScale()) * 2, color);
         }
@@ -205,9 +207,7 @@ public abstract class PointProvider extends Shape {
             //     drawer.filledCircle(board.boardToGlobal(test).toVector2f(), 2, Color.RED.cpy().lerp(Color.GREEN, (float)((space - _worstSpace) / (bestSpace - _worstSpace))));
             // }
             if (bestPos == null) bestPos = MathHelper.continueFromAngle(start, 90, -minRadius);
-            name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), (float)board.bx(bestPos.x), (float)(board.by(bestPos.y) + neededSpace.y / 2));
+            name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), board.bx(bestPos.x), (float)(board.by(bestPos.y) + neededSpace.y / 2));
         }
     }
-
-    protected abstract boolean shouldAutoAssingnName();
 }

@@ -241,7 +241,7 @@ public class DrawingBoard extends Actor {
         int mx = Gdx.input.getX();
         int my = Gdx.input.getY();
         int fontSize = (int)(Gdx.graphics.getHeight() / Size.MEDIUM.getFactor());
-        
+
         if (DynamicPlanimetry.SETTINGS.shouldShowGrid()) {
             double step = Math.abs(Math.max(getHeight(), getWidth()) / scale / 12); // detect full width
             int j = 0;
@@ -541,12 +541,18 @@ public class DrawingBoard extends Actor {
     public void addSelection(Shape shape) {
         if (drawing.hasShape(shape)) {
             selection.add(shape);
+            if (selection.size() == 1) {
+                selection.get(0).rebuildProperties();
+            }
         }
     }
 
     public void setSelection(List<Shape> shapes) {
         selection.clear();
         if (shapes != null) {
+            if (shapes.size() == 1) {
+                shapes.get(0).rebuildProperties();
+            }
             if (shapes.stream().allMatch(drawing::hasShape)) {
                 selection.addAll(shapes);
             }

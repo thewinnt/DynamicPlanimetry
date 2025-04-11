@@ -8,12 +8,15 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.ComponentSelectBox;
+import net.thewinnt.planimetry.ui.GuiHelper;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.StyleSet;
@@ -31,7 +34,7 @@ public class NameComponentProperty extends Property<NameComponent> {
     public NameComponentProperty(Component name, NameComponent value) {
         super(name);
         if (value == null) {
-            this.letter = 0;
+            this.letter = -1;
             this.index = 0;
             this.dashes = 0;
         } else {
@@ -85,6 +88,15 @@ public class NameComponentProperty extends Property<NameComponent> {
 
     @Override
     public WidgetGroup getActorSetup(StyleSet styles, Size size) {
+        if (letter == -1) {
+            Table output = new Table();
+            output.add(new Label(DynamicPlanimetry.translate("component.point_name.null"), styles.getLabelStyle(size)));
+            output.add(GuiHelper.createTextButton("component.point_name.create", styles, size, () -> {
+                letter = 0;
+                update();
+            }));
+            return output;
+        }
         Table output = new Table();
         Table col1 = new Table();
         Table col2 = new Table();

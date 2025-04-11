@@ -21,7 +21,6 @@ import net.thewinnt.planimetry.ui.text.NameComponent;
 public class Point extends PointProvider {
     private Vec2 position;
     private final Vec2Property property;
-    private final NameComponentProperty componentProperty;
 
     public Point(Drawing drawing, Vec2 position) {
         super(drawing);
@@ -29,8 +28,6 @@ public class Point extends PointProvider {
         this.property = new Vec2Property(Component.translatable("property.point.coordinates"), position);
         this.property.addValueChangeListener(pos -> Point.this.position = pos);
         this.addMovementListener(delta -> property.setValue(Point.this.position));
-        this.componentProperty = new NameComponentProperty(Component.translatable("property.point.name"), this.name);
-        this.componentProperty.addValueChangeListener(this::setName);
     }
 
     public Point(Drawing drawing, Vec2 position, NameComponent name) {
@@ -39,8 +36,6 @@ public class Point extends PointProvider {
         this.property = new Vec2Property(Component.translatable("property.point.coordinates"), position);
         this.property.addValueChangeListener(pos -> Point.this.position = pos);
         this.addMovementListener(delta -> property.setValue(Point.this.position));
-        this.componentProperty = new NameComponentProperty(Component.translatable("property.point.name"), this.name);
-        this.componentProperty.addValueChangeListener(this::setName);
     }
 
     @Override
@@ -90,15 +85,11 @@ public class Point extends PointProvider {
     }
 
     @Override
-    public Collection<Property<?>> moreProperties() {
-        if (nameOverride != null) return List.of(property);
-        return List.of(property, componentProperty);
+    public void rebuildProperties() {
+        super.rebuildProperties();
+        properties.add(property);
     }
 
-    @Override
-    protected boolean shouldAutoAssingnName() {
-        return true;
-    }
     @Override
     public ShapeDeserializer<Point> type() {
         return ShapeData.POINT_SIMPLE;

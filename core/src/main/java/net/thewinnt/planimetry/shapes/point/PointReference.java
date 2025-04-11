@@ -90,17 +90,12 @@ public class PointReference extends PointProvider {
     public PointProvider getPoint() {
         return point;
     }
-    
+
     @Override
     public void rebuildProperties() {
         this.point.rebuildProperties();
         this.properties.clear();
         this.properties.addAll(this.point.getProperties());
-    }
-
-    @Override
-    protected Collection<Property<?>> moreProperties() {
-        return List.of();
     }
 
     @Override
@@ -121,11 +116,6 @@ public class PointReference extends PointProvider {
     @Override
     public Component getNameOverride() {
         return this.point.getNameOverride();
-    }
-
-    @Override
-    protected boolean shouldAutoAssingnName() {
-        return false;
     }
 
     @Override
@@ -165,7 +155,7 @@ public class PointReference extends PointProvider {
     }
 
     public static PointReference readNbt(CompoundTag nbt, LoadingContext context) {
-        return new PointReference((PointProvider)context.resolveShape(nbt.getLong("point")));
+        return new PointReference(context.resolveShape(nbt.getLong("point")));
     }
 
     @Override

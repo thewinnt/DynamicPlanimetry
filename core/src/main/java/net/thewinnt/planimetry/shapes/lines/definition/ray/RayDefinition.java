@@ -14,10 +14,11 @@ import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.lines.Ray;
 import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.PropertySupplier;
 import net.thewinnt.planimetry.ui.text.Component;
 import org.jetbrains.annotations.ApiStatus;
 
-public abstract class RayDefinition {
+public abstract class RayDefinition implements PropertySupplier {
     private Ray source;
 
     public abstract Vec2 start();
@@ -26,7 +27,6 @@ public abstract class RayDefinition {
     public abstract void move(double dx, double dy);
     public abstract Component getName();
     public abstract void replaceShape(Shape old, Shape neo);
-    public abstract Collection<Property<?>> properties();
     public abstract RayDefinitionType<?> type();
     public abstract InfiniteLine asInfiniteLine(Drawing drawing);
     public abstract LineSegment asLineSegment(Drawing drawing);

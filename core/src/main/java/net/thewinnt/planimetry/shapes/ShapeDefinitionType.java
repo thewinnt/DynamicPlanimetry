@@ -1,6 +1,7 @@
 package net.thewinnt.planimetry.shapes;
 
 import net.thewinnt.planimetry.data.Drawing;
+import net.thewinnt.planimetry.ui.properties.PropertySupplier;
 import net.thewinnt.planimetry.util.ShapeReader;
 import net.thewinnt.planimetry.util.ShapeWriter;
 

@@ -47,16 +47,6 @@ public class MousePoint extends PointProvider {
     @Override public void move(double dx, double dy) {}
 
     @Override
-    public Collection<Property<?>> moreProperties() {
-        return List.of();
-    }
-
-    @Override
-    protected boolean shouldAutoAssingnName() {
-        return false;
-    }
-
-    @Override
     public ShapeDeserializer<MousePoint> type() {
         return ShapeData.MOUSE_POINT;
     }

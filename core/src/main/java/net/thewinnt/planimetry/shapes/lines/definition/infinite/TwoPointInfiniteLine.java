@@ -2,6 +2,7 @@ package net.thewinnt.planimetry.shapes.lines.definition.infinite;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.data.Drawing;
@@ -13,6 +14,7 @@ import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.lines.Ray;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.properties.types.ShapeProperty;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -70,24 +72,10 @@ public class TwoPointInfiniteLine extends InfiniteLineDefinition {
 
     @Override
     public Collection<Property<?>> properties() {
-        a.rebuildProperties();
-        b.rebuildProperties();
-        ArrayList<Property<?>> output = new ArrayList<>();
-        PropertyGroup point1 = new PropertyGroup(a.getName());
-        ShapeProperty setPoint1 = new ShapeProperty(Component.translatable("shape.generic.point_n", 1), a.getDrawing(), a, t -> (t instanceof PointProvider && t != b));
-        setPoint1.addValueChangeListener(shape -> a = (PointProvider) shape);
-        point1.addProperty(setPoint1);
-        point1.addProperties(a.getProperties());
-
-        PropertyGroup point2 = new PropertyGroup(b.getName());
-        ShapeProperty setPoint2 = new ShapeProperty(Component.translatable("shape.generic.point_n", 1), b.getDrawing(), b, t -> (t instanceof PointProvider && t != a));
-        setPoint2.addValueChangeListener(shape -> b = (PointProvider) shape);
-        point2.addProperty(setPoint2);
-        point2.addProperties(b.getProperties());
-
-        output.add(point1);
-        output.add(point2);
-        return output;
+        return List.of(
+            PropertyHelper.swappablePoint(a, point -> a = point, "shape.generic.point_n", 1),
+            PropertyHelper.swappablePoint(b, point -> b = point, "shape.generic.point_n", 2)
+        );
     }
 
     public CompoundTag writeNbt(SavingContext context) {
@@ -100,8 +88,8 @@ public class TwoPointInfiniteLine extends InfiniteLineDefinition {
     }
 
     public static TwoPointInfiniteLine fromNbt(CompoundTag nbt, LoadingContext context) {
-        PointProvider a = (PointProvider)context.resolveShape(nbt.getLong("a"));
-        PointProvider b = (PointProvider)context.resolveShape(nbt.getLong("b"));
+        PointProvider a = context.resolveShape(nbt.getLong("a"));
+        PointProvider b = context.resolveShape(nbt.getLong("b"));
         return new TwoPointInfiniteLine(a, b);
     }
 

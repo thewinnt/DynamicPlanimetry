@@ -98,7 +98,7 @@ public abstract class Shape implements ComponentRepresentable {
         return Collections.unmodifiableCollection(properties);
     }
 
-    public void rebuildProperties() {};
+    public void rebuildProperties() {}
 
     public Collection<Function<?>> getFunctions() {
         ArrayList<Function<?>> output = new ArrayList<>();
@@ -155,7 +155,7 @@ public abstract class Shape implements ComponentRepresentable {
     public void onAdded() {
         rebuildProperties();
     };
-    
+
     public void onRemoved() {};
 
     /**

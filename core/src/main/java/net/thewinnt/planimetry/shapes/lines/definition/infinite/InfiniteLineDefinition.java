@@ -17,9 +17,10 @@ import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.lines.Ray;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.PropertySupplier;
 import net.thewinnt.planimetry.ui.text.Component;
 
-public abstract class InfiniteLineDefinition {
+public abstract class InfiniteLineDefinition implements PropertySupplier {
     private InfiniteLine source;
 
     public abstract Vec2 point1();
@@ -28,7 +29,6 @@ public abstract class InfiniteLineDefinition {
     public abstract void move(double dx, double dy);
     public abstract Component getName();
     public abstract void replaceShape(Shape old, Shape neo);
-    public abstract Collection<Property<?>> properties();
     public abstract InfiniteLineType<?> type();
     public abstract LineSegment asLineSegment(Drawing draiwng);
     public abstract Ray asRay(Drawing draiwng);
