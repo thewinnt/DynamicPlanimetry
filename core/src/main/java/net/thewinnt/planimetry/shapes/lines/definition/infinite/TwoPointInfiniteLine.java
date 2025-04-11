@@ -32,6 +32,11 @@ public class TwoPointInfiniteLine extends InfiniteLineDefinition {
     }
 
     @Override
+    public PointProvider getBasePoint() {
+        return a;
+    }
+
+    @Override
     public Vec2 point2() {
         return b.getPosition();
     }

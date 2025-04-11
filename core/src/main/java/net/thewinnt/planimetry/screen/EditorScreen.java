@@ -34,6 +34,7 @@ import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.Size;
+import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Window;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.DropdownLayout;
@@ -149,54 +150,7 @@ public class EditorScreen extends FlatUIScreen {
         save.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                saveDialog = new Window(styles, Component.translatable("ui.save.title"), false);
-                Table table = new Table();
-
-                String willBeSavedAs = DynamicPlanimetry.translate("ui.save.filename", app.getDrawing().withFilename(app.getDrawing().getName(), false).getFilename());
-                Label filename = new Label(willBeSavedAs, styles.getLabelStyle(Size.VERY_SMALL));
-
-                TextField namePicker = new TextField(app.getDrawing().getName(), styles.getTextFieldStyle(Size.SMALL, true));
-                namePicker.setTextFieldListener((textField, c) -> {
-                    String translate = DynamicPlanimetry.translate("ui.save.filename", app.getDrawing().withFilename(namePicker.getText(), false).getFilename());
-                    filename.setText(translate);
-                });
-
-                TextButton save = new TextButton(DynamicPlanimetry.translate("ui.save.save"), styles.getButtonStyle(Size.SMALL, true));
-                save.addListener(new ChangeListener() {
-                    @Override
-                    public void changed(ChangeEvent event, Actor actor) {
-                        app.getDrawing().setName(namePicker.getText());
-                        app.getDrawing().save(namePicker.getText(), false);
-                        saveDialog.remove();
-                    }
-                });
-
-                TextButton cancel = new TextButton(DynamicPlanimetry.translate("ui.save.cancel"), styles.getButtonStyle(Size.SMALL, true));
-                cancel.addListener(new ChangeListener() {
-                    public void changed(ChangeEvent event, Actor actor) {
-                        saveDialog.remove();
-                    }
-
-                    ;
-                });
-
-                Label nameLabel = new Label(DynamicPlanimetry.translate("ui.save.drawing_name"), styles.getLabelStyle(Size.SMALL));
-                table.add(nameLabel).pad(Gdx.graphics.getHeight() / 40f, 5, 0, 5);
-                table.add(namePicker).expand().fill().pad(Gdx.graphics.getHeight() / 40f + 5, 5, 0, 5).row();
-                table.add(filename).colspan(2).pad(5).row();
-                HorizontalGroup group = new HorizontalGroup();
-                group.center().expand().pad(5).fill().space(5);
-                group.addActor(save);
-                group.addActor(cancel);
-                table.add(group).colspan(2).expand().fill();
-                saveDialog.setActor(table);
-                saveDialog.setRestyler(actor1 -> {
-                    filename.setStyle(styles.getLabelStyle(Size.VERY_SMALL));
-                    namePicker.setStyle(styles.getTextFieldStyle(Size.SMALL, true));
-                    save.setStyle(styles.getButtonStyle(Size.SMALL, true));
-                    cancel.setStyle(styles.getButtonStyle(Size.SMALL, true));
-                    nameLabel.setStyle(styles.getLabelStyle(Size.SMALL));
-                });
+                saveDialog = createSaveDialogue(styles);
                 stage.addActor(saveDialog);
             }
         });
@@ -303,5 +257,57 @@ public class EditorScreen extends FlatUIScreen {
         super.hide();
         lastScale = board.getScale();
         lastOffset = board.getOffset();
+    }
+
+    public static Window createSaveDialogue(StyleSet styles) {
+        DynamicPlanimetry app = DynamicPlanimetry.getInstance();
+        Window saveDialog = new Window(styles, Component.translatable("ui.save.title"), false);
+        Table table = new Table();
+
+        Drawing drawing = app.getDrawing();
+        String willBeSavedAs = DynamicPlanimetry.translate("ui.save.filename", drawing.withFilename(drawing.getName(), false).getFilename());
+        Label filename = new Label(willBeSavedAs, styles.getLabelStyle(Size.VERY_SMALL));
+
+        TextField namePicker = new TextField(drawing.getName(), styles.getTextFieldStyle(Size.SMALL, true));
+        namePicker.setTextFieldListener((textField, c) -> {
+            String translate = DynamicPlanimetry.translate("ui.save.filename", drawing.withFilename(namePicker.getText(), false).getFilename());
+            filename.setText(translate);
+        });
+
+        TextButton save = new TextButton(DynamicPlanimetry.translate("ui.save.save"), styles.getButtonStyle(Size.SMALL, true));
+        save.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                drawing.setName(namePicker.getText());
+                drawing.save(namePicker.getText(), false);
+                saveDialog.remove();
+            }
+        });
+
+        TextButton cancel = new TextButton(DynamicPlanimetry.translate("ui.save.cancel"), styles.getButtonStyle(Size.SMALL, true));
+        cancel.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                saveDialog.remove();
+            }
+        });
+
+        Label nameLabel = new Label(DynamicPlanimetry.translate("ui.save.drawing_name"), styles.getLabelStyle(Size.SMALL));
+        table.add(nameLabel).pad(Gdx.graphics.getHeight() / 40f, 5, 0, 5);
+        table.add(namePicker).expand().fill().pad(Gdx.graphics.getHeight() / 40f + 5, 5, 0, 5).row();
+        table.add(filename).colspan(2).pad(5).row();
+        HorizontalGroup group = new HorizontalGroup();
+        group.center().expand().pad(5).fill().space(5);
+        group.addActor(save);
+        group.addActor(cancel);
+        table.add(group).colspan(2).expand().fill();
+        saveDialog.setActor(table);
+        saveDialog.setRestyler(actor1 -> {
+            filename.setStyle(styles.getLabelStyle(Size.VERY_SMALL));
+            namePicker.setStyle(styles.getTextFieldStyle(Size.SMALL, true));
+            save.setStyle(styles.getButtonStyle(Size.SMALL, true));
+            cancel.setStyle(styles.getButtonStyle(Size.SMALL, true));
+            nameLabel.setStyle(styles.getLabelStyle(Size.SMALL));
+        });
+        return saveDialog;
     }
 }

@@ -1,5 +1,6 @@
 package net.thewinnt.planimetry.math;
 
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.Settings;
 
 /** A class containing some utility math functions, mostly geometry-related. */
@@ -11,9 +12,8 @@ public class MathHelper {
     public static final double GRADIANS_TO_RADIANS = Math.PI / 200;
 
     public static boolean roughlyEquals(double a, double b) {
-        a = Double.longBitsToDouble(Double.doubleToRawLongBits(a) & 0xffffffffffff0000l);
-        b = Double.longBitsToDouble(Double.doubleToRawLongBits(b) & 0xffffffffffff0000l);
-        return (Double.doubleToRawLongBits(Math.abs(a - b)) & 0xffffffffffff0000l) == 0;
+        long mask = -1L << DynamicPlanimetry.SETTINGS.getMathPrecision();
+        return (Double.doubleToRawLongBits(Math.abs(a - b)) & mask) == 0;
         // return Math.abs(a - b) < Math.pow(2, DynamicPlanimetry.SETTINGS.getMathPrecision());
     }
 

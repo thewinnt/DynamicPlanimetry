@@ -15,6 +15,7 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.lines.definition.ray.RayDefinition;
+import net.thewinnt.planimetry.shapes.lines.definition.ray.RayDefinitionType;
 import net.thewinnt.planimetry.shapes.lines.definition.ray.TwoPointRay;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
@@ -33,17 +34,17 @@ public class Ray extends Line {
 
     @Override
     public boolean contains(double x, double y) {
-        boolean between = point1().distanceTo(x, y) + point2().distanceTo(x, y) - point1().distanceTo(point2()) < Math.pow(2, -23);
+        boolean between = MathHelper.roughlyEquals(point1().distanceTo(x, y) + point2().distanceTo(x, y), point1().distanceTo(point2()));
         if (between) return true;
         Vec2 c = new Vec2(x, y);
-        return point1().distanceTo(point2()) + c.distanceTo(point2()) - point1().distanceTo(c) < Math.pow(2, -23);
+        return MathHelper.roughlyEquals(point1().distanceTo(point2()) + c.distanceTo(point2()), point1().distanceTo(c));
     }
 
     @Override
     public boolean contains(Vec2 point) {
-        boolean between = point1().distanceTo(point) + point2().distanceTo(point) - point1().distanceTo(point2()) < Math.pow(2, -23);;
+        boolean between = MathHelper.roughlyEquals(point1().distanceTo(point) + point2().distanceTo(point), point1().distanceTo(point2()));
         if (between) return true;
-        return point1().distanceTo(point2()) + point.distanceTo(point2()) - point1().distanceTo(point) < Math.pow(2, -23);
+        return MathHelper.roughlyEquals(point1().distanceTo(point2()) + point.distanceTo(point2()), point1().distanceTo(point));
     }
 
     @Override
@@ -96,8 +97,18 @@ public class Ray extends Line {
     @Override
     public void rebuildProperties() {
         this.properties.clear();
-        this.properties.add(new RegistryElementProperty<>(this.definition.type(), Component.translatable(this.getPropertyName("definition")), Registries.RAY_DEFITINION_TYPE));
+        RegistryElementProperty<RayDefinitionType<?>> property = new RegistryElementProperty<>(this.definition.type(), Component.translatable(this.getPropertyName("definition")), Registries.RAY_DEFITINION_TYPE);
+        this.properties.add(property);
         this.properties.addAll(this.definition.properties());
+        property.addValueChangeListener(type -> {
+            try {
+                Ray.this.definition = type.convert(Ray.this.definition, drawing);
+                Ray.this.definition.setSource(Ray.this);
+                Ray.this.rebuildProperties();
+            } catch (RuntimeException e) {
+                property.setValueSilent(type);
+            }
+        });
     }
 
     @Override

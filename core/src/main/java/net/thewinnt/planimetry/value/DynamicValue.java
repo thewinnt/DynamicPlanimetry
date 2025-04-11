@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public interface DynamicValue extends Cloneable {
     double get(ValueContext context);
-    Collection<Property<?>> properties();
+    Collection<Property<?>> appendProperties(Collection<Property<?>> prefix);
     DynamicValueType<? extends DynamicValue> type();
     @Nullable Stream<PointProvider> dependencies();
     DynamicValue clone();

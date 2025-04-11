@@ -20,7 +20,7 @@ public class LoadingContext {
         }
     }
 
-    @SuppressWarnings("unchecked") // the caller will cast anyways
+    @SuppressWarnings("unchecked") // the caller is going to cast anyway
     public <T extends Shape> T resolveShape(long id) {
         if (resolvedShapes.containsKey(id)) {
             return (T) resolvedShapes.get(id);

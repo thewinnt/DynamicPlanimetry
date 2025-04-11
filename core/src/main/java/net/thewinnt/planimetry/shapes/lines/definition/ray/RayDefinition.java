@@ -12,10 +12,14 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.LineSegment;
+import net.thewinnt.planimetry.shapes.lines.Ray;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
+import org.jetbrains.annotations.ApiStatus;
 
 public abstract class RayDefinition {
+    private Ray source;
+
     public abstract Vec2 start();
     public abstract double direction();
     public abstract boolean canMove();
@@ -29,6 +33,15 @@ public abstract class RayDefinition {
 
     public void move(Vec2 delta) {
         this.move(delta.x, delta.y);
+    }
+
+    public Ray getSource() {
+        return source;
+    }
+
+    @ApiStatus.Internal
+    public void setSource(Ray source) {
+        this.source = source;
     }
 
     public final CompoundTag toNbt(SavingContext context) {

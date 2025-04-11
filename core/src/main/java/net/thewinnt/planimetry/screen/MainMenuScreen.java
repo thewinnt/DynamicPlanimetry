@@ -2,6 +2,7 @@ package net.thewinnt.planimetry.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -9,8 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.data.Drawing;
+import net.thewinnt.planimetry.ui.ComponentLabel;
+import net.thewinnt.planimetry.ui.GuiHelper;
 import net.thewinnt.planimetry.ui.Size;
+import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.Window;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class MainMenuScreen extends FlatUIScreen {
@@ -81,8 +87,13 @@ public class MainMenuScreen extends FlatUIScreen {
         create.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                app.setDrawing(null, true);
-                app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
+                Drawing current = app.getDrawing();
+                if (current != null && current.isUnsaved()) {
+                    stage.addActor(createSaveWindow(styles, stage));
+                } else {
+                    app.setDrawing(null, true);
+                    app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
+                }
             }
         });
 
@@ -138,4 +149,36 @@ public class MainMenuScreen extends FlatUIScreen {
 
     @Override public void customRender() {}
     @Override public void addActorsAboveFps() {}
+
+
+    public static Window createSaveWindow(StyleSet styles, Stage stage) {
+        DynamicPlanimetry app = DynamicPlanimetry.getInstance();
+        Window window = new Window(styles, Component.translatable("ui.save_or_exit.title"), true);
+        Table table = new Table();
+        ComponentLabel label = new ComponentLabel(Component.translatable("ui.save_or_exit"), styles.font, Size.MEDIUM);
+
+        // TODO save window
+
+        TextButton save = GuiHelper.createTextButton("ui.save_or_exit.save", styles, Size.MEDIUM, () -> {
+            Window saveDialogue = EditorScreen.createSaveDialogue(styles);
+            saveDialogue.setBounds(window.getX(), window.getY(), window.getWidth(), window.getHeight());
+            window.remove();
+            stage.addActor(saveDialogue);
+        });
+
+        TextButton noSave = GuiHelper.createTextButton("ui.save_or_exit.nosave", styles, Size.MEDIUM, () -> {
+            window.remove();
+            app.setDrawing(null, false);
+            app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
+        });
+
+        TextButton cancel = GuiHelper.createTextButton("ui.save_or_exit.canecl", styles, Size.MEDIUM, () -> window.remove());
+
+        table.add(label).colspan(3).fill().expand().row();
+        table.add(save).expand().fill();
+        table.add(noSave).expand().fill();
+        table.add(cancel).expand().fill();
+
+        return window;
+    }
 }

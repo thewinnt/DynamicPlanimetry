@@ -8,7 +8,7 @@ public interface SegmentLike {
     default boolean contains(Vec2 point) {
         Vec2 a = point1();
         Vec2 b = point2();
-        return a.distanceTo(point) + b.distanceTo(point) - a.distanceTo(b) < Math.pow(2, Settings.get().getMathPrecision());
+        return MathHelper.roughlyEquals(a.distanceTo(point) + b.distanceTo(point), a.distanceTo(b));
     }
     default double distanceTo(Vec2 point) {
         Vec2 a = this.point1();
@@ -21,7 +21,7 @@ public interface SegmentLike {
             return distance;
         }
     }
-    
+
     default double getSlope() {
         Vec2 a = point1();
         Vec2 b = point2();

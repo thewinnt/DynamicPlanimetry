@@ -38,8 +38,9 @@ public final class ConstantValue implements DynamicValue {
     }
 
     @Override
-    public Collection<Property<?>> properties() {
-        return List.of(property);
+    public Collection<Property<?>> appendProperties(Collection<Property<?>> prefix) {
+        prefix.add(property);
+        return prefix;
     }
 
     @Override

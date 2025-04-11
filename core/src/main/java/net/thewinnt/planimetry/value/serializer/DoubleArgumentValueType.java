@@ -1,26 +1,25 @@
 package net.thewinnt.planimetry.value.serializer;
 
+import java.util.function.DoubleBinaryOperator;
+
 import net.querz.nbt.tag.CompoundTag;
+import net.thewinnt.planimetry.value.DynamicValue;
 import net.thewinnt.planimetry.value.DynamicValueType;
 import net.thewinnt.planimetry.value.type.DoubleArgumentValue;
 
-public class DoubleArgumentValueType implements DynamicValueType<DoubleArgumentValue> {
-    public static final DoubleArgumentValueType INSTANCE = new DoubleArgumentValueType();
-
-    private DoubleArgumentValueType() {}
-
+public record DoubleArgumentValueType(DoubleBinaryOperator operation) implements DynamicValueType<DoubleArgumentValue> {
     @Override
     public DoubleArgumentValue fromNbt(CompoundTag tag) {
-        return null;
+        DynamicValue a = DynamicValue.fromNbt(tag.getCompoundTag("a"));
+        DynamicValue b = DynamicValue.fromNbt(tag.getCompoundTag("b"));
+        return new DoubleArgumentValue(a, b, operation);
     }
 
     @Override
     public CompoundTag toNbt(DoubleArgumentValue value) {
-        return null;
-    }
-
-    @Override
-    public boolean usesContext() {
-        return false;
+        CompoundTag nbt = new CompoundTag();
+        nbt.put("a", DynamicValue.toNbt(value.arg1()));
+        nbt.put("b", DynamicValue.toNbt(value.arg2()));
+        return nbt;
     }
 }

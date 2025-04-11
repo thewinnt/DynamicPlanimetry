@@ -52,7 +52,7 @@ public class Settings {
     });
     public final OptionProperty ctrlSelection = new OptionProperty(Component.translatable("settings.use_ctrl_for_selection"), true).setOnTrue(Component.translatable("settings.use_ctrl_for_selection.true")).setOnFalse(Component.translatable("settings.use_ctrl_for_selection.false"));
     private String currentLanguage;
-    private byte mathPrecision = -23;
+    private byte mathPrecision = 4;
     private SortingType lastSortingType = SortingType.BY_EDITING_TIME;
     private boolean lastSortingOrder = true;
 
@@ -149,7 +149,7 @@ public class Settings {
     }
 
     public void setMathPrecision(byte mathPrecision) {
-        if (mathPrecision < 0) {
+        if (mathPrecision > 0) {
             this.mathPrecision = mathPrecision;
         }
     }

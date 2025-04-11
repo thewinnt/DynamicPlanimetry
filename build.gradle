@@ -47,6 +47,15 @@ configure(subprojects - project(':android')) {
     fileTree(assetsFolder).collect { assetsFolder.relativePath(it) }.each {
       assetsFile.append(it + "\n")
     }
+
+
+    inputs.dir("${project.rootDir}/assets/tags")
+    File tagsFolder = new File("${project.rootDir}/assets/tags")
+    File tagsFile = new File(tagsFolder, "tags.txt")
+
+    fileTree(tagsFolder).collect { tagsFolder.relativePath(it) }.each {
+      tagsFile.append(it + "\n")
+    }
   }
   processResources.dependsOn 'generateAssetList'
 

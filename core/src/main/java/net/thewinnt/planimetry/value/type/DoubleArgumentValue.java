@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.function.DoubleBinaryOperator;
 import java.util.stream.Stream;
 
+import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
+import net.thewinnt.planimetry.ui.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import net.thewinnt.planimetry.point.ValueContext;
@@ -14,36 +16,24 @@ import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.value.DynamicValue;
 import net.thewinnt.planimetry.value.DynamicValueType;
 
-public class DoubleArgumentValue implements DynamicValue {
-    // TODO figure out properties
-    private final Operation operation;
-    private DynamicValue arg1;
-    private DynamicValue arg2;
-
-    public DoubleArgumentValue(DynamicValue arg1, DynamicValue arg2, Operation operation) {
-        this.arg1 = arg1;
-        this.arg2 = arg2;
-        this.operation = operation;
-    }
+public record DoubleArgumentValue(DynamicValue arg1, DynamicValue arg2, DoubleBinaryOperator operation) implements DynamicValue {
 
     @Override
     public double get(ValueContext context) {
-        return operation.apply(arg1.get(context), arg2.get(context));
+        return operation.applyAsDouble(arg1.get(context), arg2.get(context));
     }
 
     @Override
-    public Collection<Property<?>> properties() {
-        ArrayList<Property<?>> properties = new ArrayList<>();
-        properties.addAll(arg1.properties());
-        properties.addAll(arg2.properties());
-        return properties;
+    public Collection<Property<?>> appendProperties(Collection<Property<?>> prefix) {
+        prefix.add(new PropertyGroup(Component.translatable("dynamic_value.dynamic_planimetry.double_arg.arg1"), arg1.appendProperties(new ArrayList<>())));
+        prefix.add(new PropertyGroup(Component.translatable("dynamic_value.dynamic_planimetry.double_arg.arg2"), arg2.appendProperties(new ArrayList<>())));
+        return prefix;
     }
 
     @Override
     @NotNull
     public DynamicValueType<? extends DynamicValue> type() {
-        // TODO Auto-generated method stub
-        return null;
+        return DynamicValueType.DOUBLE_ARGUMENT.get(operation);
     }
 
     @Override
@@ -67,26 +57,5 @@ public class DoubleArgumentValue implements DynamicValue {
     @Override
     public DynamicValue clone() {
         return new DoubleArgumentValue(arg1.clone(), arg2.clone(), operation);
-    }
-
-    public enum Operation {
-        ADD(Double::sum),
-        SUBTRACT((a, b) -> a - b),
-        MUL((a, b) -> a * b),
-        DIV((a, b) -> a / b),
-        POW(Math::pow),
-        MAX(Math::max),
-        MIN(Math::min),
-        ATAN2(Math::atan2);
-
-        private final DoubleBinaryOperator function;
-
-        Operation(DoubleBinaryOperator function) {
-            this.function = function;
-        }
-
-        public double apply(double a, double b) {
-            return function.applyAsDouble(a, b);
-        }
     }
 }

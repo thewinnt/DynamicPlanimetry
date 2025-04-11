@@ -19,9 +19,4 @@ public class ConstantValueType implements DynamicValueType<ConstantValue> {
     public CompoundTag toNbt(ConstantValue value) {
         return Util.make(new CompoundTag(), tag -> tag.putDouble("value", value.value()));
     }
-
-    @Override
-    public boolean usesContext() {
-        return false;
-    }
 }

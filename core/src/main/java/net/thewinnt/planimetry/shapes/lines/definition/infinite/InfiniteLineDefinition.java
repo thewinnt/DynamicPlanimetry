@@ -15,6 +15,7 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.lines.Ray;
+import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
 
@@ -31,6 +32,7 @@ public abstract class InfiniteLineDefinition {
     public abstract InfiniteLineType<?> type();
     public abstract LineSegment asLineSegment(Drawing draiwng);
     public abstract Ray asRay(Drawing draiwng);
+    public abstract PointProvider getBasePoint();
 
     public void move(Vec2 delta) {
         this.move(delta.x, delta.y);
@@ -43,6 +45,10 @@ public abstract class InfiniteLineDefinition {
     @Internal
     public void setSource(InfiniteLine line) {
         this.source = line;
+    }
+
+    public Component createProperty(String postfix) {
+        return Component.translatable(source.getPropertyName(postfix));
     }
 
     public final CompoundTag toNbt(SavingContext context) {

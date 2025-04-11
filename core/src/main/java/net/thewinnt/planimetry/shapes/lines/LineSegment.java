@@ -36,12 +36,12 @@ public class LineSegment extends Line implements SegmentLike {
 
     @Override
     public boolean contains(double x, double y) {
-        return a.getPosition().distanceTo(x, y) + b.getPosition().distanceTo(x, y) - a.getPosition().distanceTo(b.getPosition()) < Math.pow(2, -23);
+        return MathHelper.roughlyEquals(a.getPosition().distanceTo(x, y) + b.getPosition().distanceTo(x, y), a.getPosition().distanceTo(b.getPosition()));
     }
 
     @Override
     public boolean contains(Vec2 point) {
-        return a.getPosition().distanceTo(point) + b.getPosition().distanceTo(point) - a.getPosition().distanceTo(b.getPosition()) < Math.pow(2, -23);
+        return MathHelper.roughlyEquals(a.getPosition().distanceTo(point) + b.getPosition().distanceTo(point), a.getPosition().distanceTo(b.getPosition()));
     }
 
     @Override

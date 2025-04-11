@@ -4,10 +4,17 @@ import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
+import net.thewinnt.planimetry.math.MathHelper;
+import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.lines.definition.ray.RayDefinition;
 import net.thewinnt.planimetry.shapes.lines.definition.ray.RayDefinitionType;
 import net.thewinnt.planimetry.shapes.lines.definition.ray.TwoPointRay;
+import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
+
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.OptionalDouble;
 
 public class TwoPointRayType implements RayDefinitionType<TwoPointRay> {
     public static final TwoPointRayType INSTANCE = new TwoPointRayType();
@@ -16,8 +23,8 @@ public class TwoPointRayType implements RayDefinitionType<TwoPointRay> {
 
     @Override
     public TwoPointRay fromNbt(CompoundTag nbt, LoadingContext context) {
-        PointProvider a = (PointProvider) context.resolveShape(nbt.getLong("a"));
-        PointProvider b = (PointProvider) context.resolveShape(nbt.getLong("b"));
+        PointProvider a = context.resolveShape(nbt.getLong("a"));
+        PointProvider b = context.resolveShape(nbt.getLong("b"));
         return new TwoPointRay(a, b);
     }
 
@@ -31,10 +38,21 @@ public class TwoPointRayType implements RayDefinitionType<TwoPointRay> {
         context.addShape(definition.getB());
         return nbt;
     }
-    
+
     @Override
     public TwoPointRay convert(RayDefinition other, Drawing drawing) {
-        // TODO Auto-generated method stub
-        return null;
+        Vec2 a = other.start();
+        double direction = other.direction();
+        Optional<PointProvider> b = drawing.points.stream()
+            .min(Comparator.comparingDouble(
+                value -> Math.abs(MathHelper.angleTo(a, value.getPosition()) - direction))
+            );
+        if (b.isPresent()) {
+            return new TwoPointRay(drawing.getNearestPoint(a), b.get());
+        } else {
+            PointProvider point2 = new Point(drawing, MathHelper.continueFromAngle(a, direction, 25));
+            drawing.addShape(point2);
+            return new TwoPointRay(drawing.getNearestPoint(a), point2);
+        }
     }
 }
