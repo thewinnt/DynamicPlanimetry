@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
+import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.definition.point.placement.MousePlacement;
 import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
@@ -70,15 +71,15 @@ public class LineFactory extends ShapeFactory {
         this.line.rebuildProperties();
     }
 
-    public static enum LineType implements ComponentRepresentable {
-        INFINITE(InfiniteLine::of, Component.translatable("shape.infinite_line", "", "")),
-        RAY(Ray::of, Component.translatable("shape.ray", "", "")),
-        SEGMENT(LineSegment::new, Component.translatable("shape.line_segment", "", ""));
+    public enum LineType implements ComponentRepresentable {
+        INFINITE(InfiniteLine::of, Component.translatable(ShapeData.INFINITE_LINE.typeName(), "")),
+        RAY(Ray::of, Component.translatable(ShapeData.RAY.typeName(), "")),
+        SEGMENT(LineSegment::new, Component.translatable(ShapeData.LINE_SEGMENT.typeName(), ""));
 
         public final LineConstructor<?> factory;
         public final Component name;
 
-        private LineType(LineConstructor<?> factory, Component name) {
+        LineType(LineConstructor<?> factory, Component name) {
             this.factory = factory;
             this.name = name;
         }
@@ -94,7 +95,7 @@ public class LineFactory extends ShapeFactory {
     }
 
     @FunctionalInterface
-    public static interface LineConstructor<T extends Line> {
+    public interface LineConstructor<T extends Line> {
         T create(Drawing drawing, PointProvider a, PointProvider b);
     }
 

@@ -106,7 +106,8 @@ public abstract class FlatUIScreen implements Screen {
     public void render(float dt) {
         if (Gdx.graphics.getHeight() == 0) return;
 
-        ScreenUtils.clear(Theme.current().main());
+        Color color = Theme.current().main();
+        ScreenUtils.clear(color.r, color.g, color.b, color.a, false, true);
         customRender();
         if (DynamicPlanimetry.isDebug()) {
             fps_timer += dt;
@@ -157,7 +158,7 @@ public abstract class FlatUIScreen implements Screen {
     public void repositionFps(float x, float y) {
         fps_x = x;
         fps_y = y;
-        
+
         fps.setPosition(fps_x, fps_y, Align.bottomLeft);
         mem_usage.setPosition(fps_x, fps_y + fps.getHeight(), Align.bottomLeft);
     }

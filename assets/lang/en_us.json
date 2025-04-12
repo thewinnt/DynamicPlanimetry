@@ -40,6 +40,8 @@
     "infinite_line_definition_type.dynamic_planimetry.parallel": "Parallel to another",
     "infinite_line_definition_type.dynamic_planimetry.two_points": "By two points",
     "infinite_line_definition_type.dynamic_planimetry.angle_based": "By a point and direction",
+    "point_placement_type.dynamic_planimetry.static": "На координатах",
+    "point_placement_type.dynamic_planimetry.static.position": "Координаты",
     "property.dynamic_planimetry.angle_offset_point.angle": "Angle",
     "property.dynamic_planimetry.angle_offset_point.distance": "Distance",
     "property.dynamic_planimetry.angle_offset_point.name": "Name",

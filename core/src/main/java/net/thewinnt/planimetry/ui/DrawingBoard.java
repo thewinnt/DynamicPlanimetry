@@ -14,6 +14,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -31,6 +32,7 @@ import net.thewinnt.planimetry.definition.point.PointPlacementType;
 import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.settings.DebugFlag;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
 import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
@@ -333,7 +335,7 @@ public class DrawingBoard extends Actor {
         if (creatingShape != null) creatingShape.onRender(xb(mx), yb(my));
         Stream<Shape> nonPointSelected = selection.stream().filter(shape -> !(shape instanceof PointProvider));
         Stream<Shape> pointSelected = selection.stream().filter(shape -> shape instanceof PointProvider);
-        Shape hovered = getHoveredShape(mx, my, shape -> !(shape instanceof PointProvider point && !point.getPlacement().is(PointPlacementType.MOUSE_POINTER)));
+        Shape hovered = getHoveredShape(mx, my, shape -> !(shape instanceof PointProvider point && point.getPlacement().is(PointPlacementType.MOUSE_POINTER)));
         for (Shape i : this.drawing.shapes) {
             if (i.shouldRender()) i.render(drawer, SelectionStatus.NONE, font, this);
         }
@@ -363,14 +365,19 @@ public class DrawingBoard extends Actor {
                 }
             }
         }
-        if (DynamicPlanimetry.isDebug()) {
-            font.getFont(fontSize, Color.FIREBRICK).draw(batch, "scale: " + scale, x(5), y(getHeight() - 5));
-            font.getFont(fontSize, Color.FIREBRICK).draw(batch, "offx: " + offset.x, x(5), y(getHeight() - 30));
-            font.getFont(fontSize, Color.FIREBRICK).draw(batch, "offy: " + offset.y, x(5), y(getHeight() - 55));
-            font.getFont(fontSize, Color.FIREBRICK).draw(batch, "mx: " + mx, x(5), y(getHeight() - 80));
-            font.getFont(fontSize, Color.FIREBRICK).draw(batch, "my: " + my, x(5), y(getHeight() - 105));
-            font.getFont(fontSize, Color.FIREBRICK).draw(batch, "mxb: " + xb(mx), x(5), y(getHeight() - 130));
-            font.getFont(fontSize, Color.FIREBRICK).draw(batch, "mxy: " + yb(my), x(5), y(getHeight() - 155));
+        if (DebugFlag.MOUSE_INFO.get()) {
+            BitmapFont font1 = font.getFont(fontSize, Color.FIREBRICK);
+            font1.draw(batch, "scale: " + scale, x(5), y(getHeight() - 5));
+            font1.draw(batch, "offx: " + offset.x, x(5), y(getHeight() - 30));
+            font1.draw(batch, "offy: " + offset.y, x(5), y(getHeight() - 55));
+            font1.draw(batch, "mx: " + mx, x(5), y(getHeight() - 80));
+            font1.draw(batch, "my: " + my, x(5), y(getHeight() - 105));
+            font1.draw(batch, "mxb: " + xb(mx), x(5), y(getHeight() - 130));
+            font1.draw(batch, "mxy: " + yb(my), x(5), y(getHeight() - 155));
+            font1.draw(batch, "min x: " + minX(), x(5), y(getHeight() - 180));
+            font1.draw(batch, "max x: " + maxX(), x(5), y(getHeight() - 205));
+            font1.draw(batch, "min y: " + minY(), x(5), y(getHeight() - 230));
+            font1.draw(batch, "max y: " + maxY(), x(5), y(getHeight() - 255));
             if (!selection.isEmpty()) {
                 font.getFont(40, Color.MAROON).draw(batch, "keyboard focus: " + this.getStage().getKeyboardFocus(), x(5), y(155));
             }
@@ -414,11 +421,11 @@ public class DrawingBoard extends Actor {
     }
 
     public double minY() {
-        return yb(getY());
+        return yb(getY() + getHeight());
     }
 
     public double maxY() {
-        return yb(getY() + getHeight());
+        return yb(getY());
     }
 
     public List<Shape> getSelection() {

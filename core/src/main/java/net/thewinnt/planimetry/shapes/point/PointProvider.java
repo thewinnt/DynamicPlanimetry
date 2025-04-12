@@ -25,6 +25,7 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Size;
+import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.types.NameComponentProperty;
@@ -35,25 +36,29 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class PointProvider extends Shape {
+    public static final double ANGLE_STEP = 0.1;
     protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
     private PointPlacement placement;
     private Vec2 fallback;
     protected NameComponent name;
-    protected final BooleanProperty shouldRender = new BooleanProperty(Component.translatable("property.point.should_render"), true);
+    protected final BooleanProperty shouldRender = new BooleanProperty(Component.translatable(getPropertyName("should_render")), true);
     private final NameComponentProperty nameProperty;
+    private Vec2 lastBestPlace;
+    private Vec2 lastPos;
+    private double lastSpace;
 
     public PointProvider(Drawing drawing, PointPlacement placement) {
         super(drawing);
         this.placement = placement;
         this.name = drawing.generateName(drawing.shouldUseDashesForNaming());
-        this.nameProperty = new NameComponentProperty(Component.translatable(getPropertyName("name")), name);
+        this.nameProperty = PropertyHelper.setter(new NameComponentProperty(Component.translatable(getPropertyName("name")), name), this::setName);
     }
 
     public PointProvider(Drawing drawing, PointPlacement placement, NameComponent name) {
         super(drawing);
         this.placement = placement;
         this.name = name;
-        this.nameProperty = new NameComponentProperty(Component.translatable(getPropertyName("name")), name);
+        this.nameProperty = PropertyHelper.setter(new NameComponentProperty(Component.translatable(getPropertyName("name")), name), this::setName);
     }
 
     @Override
@@ -255,11 +260,24 @@ public class PointProvider extends Shape {
         }
         if (this.name != null) {
             Vec2 neededSpace = this.name.getSize(font, Size.MEDIUM).mul(0.5);
+            Vec2 boardNeeded = neededSpace.mul(1 / board.getScale());
+            if (position.x + boardNeeded.x < board.minX() ||
+                position.x > board.maxX() ||
+                position.y + boardNeeded.y < board.minY() ||
+                position.y > board.maxY()) {
+                lastPos = position;
+                return;
+            }
+            if (position.equals(lastPos) && lastBestPlace != null && board.getFreeSpace(lastBestPlace.x, lastBestPlace.y) >= lastSpace - 1) {
+                name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), board.bx(lastBestPlace.x), (float)(board.by(lastBestPlace.y) + neededSpace.y / 2));
+                lastPos = position;
+                return;
+            }
             double minRadius = (Math.max(neededSpace.x, neededSpace.y)) / board.getScale();
             double bestSpace = 0;
             // double _worstSpace = Double.MAX_VALUE;
             Vec2 bestPos = null;
-            for (double angle = 0; angle < Math.PI; angle += 0.4) {
+            for (double angle = 0; angle < Math.PI; angle += ANGLE_STEP) {
                 Vec2 test = MathHelper.continueFromAngle(position, angle, minRadius);
                 double space = board.getFreeSpace(test.x, test.y);
                 if (space >= bestSpace) {
@@ -270,7 +288,7 @@ public class PointProvider extends Shape {
                 //     _worstSpace = space;
                 // }
             }
-            for (double angle = 0; angle < Math.PI; angle += 0.4) {
+            for (double angle = 0; angle < Math.PI; angle += ANGLE_STEP) {
                 Vec2 test = MathHelper.continueFromAngle(position, angle, -minRadius);
                 double space = board.getFreeSpace(test.x, test.y);
                 if (space >= bestSpace) {
@@ -289,9 +307,13 @@ public class PointProvider extends Shape {
             //     space = board.getFreeSpace(test.x, test.y);
             //     drawer.filledCircle(board.boardToGlobal(test).toVector2f(), 2, Color.RED.cpy().lerp(Color.GREEN, (float)((space - _worstSpace) / (bestSpace - _worstSpace))));
             // }
-            if (bestPos == null) bestPos = MathHelper.continueFromAngle(position, 90, -minRadius);
-            name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), board.bx(bestPos.x), (float)(board.by(bestPos.y) + neededSpace.y / 2));
+            if (bestPos == null)
+                bestPos = MathHelper.continueFromAngle(position, 90, -minRadius);
+            lastBestPlace = bestPos;
+            lastSpace = bestSpace;
+            name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), board.bx(bestPos.x), (float) (board.by(bestPos.y) + neededSpace.y / 2));
         }
+        lastPos = position;
     }
 
     @Override

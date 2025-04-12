@@ -111,6 +111,7 @@ public class PolygonalChain extends Shape {
     public void rebuildProperties() {
         properties.clear();
         for (PointProvider i : points) {
+            i.rebuildProperties();
             properties.add(new PropertyGroup(i.getName(), i.getProperties()));
         }
         properties.add(new DisplayProperty(Component.translatable(getPropertyName("length")), () -> Component.number(getPerimeter())));
