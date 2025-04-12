@@ -10,7 +10,6 @@ import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-import net.thewinnt.planimetry.point.ValueContext;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.value.DynamicValue;
@@ -19,8 +18,8 @@ import net.thewinnt.planimetry.value.DynamicValueType;
 public record DoubleArgumentValue(DynamicValue arg1, DynamicValue arg2, DoubleBinaryOperator operation) implements DynamicValue {
 
     @Override
-    public double get(ValueContext context) {
-        return operation.applyAsDouble(arg1.get(context), arg2.get(context));
+    public double get() {
+        return operation.applyAsDouble(arg1.get(), arg2.get());
     }
 
     @Override

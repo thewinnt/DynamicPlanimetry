@@ -7,9 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.shapes.lines.PolygonalChain;
-import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
-import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.shapes.polygons.Polygon;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -17,7 +15,7 @@ import net.thewinnt.planimetry.ui.text.Component;
 public class LimitedPolygonFactory extends ShapeFactory {
     private final int limit;
     private PointProvider point1;
-    private PointReference nextPoint;
+    private PointProvider nextPoint;
     private PolygonalChain line;
     private boolean isDone = false;
 
@@ -33,17 +31,17 @@ public class LimitedPolygonFactory extends ShapeFactory {
     public boolean click(InputEvent event, double x, double y) {
         if (point1 == null) {
             this.point1 = getOrCreatePoint(x, y);
-            this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
+            this.nextPoint = PointProvider.mouse(board.getDrawing());
             this.line = new PolygonalChain(board.getDrawing(), point1, nextPoint);
             this.addShape(point1);
             this.addShape(nextPoint);
             this.addShape(line);
             return false;
         } else {
-            PointProvider next = getOrCreatePoint(x, y);
+            PointProvider next = getPoint();
             if (next == point1) return false; // don't allow self-looping
-            this.nextPoint.setPoint(next);
-            this.nextPoint = new PointReference(new MousePoint(board.getDrawing()));
+            this.replacePoint(nextPoint, x, y);
+            this.nextPoint = PointProvider.mouse(board.getDrawing());
             if (this.line.points.size() == limit) {
                 if (this.line.points.size() == 3) {
                     Polygon polygon = new Polygon(board.getDrawing(), this.line.points);

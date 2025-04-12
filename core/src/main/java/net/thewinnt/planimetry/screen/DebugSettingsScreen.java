@@ -11,6 +11,7 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.data.registry.Identifier;
 import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.data.registry.Registry;
+import net.thewinnt.planimetry.data.registry.TagKey;
 import net.thewinnt.planimetry.settings.DebugFlag;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.Size;
@@ -29,6 +30,8 @@ public class DebugSettingsScreen extends FlatUIScreen {
     public static final CharSequence EXIT = Component.translatable("ui.settings.exit");
     public static final Component FLAGS = Component.translatable("settings.debug.flags");
     public static final Component REGISTRY_DATA = Component.translatable("settings.debug.registry_data");
+    public static final Component TAGS = Component.translatable("settings.debug.registry_data.tags");
+    public static final Component ELEMENTS = Component.translatable("settings.debug.registry_data.elements");
     private Label goBack;
     private ScrollPane flags;
     private ScrollPane registryData;
@@ -50,12 +53,27 @@ public class DebugSettingsScreen extends FlatUIScreen {
         flags1 = () -> new PropertyLayout(list, styles, FLAGS, Size.MEDIUM, true, StyleSet::getButtonStyleNoBg);
 
         registryData1 = new ArrayList<>();
-        for (Registry<?> i : Registries.ROOT.elements()) {
-            List<DisplayProperty> properties = new ArrayList<>();
-            for (Identifier j : i.ids()) {
-                properties.add(new DisplayProperty(Component.literal(j.toString()), Component.literal(i.get(j).toString())));
+        for (Registry<?> registry : Registries.ROOT.elements()) {
+            PropertyGroup group = new PropertyGroup(Component.literal(registry.id().toString()));
+
+            List<DisplayProperty> elements = new ArrayList<>();
+            for (Identifier id : registry.ids()) {
+                elements.add(new DisplayProperty(Component.literal(id.toString()), Component.literal(registry.get(id).toString())));
             }
-            registryData1.add(new PropertyGroup(Component.literal(i.id().toString()), properties));
+            group.addProperty(new PropertyGroup(ELEMENTS, elements));
+
+
+            List<PropertyGroup> tags = new ArrayList<>();
+            for (TagKey<?> tag : registry.getAllTags()) {
+                PropertyGroup contents = new PropertyGroup(Component.literal(tag.id().toString()));
+                for (Identifier id : registry.getTagContents(tag)) {
+                    contents.addProperty(new DisplayProperty(Component.literal(id.toString()), Component.literal(registry.get(id).toString())));
+                }
+                tags.add(contents);
+            }
+            group.addProperty(new PropertyGroup(TAGS, tags));
+
+            registryData1.add(group);
         }
 
         this.goBack.addListener(new ClickListener() {

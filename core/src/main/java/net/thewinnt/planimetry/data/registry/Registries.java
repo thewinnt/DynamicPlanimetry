@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import net.thewinnt.planimetry.ShapeData;
-import net.thewinnt.planimetry.point.PointPlacementType;
+import net.thewinnt.planimetry.definition.point.PointPlacementType;
 import net.thewinnt.planimetry.shapes.Shape;
-import net.thewinnt.planimetry.shapes.lines.definition.infinite.InfiniteLineType;
-import net.thewinnt.planimetry.shapes.lines.definition.ray.RayDefinitionType;
+import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineType;
+import net.thewinnt.planimetry.definition.line.ray.RayDefinitionType;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.Components;
 import net.thewinnt.planimetry.value.DynamicValueType;

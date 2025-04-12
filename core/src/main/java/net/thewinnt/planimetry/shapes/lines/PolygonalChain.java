@@ -113,7 +113,7 @@ public class PolygonalChain extends Shape {
         for (PointProvider i : points) {
             properties.add(new PropertyGroup(i.getName(), i.getProperties()));
         }
-        properties.add(new DisplayProperty(Component.translatable("property.polygonal_chain.length"), () -> Component.number(getPerimeter())));
+        properties.add(new DisplayProperty(Component.translatable(getPropertyName("length")), () -> Component.number(getPerimeter())));
     }
 
     public double getPerimeter() {
@@ -166,13 +166,13 @@ public class PolygonalChain extends Shape {
     }
 
     @Override
-    public String getTypeName() {
-        return "shape.polygonal_chain";
+    public ShapeDeserializer<?> type() {
+        return ShapeData.POLYGONAL_CHAIN;
     }
 
     @Override
-    public ShapeDeserializer<?> type() {
-        return ShapeData.POLYGONAL_CHAIN;
+    public String getPropertyName(String postfix) {
+        return "property.dynamic_planimetry.polygonal_chain." + postfix;
     }
 
     @Override

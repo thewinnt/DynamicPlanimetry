@@ -20,7 +20,7 @@ public record TagKey<T>(Identifier registry, Identifier id) {
 
     public static Pair<TagKey<?>, List<Identifier>> readJson(String filename) {
         // example: tags/ivlev_invasion/shape_type/example_tag.json resolves to [dynamic_planimetry:shape_type / ivlev_invasion:example_tag]
-        String[] name = filename.split("[/\\\\]", 2);
+        String[] name = filename.replace(".json", "").split("[/\\\\]", 3);
         FileHandle file = Gdx.files.internal("tags/" + filename);
         Gdx.app.log("TagReader", Arrays.toString(name)); // debug
         Identifier registry = new Identifier(name[1]);

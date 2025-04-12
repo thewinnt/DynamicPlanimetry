@@ -156,11 +156,6 @@ public class LineSegment extends Line implements SegmentLike {
     }
 
     @Override
-    public String getTypeName() {
-        return "shape.line_segment";
-    }
-
-    @Override
     public Collection<SegmentLike> asSegments() {
         return List.of(this);
     }

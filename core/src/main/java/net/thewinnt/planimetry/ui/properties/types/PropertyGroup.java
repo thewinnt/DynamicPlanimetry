@@ -14,6 +14,8 @@ import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
+import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
+import net.thewinnt.planimetry.ui.properties.layout.RightAlignedLayout;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class PropertyGroup extends Property<Property<?>> {
@@ -75,5 +77,10 @@ public class PropertyGroup extends Property<Property<?>> {
 
     public void addProperties(Collection<Property<?>> properties) {
         this.properties.addAll(properties);
+    }
+
+    @Override
+    public CustomLayout getLayout() {
+        return RightAlignedLayout.INSTANCE;
     }
 }

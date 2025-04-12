@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.badlogic.gdx.Gdx;
@@ -21,14 +23,15 @@ import net.thewinnt.planimetry.data.update.DataUpdater;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
-import net.thewinnt.planimetry.shapes.point.PointReference;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.text.NameComponent;
-import net.thewinnt.planimetry.util.HashBiMap;
+
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 public class Drawing {
     public final List<BiConsumer<Shape, Shape>> swapListeners = new ArrayList<>();
-    public final HashBiMap<Long, Shape> shapeIds = new HashBiMap<>();
+    public final Long2ObjectMap<Shape> shapeIds = new Long2ObjectOpenHashMap<>();
     public final List<Shape> allShapes;
     public final List<Shape> shapes;
     public final List<PointProvider> points;
@@ -123,9 +126,7 @@ public class Drawing {
         }
         if (shape instanceof PointProvider) {
             for (Shape i : this.points) {
-                if (i instanceof PointReference point && point.getPoint() == shape) {
-                    return true;
-                } else if (i == shape) {
+                if (i == shape) {
                     return true;
                 }
             }
@@ -175,7 +176,7 @@ public class Drawing {
     public long getId(Shape shape) {
         if (isLoading) return 0;
         if (this.shapeIds.containsValue(shape)) {
-            return this.shapeIds.getKey(shape);
+            return shape.getId();
         } else {
             // this is the first time ever i use the do-while loop
             do {
@@ -286,7 +287,7 @@ public class Drawing {
 
     public CompoundTag toNbt() {
         CompoundTag output = new CompoundTag();
-        SavingContext context = new SavingContext(Stream.concat(this.shapes.stream(), this.points.stream()).toList());
+        SavingContext context = new SavingContext(Stream.concat(this.shapes.stream(), this.points.stream()).collect(Collectors.toList()));
         ListTag<CompoundTag> shapes = new ListTag<>(CompoundTag.class);
         shapes.addAll(context.save());
         output.put("shapes", shapes);

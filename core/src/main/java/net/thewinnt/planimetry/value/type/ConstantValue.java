@@ -1,14 +1,12 @@
 package net.thewinnt.planimetry.value.type;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.thewinnt.planimetry.point.ValueContext;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
@@ -29,7 +27,7 @@ public final class ConstantValue implements DynamicValue {
     }
 
     @Override
-    public double get(ValueContext context) {
+    public double get() {
         return value;
     }
 

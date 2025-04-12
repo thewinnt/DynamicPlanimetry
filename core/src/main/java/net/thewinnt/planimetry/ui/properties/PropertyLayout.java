@@ -48,7 +48,7 @@ public class PropertyLayout extends WidgetGroup {
 
         // pane.setupOverscroll(Gdx.graphics.getHeight() / Size.MEDIUM.getFactor() * 1.1f, 10, 200);
 
-        VerticalGroup propertyList = new VerticalGroup().top().left().expand().fill().pad(2, 5, 2, 5);
+        VerticalGroup propertyList = new VerticalGroup().top().left().expand().fill().pad(2, 5, 2, 0);
         propertyList.setFillParent(true);
         for (Property<?> i : properties) {
             propertyList.addActor(new PropertyEntry(i, styles, size));
@@ -83,11 +83,24 @@ public class PropertyLayout extends WidgetGroup {
     }
 
     @Override
+    public float getPrefWidth() {
+        if (this.list == null) {
+            return this.pane.getPrefWidth();
+        }
+        return Math.max(this.list.getPrefWidth(), this.pane.getPrefWidth());
+    }
+
+    @Override
     public float getMinHeight() {
         if (this.list != null && this.list.isChecked()) {
             return this.list.getPrefHeight() * 2;
         } else {
             return this.list.getPrefHeight();
         }
+    }
+
+    @Override
+    public float getMinWidth() {
+        return this.pane.getMinWidth();
     }
 }

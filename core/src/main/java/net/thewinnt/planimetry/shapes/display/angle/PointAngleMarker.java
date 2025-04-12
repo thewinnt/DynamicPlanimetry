@@ -48,7 +48,7 @@ public class PointAngleMarker extends AngleMarker {
 
     @Override
     public String getTypeName() {
-        return "shape.angle_marker.point";
+        return this.getPropertyName("point");
     }
 
     @Override

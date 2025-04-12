@@ -143,15 +143,15 @@ public class Circle extends Shape {
     public void rebuildProperties() {
         this.properties.clear();
         if (radiusPoint != null) {
-            BooleanProperty keep = new BooleanProperty(Component.translatable("property.circle.keep_radius"), keepRadius);
+            BooleanProperty keep = new BooleanProperty(Component.translatable(getPropertyName("keep_radius")), keepRadius);
             keep.addValueChangeListener(Circle.this::setKeepRadius);
-            this.properties.add(new PropertyGroup(Component.translatable("property.circle.group.center_point"), this.center.getProperties()));
-            this.properties.add(new PropertyGroup(Component.translatable("property.circle.group.radius_point"), this.radiusPoint.getProperties()));
+            this.properties.add(new PropertyGroup(Component.translatable(getPropertyName("group.center_point")), this.center.getProperties()));
+            this.properties.add(new PropertyGroup(Component.translatable(getPropertyName("group.radius_point")), this.radiusPoint.getProperties()));
             this.properties.add(keep);
         } else {
-            NumberProperty radius = new NumberProperty(Component.translatable("property.circle.radius"), this.radius.get());
+            NumberProperty radius = new NumberProperty(Component.translatable(getPropertyName("radius")), this.radius.get());
             radius.addValueChangeListener(r -> Circle.this.radius = () -> r);
-            this.properties.add(new PropertyGroup(Component.translatable("property.circle.group.center_point"), this.center.getProperties()));
+            this.properties.add(new PropertyGroup(Component.translatable(getPropertyName("group.center_point")), this.center.getProperties()));
             this.properties.add(radius);
         }
     }
@@ -182,11 +182,6 @@ public class Circle extends Shape {
     }
 
     @Override
-    public String getTypeName() {
-        return "shape.circle";
-    }
-
-    @Override
     public ShapeDeserializer<?> type() {
         return ShapeData.CIRCLE;
     }
@@ -207,9 +202,9 @@ public class Circle extends Shape {
     }
 
     public static Circle readNbt(CompoundTag nbt, LoadingContext context) {
-        PointProvider center = (PointProvider)context.resolveShape(nbt.getLong("center"));
+        PointProvider center = context.resolveShape(nbt.getLong("center"));
         if (nbt.containsKey("radius") && nbt.get("radius") instanceof LongTag longTag) {
-            PointProvider radius = (PointProvider)context.resolveShape(longTag.asLong());
+            PointProvider radius = context.resolveShape(longTag.asLong());
             boolean keepRadius = NbtUtil.getBoolean(nbt, "keep_radius");
             return new Circle(context.getDrawing(), center, radius, keepRadius);
         } else {

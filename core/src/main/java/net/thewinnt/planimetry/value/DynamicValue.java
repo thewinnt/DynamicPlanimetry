@@ -3,21 +3,18 @@ package net.thewinnt.planimetry.value;
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.data.registry.Identifier;
 import net.thewinnt.planimetry.data.registry.Registries;
-import net.thewinnt.planimetry.point.ValueContext;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.text.Component;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.stream.Stream;
 
 public interface DynamicValue extends Cloneable {
-    double get(ValueContext context);
+    double get();
     Collection<Property<?>> appendProperties(Collection<Property<?>> prefix);
     DynamicValueType<? extends DynamicValue> type();
-    @Nullable Stream<PointProvider> dependencies();
+    Stream<PointProvider> dependencies();
     DynamicValue clone();
 
     default String translationKey(String postfix) {

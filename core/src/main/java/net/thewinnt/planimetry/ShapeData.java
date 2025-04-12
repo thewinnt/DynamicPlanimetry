@@ -13,9 +13,7 @@ import net.thewinnt.planimetry.shapes.polygons.*;
 
 public class ShapeData {
     // POINTS
-    public static final ShapeDeserializer<Point> POINT_SIMPLE = register("point_simple", Point::readNbt);
-    public static final ShapeDeserializer<MousePoint> MOUSE_POINT = register("mouse_point", MousePoint::readNbt);
-    public static final ShapeDeserializer<PointReference> POINT_REFERENCE = register("point_reference", PointReference::readNbt);
+    public static final ShapeDeserializer<PointProvider> POINT = register("point", PointProvider::readNbt);
 
     // LINES
     public static final ShapeDeserializer<InfiniteLine> INFINITE_LINE = register("infinite_line", InfiniteLine::readNbt);

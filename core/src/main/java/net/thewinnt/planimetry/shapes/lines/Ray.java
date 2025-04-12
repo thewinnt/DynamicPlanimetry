@@ -14,9 +14,9 @@ import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
-import net.thewinnt.planimetry.shapes.lines.definition.ray.RayDefinition;
-import net.thewinnt.planimetry.shapes.lines.definition.ray.RayDefinitionType;
-import net.thewinnt.planimetry.shapes.lines.definition.ray.TwoPointRay;
+import net.thewinnt.planimetry.definition.line.ray.RayDefinition;
+import net.thewinnt.planimetry.definition.line.ray.RayDefinitionType;
+import net.thewinnt.planimetry.definition.line.ray.impl.TwoPointRay;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.types.RegistryElementProperty;
@@ -121,11 +121,6 @@ public class Ray extends Line {
     }
 
     @Override
-    public String getTypeName() {
-        return "shape.ray";
-    }
-
-    @Override
     public ShapeDeserializer<?> type() {
         return ShapeData.RAY;
     }
@@ -159,7 +154,7 @@ public class Ray extends Line {
 
     @Override
     public Component getName() {
-        return this.definition.getName();
+        return Component.translatable(this.type().typeName(), this.definition.getName());
     }
 
     @Override

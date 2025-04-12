@@ -9,7 +9,7 @@ import net.thewinnt.planimetry.ui.properties.PropertyEntry;
 public class RightAlignedLayout implements CustomLayout {
     public static final RightAlignedLayout INSTANCE = new RightAlignedLayout();
 
-    @Deprecated public RightAlignedLayout() {}
+    private RightAlignedLayout() {}
 
     @Override
     public void layout(Actor actor, PropertyEntry entry) {

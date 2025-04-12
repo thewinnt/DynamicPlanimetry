@@ -1,6 +1,5 @@
 package net.thewinnt.planimetry.value.type;
 
-import net.thewinnt.planimetry.point.ValueContext;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Stream;
@@ -27,8 +25,8 @@ public final class SingleArgumentValue implements DynamicValue {
     }
 
     @Override
-    public double get(ValueContext context) {
-        return operation.applyAsDouble(input().get(context));
+    public double get() {
+        return operation.applyAsDouble(input().get());
     }
 
     @Override

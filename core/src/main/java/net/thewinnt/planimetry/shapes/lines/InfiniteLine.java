@@ -16,9 +16,9 @@ import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
-import net.thewinnt.planimetry.shapes.lines.definition.infinite.InfiniteLineDefinition;
-import net.thewinnt.planimetry.shapes.lines.definition.infinite.InfiniteLineType;
-import net.thewinnt.planimetry.shapes.lines.definition.infinite.TwoPointInfiniteLine;
+import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineDefinition;
+import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineType;
+import net.thewinnt.planimetry.definition.line.infinite.impl.TwoPointInfiniteLine;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.types.RegistryElementProperty;
@@ -76,11 +76,6 @@ public class InfiniteLine extends Line {
     }
 
     @Override
-    public String getTypeName() {
-        return "shape.infinite_line";
-    }
-
-    @Override
     public Optional<Vec2> intersection(Line other) {
         return switch (other.getType()) {
             case INFINITE -> intersectInf(other);
@@ -105,7 +100,7 @@ public class InfiniteLine extends Line {
 
     @Override
     public Component getName() {
-        return definition.getName();
+        return Component.translatable(this.getTypeName(), definition.getName());
     }
 
     @Override

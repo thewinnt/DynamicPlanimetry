@@ -26,13 +26,14 @@ import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.data.Drawing;
+import net.thewinnt.planimetry.data.registry.Registries;
+import net.thewinnt.planimetry.definition.point.PointPlacementType;
 import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
 import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
-import net.thewinnt.planimetry.shapes.point.MousePoint;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -332,7 +333,7 @@ public class DrawingBoard extends Actor {
         if (creatingShape != null) creatingShape.onRender(xb(mx), yb(my));
         Stream<Shape> nonPointSelected = selection.stream().filter(shape -> !(shape instanceof PointProvider));
         Stream<Shape> pointSelected = selection.stream().filter(shape -> shape instanceof PointProvider);
-        Shape hovered = getHoveredShape(mx, my, shape -> !(shape instanceof MousePoint));
+        Shape hovered = getHoveredShape(mx, my, shape -> !(shape instanceof PointProvider point && !point.getPlacement().is(PointPlacementType.MOUSE_POINTER)));
         for (Shape i : this.drawing.shapes) {
             if (i.shouldRender()) i.render(drawer, SelectionStatus.NONE, font, this);
         }

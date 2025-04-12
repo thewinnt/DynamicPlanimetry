@@ -52,6 +52,7 @@ configure(subprojects - project(':android')) {
     inputs.dir("${project.rootDir}/assets/tags")
     File tagsFolder = new File("${project.rootDir}/assets/tags")
     File tagsFile = new File(tagsFolder, "tags.txt")
+    tagsFile.delete()
 
     fileTree(tagsFolder).collect { tagsFolder.relativePath(it) }.each {
       tagsFile.append(it + "\n")

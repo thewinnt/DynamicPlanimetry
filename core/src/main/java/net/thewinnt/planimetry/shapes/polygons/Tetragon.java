@@ -6,9 +6,9 @@ import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.definition.point.placement.StaticPlacement;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
-import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -53,7 +53,7 @@ public class Tetragon extends Polygon {
     }
 
     public Tetragon(Drawing drawing, PointProvider a, PointProvider b, PointProvider c) {
-        super(drawing, List.of(a, b, c, new Point(drawing, c.getPosition().subtract(b.getPosition().subtract(a.getPosition())))));
+        super(drawing, List.of(a, b, c, PointProvider.simple(drawing, c.getPosition().subtract(b.getPosition().subtract(a.getPosition())))));
         this.a = a;
         this.b = b;
         this.c = c;
@@ -94,11 +94,6 @@ public class Tetragon extends Polygon {
     }
 
     @Override
-    public String getTypeName() {
-        return "shape.polygon.4";
-    }
-
-    @Override
     public ShapeDeserializer<?> type() {
         return ShapeData.TRIANGLE;
     }
@@ -117,7 +112,7 @@ public class Tetragon extends Polygon {
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
         switch (this.type) {
             case PARALLELOGRAM:
-                ((Point)this.d).setPosition(c.getPosition().subtract(b.getPosition().subtract(a.getPosition())));
+                this.d.setPlacement(new StaticPlacement(c.getPosition().subtract(b.getPosition().subtract(a.getPosition()))));
                 break;
             default:
                 break;

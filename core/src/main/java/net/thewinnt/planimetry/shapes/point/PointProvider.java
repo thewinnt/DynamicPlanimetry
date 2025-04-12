@@ -3,11 +3,21 @@ package net.thewinnt.planimetry.shapes.point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.graphics.Color;
 
+import net.querz.nbt.tag.CompoundTag;
+import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
+import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.data.SavingContext;
+import net.thewinnt.planimetry.data.registry.Registries;
+import net.thewinnt.planimetry.definition.point.PointPlacement;
+import net.thewinnt.planimetry.definition.point.PointPlacementType;
+import net.thewinnt.planimetry.definition.point.placement.MousePlacement;
+import net.thewinnt.planimetry.definition.point.placement.StaticPlacement;
 import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.SegmentLike;
@@ -15,29 +25,33 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Size;
-import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.types.NameComponentProperty;
+import net.thewinnt.planimetry.ui.properties.types.RegistryElementProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public abstract class PointProvider extends Shape {
+public class PointProvider extends Shape {
     protected final List<Consumer<Vec2>> movementListeners = new ArrayList<>();
+    private PointPlacement placement;
+    private Vec2 fallback;
     protected NameComponent name;
     protected final BooleanProperty shouldRender = new BooleanProperty(Component.translatable("property.point.should_render"), true);
     private final NameComponentProperty nameProperty;
 
-    public PointProvider(Drawing drawing) {
+    public PointProvider(Drawing drawing, PointPlacement placement) {
         super(drawing);
+        this.placement = placement;
         this.name = drawing.generateName(drawing.shouldUseDashesForNaming());
         this.nameProperty = new NameComponentProperty(Component.translatable(getPropertyName("name")), name);
     }
 
-    public PointProvider(Drawing drawing, NameComponent name) {
+    public PointProvider(Drawing drawing, PointPlacement placement, NameComponent name) {
         super(drawing);
+        this.placement = placement;
         this.name = name;
         this.nameProperty = new NameComponentProperty(Component.translatable(getPropertyName("name")), name);
     }
@@ -45,11 +59,24 @@ public abstract class PointProvider extends Shape {
     @Override
     public void rebuildProperties() {
         properties.clear();
+        RegistryElementProperty<PointPlacementType<?>> type = new RegistryElementProperty<>(placement.type(), Component.translatable(getPropertyName("placement")), Registries.POINT_PLACEMENT_TYPE, PointPlacementType.SELECTABLE);
+        properties.add(type);
+        properties.addAll(placement.properties());
         properties.add(shouldRender);
         properties.add(nameProperty);
+        type.addValueChangeListener(t -> {
+            try {
+                placement = t.convert(placement, drawing);
+                rebuildProperties();
+            } catch (RuntimeException e) {
+                type.setValueSilent(t);
+            }
+        });
     }
 
-    public abstract Vec2 getPosition();
+    public Vec2 getPosition() {
+        return Objects.requireNonNullElse(placement.get(), fallback);
+    }
 
     public double getX() {
         return getPosition().x;
@@ -108,6 +135,33 @@ public abstract class PointProvider extends Shape {
         return List.of();
     }
 
+    @Override
+    public void move(double dx, double dy) {
+        this.placement.move(dx, dy);
+    }
+
+    @Override
+    public void move(Vec2 delta) {
+        this.placement.move(delta);
+    }
+
+    @Override
+    public boolean canMove() {
+        return placement.canMove();
+    }
+
+    public PointPlacement getPlacement() {
+        return placement;
+    }
+
+    public void setPlacement(PointPlacement placement) {
+        Vec2 fallback = this.placement.get();
+        if (fallback != null) {
+            this.fallback = fallback;
+        }
+        this.placement = placement;
+    }
+
     public void addMovementListener(Consumer<Vec2> listener) {
         this.movementListeners.add(listener);
     }
@@ -140,44 +194,73 @@ public abstract class PointProvider extends Shape {
         return name;
     }
 
-    @Override
-    public String getTypeName() {
-        return "shape.point";
-    }
-
     public void setName(NameComponent name) {
         this.name = name;
     }
 
     @Override
-    public void replaceShape(Shape old, Shape neo) {} // most points don't have dependencies
+    public void replaceShape(Shape old, Shape neo) {
+        // TODO PointPlacement#replaceShape
+    } // most points don't have dependencies
+
+    /** Makes a point static */
+    public void freeze() {
+        this.placement = new StaticPlacement(placement.get());
+    }
+
+    @Override
+    protected CompoundTag writeNbt(SavingContext context) {
+        CompoundTag nbt = new CompoundTag();
+        nbt.put("placement", placement.toNbt(context));
+        nbt.put("name", name.toNbt());
+        return nbt;
+    }
+
+    public static PointProvider readNbt(CompoundTag nbt, LoadingContext context) {
+        return new PointProvider(
+            context.getDrawing(),
+            PointPlacement.fromNbt(nbt.getCompoundTag("placement"), context),
+            NameComponent.readNbt(nbt.getCompoundTag("name"))
+        );
+    }
 
     @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
+        Vec2 position = placement.get();
+        boolean isFallback = position == null;
+        if (position == null) {
+            position = Objects.requireNonNullElse(fallback, Vec2.ZERO);
+        }
         if (!board.hasShape(this)) {
             drawer.setColor(switch (selection) {
                 case HOVERED -> Theme.current().utilityPointHovered();
                 case SELECTED -> Theme.current().utilityPointSelected();
                 default -> Theme.current().utilityPoint();
             });
-            drawer.circle(board.bx(getPosition().x), board.by(getPosition().y), this.getThickness(board.getScale()) * 2, 2);
+            drawer.circle(board.bx(position.x), board.by(position.y), this.getThickness(board.getScale()) * 2, 2);
+        } else if (isFallback) {
+            drawer.setColor(switch (selection) {
+                case HOVERED -> Theme.current().undefinedPointHovered();
+                case SELECTED -> Theme.current().undefinedPointSelected();
+                default -> Theme.current().undefinedPoint();
+            });
+            drawer.circle(board.bx(position.x), board.by(position.y), this.getThickness(board.getScale()) * 2, 2);
         } else {
             Color color = switch (selection) {
                 case HOVERED -> Theme.current().pointHovered();
                 case SELECTED -> Theme.current().pointSelected();
                 default -> Theme.current().point();
             };
-            drawer.filledCircle(board.boardToGlobal(getPosition()).toVector2f(), this.getThickness(board.getScale()) * 2, color);
+            drawer.filledCircle(board.boardToGlobal(position).toVector2f(), this.getThickness(board.getScale()) * 2, color);
         }
         if (this.name != null) {
             Vec2 neededSpace = this.name.getSize(font, Size.MEDIUM).mul(0.5);
             double minRadius = (Math.max(neededSpace.x, neededSpace.y)) / board.getScale();
-            Vec2 start = getPosition();
             double bestSpace = 0;
             // double _worstSpace = Double.MAX_VALUE;
             Vec2 bestPos = null;
             for (double angle = 0; angle < Math.PI; angle += 0.4) {
-                Vec2 test = MathHelper.continueFromAngle(start, angle, minRadius);
+                Vec2 test = MathHelper.continueFromAngle(position, angle, minRadius);
                 double space = board.getFreeSpace(test.x, test.y);
                 if (space >= bestSpace) {
                     bestSpace = space;
@@ -188,7 +271,7 @@ public abstract class PointProvider extends Shape {
                 // }
             }
             for (double angle = 0; angle < Math.PI; angle += 0.4) {
-                Vec2 test = MathHelper.continueFromAngle(start, angle, -minRadius);
+                Vec2 test = MathHelper.continueFromAngle(position, angle, -minRadius);
                 double space = board.getFreeSpace(test.x, test.y);
                 if (space >= bestSpace) {
                     bestSpace = space;
@@ -206,8 +289,21 @@ public abstract class PointProvider extends Shape {
             //     space = board.getFreeSpace(test.x, test.y);
             //     drawer.filledCircle(board.boardToGlobal(test).toVector2f(), 2, Color.RED.cpy().lerp(Color.GREEN, (float)((space - _worstSpace) / (bestSpace - _worstSpace))));
             // }
-            if (bestPos == null) bestPos = MathHelper.continueFromAngle(start, 90, -minRadius);
+            if (bestPos == null) bestPos = MathHelper.continueFromAngle(position, 90, -minRadius);
             name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), board.bx(bestPos.x), (float)(board.by(bestPos.y) + neededSpace.y / 2));
         }
+    }
+
+    @Override
+    public ShapeDeserializer<?> type() {
+        return ShapeData.POINT;
+    }
+
+    public static PointProvider simple(Drawing drawing, Vec2 pos) {
+        return new PointProvider(drawing, new StaticPlacement(pos));
+    }
+
+    public static PointProvider mouse(Drawing drawing) {
+        return new PointProvider(drawing, new MousePlacement());
     }
 }

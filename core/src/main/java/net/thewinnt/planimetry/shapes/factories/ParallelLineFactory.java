@@ -7,21 +7,20 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.Line;
-import net.thewinnt.planimetry.shapes.lines.definition.infinite.ParallelLineDefinition;
-import net.thewinnt.planimetry.shapes.point.MousePoint;
-import net.thewinnt.planimetry.shapes.point.PointReference;
+import net.thewinnt.planimetry.definition.line.infinite.impl.ParallelLineDefinition;
+import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class ParallelLineFactory extends ShapeFactory {
     private final Line newLine;
-    private final PointReference point;
+    private final PointProvider point;
     private boolean isDone;
 
     public ParallelLineFactory(DrawingBoard board, Line originalLine) {
         // TODO parallel lines
         super(board);
-        this.point = new PointReference(new MousePoint(board.getDrawing()));
+        this.point = PointProvider.mouse(board.getDrawing());
         this.newLine = new InfiniteLine(board.getDrawing(), new ParallelLineDefinition(originalLine, point));
         addShape(newLine);
         addShape(point);
@@ -29,7 +28,7 @@ public class ParallelLineFactory extends ShapeFactory {
 
     @Override
     public boolean click(InputEvent event, double x, double y) {
-        this.point.setPoint(getOrCreatePoint(x, y));
+        this.replacePoint(point, x, y);
         isDone = true;
         return true;
     }

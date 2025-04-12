@@ -171,7 +171,7 @@ public abstract class Shape implements ComponentRepresentable {
             i.removeDepending(this);
         }
         if (includeDependencies) {
-            for (Shape i : this.dependencies) {
+            for (Shape i : this.dependencies.toArray(Shape[]::new)) {
                 if (i.dependents.isEmpty()) i.delete(false, false);
             }
         }
@@ -199,7 +199,7 @@ public abstract class Shape implements ComponentRepresentable {
     }
 
     public String getPropertyName(String postfix) {
-        return Registries.SHAPE_TYPE.getName(this.type()).toLanguageKey("shape", postfix);
+        return Registries.SHAPE_TYPE.getName(this.type()).toLanguageKey("property", postfix);
     }
 
     protected abstract CompoundTag writeNbt(SavingContext context);
@@ -287,11 +287,11 @@ public abstract class Shape implements ComponentRepresentable {
         T deserialize(CompoundTag nbt, LoadingContext context);
 
         default String typeName() {
-            return Registries.SHAPE_TYPE.getName(this).toLanguageKey("string");
+            return Registries.SHAPE_TYPE.getName(this).toLanguageKey("shape");
         }
 
         default String propertyName(String postfix) {
-            return Registries.SHAPE_TYPE.getName(this).toLanguageKey("string", postfix);
+            return Registries.SHAPE_TYPE.getName(this).toLanguageKey("property", postfix);
         }
     }
 }

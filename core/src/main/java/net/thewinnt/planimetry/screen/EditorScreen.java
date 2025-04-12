@@ -165,8 +165,8 @@ public class EditorScreen extends FlatUIScreen {
 
         if (selections.size() == 1) {
             Shape selection = selections.get(0);
-            selectedShapeName.setActor(new ComponentLabel(Component.translatable("ui.edit.properties.title"), app::getBoldFont, Size.MEDIUM));
-            properties.setActor(new PropertyLayout(selection.getProperties(), styles, selection.getName(), Size.SMALL, true));
+            selectedShapeName.setActor(new ComponentLabel(selection.getName(), app::getBoldFont, Size.MEDIUM));
+            properties.setActor(new PropertyLayout(selection.getProperties(), styles, null, Size.SMALL, true));
             Collection<Function<?>> shapeFunctions = selection.getFunctions();
             if (!shapeFunctions.isEmpty()) {
                 functions.add(new ComponentLabel(Component.translatable("ui.edit.actions.title"), app::getBoldFont, Size.MEDIUM)).expand().left().row();

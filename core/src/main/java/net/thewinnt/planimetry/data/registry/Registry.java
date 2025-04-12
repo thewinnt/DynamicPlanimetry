@@ -1,5 +1,7 @@
 package net.thewinnt.planimetry.data.registry;
 
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public interface Registry<T> {
@@ -16,6 +18,9 @@ public interface Registry<T> {
     Holder<T> wrapAsHolder(T element);
     Holder<T> getHolder(Identifier id);
     Holder<T> getHolder(int id);
+    List<T> getElementsOfTag(TagKey<?> tag);
+    List<Identifier> getTagContents(TagKey<?> tag);
+    Set<TagKey<T>> getAllTags();
 
     @SuppressWarnings("unchecked")
     public static <T> T register(Registry<? super T> registry, T element, Identifier id) {

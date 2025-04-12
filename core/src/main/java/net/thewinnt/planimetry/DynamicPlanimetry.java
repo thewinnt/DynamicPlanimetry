@@ -86,6 +86,9 @@ public class DynamicPlanimetry extends Game {
         new Color(0x0080FFFF), // utility point
         new Color(0x00C4FFFF), // utility point hovered
         new Color(0x0055CCFF), // utility point selected
+        new Color(0x00A00000), // undefined point
+        new Color(0x00FF0000), // undefined point hovered
+        new Color(0x00800000), // undefined point selected
         new Color(0xDDDDDDFF), // grid line
         new Color(0xAAAAAAFF), // grid hint
         new Color(0x808080FF), // grid center
@@ -121,6 +124,9 @@ public class DynamicPlanimetry extends Game {
         new Color(0x0080FFFF), // utility point
         new Color(0x00C4FFFF), // utility point hovered
         new Color(0x0055CCFF), // utility point selected
+        new Color(0x00A00000), // undefined point
+        new Color(0x00FF0000), // undefined point hovered
+        new Color(0x00800000), // undefined point selected
         new Color(0x404040FF), // grid line
         new Color(0x505050FF), // grid hint
         new Color(0x000000FF), // grid center

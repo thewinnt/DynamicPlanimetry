@@ -2,15 +2,12 @@ package net.thewinnt.planimetry.value;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.data.registry.Registry;
-import net.thewinnt.planimetry.point.ValueContext;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.value.serializer.ConstantValueType;
 import net.thewinnt.planimetry.value.serializer.DoubleArgumentValueType;
@@ -50,16 +47,6 @@ public interface DynamicValueType<T extends DynamicValue> {
     @SuppressWarnings("unchecked")
     default CompoundTag toNbtUnchecked(DynamicValue value) {
         return toNbt((T) value);
-    }
-
-    /**
-     * Returns a random value in some reasonable range, if the implementer felt like it.
-     * @param outMin the preferred minimum value
-     * @param outMax the preferred maximum value
-     * @see net.thewinnt.planimetry.screen.MainMenuScreen
-     */
-    default Optional<DynamicValue> createRandom(Random random, double outMin, double outMax, ValueContext context) {
-        return Optional.empty();
     }
 
     default Component name() {

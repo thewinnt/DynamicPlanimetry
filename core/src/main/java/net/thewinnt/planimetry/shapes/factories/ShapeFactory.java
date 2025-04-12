@@ -7,12 +7,14 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
+import net.thewinnt.planimetry.definition.point.placement.StaticPlacement;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
-import net.thewinnt.planimetry.shapes.point.Point;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
+
+import org.jetbrains.annotations.Nullable;
 
 public abstract class ShapeFactory {
     private final List<Shape> addingShapes = new ArrayList<>();
@@ -103,10 +105,22 @@ public abstract class ShapeFactory {
 
     protected PointProvider getOrCreatePoint(double x, double y) {
         PointProvider point = (PointProvider) board.getHoveredShape(Gdx.input.getX(), Gdx.input.getY(), shape -> shape instanceof PointProvider);
-        if (point != null) {
-            return point;
+        return point != null ? point : PointProvider.simple(board.getDrawing(), new Vec2(x, y));
+    }
+
+    protected PointProvider replacePoint(PointProvider point, double x, double y) {
+        PointProvider neo = (PointProvider) board.getHoveredShape(Gdx.input.getX(), Gdx.input.getY(), shape -> shape instanceof PointProvider);
+        if (neo != null) {
+            this.replaceShape(point, neo);
+            return neo;
         } else {
-            return new Point(board.getDrawing(), new Vec2(x, y));
+            point.setPlacement(new StaticPlacement(new Vec2(x, y)));
+            return point;
         }
+    }
+
+    @Nullable
+    protected PointProvider getPoint() {
+        return (PointProvider) board.getHoveredShape(Gdx.input.getX(), Gdx.input.getY(), shape -> shape instanceof PointProvider);
     }
 }

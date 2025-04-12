@@ -1,8 +1,11 @@
 package net.thewinnt.planimetry.data.registry;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -19,6 +22,7 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
     protected final Int2ObjectMap<Holder<T>> elementById = new Int2ObjectOpenHashMap<>();
     protected final Object2IntMap<T> ids = new Object2IntOpenHashMap<>();
     protected final Map<T, Holder<T>> holders = new HashMap<>();
+    protected final Map<TagKey<T>, List<T>> tags = new HashMap<>();
     protected boolean frozen;
     private int idMapper = 0;
 
@@ -114,19 +118,39 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
     }
 
     @Override
+    public List<T> getElementsOfTag(TagKey<?> tag) {
+        return this.tags.get(tag);
+    }
+
+    @Override
+    public List<Identifier> getTagContents(TagKey<?> tag) {
+        return this.tags.get(tag).stream().map(this::getName).collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public Set<TagKey<T>> getAllTags() {
+        return this.tags.keySet();
+    }
+
+    @Override
     public Identifier id() {
         return id;
     }
 
+    @SuppressWarnings("unchecked")
     public void reloadTags(Map<TagKey<?>, List<Identifier>> tags) {
+        this.tags.clear();
         for (Holder<T> i : this.holders.values()) {
             i.clearTags();
         }
         for (var i : tags.entrySet()) {
             if (!i.getKey().registry().equals(this.id)) continue;
+            List<T> elements = new ArrayList<>();
             for (Identifier id : i.getValue()) {
                 this.getHolder(id).addTag(i.getKey());
+                elements.add(this.get(id));
             }
+            this.tags.put((TagKey<T>) i.getKey(), elements);
         }
     }
 }

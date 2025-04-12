@@ -97,8 +97,8 @@ public class Polygon extends PolygonalChain {
     public void rebuildProperties() {
         recalculateAngles();
         super.rebuildProperties();
-        properties.add(new DisplayProperty(Component.translatable("property.polygon.area"), () -> Component.number(getArea())));
-        properties.add(new PropertyGroup(Component.translatable("property.polygon.angles"), angles));
+        properties.add(new DisplayProperty(Component.translatable(getPropertyName("area")), () -> Component.number(getArea())));
+        properties.add(new PropertyGroup(Component.translatable(getPropertyName("angles")), angles));
     }
 
     @Override
@@ -124,12 +124,12 @@ public class Polygon extends PolygonalChain {
         // for each angle in the polygon, add a new display property consisting of:
         // - a translation string, with 3 adjacent points' names as arguments
         // - the angle, formatted as one
-        angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[1].getNameComponent(), pts[0].getNameComponent(), pts[pts.length - 1].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[1].getPosition(), pts[0].getPosition(), pts[pts.length - 1].getPosition()))));
+        angles.add(new DisplayProperty(Component.translatable(getPropertyName("angle_value"), pts[1].getNameComponent(), pts[0].getNameComponent(), pts[pts.length - 1].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[1].getPosition(), pts[0].getPosition(), pts[pts.length - 1].getPosition()))));
         for (int i = 1; i < pts.length - 1; i++) {
             final int j = i;
-            angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[j-1].getNameComponent(), pts[j].getNameComponent(), pts[j+1].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[j-1].getPosition(), pts[j].getPosition(), pts[j+1].getPosition()))));
+            angles.add(new DisplayProperty(Component.translatable(getPropertyName("angle_value"), pts[j-1].getNameComponent(), pts[j].getNameComponent(), pts[j+1].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[j-1].getPosition(), pts[j].getPosition(), pts[j+1].getPosition()))));
         }
-        angles.add(new DisplayProperty(Component.translatable("property.polygon.angle_value", pts[pts.length - 2].getNameComponent(), pts[pts.length - 1].getNameComponent(), pts[0].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[pts.length - 2].getPosition(), pts[pts.length - 1].getPosition(), pts[0].getPosition()))));
+        angles.add(new DisplayProperty(Component.translatable(getPropertyName("angle_value"), pts[pts.length - 2].getNameComponent(), pts[pts.length - 1].getNameComponent(), pts[0].getNameComponent()), () -> Component.angle(MathHelper.angle(pts[pts.length - 2].getPosition(), pts[pts.length - 1].getPosition(), pts[0].getPosition()))));
     }
 
     public double getArea() {
@@ -156,10 +156,16 @@ public class Polygon extends PolygonalChain {
 
     @Override
     public String getTypeName() {
-        if (DynamicPlanimetry.getInstance().getCurrentLanguage().hasKey("shape.polygon." + points.size())) {
-            return "shape.polygon." + points.size();
+        String simple = "shape.dynamic_planimetry.polygon." + points.size();
+        if (DynamicPlanimetry.getInstance().getCurrentLanguage().hasKey(simple)) {
+            return simple;
         }
-        return "shape.polygon";
+        return super.getTypeName();
+    }
+
+    @Override
+    public String getPropertyName(String postfix) {
+        return "property.dynamic_planimetry.polygon." + postfix;
     }
 
     @Override

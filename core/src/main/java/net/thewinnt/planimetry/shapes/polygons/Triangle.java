@@ -39,11 +39,6 @@ public class Triangle extends Polygon {
     }
 
     @Override
-    public String getTypeName() {
-        return "shape.polygon.3";
-    }
-
-    @Override
     public ShapeDeserializer<?> type() {
         return ShapeData.TRIANGLE;
     }

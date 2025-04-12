@@ -5,31 +5,31 @@ import java.util.List;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
+import net.thewinnt.planimetry.definition.point.placement.MousePlacement;
+import net.thewinnt.planimetry.definition.point.placement.StaticPlacement;
 import net.thewinnt.planimetry.math.Vec2;
-import net.thewinnt.planimetry.shapes.point.MousePoint;
-import net.thewinnt.planimetry.shapes.point.Point;
-import net.thewinnt.planimetry.shapes.point.PointReference;
+import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class PointFactory extends ShapeFactory {
-    private final PointReference point;
+    private final PointProvider point;
 
     public PointFactory(DrawingBoard board) {
         super(board);
-        this.point = new PointReference(new MousePoint(board.getDrawing()));
+        this.point = PointProvider.mouse(board.getDrawing());
         this.addShape(point);
     }
 
     @Override
     public boolean click(InputEvent event, double x, double y) {
-        this.point.setPoint(new Point(board.getDrawing(), new Vec2(x, y)));
+        this.point.setPlacement(new StaticPlacement(new Vec2(x, y)));
         return true;
     }
 
     @Override
     public boolean isDone() {
-        return !(point.getPoint() instanceof MousePoint);
+        return !(point.getPlacement() instanceof MousePlacement);
     }
 
     @Override

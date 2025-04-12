@@ -14,6 +14,8 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.util.FontProvider;
 
+import org.jetbrains.annotations.ApiStatus;
+
 public interface Component extends ComponentRepresentable {
     String toString();
     Vec2 drawGetSize(Batch batch, FontProvider font, Size size, Color color, float x, float y);
@@ -23,49 +25,50 @@ public interface Component extends ComponentRepresentable {
      * @deprecated use {@link #toNbt()} for actual saving
      */
     @Deprecated
+    @ApiStatus.OverrideOnly
     CompoundTag writeNbt();
     ComponentDeserializer<?> getDeserializer();
 
-    public default CompoundTag toNbt() {
+    default CompoundTag toNbt() {
         CompoundTag nbt = this.writeNbt();
         nbt.putString("type", Components.getComponentType(this.getDeserializer()).toString());
         return nbt;
     }
 
-    public static Component fromNbt(CompoundTag nbt) {
+    static Component fromNbt(CompoundTag nbt) {
         String type = nbt.getString("type");
         return Components.getDeserializer(type).deserialize(nbt);
     }
 
-    public static Component empty() {
+    static Component empty() {
         return Empty.INSTANCE;
     }
 
-    public static LiteralComponent literal(String value) {
+    static LiteralComponent literal(String value) {
         return value == null ? LiteralComponent.EMPTY : new LiteralComponent(value);
     }
 
-    public static LiteralComponent number(double value) {
+    static LiteralComponent number(double value) {
         return new LiteralComponent(DynamicPlanimetry.formatNumber(value));
     }
 
-    public static LiteralComponent angle(double radians) {
+    static LiteralComponent angle(double radians) {
         return new LiteralComponent(DynamicPlanimetry.formatNumber(Settings.get().toUnit(radians)) + Settings.get().getAngleUnit().getUnit());
     }
 
-    public static Component of(Component... components) {
+    static Component of(Component... components) {
         return new MultiComponent(Arrays.asList(components));
     }
 
-    public static Component optional(Component component) {
+    static Component optional(Component component) {
         return component == null ? Empty.INSTANCE : component;
     }
 
-    public static SimpleTranslatableComponent translatable(String key) {
+    static SimpleTranslatableComponent translatable(String key) {
         return new SimpleTranslatableComponent(key);
     }
 
-    public static Component translatable(String key, Object... args) {
+    static Component translatable(String key, Object... args) {
         boolean isMulti = false;
         for (Object i : args) {
             if (i instanceof Component) {
@@ -106,7 +109,7 @@ public interface Component extends ComponentRepresentable {
         return this;
     }
 
-    static class Empty implements Component {
+    class Empty implements Component {
         public static final Empty INSTANCE = new Empty();
 
         private Empty() {}
@@ -145,7 +148,7 @@ public interface Component extends ComponentRepresentable {
     }
 
     @FunctionalInterface
-    public static interface ComponentDeserializer<T extends Component> {
+    interface ComponentDeserializer<T extends Component> {
         T deserialize(CompoundTag nbt);
     }
 }
