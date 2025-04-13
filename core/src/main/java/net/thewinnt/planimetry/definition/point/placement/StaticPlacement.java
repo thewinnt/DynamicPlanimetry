@@ -3,6 +3,7 @@ package net.thewinnt.planimetry.definition.point.placement;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.definition.point.PointPlacement;
 import net.thewinnt.planimetry.definition.point.PointPlacementType;
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.types.Vec2Property;
@@ -45,5 +46,10 @@ public class StaticPlacement extends PointPlacement {
     @Override
     public PointPlacementType<?> type() {
         return PointPlacementType.STATIC;
+    }
+
+    @Override
+    public List<Shape> dependencies() {
+        return List.of();
     }
 }

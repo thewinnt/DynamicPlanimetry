@@ -6,6 +6,7 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.definition.point.PointPlacement;
 import net.thewinnt.planimetry.definition.point.PointPlacementType;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.properties.Property;
 
@@ -38,5 +39,10 @@ public class MousePlacement extends PointPlacement {
     @Override
     public PointPlacementType<?> type() {
         return PointPlacementType.MOUSE_POINTER;
+    }
+
+    @Override
+    public List<Shape> dependencies() {
+        return List.of();
     }
 }

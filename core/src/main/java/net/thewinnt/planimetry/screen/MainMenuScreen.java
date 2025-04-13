@@ -64,7 +64,12 @@ public class MainMenuScreen extends FlatUIScreen {
         exit.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
+                Drawing current = app.getDrawing();
+                if (current != null && current.isUnsaved()) {
+                    stage.addActor(createSaveWindow(styles, stage, Gdx.app::exit));
+                } else {
+                    Gdx.app.exit();
+                }
             }
         });
 
@@ -150,17 +155,18 @@ public class MainMenuScreen extends FlatUIScreen {
     @Override public void customRender() {}
     @Override public void addActorsAboveFps() {}
 
-
     public static Window createSaveWindow(StyleSet styles, Stage stage) {
+        return createSaveWindow(styles, stage, () -> {});
+    }
+
+    public static Window createSaveWindow(StyleSet styles, Stage stage, Runnable postAction) {
         DynamicPlanimetry app = DynamicPlanimetry.getInstance();
         Window window = new Window(styles, Component.translatable("ui.save_or_exit.title"), true);
         Table table = new Table();
         ComponentLabel label = new ComponentLabel(Component.translatable("ui.save_or_exit"), styles.font, Size.MEDIUM);
 
-        // TODO save window
-
         TextButton save = GuiHelper.createTextButton("ui.save_or_exit.save", styles, Size.MEDIUM, () -> {
-            Window saveDialogue = EditorScreen.createSaveDialogue(styles);
+            Window saveDialogue = EditorScreen.createSaveDialogue(styles, postAction);
             saveDialogue.setBounds(window.getX(), window.getY(), window.getWidth(), window.getHeight());
             window.remove();
             stage.addActor(saveDialogue);
@@ -170,14 +176,16 @@ public class MainMenuScreen extends FlatUIScreen {
             window.remove();
             app.setDrawing(null, false);
             app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
+            postAction.run();
         });
 
-        TextButton cancel = GuiHelper.createTextButton("ui.save_or_exit.canecl", styles, Size.MEDIUM, () -> window.remove());
+        TextButton cancel = GuiHelper.createTextButton("ui.save_or_exit.cancel", styles, Size.MEDIUM, window::remove);
+        window.setActor(table);
 
-        table.add(label).colspan(3).fill().expand().row();
-        table.add(save).expand().fill();
-        table.add(noSave).expand().fill();
-        table.add(cancel).expand().fill();
+        table.add(label).pad(5).colspan(3).fill().center().row();
+        table.add(save).pad(5).expand().fill();
+        table.add(noSave).pad(5).expand().fill();
+        table.add(cancel).pad(5).expand().fill();
 
         return window;
     }

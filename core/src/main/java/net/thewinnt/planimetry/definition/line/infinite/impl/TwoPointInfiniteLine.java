@@ -98,12 +98,17 @@ public class TwoPointInfiniteLine extends InfiniteLineDefinition {
     }
 
     @Override
-    public LineSegment asLineSegment(Drawing draiwng) {
-        return new LineSegment(draiwng, a, b);
+    public LineSegment asLineSegment(Drawing drawing) {
+        return new LineSegment(drawing, a, b);
     }
 
     @Override
-    public Ray asRay(Drawing draiwng) {
-        return Ray.of(draiwng, a, b);
+    public Ray asRay(Drawing drawing) {
+        return Ray.of(drawing, a, b);
+    }
+
+    @Override
+    public List<Shape> dependencies() {
+        return List.of(a, b);
     }
 }

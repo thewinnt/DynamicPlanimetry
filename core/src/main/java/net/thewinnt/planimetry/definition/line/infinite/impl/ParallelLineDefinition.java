@@ -2,10 +2,12 @@ package net.thewinnt.planimetry.definition.line.infinite.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineDefinition;
 import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineType;
+import net.thewinnt.planimetry.definition.line.ray.impl.DirectionBasedRay;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -71,19 +73,19 @@ public class ParallelLineDefinition extends InfiniteLineDefinition {
     public Collection<Property<?>> properties() {
         point.rebuildProperties();
         ArrayList<Property<?>> output = new ArrayList<>();
-        PropertyGroup point1 = new PropertyGroup(point.getName());
-        ShapeProperty setPoint1 = new ShapeProperty(Component.translatable("shape.point"), point.getDrawing(), point, t -> t instanceof PointProvider);
-        setPoint1.addValueChangeListener(shape -> point = (PointProvider) shape);
-        point1.addProperty(setPoint1);
-        point1.addProperties(point.getProperties());
+        PropertyGroup point = new PropertyGroup(this.point.getName());
+        ShapeProperty setPoint = new ShapeProperty(Component.translatable("shape.point"), this.point.getDrawing(), this.point, t -> t instanceof PointProvider);
+        setPoint.addValueChangeListener(shape -> this.point = (PointProvider) shape);
+        point.addProperty(setPoint);
+        point.addProperties(this.point.getProperties());
 
-        PropertyGroup point2 = new PropertyGroup(line.getName());
-        ShapeProperty setPoint2 = new ShapeProperty(Component.translatable("shape.line"), line.getDrawing(), line, t -> t instanceof Line && t != getSource());
-        setPoint2.addValueChangeListener(shape -> line = (Line) shape);
-        point2.addProperty(setPoint2);
-        point2.addProperties(line.getProperties());
-        output.add(point1);
-        output.add(point2);
+        PropertyGroup line = new PropertyGroup(this.line.getName());
+        ShapeProperty setLine = new ShapeProperty(Component.translatable("shape.line"), this.line.getDrawing(), this.line, t -> t instanceof Line && t != getSource());
+        setLine.addValueChangeListener(shape -> this.line = (Line) shape);
+        line.addProperty(setLine);
+        line.addProperties(this.line.getProperties());
+        output.add(point);
+        output.add(line);
         return output;
     }
 
@@ -93,15 +95,21 @@ public class ParallelLineDefinition extends InfiniteLineDefinition {
     }
 
     @Override
-    public LineSegment asLineSegment(Drawing draiwng) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'asLineSegment'");
+    public LineSegment asLineSegment(Drawing drawing) {
+        Vec2 offset = this.point.getPosition().subtract(line.point1());
+        PointProvider b = drawing.getNearestPoint(line.point2().add(offset));
+        if (this.getSource().contains(b.getPosition())) {
+            return new LineSegment(drawing, point, b);
+        } else {
+            b = PointProvider.simple(drawing, line.point2().add(offset));
+            drawing.addShape(b);
+            return new LineSegment(drawing, point, b);
+        }
     }
 
     @Override
-    public Ray asRay(Drawing draiwng) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'asRay'");
+    public Ray asRay(Drawing drawing) {
+        return new Ray(drawing, new DirectionBasedRay(point, MathHelper.angleTo(line.point1(), line.point2())));
     }
 
     public Line getLine() {
@@ -110,5 +118,10 @@ public class ParallelLineDefinition extends InfiniteLineDefinition {
 
     public PointProvider getPoint() {
         return point;
+    }
+
+    @Override
+    public List<Shape> dependencies() {
+        return List.of(point);
     }
 }

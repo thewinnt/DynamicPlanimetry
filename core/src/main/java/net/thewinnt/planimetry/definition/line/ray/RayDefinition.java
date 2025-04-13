@@ -15,6 +15,8 @@ import net.thewinnt.planimetry.ui.properties.PropertySupplier;
 import net.thewinnt.planimetry.ui.text.Component;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.List;
+
 public abstract class RayDefinition implements PropertySupplier {
     private Ray source;
 
@@ -27,6 +29,7 @@ public abstract class RayDefinition implements PropertySupplier {
     public abstract RayDefinitionType<?> type();
     public abstract InfiniteLine asInfiniteLine(Drawing drawing);
     public abstract LineSegment asLineSegment(Drawing drawing);
+    public abstract List<Shape> dependencies();
 
     public void move(Vec2 delta) {
         this.move(delta.x, delta.y);

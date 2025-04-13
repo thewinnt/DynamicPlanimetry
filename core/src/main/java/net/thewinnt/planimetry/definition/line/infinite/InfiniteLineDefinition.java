@@ -29,8 +29,8 @@ public abstract class InfiniteLineDefinition implements PropertySupplier {
     public abstract Component getName();
     public abstract void replaceShape(Shape old, Shape neo);
     public abstract InfiniteLineType<?> type();
-    public abstract LineSegment asLineSegment(Drawing draiwng);
-    public abstract Ray asRay(Drawing draiwng);
+    public abstract LineSegment asLineSegment(Drawing drawing);
+    public abstract Ray asRay(Drawing drawing);
     public abstract PointProvider getBasePoint();
     public abstract List<Shape> dependencies();
 

@@ -61,7 +61,7 @@ public abstract class DynamicIcon extends ShapeDrawerDrawable {
         public void render(float x, float y, float size) {
             super.render(x, y, size);
             drawer.line(x(4), y(4), x(38), y(38), 3);
-            drawer.line(x(4), y(38), x(4), y(38), 3);
+            drawer.line(x(4), y(38), x(38), y(4), 3);
         }
     };
 

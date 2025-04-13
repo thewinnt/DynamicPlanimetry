@@ -52,6 +52,9 @@ public class PointProvider extends Shape {
         this.placement = placement;
         this.name = drawing.generateName(drawing.shouldUseDashesForNaming());
         this.nameProperty = PropertyHelper.setter(new NameComponentProperty(Component.translatable(getPropertyName("name")), name), this::setName);
+        this.dependencies.clear();
+        this.dependencies.addAll(this.placement.dependencies());
+        this.dependencies.forEach(t -> t.addDepending(this));
     }
 
     public PointProvider(Drawing drawing, PointPlacement placement, NameComponent name) {
@@ -59,6 +62,9 @@ public class PointProvider extends Shape {
         this.placement = placement;
         this.name = name;
         this.nameProperty = PropertyHelper.setter(new NameComponentProperty(Component.translatable(getPropertyName("name")), name), this::setName);
+        this.dependencies.clear();
+        this.dependencies.addAll(this.placement.dependencies());
+        this.dependencies.forEach(t -> t.addDepending(this));
     }
 
     @Override
@@ -72,6 +78,9 @@ public class PointProvider extends Shape {
         type.addValueChangeListener(t -> {
             try {
                 placement = t.convert(placement, drawing);
+                this.dependencies.clear();
+                this.dependencies.addAll(this.placement.dependencies());
+                this.dependencies.forEach(shape -> shape.addDepending(this));
                 rebuildProperties();
             } catch (RuntimeException e) {
                 type.setValueSilent(t);

@@ -135,6 +135,7 @@ public class Drawing {
     }
 
     public void replaceShape(Shape old, Shape neo) {
+        if (neo == null) return;
         update();
         // swap dependencies
         for (Shape i : old.getDependencies()) {
@@ -154,11 +155,23 @@ public class Drawing {
         boolean call = !this.allShapes.contains(neo);
         // actually swap them
         if (neo instanceof PointProvider point) {
-            this.points.set(this.points.indexOf(old), point);
+            if (this.points.contains(old)) {
+                this.points.set(this.points.indexOf(old), point);
+            } else {
+                this.points.add(point);
+            }
         } else {
-            this.shapes.set(this.shapes.indexOf(old), neo);
+            if (this.shapes.contains(old)) {
+                this.shapes.set(this.shapes.indexOf(old), neo);
+            } else {
+                this.shapes.add(neo);
+            }
         }
-        this.allShapes.set(this.allShapes.indexOf(old), neo);
+        if (this.allShapes.contains(old)) {
+            this.allShapes.set(this.allShapes.indexOf(old), neo);
+        } else {
+            this.allShapes.add(neo);
+        }
         this.swapListeners.forEach(listener -> listener.accept(old, neo));
         if (call) {
             neo.onAdded();

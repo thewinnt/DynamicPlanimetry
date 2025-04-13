@@ -1,11 +1,15 @@
 package net.thewinnt.planimetry.definition.line.infinite.impl;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineDefinition;
 import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineType;
+import net.thewinnt.planimetry.definition.line.ray.impl.DirectionBasedRay;
+import net.thewinnt.planimetry.definition.line.ray.impl.TwoPointRay;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -14,6 +18,7 @@ import net.thewinnt.planimetry.shapes.lines.Ray;
 import net.thewinnt.planimetry.definition.line.infinite.type.AngleLineType;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.properties.types.ShapeProperty;
@@ -67,15 +72,14 @@ public class AngleBasedLineDefinition extends InfiniteLineDefinition {
 
     @Override
     public Collection<Property<?>> properties() {
-        ShapeProperty pointSelector = new ShapeProperty(Component.translatable("shape.point"), this.point.getDrawing(), this.point, t -> t instanceof PointProvider);
+        ShapeProperty pointSelector = new ShapeProperty(createProperty("point"), this.point.getDrawing(), this.point, t -> t instanceof PointProvider);
         pointSelector.addValueChangeListener(shape -> this.point = (PointProvider) shape);
 
         PropertyGroup point = new PropertyGroup(this.point.getName());
         point.addProperty(pointSelector);
         point.addProperties(this.point.getProperties());
 
-        NumberProperty angle = new NumberProperty(createProperty("angle"), this.angle);
-        angle.addValueChangeListener(t -> this.angle = t);
+        NumberProperty angle = PropertyHelper.angle(getSource().getPropertyName("angle"), this.angle, this::setAngle);
 
         return List.of(point, angle);
     }
@@ -86,15 +90,24 @@ public class AngleBasedLineDefinition extends InfiniteLineDefinition {
     }
 
     @Override
-    public LineSegment asLineSegment(Drawing draiwng) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'asLineSegment'");
+    public LineSegment asLineSegment(Drawing drawing) {
+        Vec2 a = point.getPosition();
+        Optional<PointProvider> b = drawing.points.stream()
+                                        .min(Comparator.comparingDouble(
+                                            value -> Math.abs(MathHelper.angleTo(a, value.getPosition()) - angle))
+                                        );
+        if (b.isPresent()) {
+            return new LineSegment(drawing, point, b.get());
+        } else {
+            PointProvider point2 = PointProvider.simple(drawing, MathHelper.continueFromAngle(a, angle, 25));
+            drawing.addShape(point2);
+            return new LineSegment(drawing, point, point2);
+        }
     }
 
     @Override
-    public Ray asRay(Drawing draiwng) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'asRay'");
+    public Ray asRay(Drawing drawing) {
+        return new Ray(drawing, new DirectionBasedRay(point, angle));
     }
 
     public PointProvider getPoint() {
@@ -103,5 +116,14 @@ public class AngleBasedLineDefinition extends InfiniteLineDefinition {
 
     public double getAngle() {
         return angle;
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+
+    @Override
+    public List<Shape> dependencies() {
+        return List.of(point);
     }
 }

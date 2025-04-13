@@ -7,7 +7,7 @@ import net.thewinnt.planimetry.ui.properties.PropertyEntry;
 public class BasicLayout implements CustomLayout {
     public static final BasicLayout INSTANCE = new BasicLayout();
 
-    @Deprecated public BasicLayout() {}
+    private BasicLayout() {}
 
     @Override
     public void layout(Actor actor, PropertyEntry entry) {

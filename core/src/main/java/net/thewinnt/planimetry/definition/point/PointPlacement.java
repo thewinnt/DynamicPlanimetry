@@ -8,10 +8,12 @@ import net.thewinnt.planimetry.data.registry.Identifier;
 import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.data.registry.TagKey;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.PropertySupplier;
 
 import java.util.Collection;
+import java.util.List;
 
 public abstract class PointPlacement implements PropertySupplier {
     public abstract Vec2 get();
@@ -20,6 +22,7 @@ public abstract class PointPlacement implements PropertySupplier {
     public abstract boolean canMove();
     public abstract Collection<Property<?>> properties();
     public abstract PointPlacementType<?> type();
+    public abstract List<Shape> dependencies();
 
     public final CompoundTag toNbt(SavingContext context) {
         CompoundTag nbt = this.type().writeNbt(this, context);

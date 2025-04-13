@@ -275,8 +275,7 @@ public class Window extends WidgetGroup {
         }
         styles.pressed.draw(batch, this.getX(), this.getY() + this.getHeight() - nameSize.y, this.getWidth(), nameSize.y);
         if (name != null) {
-            float lineHeight = Size.MEDIUM.lines(1);
-            name.draw(batch, styles.font, Size.MEDIUM, Theme.current().textUI(), this.getX() + 2, this.getY() + this.getHeight() - 5);
+            name.draw(batch, styles.font, Size.MEDIUM, Theme.current().textUI(), this.getX() + 2, this.getY() + this.getHeight() - 3);
         }
         super.draw(batch, parentAlpha);
         // TODO window manager

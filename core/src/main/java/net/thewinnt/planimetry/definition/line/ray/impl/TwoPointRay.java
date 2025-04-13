@@ -2,6 +2,7 @@ package net.thewinnt.planimetry.definition.line.ray.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
@@ -94,4 +95,8 @@ public class TwoPointRay extends RayDefinition {
         return RayDefinitionType.TWO_POINTS;
     }
 
+    @Override
+    public List<Shape> dependencies() {
+        return List.of(a, b);
+    }
 }

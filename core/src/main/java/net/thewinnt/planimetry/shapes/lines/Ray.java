@@ -30,6 +30,10 @@ public class Ray extends Line {
     public Ray(Drawing drawing, RayDefinition definition) {
         super(drawing);
         this.definition = definition;
+        definition.setSource(this);
+        this.dependencies.clear();
+        this.dependencies.addAll(this.definition.dependencies());
+        this.dependencies.forEach(t -> t.addDepending(this));
     }
 
     @Override
@@ -102,9 +106,12 @@ public class Ray extends Line {
         this.properties.addAll(this.definition.properties());
         property.addValueChangeListener(type -> {
             try {
-                Ray.this.definition = type.convert(Ray.this.definition, drawing);
-                Ray.this.definition.setSource(Ray.this);
-                Ray.this.rebuildProperties();
+                this.definition = type.convert(this.definition, drawing);
+                this.definition.setSource(this);
+                this.rebuildProperties();
+                this.dependencies.clear();
+                this.dependencies.addAll(this.definition.dependencies());
+                this.dependencies.forEach(t -> t.addDepending(this));
             } catch (RuntimeException e) {
                 property.setValueSilent(type);
             }

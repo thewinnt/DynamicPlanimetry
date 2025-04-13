@@ -32,6 +32,7 @@ import net.thewinnt.planimetry.shapes.factories.PointFactory;
 import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
 import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.GuiHelper;
 import net.thewinnt.planimetry.ui.ShapeSettingsBackground;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.StyleSet;
@@ -150,7 +151,7 @@ public class EditorScreen extends FlatUIScreen {
         save.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                saveDialog = createSaveDialogue(styles);
+                saveDialog = createSaveDialogue(styles, () -> {});
                 stage.addActor(saveDialog);
             }
         });
@@ -259,7 +260,7 @@ public class EditorScreen extends FlatUIScreen {
         lastOffset = board.getOffset();
     }
 
-    public static Window createSaveDialogue(StyleSet styles) {
+    public static Window createSaveDialogue(StyleSet styles, Runnable postAction) {
         DynamicPlanimetry app = DynamicPlanimetry.getInstance();
         Window saveDialog = new Window(styles, Component.translatable("ui.save.title"), false);
         Table table = new Table();
@@ -274,22 +275,14 @@ public class EditorScreen extends FlatUIScreen {
             filename.setText(translate);
         });
 
-        TextButton save = new TextButton(DynamicPlanimetry.translate("ui.save.save"), styles.getButtonStyle(Size.SMALL, true));
-        save.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                drawing.setName(namePicker.getText());
-                drawing.save(namePicker.getText(), false);
-                saveDialog.remove();
-            }
+        TextButton save = GuiHelper.createTextButton("ui.save.save", styles, Size.SMALL, () -> {
+            drawing.setName(namePicker.getText());
+            drawing.save(namePicker.getText(), false);
+            saveDialog.remove();
+            postAction.run();
         });
 
-        TextButton cancel = new TextButton(DynamicPlanimetry.translate("ui.save.cancel"), styles.getButtonStyle(Size.SMALL, true));
-        cancel.addListener(new ChangeListener() {
-            public void changed(ChangeEvent event, Actor actor) {
-                saveDialog.remove();
-            }
-        });
+        TextButton cancel = GuiHelper.createTextButton("ui.save.cancel", styles, Size.SMALL, saveDialog::remove);
 
         Label nameLabel = new Label(DynamicPlanimetry.translate("ui.save.drawing_name"), styles.getLabelStyle(Size.SMALL));
         table.add(nameLabel).pad(Gdx.graphics.getHeight() / 40f, 5, 0, 5);

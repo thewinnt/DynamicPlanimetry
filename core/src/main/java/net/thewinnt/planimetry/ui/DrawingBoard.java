@@ -378,10 +378,21 @@ public class DrawingBoard extends Actor {
             font1.draw(batch, "max x: " + maxX(), x(5), y(getHeight() - 205));
             font1.draw(batch, "min y: " + minY(), x(5), y(getHeight() - 230));
             font1.draw(batch, "max y: " + maxY(), x(5), y(getHeight() - 255));
+            BitmapFont font2 = font.getFont(40, Color.MAROON);
             if (!selection.isEmpty()) {
-                font.getFont(40, Color.MAROON).draw(batch, "keyboard focus: " + this.getStage().getKeyboardFocus(), x(5), y(155));
+                if (selection.size() == 1) {
+                    font2.draw(batch, "keyboard focus: " + this.getStage().getKeyboardFocus(), x(5), y(235));
+                } else {
+                    font2.draw(batch, "keyboard focus: " + this.getStage().getKeyboardFocus(), x(5), y(155));
+                }
             }
-            font.getFont(40, Color.MAROON).draw(batch, "selected: " + selection, x(5), y(115));
+            if (selection.size() == 1) {
+                font2.draw(batch, "selected: " + selection, x(5), y(195));
+                font2.draw(batch, "dependencies: " + selection.get(0).getDependencies(), x(5), y(155));
+                font2.draw(batch, "dependenents: " + selection.get(0).getDependingShapes(), x(5), y(115));
+            } else {
+                font2.draw(batch, "selected: " + selection, x(5), y(115));
+            }
         }
         if (creatingShape != null) {
             final float lineHeight = font.getFont((int)(Gdx.graphics.getHeight() / Size.MEDIUM.getFactor()), Color.BLACK).getLineHeight();

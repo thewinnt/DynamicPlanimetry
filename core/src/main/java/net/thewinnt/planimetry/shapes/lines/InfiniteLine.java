@@ -35,6 +35,9 @@ public class InfiniteLine extends Line {
         this.definition = definition;
         if (this.definition != null) {
             this.definition.setSource(this);
+            this.dependencies.clear();
+            this.dependencies.addAll(this.definition.dependencies());
+            this.dependencies.forEach(t -> t.addDepending(this));
         }
     }
 
@@ -126,9 +129,12 @@ public class InfiniteLine extends Line {
         this.properties.addAll(definition.properties());
         definitionType.addValueChangeListener(type -> {
             try {
-                InfiniteLine.this.definition = type.convert(InfiniteLine.this.definition, drawing);
-                InfiniteLine.this.definition.setSource(InfiniteLine.this);
-                InfiniteLine.this.rebuildProperties();
+                this.definition = type.convert(this.definition, drawing);
+                this.definition.setSource(this);
+                this.dependencies.clear();
+                this.dependencies.addAll(this.definition.dependencies());
+                this.dependencies.forEach(t -> t.addDepending(this));
+                this.rebuildProperties();
             } catch (RuntimeException e) {
                 definitionType.setValueSilent(type);
             }
