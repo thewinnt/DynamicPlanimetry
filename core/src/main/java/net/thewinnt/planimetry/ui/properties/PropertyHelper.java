@@ -1,6 +1,8 @@
 package net.thewinnt.planimetry.ui.properties;
 
+import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
+import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.properties.types.ShapeProperty;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -24,5 +26,11 @@ public class PropertyHelper {
     public static <E, T extends Property<E>> T setter(T property, Consumer<E> setter) {
         property.addValueChangeListener(setter);
         return property;
+    }
+
+    public static NumberProperty angle(String nameKey, double currentRad, Consumer<Double> setterRad) {
+        NumberProperty output = new NumberProperty(Component.translatable(nameKey), Settings.get().toUnit(currentRad));
+        output.addValueChangeListener(unit -> setterRad.accept(Settings.get().toRadians(unit)));
+        return output;
     }
 }

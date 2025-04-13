@@ -9,6 +9,8 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import net.querz.nbt.io.NBTUtil;
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.data.NbtUtil;
+import net.thewinnt.planimetry.settings.AntialiasingType;
 import net.thewinnt.planimetry.ui.Notifications;
 
 /** Launches the desktop (LWJGL3) application. */
@@ -41,14 +43,15 @@ public class Lwjgl3Launcher {
 
     private static Lwjgl3Application createApplication(CompoundTag settings, boolean debug) {
         DragAndDropWrapper dragAndDrop = new DragAndDropWrapper();
-        return new Lwjgl3Application(new DynamicPlanimetry(settings, new DesktopPlatform(), new DesktopIO(dragAndDrop), debug), getDefaultConfiguration(dragAndDrop));
+        byte samples = NbtUtil.getOptionalByte(settings, "antialiasing", (byte)0);
+        return new Lwjgl3Application(new DynamicPlanimetry(settings, new DesktopPlatform(), new DesktopIO(dragAndDrop), debug), getDefaultConfiguration(dragAndDrop, samples));
     }
 
-    private static Lwjgl3ApplicationConfiguration getDefaultConfiguration(DragAndDropWrapper dragAndDrop) {
+    private static Lwjgl3ApplicationConfiguration getDefaultConfiguration(DragAndDropWrapper dragAndDrop, int msaaSamples) {
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
         configuration.setTitle("Dynamic Planimetry");
         configuration.useVsync(false);
-        configuration.setBackBufferConfig(8, 8, 8, 8, 16, 0, 16); // TODO make this a settings
+        configuration.setBackBufferConfig(8, 8, 8, 8, 16, 0, msaaSamples); // TODO make this a settings
         //// Limits FPS to the refresh rate of the currently active monitor.
         // configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
         //// If you remove the above line and set Vsync to false, you can get unlimited FPS, which can be

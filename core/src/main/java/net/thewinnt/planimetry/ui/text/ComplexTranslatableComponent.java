@@ -55,7 +55,7 @@ public class ComplexTranslatableComponent implements Component, CharSequence {
 
     @Override
     public String toString() {
-        return DynamicPlanimetry.getInstance().getCurrentLanguage().get(key, args);
+        return DynamicPlanimetry.translate(key, args);
     }
 
     public void setArgs(Object... args) {

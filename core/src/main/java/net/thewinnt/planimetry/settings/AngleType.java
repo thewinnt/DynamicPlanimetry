@@ -9,7 +9,7 @@ import java.util.function.DoubleFunction;
 public enum AngleType implements ComponentRepresentable {
     GRADIANS(Component.translatable("angle.gradians"), t -> t * MathHelper.RADIANS_TO_GRADIANS, t -> t * MathHelper.GRADIANS_TO_RADIANS, Component.translatable("angle.gradians.unit"), 400),
     RADIANS(Component.translatable("angle.radians"), t -> t, t -> t, Component.translatable("angle.radians.unit"), Math.PI * 2),
-    DEGREES(Component.translatable("angle.degrees"), t -> Math.toDegrees(t), t -> Math.toRadians(t), Component.translatable("angle.degrees.unit"), 360);
+    DEGREES(Component.translatable("angle.degrees"), Math::toDegrees, Math::toRadians, Component.translatable("angle.degrees.unit"), 360);
 
     private final DoubleFunction<Double> toUnit;
     private final DoubleFunction<Double> toRadians;

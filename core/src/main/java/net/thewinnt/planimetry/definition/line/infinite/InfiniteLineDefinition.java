@@ -17,6 +17,8 @@ import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.PropertySupplier;
 import net.thewinnt.planimetry.ui.text.Component;
 
+import java.util.List;
+
 public abstract class InfiniteLineDefinition implements PropertySupplier {
     private InfiniteLine source;
 
@@ -30,6 +32,7 @@ public abstract class InfiniteLineDefinition implements PropertySupplier {
     public abstract LineSegment asLineSegment(Drawing draiwng);
     public abstract Ray asRay(Drawing draiwng);
     public abstract PointProvider getBasePoint();
+    public abstract List<Shape> dependencies();
 
     public void move(Vec2 delta) {
         this.move(delta.x, delta.y);

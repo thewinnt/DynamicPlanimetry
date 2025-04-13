@@ -7,6 +7,7 @@ import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.data.Language;
 import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.settings.AngleType;
+import net.thewinnt.planimetry.settings.AntialiasingType;
 import net.thewinnt.planimetry.settings.ShapeMovementPredicate;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.Notifications;
@@ -41,6 +42,7 @@ public class Settings {
     private final BooleanProperty fullscreen = new BooleanProperty(Component.translatable("settings.fullscreen"), false);
     private final NumberProperty displayScaling = new NumberProperty(Component.translatable("settings.scaling"), 1).withMin(0.125).withMax(8).noLiveUpdates();
     private final NumberProperty editPanelScale = new NumberProperty(Component.translatable("settings.edit_pane_scale"), 1).withMin(0.1);
+    private final SelectionProperty<AntialiasingType> antialiasing = new SelectionProperty<>(Component.translatable("settings.antialiasing"), AntialiasingType.values());
     private SelectionProperty<Language> language;
     private final ActionProperty reloadLanguages = new ActionProperty(Component.translatable("settings.reload_languages"), Component.translatable("settings.reload_languages.action"), () -> {
         if (Gdx.app != null) {
@@ -64,6 +66,7 @@ public class Settings {
         reloadLanguages.layoutOverride = PROPERTY_LAYOUT;
         displayScaling.layoutOverride = PROPERTY_LAYOUT;
         editPanelScale.layoutOverride = PROPERTY_LAYOUT;
+        antialiasing.layoutOverride = PROPERTY_LAYOUT;
         theme.addValueChangeListener(theme -> {
             if (Gdx.app != null) {
                 DynamicPlanimetry app = DynamicPlanimetry.getInstance();
@@ -86,6 +89,7 @@ public class Settings {
                 DynamicPlanimetry.getInstance().settingsScreen.show();
             }
         });
+        antialiasing.addValueChangeListener(t -> Notifications.addNotification(DynamicPlanimetry.translate("settings.restart_needed"), 2000));
     }
 
     public Theme getTheme() {
@@ -171,7 +175,7 @@ public class Settings {
     }
 
     public PropertyLayout getLayout(StyleSet styles) {
-        ArrayList<Property<?>> properties = new ArrayList<>(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen, language, displayScaling, editPanelScale));
+        ArrayList<Property<?>> properties = new ArrayList<>(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen, language, displayScaling, editPanelScale, antialiasing));
         if (isDebug() || DynamicPlanimetry.platform().forceShowDebug()) {
             properties.add(isDebug);
             if (isDebug()) {
@@ -228,6 +232,7 @@ public class Settings {
             this.ctrlSelection.setValue(NbtUtil.getOptionalBoolean(nbt, "ctrl_selection", true));
             this.editPanelScale.setValue(NbtUtil.getOptionalDouble(nbt, "edit_pane_scale", 1));
             DynamicPlanimetry.setDisplayScaling(displayScaling.getValue().floatValue());
+            this.antialiasing.setValueSilent(AntialiasingType.valueOf(NbtUtil.getOptionalByte(nbt, "antialiasing", (byte)4)));
         } catch (Exception e) {
             Notifications.addNotification(DynamicPlanimetry.translate("error.settings.load_failed", e.getMessage()), 15000);
             e.printStackTrace();
@@ -249,6 +254,7 @@ public class Settings {
         nbt.putDouble("display_scaling", displayScaling.getValue());
         NbtUtil.writeBoolean(nbt, "ctrl_selection", ctrlSelection.getValue());
         nbt.putDouble("edit_pane_scale", editPanelScale.getValue());
+        nbt.putByte("antialiasing", antialiasing.getValue().samples);
         try {
             NBTUtil.write(nbt, file);
         } catch (IOException e) {

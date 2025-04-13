@@ -74,7 +74,7 @@ public class LineFactory extends ShapeFactory {
     public enum LineType implements ComponentRepresentable {
         INFINITE(InfiniteLine::of, Component.translatable(ShapeData.INFINITE_LINE.typeName(), "")),
         RAY(Ray::of, Component.translatable(ShapeData.RAY.typeName(), "")),
-        SEGMENT(LineSegment::new, Component.translatable(ShapeData.LINE_SEGMENT.typeName(), ""));
+        SEGMENT(LineSegment::new, Component.translatable(ShapeData.LINE_SEGMENT.typeName(), "", ""));
 
         public final LineConstructor<?> factory;
         public final Component name;

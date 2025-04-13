@@ -183,7 +183,7 @@ public class DrawingBoard extends Actor {
                     boolean force = Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT);
                     // onlyThis = !ignoreDependencies
                     // if defaultIgnoreDependencies, inverts ignoreDependencies
-                    for (Shape i : selection) {
+                    for (Shape i : selection.toArray(Shape[]::new)) {
                         i.delete(onlyThis != i.defaultIgnoreDependencies(), force);
                     }
                     return true;

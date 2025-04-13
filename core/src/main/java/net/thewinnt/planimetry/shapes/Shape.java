@@ -156,7 +156,7 @@ public abstract class Shape implements ComponentRepresentable {
         rebuildProperties();
     };
 
-    public void onRemoved() {};
+    public void onRemoved() {}
 
     /**
      * Tries to delete this shape from its drawing

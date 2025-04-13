@@ -13,6 +13,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import net.querz.nbt.io.NBTUtil;
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.ui.Notifications;
 
 import java.io.File;
@@ -46,6 +47,9 @@ public class AndroidLauncher extends AndroidApplication {
             }
         }
 
+        if (nbt != null) {
+            configuration.numSamples = NbtUtil.getOptionalByte(nbt, "antialiasing", (byte)4);
+        }
         initialize(new DynamicPlanimetry(nbt, platform, new AndroidIO(this, this.getBaseContext()), true), configuration);
     }
 
@@ -57,7 +61,7 @@ public class AndroidLauncher extends AndroidApplication {
             if (data != null && data.getData() != null) {
                 Uri uri = data.getData();
                 try {
-                    ParcelFileDescriptor descriptor = descriptor = this.getContentResolver().openFileDescriptor(uri, "w");
+                    ParcelFileDescriptor descriptor = this.getContentResolver().openFileDescriptor(uri, "w");
                     FileOutputStream stream = new FileOutputStream(descriptor.getFileDescriptor());
                     fileOutputs.forEach(consumer -> consumer.accept(stream));
                     fileOutputs.clear();
