@@ -62,11 +62,6 @@ public class PropertyGroup extends Property<Property<?>> {
     }
 
     @Override
-    public void addValueChangeListener(Consumer<Property<?>> listener) {
-        throw new UnsupportedOperationException("A PropertyGroup does not accept listeners");
-    }
-
-    @Override
     public WidgetGroup getActorSetup(StyleSet styles, Size size) {
         return new PropertyLayout(properties, styles, name, size, false, styleGetter);
     }

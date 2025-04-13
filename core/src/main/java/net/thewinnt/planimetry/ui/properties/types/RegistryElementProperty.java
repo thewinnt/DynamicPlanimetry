@@ -9,12 +9,12 @@ import net.thewinnt.planimetry.ui.text.Component;
 
 public class RegistryElementProperty<T> extends SelectionProperty<T> {
     public RegistryElementProperty(T selected, Component name, Registry<T> registry) {
-        super(selected, name, registry.stream().collect(Collectors.toList()));
+        super(selected, name, registry.stream().toList());
         this.setComponentProvider(t -> t == null ? Component.translatable("null") : Component.translatable(registry.getName(t).toLanguageKey(registry.id().path).toString()));
     }
 
     public RegistryElementProperty(T selected, Component name, Registry<T> registry, Predicate<T> filter) {
-        super(selected, name, registry.stream().filter(filter).collect(Collectors.toList()));
+        super(selected, name, registry.stream().filter(filter).toList());
         this.setComponentProvider(t -> t == null ? Component.translatable("null") : Component.translatable(registry.getName(t).toLanguageKey(registry.id().path).toString()));
     }
 

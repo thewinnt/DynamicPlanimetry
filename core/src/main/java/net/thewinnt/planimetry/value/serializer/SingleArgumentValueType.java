@@ -6,6 +6,7 @@ import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.util.Util;
 import net.thewinnt.planimetry.value.DynamicValue;
 import net.thewinnt.planimetry.value.DynamicValueType;
+import net.thewinnt.planimetry.value.type.ConstantValue;
 import net.thewinnt.planimetry.value.type.SingleArgumentValue;
 
 public record SingleArgumentValueType(DoubleUnaryOperator operation) implements DynamicValueType<SingleArgumentValue> {
@@ -20,4 +21,8 @@ public record SingleArgumentValueType(DoubleUnaryOperator operation) implements 
         return Util.make(new CompoundTag(), tag -> tag.put("value", DynamicValue.toNbt(value.input())));
     }
 
+    @Override
+    public SingleArgumentValue create() {
+        return new SingleArgumentValue(new ConstantValue(0), operation);
+    }
 }

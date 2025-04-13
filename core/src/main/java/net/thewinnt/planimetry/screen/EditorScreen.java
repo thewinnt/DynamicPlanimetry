@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.data.Drawing;
+import net.thewinnt.planimetry.data.TreeNode;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.CircleFactory;
@@ -61,6 +62,8 @@ public class EditorScreen extends FlatUIScreen {
     private TextButton goSettings;
     private TextButton save;
     private Window saveDialog;
+
+    private Shape lastSelected;
 
     public EditorScreen(DynamicPlanimetry app) {
         super(app);
@@ -166,8 +169,19 @@ public class EditorScreen extends FlatUIScreen {
 
         if (selections.size() == 1) {
             Shape selection = selections.get(0);
+            selection.rebuildProperties();
             selectedShapeName.setActor(new ComponentLabel(selection.getName(), app::getBoldFont, Size.MEDIUM));
-            properties.setActor(new PropertyLayout(selection.getProperties(), styles, null, Size.SMALL, true));
+            // create properties, keeping previously open sections
+            TreeNode<PropertyLayout.OpenStatus> openStatuses = null;
+            if (lastSelected == selection && properties.getActor() instanceof PropertyLayout layout) {
+                openStatuses = layout.getOpenChildren();
+            }
+            PropertyLayout layout = new PropertyLayout(selection.getProperties(), styles, null, Size.SMALL, true);
+            properties.setActor(layout);
+            if (openStatuses != null) {
+                layout.applyOpenStatus(openStatuses);
+            }
+            // add functions
             Collection<Function<?>> shapeFunctions = selection.getFunctions();
             if (!shapeFunctions.isEmpty()) {
                 functions.add(new ComponentLabel(Component.translatable("ui.edit.actions.title"), app::getBoldFont, Size.MEDIUM)).expand().left().row();
@@ -176,12 +190,15 @@ public class EditorScreen extends FlatUIScreen {
                     functions.add(i.setupActors(styles)).expandX().fillX().row();
                 }
             }
+            lastSelected = selection;
         } else if (selections.size() > 1) {
             selectedShapeName.setActor(new ComponentLabel(Component.translatable("ui.edit.selection.multiple", selections.size()), app::getBoldFont, Size.MEDIUM));
             properties.setActor(null);
+            lastSelected = null;
         } else {
             selectedShapeName.setActor(null);
             properties.setActor(null);
+            lastSelected = null;
         }
 
 //        actions.add(selectionToggle).expand().fill().colspan(3).pad(5, 5, 5, 0).row();

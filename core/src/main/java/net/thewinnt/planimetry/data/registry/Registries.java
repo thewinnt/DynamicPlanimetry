@@ -3,6 +3,7 @@ package net.thewinnt.planimetry.data.registry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.definition.point.PointPlacementType;
@@ -18,7 +19,7 @@ public class Registries {
     private static final Map<Registry<?>, RegistryBootstrap> BOOTSTRAPS = new HashMap<>();
     public static final Registry<Registry<?>> ROOT = REGISTRY;
     public static final Registry<Shape.ShapeDeserializer<?>> SHAPE_TYPE = registerMapped(new Identifier("shape_type"), t -> ShapeData.init());
-    public static final Registry<DynamicValueType<?>> DYNAMIC_VALUE_TYPES = registerMapped(new Identifier("dynamic_value"), t -> DynamicValueType.init());
+    public static final Registry<DynamicValueType<?>> DYNAMIC_VALUE_TYPE = registerDefaulted(new Identifier("dynamic_value_type"), () -> DynamicValueType.CONSTANT, t -> DynamicValueType.init());
     public static final Registry<Component.ComponentDeserializer<?>> COMPONENT_TYPE = registerMapped(new Identifier("component_type"), t -> Components.init());
     public static final Registry<InfiniteLineType<?>> INFINITE_LINE_DEFINITION_TYPE = registerMapped(new Identifier("infinite_line_definition_type"), t -> InfiniteLineType.init());
     public static final Registry<RayDefinitionType<?>> RAY_DEFITINION_TYPE = registerMapped(new Identifier("ray_definition_type"), t -> RayDefinitionType.init());
@@ -28,7 +29,7 @@ public class Registries {
         return registerRegistry(new MappedRegistry<>(id), id, bootstrap);
     }
 
-    public static <T> Registry<T> registerDefaulted(Identifier id, T defaultElement, RegistryBootstrap bootstrap) {
+    public static <T> Registry<T> registerDefaulted(Identifier id, Supplier<T> defaultElement, RegistryBootstrap bootstrap) {
         return registerRegistry(new DefaultedMappedRegistry<>(id, defaultElement), id, bootstrap);
     }
 

@@ -43,7 +43,7 @@ public class Lwjgl3Launcher {
 
     private static Lwjgl3Application createApplication(CompoundTag settings, boolean debug) {
         DragAndDropWrapper dragAndDrop = new DragAndDropWrapper();
-        byte samples = NbtUtil.getOptionalByte(settings, "antialiasing", (byte)0);
+        byte samples = NbtUtil.getOptionalByte(settings, "antialiasing", (byte)4);
         return new Lwjgl3Application(new DynamicPlanimetry(settings, new DesktopPlatform(), new DesktopIO(dragAndDrop), debug), getDefaultConfiguration(dragAndDrop, samples));
     }
 

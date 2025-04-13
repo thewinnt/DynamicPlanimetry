@@ -187,6 +187,8 @@ public class MainMenuScreen extends FlatUIScreen {
         table.add(noSave).pad(5).expand().fill();
         table.add(cancel).pad(5).expand().fill();
 
+        window.setPosition(Gdx.graphics.getWidth() / 2f - window.getWidth(), Gdx.graphics.getHeight() / 2f - window.getHeight());
+
         return window;
     }
 }

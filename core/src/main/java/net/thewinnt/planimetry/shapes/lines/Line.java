@@ -51,7 +51,7 @@ public abstract class Line extends Shape {
         output.addAll(super.getFunctions());
         return output;
     }
-    
+
     public abstract LineType getType();
     public abstract Line convertTo(LineType other);
 
@@ -106,7 +106,7 @@ public abstract class Line extends Shape {
                                .map(this::intersect)
                                .filter(Optional::isPresent)
                                .map(Optional::get)
-                               .collect(Collectors.toList());
+                               .toList();
             } else {
                 return other.intersections(this); // in hopes that the other shape will have figured it out
             }

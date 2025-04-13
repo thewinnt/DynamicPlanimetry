@@ -7,9 +7,9 @@ import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Size;
 
 public class PropertyEntry extends WidgetGroup {
-    private Property<?> property;
-    private ComponentLabel name;
-    private WidgetGroup propertySetup;
+    private final Property<?> property;
+    private final ComponentLabel name;
+    private final WidgetGroup propertySetup;
 
     public PropertyEntry(Property<?> property, StyleSet styles, Size size) {
         this.property = property;
@@ -38,6 +38,10 @@ public class PropertyEntry extends WidgetGroup {
             this.name.setBounds(0, 2, name.getPrefWidth(), getHeight() - 4);
             this.property.getLayout().layout(this.propertySetup, this);
         }
+    }
+
+    public WidgetGroup getPropertySetup() {
+        return propertySetup;
     }
 
     public ComponentLabel getNameLabel() {

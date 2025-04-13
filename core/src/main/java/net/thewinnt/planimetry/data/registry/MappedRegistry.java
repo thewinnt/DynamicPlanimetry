@@ -124,7 +124,7 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
 
     @Override
     public List<Identifier> getTagContents(TagKey<?> tag) {
-        return this.tags.get(tag).stream().map(this::getName).collect(Collectors.toUnmodifiableList());
+        return this.tags.get(tag).stream().map(this::getName).toList();
     }
 
     @Override

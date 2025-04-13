@@ -2,10 +2,12 @@ package net.thewinnt.planimetry.value.type;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.DoubleBinaryOperator;
 import java.util.stream.Stream;
 
+import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +17,16 @@ import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.value.DynamicValue;
 import net.thewinnt.planimetry.value.DynamicValueType;
 
-public record DoubleArgumentValue(DynamicValue arg1, DynamicValue arg2, DoubleBinaryOperator operation) implements DynamicValue {
+public final class DoubleArgumentValue implements DynamicValue {
+    private DynamicValue arg1;
+    private DynamicValue arg2;
+    private final DoubleBinaryOperator operation;
+
+    public DoubleArgumentValue(DynamicValue arg1, DynamicValue arg2, DoubleBinaryOperator operation) {
+        this.arg1 = arg1;
+        this.arg2 = arg2;
+        this.operation = operation;
+    }
 
     @Override
     public double get() {
@@ -23,10 +34,11 @@ public record DoubleArgumentValue(DynamicValue arg1, DynamicValue arg2, DoubleBi
     }
 
     @Override
-    public Collection<Property<?>> appendProperties(Collection<Property<?>> prefix) {
-        prefix.add(new PropertyGroup(Component.translatable("dynamic_value.dynamic_planimetry.double_arg.arg1"), arg1.appendProperties(new ArrayList<>())));
-        prefix.add(new PropertyGroup(Component.translatable("dynamic_value.dynamic_planimetry.double_arg.arg2"), arg2.appendProperties(new ArrayList<>())));
-        return prefix;
+    public Collection<Property<?>> properties() {
+        return List.of(
+            PropertyHelper.dynamicValue(arg1, t -> arg1 = t, "value.dynamic_planimetry.double_arg.arg1"),
+            PropertyHelper.dynamicValue(arg2, t -> arg2 = t, "value.dynamic_planimetry.double_arg.arg2")
+        );
     }
 
     @Override
@@ -57,4 +69,48 @@ public record DoubleArgumentValue(DynamicValue arg1, DynamicValue arg2, DoubleBi
     public DynamicValue clone() {
         return new DoubleArgumentValue(arg1.clone(), arg2.clone(), operation);
     }
+
+    public DynamicValue arg1() {
+        return arg1;
+    }
+
+    public DynamicValue arg2() {
+        return arg2;
+    }
+
+    @Override
+    public DynamicValue add(double delta) {
+        if (this.type() == DynamicValueType.ADD) {
+            if (arg2 instanceof ConstantValue) {
+                arg2.add(delta);
+                return this;
+            } else if (arg1 instanceof ConstantValue) {
+                arg1.add(delta);
+                return this;
+            } else {
+                return DynamicValue.super.add(delta);
+            }
+        } else if (this.type() == DynamicValueType.SUBTRACT) {
+            if (arg2 instanceof ConstantValue) {
+                arg2.add(-delta);
+                return this;
+            } else if (arg1 instanceof ConstantValue) {
+                arg1.add(delta);
+                return this;
+            } else {
+                return DynamicValue.super.add(delta);
+            }
+        } else {
+            return DynamicValue.super.add(delta);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "DoubleArgumentValue[" +
+                   "arg1=" + arg1 + ", " +
+                   "arg2=" + arg2 + ", " +
+                   "operation=" + operation + ']';
+    }
+
 }

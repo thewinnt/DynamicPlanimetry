@@ -47,7 +47,7 @@ public record SimpleTranslatableComponent(String key) implements Component, Char
 
     @Override
     public String toString() {
-        return DynamicPlanimetry.getInstance().getCurrentLanguage().get(key);
+        return DynamicPlanimetry.translate(key);
     }
 
     @Override

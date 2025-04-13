@@ -93,6 +93,7 @@ public class Drawing {
     }
 
     public void addShape(Shape shape) {
+        if (this.allShapes.contains(shape)) return;
         update();
         this.allShapes.add(shape);
         if (shape instanceof PointProvider point) {
@@ -157,19 +158,19 @@ public class Drawing {
         if (neo instanceof PointProvider point) {
             if (this.points.contains(old)) {
                 this.points.set(this.points.indexOf(old), point);
-            } else {
+            } else if (!this.points.contains(point)) {
                 this.points.add(point);
             }
         } else {
             if (this.shapes.contains(old)) {
                 this.shapes.set(this.shapes.indexOf(old), neo);
-            } else {
+            } else if (!this.shapes.contains(neo)) {
                 this.shapes.add(neo);
             }
         }
         if (this.allShapes.contains(old)) {
             this.allShapes.set(this.allShapes.indexOf(old), neo);
-        } else {
+        } else if (!this.allShapes.contains(neo)) {
             this.allShapes.add(neo);
         }
         this.swapListeners.forEach(listener -> listener.accept(old, neo));
@@ -300,7 +301,7 @@ public class Drawing {
 
     public CompoundTag toNbt() {
         CompoundTag output = new CompoundTag();
-        SavingContext context = new SavingContext(Stream.concat(this.shapes.stream(), this.points.stream()).collect(Collectors.toList()));
+        SavingContext context = new SavingContext(Stream.concat(this.shapes.stream(), this.points.stream()).toList());
         ListTag<CompoundTag> shapes = new ListTag<>(CompoundTag.class);
         shapes.addAll(context.save());
         output.put("shapes", shapes);

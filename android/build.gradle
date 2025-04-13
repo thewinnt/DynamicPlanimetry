@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 
 android {
   namespace "net.thewinnt.planimetry"
-  compileSdk 34
+  compileSdk 35
   sourceSets {
     main {
       manifest.srcFile 'AndroidManifest.xml'
@@ -52,7 +52,7 @@ repositories {
 configurations { natives }
 
 dependencies {
-  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
   implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
   implementation project(':core')
   implementation 'com.github.Querz:NBT:6.1'

@@ -9,13 +9,18 @@ import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.data.registry.TagKey;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.PropertySupplier;
+
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
 import java.util.List;
 
 public abstract class PointPlacement implements PropertySupplier {
+    protected PointProvider source;
+
     public abstract Vec2 get();
     public abstract void move(Vec2 delta);
     public abstract void move(double dx, double dy);
@@ -40,6 +45,15 @@ public abstract class PointPlacement implements PropertySupplier {
 
     public final boolean is(TagKey<PointPlacementType<?>> tag) {
         return Registries.POINT_PLACEMENT_TYPE.wrapAsHolder(this.type()).is(tag);
+    }
+
+    public PointProvider getSource() {
+        return source;
+    }
+
+    @ApiStatus.Internal
+    public void setSource(PointProvider source) {
+        this.source = source;
     }
 
     public static PointPlacement fromNbt(CompoundTag nbt, LoadingContext context) {

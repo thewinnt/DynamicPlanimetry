@@ -18,7 +18,7 @@ import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
 
 public class SelectionProperty<T> extends Property<T> {
-    private Collection<T> options;
+    private final Collection<T> options;
     private Function<T, Component> componentProvider = t -> {
         if (t instanceof ComponentRepresentable component) return component.toComponent();
         return Component.literal(t.toString());

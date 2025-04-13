@@ -1,7 +1,9 @@
 package net.thewinnt.planimetry.value.type;
 
+import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.value.DynamicValue;
@@ -11,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Stream;
@@ -30,9 +33,8 @@ public final class SingleArgumentValue implements DynamicValue {
     }
 
     @Override
-    public Collection<Property<?>> appendProperties(Collection<Property<?>> prefix) {
-        prefix.add(new PropertyGroup(Component.translatable("dynamic_value.dynamic_planimetry.single_arg.arg"), input.appendProperties(new ArrayList<>())));
-        return prefix;
+    public Collection<Property<?>> properties() {
+        return List.of(PropertyHelper.dynamicValue(input, t -> input = t, "value.dynamic_planimetry.single_arg.arg"));
     }
 
     @Override

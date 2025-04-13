@@ -1,6 +1,7 @@
 package net.thewinnt.planimetry.value.type;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -36,9 +37,8 @@ public final class ConstantValue implements DynamicValue {
     }
 
     @Override
-    public Collection<Property<?>> appendProperties(Collection<Property<?>> prefix) {
-        prefix.add(property);
-        return prefix;
+    public Collection<Property<?>> properties() {
+        return List.of(property);
     }
 
     @Override
@@ -52,8 +52,14 @@ public final class ConstantValue implements DynamicValue {
     }
 
     @Override
-    public @Nullable Stream<PointProvider> dependencies() {
-        return null;
+    public Stream<PointProvider> dependencies() {
+        return Stream.empty();
+    }
+
+    @Override
+    public DynamicValue add(double delta) {
+        value += delta;
+        return this;
     }
 
     @Override

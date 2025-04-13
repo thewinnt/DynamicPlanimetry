@@ -1,5 +1,6 @@
 {
   "values": [
-    "dynamic_planimetry:static"
+    "dynamic_planimetry:static",
+    "dynamic_planimetry:offset"
   ]
 }

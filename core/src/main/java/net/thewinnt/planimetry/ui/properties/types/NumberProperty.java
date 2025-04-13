@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
+import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.Size;
@@ -101,7 +102,7 @@ public class NumberProperty extends Property<Double> {
         TextField doubleField = new TextField(fieldText, styles.getTextFieldStyle(size, true)) {
             @Override
             public float getPrefWidth() {
-                return Gdx.graphics.getHeight() / 30f;
+                return size.lines(4);
             }
         };
         doubleField.setTextFieldFilter((textField, character) -> {

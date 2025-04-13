@@ -8,8 +8,10 @@ import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.data.registry.Registry;
 import net.thewinnt.planimetry.data.registry.TagKey;
 import net.thewinnt.planimetry.definition.point.placement.MousePlacement;
+import net.thewinnt.planimetry.definition.point.placement.OffsetPlacement;
 import net.thewinnt.planimetry.definition.point.placement.StaticPlacement;
 import net.thewinnt.planimetry.definition.point.type.MousePlacementType;
+import net.thewinnt.planimetry.definition.point.type.OffsetPlacementType;
 import net.thewinnt.planimetry.definition.point.type.StaticPlacementType;
 import net.thewinnt.planimetry.shapes.ShapeDefinitionType;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -21,6 +23,7 @@ import java.util.Random;
 public interface PointPlacementType<T extends PointPlacement> extends ShapeDefinitionType<T, PointPlacement> {
     PointPlacementType<StaticPlacement> STATIC = register("static", StaticPlacementType.INSTANCE);
     PointPlacementType<MousePlacement> MOUSE_POINTER = register("mouse_pointer", MousePlacementType.INSTANCE);
+    PointPlacementType<OffsetPlacement> OFFSET = register("offset", OffsetPlacementType.INSTANCE);
 
     TagKey<PointPlacementType<?>> SELECTABLE = TagKey.create(Registries.POINT_PLACEMENT_TYPE, new Identifier("selectable"));
 

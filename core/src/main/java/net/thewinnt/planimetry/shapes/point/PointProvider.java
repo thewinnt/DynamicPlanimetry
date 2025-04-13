@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import com.badlogic.gdx.graphics.Color;
 
 import net.querz.nbt.tag.CompoundTag;
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -50,6 +51,7 @@ public class PointProvider extends Shape {
     public PointProvider(Drawing drawing, PointPlacement placement) {
         super(drawing);
         this.placement = placement;
+        this.placement.setSource(this);
         this.name = drawing.generateName(drawing.shouldUseDashesForNaming());
         this.nameProperty = PropertyHelper.setter(new NameComponentProperty(Component.translatable(getPropertyName("name")), name), this::setName);
         this.dependencies.clear();
@@ -60,6 +62,7 @@ public class PointProvider extends Shape {
     public PointProvider(Drawing drawing, PointPlacement placement, NameComponent name) {
         super(drawing);
         this.placement = placement;
+        this.placement.setSource(this);
         this.name = name;
         this.nameProperty = PropertyHelper.setter(new NameComponentProperty(Component.translatable(getPropertyName("name")), name), this::setName);
         this.dependencies.clear();
@@ -77,11 +80,13 @@ public class PointProvider extends Shape {
         properties.add(nameProperty);
         type.addValueChangeListener(t -> {
             try {
-                placement = t.convert(placement, drawing);
+                this.placement = t.convert(this.placement, drawing);
+                this.placement.setSource(this);
                 this.dependencies.clear();
                 this.dependencies.addAll(this.placement.dependencies());
                 this.dependencies.forEach(shape -> shape.addDepending(this));
                 rebuildProperties();
+                DynamicPlanimetry.getInstance().editorScreen.show();
             } catch (RuntimeException e) {
                 type.setValueSilent(t);
             }

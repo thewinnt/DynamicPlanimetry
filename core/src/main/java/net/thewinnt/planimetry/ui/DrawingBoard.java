@@ -111,7 +111,7 @@ public class DrawingBoard extends Actor {
                     selectionEndB = new Vec2(xb(mx), yb(my));
                     AABB range = new AABB(panStartB, selectionEndB);
                     selection.clear();
-                    selection.addAll(drawing.points.stream().filter(t -> t.intersects(range)).collect(Collectors.toUnmodifiableList()));
+                    selection.addAll(drawing.points.stream().filter(t -> t.intersects(range)).toList());
                 }
                 event.handle();
             }
@@ -156,7 +156,7 @@ public class DrawingBoard extends Actor {
 
                 movingShapes.clear();
                 if (!isPanning && !selection.isEmpty()) {
-                    movingShapes.addAll(selection.stream().anyMatch(i -> i.distanceToMouse(xb(mx), yb(my), DrawingBoard.this) <= 16 / scale) ? selection.stream().filter(Shape::canMove).collect(Collectors.toUnmodifiableList()) : List.of());
+                    movingShapes.addAll(selection.stream().anyMatch(i -> i.distanceToMouse(xb(mx), yb(my), DrawingBoard.this) <= 16 / scale) ? selection.stream().filter(Shape::canMove).toList() : List.of());
                 } else if (!isPanning) {
                     movingShapes.add(getHoveredShape(mx, my, Settings.get().getShapeMovementPredicate()));
                 }
@@ -339,7 +339,7 @@ public class DrawingBoard extends Actor {
         for (Shape i : this.drawing.shapes) {
             if (i.shouldRender()) i.render(drawer, SelectionStatus.NONE, font, this);
         }
-        for (Shape i : nonPointSelected.collect(Collectors.toUnmodifiableList())) {
+        for (Shape i : nonPointSelected.toList()) {
             i.render(drawer, SelectionStatus.SELECTED, font, this);
         }
         if (hovered != null && !(hovered instanceof PointProvider)) {
@@ -349,7 +349,7 @@ public class DrawingBoard extends Actor {
             if (selection == i || hovered == i || !i.shouldRender()) continue;
             i.render(drawer, SelectionStatus.NONE, font, this);
         }
-        for (Shape i : pointSelected.collect(Collectors.toUnmodifiableList())) i.render(drawer, SelectionStatus.SELECTED, font, this);
+        for (Shape i : pointSelected.toList()) i.render(drawer, SelectionStatus.SELECTED, font, this);
         if (hovered instanceof PointProvider) hovered.render(drawer, hovered == selection ? SelectionStatus.SELECTED : SelectionStatus.HOVERED, font, this);
         if (panStart != null && selectionEnd != null) {
             AABB aabb = new AABB(panStart, selectionEnd);
@@ -444,7 +444,7 @@ public class DrawingBoard extends Actor {
     }
 
     public Collection<Shape> getShapes() {
-        return Stream.concat(this.drawing.points.stream(), this.drawing.shapes.stream()).collect(Collectors.toUnmodifiableList());
+        return Stream.concat(this.drawing.points.stream(), this.drawing.shapes.stream()).toList();
     }
 
     public Shape getHoveredShape(double mx, double my) {

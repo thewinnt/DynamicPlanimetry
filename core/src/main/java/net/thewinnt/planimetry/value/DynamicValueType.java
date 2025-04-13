@@ -37,12 +37,13 @@ public interface DynamicValueType<T extends DynamicValue> {
     DoubleArgumentValueType DIV = registerDoubleArg("div", (a, b)-> a / b);
     DoubleArgumentValueType MOD = registerDoubleArg("mod", (a, b)-> a % b);
     DoubleArgumentValueType POW = registerDoubleArg("pow", Math::pow);
-    DoubleArgumentValueType MIN = registerDoubleArg("pow", Math::min);
-    DoubleArgumentValueType MAX = registerDoubleArg("pow", Math::max);
-    DoubleArgumentValueType ATAN2 = registerDoubleArg("pow", Math::atan2);
+    DoubleArgumentValueType MIN = registerDoubleArg("min", Math::min);
+    DoubleArgumentValueType MAX = registerDoubleArg("max", Math::max);
+    DoubleArgumentValueType ATAN2 = registerDoubleArg("atan2", Math::atan2);
 
     T fromNbt(CompoundTag tag);
     CompoundTag toNbt(T value);
+    T create();
 
     @SuppressWarnings("unchecked")
     default CompoundTag toNbtUnchecked(DynamicValue value) {
@@ -50,19 +51,19 @@ public interface DynamicValueType<T extends DynamicValue> {
     }
 
     default Component name() {
-        return Component.translatable(Registries.DYNAMIC_VALUE_TYPES.getName(this).toLanguageKey("value_type"));
+        return Component.translatable(Registries.DYNAMIC_VALUE_TYPE.getName(this).toLanguageKey("value_type"));
     }
 
     static <T extends DynamicValue> DynamicValueType<T> register(String id, DynamicValueType<T> type) {
-        return Registry.register(Registries.DYNAMIC_VALUE_TYPES, type, id);
+        return Registry.register(Registries.DYNAMIC_VALUE_TYPE, type, id);
     }
 
     static SingleArgumentValueType registerSingleArg(String id, DoubleUnaryOperator operation) {
-        return Registry.register(Registries.DYNAMIC_VALUE_TYPES, new SingleArgumentValueType(operation), id);
+        return Registry.register(Registries.DYNAMIC_VALUE_TYPE, new SingleArgumentValueType(operation), id);
     }
 
     static DoubleArgumentValueType registerDoubleArg(String id, DoubleBinaryOperator operation) {
-        return Registry.register(Registries.DYNAMIC_VALUE_TYPES, new DoubleArgumentValueType(operation), id);
+        return Registry.register(Registries.DYNAMIC_VALUE_TYPE, new DoubleArgumentValueType(operation), id);
     }
 
     static void init() {}
