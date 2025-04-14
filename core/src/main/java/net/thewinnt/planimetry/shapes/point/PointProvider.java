@@ -94,7 +94,11 @@ public class PointProvider extends Shape {
     }
 
     public Vec2 getPosition() {
-        return Objects.requireNonNullElse(placement.get(), fallback);
+        try {
+            return Objects.requireNonNullElse(placement.get(), fallback);
+        } catch (Exception | StackOverflowError e) {
+            return fallback;
+        }
     }
 
     public double getX() {
@@ -245,7 +249,12 @@ public class PointProvider extends Shape {
 
     @Override
     public void render(ShapeDrawer drawer, SelectionStatus selection, FontProvider font, DrawingBoard board) {
-        Vec2 position = placement.get();
+        Vec2 position;
+        try {
+            position = placement.get();
+        } catch (Exception | StackOverflowError e) {
+            position = null;
+        }
         boolean isFallback = position == null;
         if (position == null) {
             position = Objects.requireNonNullElse(fallback, Vec2.ZERO);
@@ -327,7 +336,9 @@ public class PointProvider extends Shape {
             lastSpace = bestSpace;
             name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), board.bx(bestPos.x), (float) (board.by(bestPos.y) + neededSpace.y / 2));
         }
+        if (!position.equals(lastPos)) drawing.update();
         lastPos = position;
+        if (!isFallback) fallback = position;
     }
 
     @Override

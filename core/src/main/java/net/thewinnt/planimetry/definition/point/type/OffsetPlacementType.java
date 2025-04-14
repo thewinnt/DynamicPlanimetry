@@ -38,8 +38,8 @@ public class OffsetPlacementType implements PointPlacementType<OffsetPlacement> 
     @Override
     public OffsetPlacement fromNbt(CompoundTag nbt, LoadingContext context) {
         PointProvider point = context.resolveShape(nbt.getLong("point"));
-        DynamicValue offsetX = DynamicValue.fromNbt(nbt.getCompoundTag("offset_x"));
-        DynamicValue offsetY = DynamicValue.fromNbt(nbt.getCompoundTag("offset_y"));
+        DynamicValue offsetX = DynamicValue.fromNbt(nbt.getCompoundTag("offset_x"), context);
+        DynamicValue offsetY = DynamicValue.fromNbt(nbt.getCompoundTag("offset_y"), context);
         return new OffsetPlacement(point, offsetX, offsetY);
     }
 
@@ -48,8 +48,8 @@ public class OffsetPlacementType implements PointPlacementType<OffsetPlacement> 
         OffsetPlacement placement = ((OffsetPlacement) object);
         CompoundTag nbt = new CompoundTag();
         nbt.putLong("point", context.addShape(placement.getPoint()));
-        nbt.put("offset_x", DynamicValue.toNbt(placement.getOffsetX()));
-        nbt.put("offset_y", DynamicValue.toNbt(placement.getOffsetY()));
+        nbt.put("offset_x", DynamicValue.toNbt(placement.getOffsetX(), context));
+        nbt.put("offset_y", DynamicValue.toNbt(placement.getOffsetY(), context));
         return nbt;
     }
 }

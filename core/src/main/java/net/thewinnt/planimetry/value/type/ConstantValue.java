@@ -20,7 +20,6 @@ public final class ConstantValue implements DynamicValue {
     private double value;
 
     public ConstantValue(double value) {
-        // TODO implement others
         // TODO implement restrictable number
         this.value = value;
         this.property = new NumberProperty(Component.translatable(this.translationKey("value")), value);

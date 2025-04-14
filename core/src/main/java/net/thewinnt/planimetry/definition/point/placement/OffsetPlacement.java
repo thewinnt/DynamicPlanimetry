@@ -26,6 +26,7 @@ public class OffsetPlacement extends PointPlacement {
 
     @Override
     public Vec2 get() {
+        if (point == getSource()) return null;
         return point.getPosition().add(offsetX.get(), offsetY.get());
     }
 
@@ -49,7 +50,7 @@ public class OffsetPlacement extends PointPlacement {
     @Override
     public Collection<Property<?>> properties() {
         return List.of(
-            PropertyHelper.swappablePoint(point, t -> point = t, List.of(), "shape.generic.point"),
+            PropertyHelper.swappablePoint(point, t -> point = t, List.of(getSource()), false, "shape.generic.point"),
             PropertyHelper.dynamicValue(offsetX, t -> offsetX = t, point.getPropertyName("offset_x")),
             PropertyHelper.dynamicValue(offsetY, t -> offsetY = t, point.getPropertyName("offset_y"))
         );

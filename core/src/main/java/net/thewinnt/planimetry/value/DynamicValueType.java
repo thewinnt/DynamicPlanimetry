@@ -6,13 +6,20 @@ import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
 import net.querz.nbt.tag.CompoundTag;
+import net.thewinnt.planimetry.data.Drawing;
+import net.thewinnt.planimetry.data.LoadingContext;
+import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.data.registry.Registry;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.value.serializer.ConstantValueType;
 import net.thewinnt.planimetry.value.serializer.DoubleArgumentValueType;
+import net.thewinnt.planimetry.value.serializer.PointCoordinateValueType;
+import net.thewinnt.planimetry.value.serializer.PointDistanceValueType;
 import net.thewinnt.planimetry.value.serializer.SingleArgumentValueType;
 import net.thewinnt.planimetry.value.type.ConstantValue;
+import net.thewinnt.planimetry.value.type.PointCoordinateValue;
+import net.thewinnt.planimetry.value.type.PointDistanceValue;
 
 public interface DynamicValueType<T extends DynamicValue> {
     Map<DoubleUnaryOperator, SingleArgumentValueType> SINGLE_ARGUMENT = new HashMap<>();
@@ -40,14 +47,16 @@ public interface DynamicValueType<T extends DynamicValue> {
     DoubleArgumentValueType MIN = registerDoubleArg("min", Math::min);
     DoubleArgumentValueType MAX = registerDoubleArg("max", Math::max);
     DoubleArgumentValueType ATAN2 = registerDoubleArg("atan2", Math::atan2);
+    DynamicValueType<PointCoordinateValue> COORDINATE = register("coordinate", PointCoordinateValueType.INSTANCE);
+    DynamicValueType<PointDistanceValue> DISTANCE = register("distance", PointDistanceValueType.INSTANCE);
 
-    T fromNbt(CompoundTag tag);
-    CompoundTag toNbt(T value);
-    T create();
+    T fromNbt(CompoundTag nbt, LoadingContext context);
+    CompoundTag toNbt(T value, SavingContext context);
+    T create(Drawing drawing);
 
     @SuppressWarnings("unchecked")
-    default CompoundTag toNbtUnchecked(DynamicValue value) {
-        return toNbt((T) value);
+    default CompoundTag toNbtUnchecked(DynamicValue value, SavingContext context) {
+        return toNbt((T) value, context);
     }
 
     default Component name() {
@@ -59,11 +68,15 @@ public interface DynamicValueType<T extends DynamicValue> {
     }
 
     static SingleArgumentValueType registerSingleArg(String id, DoubleUnaryOperator operation) {
-        return Registry.register(Registries.DYNAMIC_VALUE_TYPE, new SingleArgumentValueType(operation), id);
+        SingleArgumentValueType type = new SingleArgumentValueType(operation);
+        SINGLE_ARGUMENT.put(operation, type);
+        return Registry.register(Registries.DYNAMIC_VALUE_TYPE, type, id);
     }
 
     static DoubleArgumentValueType registerDoubleArg(String id, DoubleBinaryOperator operation) {
-        return Registry.register(Registries.DYNAMIC_VALUE_TYPE, new DoubleArgumentValueType(operation), id);
+        DoubleArgumentValueType type = new DoubleArgumentValueType(operation);
+        DOUBLE_ARGUMENT.put(operation, type);
+        return Registry.register(Registries.DYNAMIC_VALUE_TYPE, type, id);
     }
 
     static void init() {}

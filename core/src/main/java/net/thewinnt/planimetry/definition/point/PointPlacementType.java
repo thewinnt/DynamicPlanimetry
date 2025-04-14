@@ -7,9 +7,13 @@ import net.thewinnt.planimetry.data.registry.Identifier;
 import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.data.registry.Registry;
 import net.thewinnt.planimetry.data.registry.TagKey;
+import net.thewinnt.planimetry.definition.point.placement.CalculatablePlacement;
+import net.thewinnt.planimetry.definition.point.placement.CirclePlacement;
 import net.thewinnt.planimetry.definition.point.placement.MousePlacement;
 import net.thewinnt.planimetry.definition.point.placement.OffsetPlacement;
 import net.thewinnt.planimetry.definition.point.placement.StaticPlacement;
+import net.thewinnt.planimetry.definition.point.type.CalculatablePlacementType;
+import net.thewinnt.planimetry.definition.point.type.CirclePlacementType;
 import net.thewinnt.planimetry.definition.point.type.MousePlacementType;
 import net.thewinnt.planimetry.definition.point.type.OffsetPlacementType;
 import net.thewinnt.planimetry.definition.point.type.StaticPlacementType;
@@ -24,6 +28,8 @@ public interface PointPlacementType<T extends PointPlacement> extends ShapeDefin
     PointPlacementType<StaticPlacement> STATIC = register("static", StaticPlacementType.INSTANCE);
     PointPlacementType<MousePlacement> MOUSE_POINTER = register("mouse_pointer", MousePlacementType.INSTANCE);
     PointPlacementType<OffsetPlacement> OFFSET = register("offset", OffsetPlacementType.INSTANCE);
+    PointPlacementType<CalculatablePlacement> CALCULATABLE = register("calculatable", CalculatablePlacementType.INSTANCE);
+    PointPlacementType<CirclePlacement> CIRCLE = register("circle", CirclePlacementType.INSTANCE);
 
     TagKey<PointPlacementType<?>> SELECTABLE = TagKey.create(Registries.POINT_PLACEMENT_TYPE, new Identifier("selectable"));
 

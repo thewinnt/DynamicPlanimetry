@@ -1,10 +1,8 @@
 package net.thewinnt.planimetry.definition.line.ray.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.definition.line.ray.RayDefinition;
 import net.thewinnt.planimetry.definition.line.ray.RayDefinitionType;
@@ -15,7 +13,7 @@ import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
-import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
+import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class TwoPointRay extends RayDefinition {
@@ -60,10 +58,10 @@ public class TwoPointRay extends RayDefinition {
 
     @Override
     public Collection<Property<?>> properties() {
-        ArrayList<Property<?>> output = new ArrayList<>();
-        output.add(new PropertyGroup(Component.translatable(ShapeData.RAY.propertyName("a")), a.getProperties()));
-        output.add(new PropertyGroup(Component.translatable(ShapeData.RAY.propertyName("b")), b.getProperties()));
-        return output;
+        return List.of(
+            PropertyHelper.swappablePoint(a, t -> a = t, List.of(b), true, getSource().getPropertyName("a")),
+            PropertyHelper.swappablePoint(b, t -> b = t, List.of(a), true, getSource().getPropertyName("b"))
+        );
     }
 
     @Override

@@ -392,7 +392,6 @@ public class Drawing {
 
     public static Drawing load(File file) {
         try {
-            // TODO fix files being open
             CompoundTag nbt = ((CompoundTag) NBTUtil.read(file).getTag());
             return Drawing.fromNbt(nbt).withFilename(file.getAbsolutePath(), true);
         } catch (IOException e) {

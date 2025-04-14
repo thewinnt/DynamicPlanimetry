@@ -136,6 +136,7 @@ public class PropertyLayout extends WidgetGroup {
             if (branch.size() > 1) {
                 for (int j = 1; j < branch.size(); j++) {
                     i = i.getChildEntry(branch.get(j).id);
+                    if (i == null) return;
                 }
             }
             i.setOpen(branch.get(branch.size() - 1).open);
@@ -147,6 +148,7 @@ public class PropertyLayout extends WidgetGroup {
     }
 
     private PropertyLayout getChildEntry(int id) {
+        if (id >= this.children.size()) return null;
         return this.children.get(id);
     }
 

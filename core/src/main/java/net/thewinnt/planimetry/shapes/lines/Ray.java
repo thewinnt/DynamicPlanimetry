@@ -5,6 +5,7 @@ import java.util.function.DoubleFunction;
 import com.badlogic.gdx.graphics.Color;
 
 import net.querz.nbt.tag.CompoundTag;
+import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ShapeData;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.LoadingContext;
@@ -112,6 +113,7 @@ public class Ray extends Line {
                 this.dependencies.clear();
                 this.dependencies.addAll(this.definition.dependencies());
                 this.dependencies.forEach(t -> t.addDepending(this));
+                DynamicPlanimetry.getInstance().editorScreen.show();
             } catch (RuntimeException e) {
                 property.setValueSilent(type);
             }

@@ -61,5 +61,4 @@ public abstract class InfiniteLineDefinition implements PropertySupplier {
         InfiniteLineType<?> type = Registries.INFINITE_LINE_DEFINITION_TYPE.get(new Identifier(nbt.getString("type")));
         return type.fromNbt(nbt, context);
     }
-    // TODO line conversions
 }

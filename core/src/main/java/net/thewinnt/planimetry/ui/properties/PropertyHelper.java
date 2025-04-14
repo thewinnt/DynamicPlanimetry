@@ -20,17 +20,21 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 public class PropertyHelper {
-    public static PropertyGroup swappablePoint(PointProvider point, Consumer<PointProvider> setter, Collection<PointProvider> except, String nameKey, Object... textArgs) {
-        point.rebuildProperties();
-        PropertyGroup output = new PropertyGroup(Component.translatable(nameKey, textArgs));
+    public static Property<?> swappablePoint(PointProvider point, Consumer<PointProvider> setter, Collection<PointProvider> except, boolean includePointProperties, String nameKey, Object... textArgs) {
         ShapeProperty selector = new ShapeProperty(Component.translatable("shape.generic.point"), point.getDrawing(), point, s -> s instanceof PointProvider p && !except.contains(p));
         selector.addValueChangeListener(shape -> {
             setter.accept((PointProvider) shape);
             DynamicPlanimetry.getInstance().editorScreen.show();
         });
-        output.addProperty(selector);
-        output.addProperties(point.getProperties());
-        return output;
+        if (includePointProperties) {
+            point.rebuildProperties();
+            PropertyGroup output = new PropertyGroup(Component.translatable(nameKey, textArgs));
+            output.addProperty(selector);
+            output.addProperties(point.getProperties());
+            return output;
+        } else {
+            return selector;
+        }
     }
 
     public static <E, T extends Property<E>> T setter(T property, Consumer<E> setter) {
@@ -70,7 +74,7 @@ public class PropertyHelper {
         if (input instanceof ConstantValue) {
             RegistryElementProperty<DynamicValueType<?>> property = new RegistryElementProperty<>(input.type(), Component.translatable("value.type"), Registries.DYNAMIC_VALUE_TYPE);
             property.addValueChangeListener(type -> {
-                setter.accept(type.create());
+                setter.accept(type.create(DynamicPlanimetry.getInstance().getDrawing()));
                 DynamicPlanimetry.getInstance().editorScreen.show();
             });
             return new InlineTypeProperty(
@@ -79,6 +83,6 @@ public class PropertyHelper {
                 input.properties().stream().findAny().orElseThrow()
             );
         }
-        return collect(Registries.DYNAMIC_VALUE_TYPE, input.type(), type -> setter.accept(type.create()), input, "value.type", key, textArgs);
+        return collect(Registries.DYNAMIC_VALUE_TYPE, input.type(), type -> setter.accept(type.create(DynamicPlanimetry.getInstance().getDrawing())), input, "value.type", key, textArgs);
     }
 }

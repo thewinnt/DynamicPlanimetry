@@ -176,7 +176,7 @@ public class EditorScreen extends FlatUIScreen {
             if (lastSelected == selection && properties.getActor() instanceof PropertyLayout layout) {
                 openStatuses = layout.getOpenChildren();
             }
-            PropertyLayout layout = new PropertyLayout(selection.getProperties(), styles, null, Size.SMALL, true);
+            PropertyLayout layout = new PropertyLayout(selection.getProperties(), styles, Component.translatable("ui.edit.properties.title"), Size.SMALL, true);
             properties.setActor(layout);
             if (openStatuses != null) {
                 layout.applyOpenStatus(openStatuses);

@@ -9,6 +9,7 @@ import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.value.DynamicValue;
 import net.thewinnt.planimetry.value.DynamicValueType;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public final class SingleArgumentValue implements DynamicValue {
     }
 
     @Override
-    public DynamicValueType<? extends DynamicValue> type() {
+    public @NotNull DynamicValueType<? extends DynamicValue> type() {
         return DynamicValueType.SINGLE_ARGUMENT.get(operation);
     }
 

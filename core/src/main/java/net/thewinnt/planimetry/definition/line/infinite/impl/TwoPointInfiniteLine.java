@@ -72,8 +72,8 @@ public class TwoPointInfiniteLine extends InfiniteLineDefinition {
     @Override
     public Collection<Property<?>> properties() {
         return List.of(
-            PropertyHelper.swappablePoint(a, point -> a = point, List.of(b), "shape.generic.point_n", 1),
-            PropertyHelper.swappablePoint(b, point -> b = point, List.of(a), "shape.generic.point_n", 2)
+            PropertyHelper.swappablePoint(a, point -> a = point, List.of(b), true, "shape.generic.point_n", 1),
+            PropertyHelper.swappablePoint(b, point -> b = point, List.of(a), true, "shape.generic.point_n", 2)
         );
     }
 

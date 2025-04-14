@@ -50,8 +50,8 @@ public class Lwjgl3Launcher {
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration(DragAndDropWrapper dragAndDrop, int msaaSamples) {
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
         configuration.setTitle("Dynamic Planimetry");
-        configuration.useVsync(false);
-        configuration.setBackBufferConfig(8, 8, 8, 8, 16, 0, msaaSamples); // TODO make this a settings
+        configuration.useVsync(true);
+        configuration.setBackBufferConfig(8, 8, 8, 8, 16, 0, msaaSamples);
         //// Limits FPS to the refresh rate of the currently active monitor.
         // configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
         //// If you remove the above line and set Vsync to false, you can get unlimited FPS, which can be

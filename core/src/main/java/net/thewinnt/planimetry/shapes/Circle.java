@@ -25,9 +25,9 @@ import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
 import net.thewinnt.planimetry.ui.functions.Function;
+import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
-import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -145,13 +145,13 @@ public class Circle extends Shape {
         if (radiusPoint != null) {
             BooleanProperty keep = new BooleanProperty(Component.translatable(getPropertyName("keep_radius")), keepRadius);
             keep.addValueChangeListener(Circle.this::setKeepRadius);
-            this.properties.add(new PropertyGroup(Component.translatable(getPropertyName("group.center_point")), this.center.getProperties()));
-            this.properties.add(new PropertyGroup(Component.translatable(getPropertyName("group.radius_point")), this.radiusPoint.getProperties()));
+            this.properties.add(PropertyHelper.swappablePoint(center, t -> center = t, List.of(radiusPoint), true, getPropertyName("group.center_point")));
+            this.properties.add(PropertyHelper.swappablePoint(radiusPoint, this::setRadiusPoint, List.of(center), true, getPropertyName("group.radius_point")));
             this.properties.add(keep);
         } else {
             NumberProperty radius = new NumberProperty(Component.translatable(getPropertyName("radius")), this.radius.get());
             radius.addValueChangeListener(r -> Circle.this.radius = () -> r);
-            this.properties.add(new PropertyGroup(Component.translatable(getPropertyName("group.center_point")), this.center.getProperties()));
+            this.properties.add(PropertyHelper.swappablePoint(center, t -> center = t, List.of(radiusPoint), true, getPropertyName("group.center_point")));
             this.properties.add(radius);
         }
     }
