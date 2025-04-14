@@ -1,6 +1,8 @@
 {
   "values": [
     "dynamic_planimetry:static",
-    "dynamic_planimetry:offset"
+    "dynamic_planimetry:offset",
+    "dynamic_planimetry:calculatable",
+    "dynamic_planimetry:circle"
   ]
 }

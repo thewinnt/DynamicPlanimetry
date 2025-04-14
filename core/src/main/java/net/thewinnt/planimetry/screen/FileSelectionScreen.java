@@ -174,7 +174,7 @@ public class FileSelectionScreen extends FlatUIScreen {
             public void changed(ChangeEvent event, Actor actor) {
                 if (open.getStyle() != styles.getButtonStyle(Size.MEDIUM, isRenaming) && selection != null) {
                     app.setDrawing(selection, true);
-                    app.editorScreen.hide();
+                    if (app.editorScreen != null) app.editorScreen.hide();
                     app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
                 }
             }
@@ -347,26 +347,31 @@ public class FileSelectionScreen extends FlatUIScreen {
                     Notifications.addNotification(DynamicPlanimetry.translate("error.load_file.null_loaded"), 100);
                     continue;
                 }
-                SaveEntry file = new SaveEntry(i.getName(), i.getCreationTime(), i.getLastEditTime(), i.getFilename().replace(Gdx.files.getLocalStoragePath(), ""), styles);
-                file.setChecked(selection == i);
-                file.addListener(new ChangeListener() {
-                    @Override
-                    public void changed(ChangeEvent event, Actor actor) {
-                        if (System.currentTimeMillis() - lastClickTime < 300 && selection == i) {
-                            app.setDrawing(i, true);
-                            app.editorScreen.hide();
-                            app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
-                            return;
-                        }
-                        selection = i;
-                        lastClickTime = System.currentTimeMillis();
-                        nameField.setText(i.getName());
-                        show();
-                    }
-                });
+                SaveEntry file = createSaveEntry(i);
                 files.add(file).expandX().fillX().pad(5).row();
             }
         }
+    }
+
+    private SaveEntry createSaveEntry(Drawing i) {
+        SaveEntry file = new SaveEntry(i.getName(), i.getCreationTime(), i.getLastEditTime(), i.getFilename(), styles);
+        file.setChecked(selection == i);
+        file.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (System.currentTimeMillis() - lastClickTime < 300 && selection == i) {
+                    app.setDrawing(i, true);
+                    if (app.editorScreen != null) app.editorScreen.hide();
+                    app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
+                    return;
+                }
+                selection = i;
+                lastClickTime = System.currentTimeMillis();
+                nameField.setText(i.getName());
+                show();
+            }
+        });
+        return file;
     }
 
     @Override public void addActorsAboveFps() {}

@@ -47,7 +47,9 @@ public class PropertyLayout extends WidgetGroup {
                         PropertyLayout.this.removeActor(pane);
                         PropertyLayout.this.open = false;
                     }
-                    DynamicPlanimetry.getInstance().editorScreen.layout();
+                    if (DynamicPlanimetry.getInstance().editorScreen != null) {
+                        DynamicPlanimetry.getInstance().editorScreen.layout();
+                    }
                 }
             });
         } else {

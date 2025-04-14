@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.DynamicPlanimetry;
@@ -28,6 +29,14 @@ public interface Component extends ComponentRepresentable {
     @ApiStatus.OverrideOnly
     CompoundTag writeNbt();
     ComponentDeserializer<?> getDeserializer();
+
+    default boolean canCache() {
+        return false;
+    }
+
+    default BitmapFontCache createCache(FontProvider font, Size size, Color color) {
+        return null;
+    }
 
     default CompoundTag toNbt() {
         CompoundTag nbt = this.writeNbt();

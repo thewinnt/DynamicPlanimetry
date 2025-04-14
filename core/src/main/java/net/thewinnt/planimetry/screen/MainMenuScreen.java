@@ -84,8 +84,8 @@ public class MainMenuScreen extends FlatUIScreen {
         go_settings.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                app.settingsScreen.setFrom(MainMenuScreen.this);
                 app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
+                app.settingsScreen.setFrom(MainMenuScreen.this);
             }
         });
 

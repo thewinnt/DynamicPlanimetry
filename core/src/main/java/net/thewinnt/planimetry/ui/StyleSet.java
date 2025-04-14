@@ -113,13 +113,15 @@ public class StyleSet {
     }
 
     public void rebuild(final int height) {
-        buttonStyles.clear();
-        textFieldStyles.clear();
-        listStyles.clear();
-        labelStyles.clear();
-        checkboxStyles.clear();
-        windowStyles.clear();
-        this.height = height;
+        if (height != this.height) {
+            buttonStyles.clear();
+            textFieldStyles.clear();
+            listStyles.clear();
+            labelStyles.clear();
+            checkboxStyles.clear();
+            windowStyles.clear();
+            this.height = height;
+        }
     }
 
     public TextButtonStyle getButtonStyle(Size size, boolean isActive) {

@@ -218,19 +218,19 @@ public class Settings {
     public void fromNbt(CompoundTag nbt) {
         if (nbt == null) nbt = new CompoundTag(); // needed to load defaults
         try {
-            this.theme.setValue(NbtUtil.getOptionalInt(nbt, "theme", 0) == 1 ? DynamicPlanimetry.THEME_DARK : DynamicPlanimetry.THEME_LIGHT);
-            this.displayPresicion.setValue((double)NbtUtil.getOptionalByte(nbt, "display_precision", (byte)3));
-            this.angleUnits.setValue(AngleType.valueOf(NbtUtil.getOptionalString(nbt, "angle_units", "degrees").toUpperCase()));
-            this.moveShapes.setValue(ShapeMovementPredicate.valueOf(NbtUtil.getOptionalString(nbt, "shape_movement_predicate", "only_points").toUpperCase()));
+            this.theme.setValueSilent(NbtUtil.getOptionalInt(nbt, "theme", 0) == 1 ? DynamicPlanimetry.THEME_DARK : DynamicPlanimetry.THEME_LIGHT);
+            this.displayPresicion.setValueSilent((double)NbtUtil.getOptionalByte(nbt, "display_precision", (byte)3));
+            this.angleUnits.setValueSilent(AngleType.valueOf(NbtUtil.getOptionalString(nbt, "angle_units", "degrees").toUpperCase()));
+            this.moveShapes.setValueSilent(ShapeMovementPredicate.valueOf(NbtUtil.getOptionalString(nbt, "shape_movement_predicate", "only_points").toUpperCase()));
             this.mathPrecision = NbtUtil.getOptionalByte(nbt, "math_precision", (byte)-23);
-            this.showGrid.setValue(NbtUtil.getOptionalBoolean(nbt, "show_grid", true));
+            this.showGrid.setValueSilent(NbtUtil.getOptionalBoolean(nbt, "show_grid", true));
             this.lastSortingType = SortingType.valueOf(NbtUtil.getOptionalString(nbt, "last_sorting_type", "by_editing_time").toUpperCase());
             this.lastSortingOrder = NbtUtil.getOptionalBoolean(nbt, "is_reverse_sort", true);
             this.currentLanguage = NbtUtil.getOptionalString(nbt, "language", "ru_ru");
-            this.isDebug.setValue(NbtUtil.getOptionalBoolean(nbt, "debug_mode", false));
-            this.displayScaling.setValue(NbtUtil.getOptionalDouble(nbt, "display_scaling", 1));
-            this.ctrlSelection.setValue(NbtUtil.getOptionalBoolean(nbt, "ctrl_selection", true));
-            this.editPanelScale.setValue(NbtUtil.getOptionalDouble(nbt, "edit_pane_scale", 1));
+            this.isDebug.setValueSilent(NbtUtil.getOptionalBoolean(nbt, "debug_mode", false));
+            this.displayScaling.setValueSilent(NbtUtil.getOptionalDouble(nbt, "display_scaling", 1));
+            this.ctrlSelection.setValueSilent(NbtUtil.getOptionalBoolean(nbt, "ctrl_selection", true));
+            this.editPanelScale.setValueSilent(NbtUtil.getOptionalDouble(nbt, "edit_pane_scale", 1));
             DynamicPlanimetry.setDisplayScaling(displayScaling.getValue().floatValue());
             this.antialiasing.setValueSilent(AntialiasingType.valueOf(NbtUtil.getOptionalByte(nbt, "antialiasing", (byte)4)));
         } catch (Exception e) {

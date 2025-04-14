@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
+import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.text.Component;
 
@@ -76,6 +77,12 @@ public class SettingsScreen extends FlatUIScreen {
 
         this.debugSettings.setPosition(10, 10);
         this.debugSettings.setSize((Gdx.graphics.getWidth() - 20) / 2f, Size.MEDIUM.lines(1));
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        Settings.get().toNbt(DynamicPlanimetry.platform().getSettingsFile());
     }
 
     @Override public void addActorsAboveFps() {}

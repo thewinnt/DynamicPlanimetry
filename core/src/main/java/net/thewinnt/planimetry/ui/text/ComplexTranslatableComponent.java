@@ -3,6 +3,7 @@ package net.thewinnt.planimetry.ui.text;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 import net.querz.nbt.tag.CompoundTag;
@@ -76,5 +77,18 @@ public class ComplexTranslatableComponent implements Component, CharSequence {
 
     public static ComplexTranslatableComponent readNbt(CompoundTag nbt) {
         return new ComplexTranslatableComponent(nbt.getString("key"));
+    }
+
+    @Override
+    public boolean canCache() {
+        return true;
+    }
+
+    @Override
+    public BitmapFontCache createCache(FontProvider font, Size size, Color color) {
+        var fnt = font.getFont((int)(size.lines(1)), color);
+        BitmapFontCache cache = fnt.newFontCache();
+        cache.setText(toString(), 0, 0);
+        return cache;
     }
 }

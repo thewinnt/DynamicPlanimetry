@@ -17,8 +17,6 @@ import net.thewinnt.planimetry.ui.properties.layout.SquareLayout;
 import net.thewinnt.planimetry.ui.text.Component;
 
 public class BooleanProperty extends Property<Boolean> {
-    private final List<Consumer<Boolean>> listeners = new ArrayList<>();
-
     public BooleanProperty() {
         this(Component.empty());
     }

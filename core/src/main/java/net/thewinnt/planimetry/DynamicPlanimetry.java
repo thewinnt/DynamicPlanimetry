@@ -31,6 +31,7 @@ import net.thewinnt.planimetry.screen.FlatUIScreen;
 import net.thewinnt.planimetry.screen.MainMenuScreen;
 import net.thewinnt.planimetry.screen.SettingsScreen;
 import net.thewinnt.planimetry.ui.Notifications;
+import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.text.Component;
 
@@ -46,8 +47,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.MissingFormatArgumentException;
 import java.util.Random;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.zip.Deflater;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -143,8 +149,9 @@ public class DynamicPlanimetry extends Game {
 
     // general stuff
     private static DynamicPlanimetry INSTANCE;
-    public final List<Screen> screenByIds = new ArrayList<>();
+    public final Int2ObjectMap<ScreenInstance<?>> screenByIds = new Int2ObjectArrayMap<>();
     public String last_fps = "FPS: ..."; // the last reading of the fps counter
+    public StyleSet styles;
 
     // settings
     public static final Settings SETTINGS = new Settings();
@@ -225,11 +232,11 @@ public class DynamicPlanimetry extends Game {
         reloadLanguages();
         reloadTags();
 
-        mainMenu = registerScreen(new MainMenuScreen(this));
-        editorScreen = registerScreen(new EditorScreen(this));
-        fileSelectionScreen = registerScreen(new FileSelectionScreen(this));
-        settingsScreen = registerScreen(new SettingsScreen(this));
-        debugSettingsScreen = registerScreen(new DebugSettingsScreen(this));
+        registerScreen(MAIN_MENU, dp -> mainMenu = new MainMenuScreen(dp));
+        registerScreen(EDITOR_SCREEN, dp -> editorScreen = new EditorScreen(dp));
+        registerScreen(FILE_SELECTION_SCREEN, dp -> fileSelectionScreen = new FileSelectionScreen(dp));
+        registerScreen(SETTINGS_SCREEN, dp -> settingsScreen = new SettingsScreen(dp));
+        registerScreen(DEBUG_SETTINGS_SCREEN, dp -> debugSettingsScreen = new DebugSettingsScreen(dp));
         setDrawing(null, false);
         setScreen(MAIN_MENU);
         if (isDebug()) {
@@ -237,10 +244,10 @@ public class DynamicPlanimetry extends Game {
         }
     }
 
-    private <T extends FlatUIScreen> T registerScreen(T screen) {
-        this.screenByIds.add(screen);
-        screen.hide();
-        return screen;
+    private <T extends FlatUIScreen> ScreenInstance<T> registerScreen(int id, Function<DynamicPlanimetry, T> screen) {
+        ScreenInstance<T> output = new ScreenInstance<>(screen);
+        this.screenByIds.put(id, output);
+        return output;
     }
 
     public void reloadLanguages() {
@@ -350,7 +357,7 @@ public class DynamicPlanimetry extends Game {
     }
 
     public void setScreen(int id) {
-        this.setScreen(screenByIds.get(id));
+        this.setScreen(this.screenByIds.get(id).get());
     }
 
     public void setDrawing(Drawing drawing, boolean saveOld) {
@@ -442,5 +449,24 @@ public class DynamicPlanimetry extends Game {
 
     /* package-private */ static void setDisplayScaling(float displayScaling) {
         DynamicPlanimetry.DISPLAY_SCALING = displayScaling;
+    }
+
+    private class ScreenInstance<T extends FlatUIScreen> {
+        private final Function<DynamicPlanimetry, T> setter;
+        private T instance;
+        private boolean initialized;
+
+        public ScreenInstance(Function<DynamicPlanimetry, T> setter) {
+            this.setter = setter;
+        }
+
+        public T get() {
+            if (initialized) {
+                return instance;
+            }
+            initialized = true;
+            instance = setter.apply(DynamicPlanimetry.this);
+            return instance;
+        }
     }
 }

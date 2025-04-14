@@ -14,6 +14,7 @@ import net.thewinnt.planimetry.ui.properties.types.ShapeProperty;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.value.DynamicValue;
 import net.thewinnt.planimetry.value.DynamicValueType;
+import net.thewinnt.planimetry.value.type.AngleValue;
 import net.thewinnt.planimetry.value.type.ConstantValue;
 
 import java.util.Collection;
@@ -71,7 +72,7 @@ public class PropertyHelper {
     }
 
     public static Property<?> dynamicValue(DynamicValue input, Consumer<DynamicValue> setter, String key, Object... textArgs) {
-        if (input instanceof ConstantValue) {
+        if (input instanceof ConstantValue || input instanceof AngleValue) {
             RegistryElementProperty<DynamicValueType<?>> property = new RegistryElementProperty<>(input.type(), Component.translatable("value.type"), Registries.DYNAMIC_VALUE_TYPE);
             property.addValueChangeListener(type -> {
                 setter.accept(type.create(DynamicPlanimetry.getInstance().getDrawing()));

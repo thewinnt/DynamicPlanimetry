@@ -7,6 +7,7 @@ import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Circle;
 import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.types.ShapeProperty;
@@ -49,9 +50,10 @@ public class CirclePlacement extends PointPlacement {
 
     @Override
     public Collection<Property<?>> properties() {
+        PointProvider src = getSource();
         return List.of(
-            PropertyHelper.setter(new ShapeProperty(Component.translatable(getSource().getPropertyName("circle")), getSource().getDrawing(), circle, shape -> shape instanceof Circle), t -> circle = (Circle) t),
-            PropertyHelper.dynamicValue(angle, t -> angle = t, getSource().getPropertyName("angle"))
+            PropertyHelper.setter(new ShapeProperty(Component.translatable(src.getPropertyName("circle")), src.getDrawing(), circle, s -> s instanceof Circle c && c.getRadiusPoint() != src), t -> circle = (Circle) t),
+            PropertyHelper.dynamicValue(angle, t -> angle = t, src.getPropertyName("angle"))
         );
     }
 

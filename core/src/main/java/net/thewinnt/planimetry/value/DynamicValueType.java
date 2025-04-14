@@ -12,13 +12,17 @@ import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.data.registry.Registry;
 import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.value.serializer.AngleValueType;
 import net.thewinnt.planimetry.value.serializer.ConstantValueType;
 import net.thewinnt.planimetry.value.serializer.DoubleArgumentValueType;
 import net.thewinnt.planimetry.value.serializer.PointCoordinateValueType;
+import net.thewinnt.planimetry.value.serializer.PointDirectionValueType;
 import net.thewinnt.planimetry.value.serializer.PointDistanceValueType;
 import net.thewinnt.planimetry.value.serializer.SingleArgumentValueType;
+import net.thewinnt.planimetry.value.type.AngleValue;
 import net.thewinnt.planimetry.value.type.ConstantValue;
 import net.thewinnt.planimetry.value.type.PointCoordinateValue;
+import net.thewinnt.planimetry.value.type.PointDirectionValue;
 import net.thewinnt.planimetry.value.type.PointDistanceValue;
 
 public interface DynamicValueType<T extends DynamicValue> {
@@ -26,6 +30,7 @@ public interface DynamicValueType<T extends DynamicValue> {
     Map<DoubleBinaryOperator, DoubleArgumentValueType> DOUBLE_ARGUMENT = new HashMap<>();
 
     DynamicValueType<ConstantValue> CONSTANT = register("constant", ConstantValueType.INSTANCE);
+    DynamicValueType<AngleValue> ANGLE = register("angle", AngleValueType.INSTANCE);
     SingleArgumentValueType SQUARE = registerSingleArg("square", t -> t * t);
     SingleArgumentValueType CUBE = registerSingleArg("cube", t -> t * t * t);
     SingleArgumentValueType SQRT = registerSingleArg("sqrt", Math::sqrt);
@@ -49,6 +54,7 @@ public interface DynamicValueType<T extends DynamicValue> {
     DoubleArgumentValueType ATAN2 = registerDoubleArg("atan2", Math::atan2);
     DynamicValueType<PointCoordinateValue> COORDINATE = register("coordinate", PointCoordinateValueType.INSTANCE);
     DynamicValueType<PointDistanceValue> DISTANCE = register("distance", PointDistanceValueType.INSTANCE);
+    DynamicValueType<PointDirectionValue> DIRECTION = register("direction", PointDirectionValueType.INSTANCE);
 
     T fromNbt(CompoundTag nbt, LoadingContext context);
     CompoundTag toNbt(T value, SavingContext context);
