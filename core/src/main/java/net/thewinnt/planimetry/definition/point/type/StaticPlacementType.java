@@ -34,7 +34,7 @@ public class StaticPlacementType implements PointPlacementType<StaticPlacement> 
 
     @Override
     public StaticPlacement convert(PointPlacement other, Drawing drawing) {
-        return new StaticPlacement(other.get());
+        return new StaticPlacement(other.getSource().getPosition());
     }
 
     @Override

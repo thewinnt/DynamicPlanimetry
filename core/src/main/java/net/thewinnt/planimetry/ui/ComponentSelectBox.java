@@ -80,9 +80,9 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
             }
         } else {
             if (this.open) {
-                DynamicIcon.DOWN_TRIANGLE.draw(batch, getX(), getY() + iconSizeOverride / 2, iconSizeOverride, iconSizeOverride);
+                DynamicIcon.DOWN_TRIANGLE.draw(batch, getX(), getY() + getHeight() / 2 - iconSizeOverride / 2, iconSizeOverride, iconSizeOverride);
             } else {
-                DynamicIcon.RIGHT_TRIANGLE.draw(batch, getX(), getY() + iconSizeOverride / 2, iconSizeOverride, iconSizeOverride);
+                DynamicIcon.RIGHT_TRIANGLE.draw(batch, getX(), getY() + getHeight() / 2 - iconSizeOverride / 2, iconSizeOverride, iconSizeOverride);
             }
             textGetter.apply(getSelected()).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, this.size, Theme.current().textButton(), getX() + iconSizeOverride, getY() + getHeight() * 3 / 4);
         }

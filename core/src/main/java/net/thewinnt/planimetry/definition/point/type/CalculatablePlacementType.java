@@ -28,7 +28,7 @@ public class CalculatablePlacementType implements PointPlacementType<Calculatabl
 
     @Override
     public CalculatablePlacement convert(PointPlacement other, Drawing drawing) {
-        Vec2 pos = other.get();
+        Vec2 pos = other.getSource().getPosition();
         return new CalculatablePlacement(new ConstantValue(pos.x), new ConstantValue(pos.y));
     }
 

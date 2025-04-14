@@ -57,6 +57,7 @@ public class Settings {
     private byte mathPrecision = 4;
     private SortingType lastSortingType = SortingType.BY_EDITING_TIME;
     private boolean lastSortingOrder = true;
+    private boolean showFilenames = true;
 
     public Settings() {
         theme.layoutOverride = PROPERTY_LAYOUT;
@@ -197,6 +198,14 @@ public class Settings {
         fullscreen.setValue(!fullscreen.getValue());
     }
 
+    public boolean showFilenames() {
+        return showFilenames;
+    }
+
+    public void setShowFilenames(boolean showFilenames) {
+        this.showFilenames = showFilenames;
+    }
+
     void initLanguages(Map<String, Language> languages) {
         Language.setFallbackLanguage(languages.get("en_us"));
         this.language = new SelectionProperty<>(Component.translatable("settings.language"), languages.values().toArray(new Language[0]));
@@ -233,6 +242,7 @@ public class Settings {
             this.editPanelScale.setValueSilent(NbtUtil.getOptionalDouble(nbt, "edit_pane_scale", 1));
             DynamicPlanimetry.setDisplayScaling(displayScaling.getValue().floatValue());
             this.antialiasing.setValueSilent(AntialiasingType.valueOf(NbtUtil.getOptionalByte(nbt, "antialiasing", (byte)4)));
+            this.showFilenames = NbtUtil.getOptionalBoolean(nbt, "show_filenames", true);
         } catch (Exception e) {
             Notifications.addNotification(DynamicPlanimetry.translate("error.settings.load_failed", e.getMessage()), 15000);
             e.printStackTrace();
@@ -255,6 +265,7 @@ public class Settings {
         NbtUtil.writeBoolean(nbt, "ctrl_selection", ctrlSelection.getValue());
         nbt.putDouble("edit_pane_scale", editPanelScale.getValue());
         nbt.putByte("antialiasing", antialiasing.getValue().samples);
+        NbtUtil.writeBoolean(nbt, "show_filenames", showFilenames);
         try {
             NBTUtil.write(nbt, file);
         } catch (IOException e) {

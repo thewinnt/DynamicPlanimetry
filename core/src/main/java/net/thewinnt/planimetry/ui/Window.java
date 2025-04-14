@@ -56,7 +56,7 @@ public class Window extends WidgetGroup {
             this.close = null;
         }
 
-        final int hitSize = DynamicPlanimetry.platform().isSmallScreen() ? 50 : 20;
+        final int hitSize = 20;
         this.addListener(new ActorGestureListener() {
             @Override
             public void touchDown(InputEvent event, float x, float y, int pointer, int button) {

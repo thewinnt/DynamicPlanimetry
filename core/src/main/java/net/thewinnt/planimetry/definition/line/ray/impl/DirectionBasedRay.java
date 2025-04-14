@@ -16,6 +16,7 @@ import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.value.type.ConstantValue;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -82,7 +83,7 @@ public class DirectionBasedRay extends RayDefinition {
 
     @Override
     public InfiniteLine asInfiniteLine(Drawing drawing) {
-        return new InfiniteLine(drawing, new AngleBasedLineDefinition(start, direction));
+        return new InfiniteLine(drawing, new AngleBasedLineDefinition(start, new ConstantValue(direction)));
     }
 
     @Override

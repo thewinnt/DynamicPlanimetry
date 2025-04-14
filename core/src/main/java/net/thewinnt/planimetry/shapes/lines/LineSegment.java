@@ -32,6 +32,10 @@ public class LineSegment extends Line implements SegmentLike {
         super(drawing);
         this.a = a;
         this.b = b;
+        this.dependencies.add(a);
+        this.dependencies.add(b);
+        a.addDepending(this);
+        b.addDepending(this);
     }
 
     @Override
@@ -133,14 +137,15 @@ public class LineSegment extends Line implements SegmentLike {
 
     @Override
     public Component getName() {
-        return Component.of(Component.translatable(getTypeName()), a.getNameComponent(), b.getNameComponent());
+        return Component.translatable(getTypeName(), a.getNameComponent(), b.getNameComponent());
     }
 
     @Override
     public void rebuildProperties() {
+        this.properties.clear();
         this.properties.add(new PropertyGroup(this.a.getName(), this.a.getProperties()));
         this.properties.add(new PropertyGroup(this.b.getName(), this.b.getProperties()));
-        this.properties.add(new DisplayProperty(Component.translatable("property.line_segment.length"), () -> Component.number(this.a.getPosition().distanceTo(this.b.getPosition()))));
+        this.properties.add(new DisplayProperty(Component.translatable("property.dynamic_planimetry.line_segment.length"), () -> Component.number(this.a.getPosition().distanceTo(this.b.getPosition()))));
     }
 
     @Override

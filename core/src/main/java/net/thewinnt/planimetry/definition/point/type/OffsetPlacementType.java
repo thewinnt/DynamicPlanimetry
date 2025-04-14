@@ -31,7 +31,7 @@ public class OffsetPlacementType implements PointPlacementType<OffsetPlacement> 
     public OffsetPlacement convert(PointPlacement other, Drawing drawing) {
         PointProvider point = (PointProvider) drawing.getRandom(shape -> shape instanceof PointProvider p && p != other.getSource());
         if (point == null) return null;
-        Vec2 pos = other.get().subtract(point.getPosition());
+        Vec2 pos = other.getSource().getPosition().subtract(point.getPosition());
         return new OffsetPlacement(point, new ConstantValue(pos.x), new ConstantValue(pos.y));
     }
 

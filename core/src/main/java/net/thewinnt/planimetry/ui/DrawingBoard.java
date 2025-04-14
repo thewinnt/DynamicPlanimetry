@@ -450,6 +450,7 @@ public class DrawingBoard extends Actor {
     public Shape getHoveredShape(double mx, double my) {
         Shape hovered = null;
         double minDistance = 16 / scale;
+        if (DynamicPlanimetry.platform().isSmallScreen()) minDistance *= 2;
         Collection<Shape> ignore;
         if (creatingShape != null) {
             ignore = creatingShape.getSuggestedShapes();

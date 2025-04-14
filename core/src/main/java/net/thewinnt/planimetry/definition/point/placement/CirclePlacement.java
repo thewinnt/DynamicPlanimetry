@@ -28,12 +28,15 @@ public class CirclePlacement extends PointPlacement {
 
     @Override
     public Vec2 get() {
+        if (circle.getRadiusPoint() == getSource()) return null;
         return MathHelper.continueFromAngle(circle.center.getPosition(), angle.get(), circle.getRadius());
     }
 
     @Override
     public void move(Vec2 delta) {
-        Vec2 newPos = get().add(delta);
+        Vec2 vec2 = get();
+        if (vec2 == null) return;
+        Vec2 newPos = vec2.add(delta);
         double newAngle = MathHelper.angleTo(circle.center.getPosition(), newPos);
         this.angle = angle.add(newAngle - angle.get());
     }
@@ -60,6 +63,14 @@ public class CirclePlacement extends PointPlacement {
     @Override
     public PointPlacementType<?> type() {
         return CirclePlacementType.INSTANCE; // TODO circle placement
+    }
+
+    public Circle getCircle() {
+        return circle;
+    }
+
+    public DynamicValue getAngle() {
+        return angle;
     }
 
     @Override

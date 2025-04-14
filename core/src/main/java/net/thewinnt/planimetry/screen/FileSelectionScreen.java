@@ -39,6 +39,7 @@ public class FileSelectionScreen extends FlatUIScreen {
     private Table sortingTable;
     private final SelectionProperty<SaveEntry.SortingType> sortingType;
     private final BooleanProperty isReverse;
+    private final BooleanProperty showFilenames;
     // file list
     private ScrollPane pane;
     private Table files;
@@ -64,12 +65,17 @@ public class FileSelectionScreen extends FlatUIScreen {
         super(app);
         this.sortingType = new SelectionProperty<>(Settings.get().getLastSortingType(), Component.translatable("ui.load_file.sort_by"), SortingType.values());
         this.isReverse = new BooleanProperty(Component.translatable("ui.load_file.sort_descending"), Settings.get().getLastSortingOrder());
+        this.showFilenames = new BooleanProperty(Component.translatable("ui.load_file.show_filenames"), Settings.get().showFilenames());
         this.sortingType.addValueChangeListener(value -> {
             Settings.get().setLastSortingType(value);
             show();
         });
         this.isReverse.addValueChangeListener(value -> {
             Settings.get().setLastSortingOrder(value);
+            show();
+        });
+        this.showFilenames.addValueChangeListener(value -> {
+            Settings.get().setShowFilenames(value);
             show();
         });
     }
@@ -292,7 +298,8 @@ public class FileSelectionScreen extends FlatUIScreen {
 
         sortingTable.reset();
         sortingTable.add(new PropertyEntry(sortingType, styles, Size.MEDIUM)).expand().fill().padRight(20).left();
-        sortingTable.add(new PropertyEntry(isReverse, styles, Size.MEDIUM)).expand().fill().left();
+        sortingTable.add(new PropertyEntry(isReverse, styles, Size.MEDIUM)).expand().fill().padRight(20).left();
+        sortingTable.add(new PropertyEntry(showFilenames, styles, Size.MEDIUM)).expand().fill().left();
 
         controlPanel.reset();
         if (isRenaming) {
@@ -354,7 +361,7 @@ public class FileSelectionScreen extends FlatUIScreen {
     }
 
     private SaveEntry createSaveEntry(Drawing i) {
-        SaveEntry file = new SaveEntry(i.getName(), i.getCreationTime(), i.getLastEditTime(), i.getFilename(), styles);
+        SaveEntry file = new SaveEntry(i.getName(), i.getCreationTime(), i.getLastEditTime(), Settings.get().showFilenames() ? i.getFilename() : null, styles);
         file.setChecked(selection == i);
         file.addListener(new ChangeListener() {
             @Override

@@ -50,7 +50,7 @@ public class AndroidLauncher extends AndroidApplication {
         if (nbt != null) {
             configuration.numSamples = NbtUtil.getOptionalByte(nbt, "antialiasing", (byte)4);
         }
-        initialize(new DynamicPlanimetry(nbt, platform, new AndroidIO(this, this.getBaseContext()), true), configuration);
+        initialize(new DynamicPlanimetry(nbt, platform, new AndroidIO(this, this.getBaseContext()), false), configuration);
     }
 
     @Override

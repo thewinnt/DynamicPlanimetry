@@ -10,6 +10,7 @@ import net.thewinnt.planimetry.definition.point.ValueContext;
 import net.thewinnt.planimetry.definition.point.placement.CirclePlacement;
 import net.thewinnt.planimetry.shapes.Circle;
 import net.thewinnt.planimetry.value.DynamicValue;
+import net.thewinnt.planimetry.value.type.AngleValue;
 import net.thewinnt.planimetry.value.type.ConstantValue;
 
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +29,7 @@ public class CirclePlacementType implements PointPlacementType<CirclePlacement> 
 
     @Override
     public CirclePlacement convert(PointPlacement other, Drawing drawing) {
-        return new CirclePlacement((Circle)drawing.getRandom(shape -> shape instanceof Circle), new ConstantValue(0));
+        return new CirclePlacement((Circle)drawing.getRandom(shape -> shape instanceof Circle), new AngleValue(0));
     }
 
     @Override
@@ -40,6 +41,10 @@ public class CirclePlacementType implements PointPlacementType<CirclePlacement> 
 
     @Override
     public CompoundTag writeNbt(PointPlacement object, SavingContext context) {
-        return null;
+        CirclePlacement placement = (CirclePlacement) object;
+        CompoundTag nbt = new CompoundTag();
+        nbt.putLong("circle", context.addShape(placement.getCircle()));
+        nbt.put("angle", DynamicValue.toNbt(placement.getAngle(), context));
+        return nbt;
     }
 }

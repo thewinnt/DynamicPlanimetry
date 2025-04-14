@@ -6,30 +6,33 @@ import java.util.List;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 // import net.thewinnt.planimetry.shapes.lines.AngledInfiniteLine;
+import net.thewinnt.planimetry.Settings;
+import net.thewinnt.planimetry.definition.line.infinite.impl.RelativeAngleLineDefinition;
+import net.thewinnt.planimetry.shapes.lines.InfiniteLine;
 import net.thewinnt.planimetry.shapes.lines.Line;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.value.type.AngleValue;
+import net.thewinnt.planimetry.value.type.ConstantValue;
 
 public class AngledLineFactory extends ShapeFactory {
-    // private final Line newLine;
     private final PointProvider point;
     private final Component name;
     private boolean isDone;
 
     public AngledLineFactory(DrawingBoard board, Line originalLine, double angle) {
         super(board);
-        // TODO angled lines
+        angle = Settings.get().toRadians(angle);
         this.point = PointProvider.mouse(board.getDrawing());
-        // this.newLine = new AngledInfiniteLine(board.getDrawing(), originalLine, point, Settings.get().toRadians(angle));
         this.name = Component.translatable("shape.factory.angled_line", originalLine.getName());
-        // addShape(newLine);
+        addShape(new InfiniteLine(board.getDrawing(), new RelativeAngleLineDefinition(originalLine, point, new AngleValue(angle))));
         addShape(point);
     }
 
     @Override
     public boolean click(InputEvent event, double x, double y) {
-        this.point.setPlacement(getOrCreatePoint(x, y).getPlacement());
+        this.replacePoint(point, x, y);
         isDone = true;
         return true;
     }

@@ -23,8 +23,8 @@ import net.thewinnt.planimetry.util.FontProvider;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public abstract class AngleMarker extends Shape {
-    protected final DisplayProperty value = new DisplayProperty(Component.translatable("property.angle_marker.generic.value"), () -> Component.angle(getAngle()));
-    protected final BooleanProperty displayValue = new BooleanProperty(Component.translatable("property.angle_marker.generic.show_value"), true);
+    protected final DisplayProperty value = new DisplayProperty(Component.translatable("property.dynamic_planimetry.angle_marker.generic.value"), () -> Component.angle(getAngle()));
+    protected final BooleanProperty displayValue = new BooleanProperty(Component.translatable("property.dynamic_planimetry.angle_marker.generic.show_value"), true);
 
     public AngleMarker(Drawing drawing) {
         super(drawing);

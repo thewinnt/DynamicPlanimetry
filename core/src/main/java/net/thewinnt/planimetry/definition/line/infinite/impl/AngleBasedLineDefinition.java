@@ -23,12 +23,13 @@ import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
 import net.thewinnt.planimetry.ui.properties.types.ShapeProperty;
 import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.value.DynamicValue;
 
 public class AngleBasedLineDefinition extends InfiniteLineDefinition {
     private PointProvider point;
-    private double angle;
+    private DynamicValue angle;
 
-    public AngleBasedLineDefinition(PointProvider point, double angle) {
+    public AngleBasedLineDefinition(PointProvider point, DynamicValue angle) {
         this.point = point;
         this.angle = angle;
     }
@@ -45,7 +46,7 @@ public class AngleBasedLineDefinition extends InfiniteLineDefinition {
 
     @Override
     public Vec2 point2() {
-        return MathHelper.continueFromAngle(point1(), angle, 10);
+        return MathHelper.continueFromAngle(point1(), angle.get(), 10);
     }
 
     @Override
@@ -79,7 +80,7 @@ public class AngleBasedLineDefinition extends InfiniteLineDefinition {
         point.addProperty(pointSelector);
         point.addProperties(this.point.getProperties());
 
-        NumberProperty angle = PropertyHelper.angle(getSource().getPropertyName("angle"), this.angle, this::setAngle);
+        Property<?> angle = PropertyHelper.dynamicValue(this.angle, this::setAngle, getSource().getPropertyName("angle"));
 
         return List.of(point, angle);
     }
@@ -92,6 +93,7 @@ public class AngleBasedLineDefinition extends InfiniteLineDefinition {
     @Override
     public LineSegment asLineSegment(Drawing drawing) {
         Vec2 a = point.getPosition();
+        double angle = this.angle.get();
         Optional<PointProvider> b = drawing.points.stream()
                                         .min(Comparator.comparingDouble(
                                             value -> Math.abs(MathHelper.angleTo(a, value.getPosition()) - angle))
@@ -107,18 +109,18 @@ public class AngleBasedLineDefinition extends InfiniteLineDefinition {
 
     @Override
     public Ray asRay(Drawing drawing) {
-        return new Ray(drawing, new DirectionBasedRay(point, angle));
+        return new Ray(drawing, new DirectionBasedRay(point, angle.get()));
     }
 
     public PointProvider getPoint() {
         return point;
     }
 
-    public double getAngle() {
+    public DynamicValue getAngle() {
         return angle;
     }
 
-    public void setAngle(double angle) {
+    public void setAngle(DynamicValue angle) {
         this.angle = angle;
     }
 

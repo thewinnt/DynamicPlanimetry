@@ -25,16 +25,16 @@ public class CircleFactory extends ShapeFactory {
     @Override
     public boolean click(InputEvent event, double x, double y) {
         if (this.point == null) {
-            this.point = PointProvider.mouse(board.getDrawing());
             PointProvider center = getOrCreatePoint(x, y);
+            this.point = PointProvider.mouse(board.getDrawing());
             this.addShape(new Circle(board.getDrawing(), center, point, keepRadius));
             if (addCenter) this.addShape(center);
-            this.addShape(point);
             if (addRadius) this.addShape(new LineSegment(board.getDrawing(), center, point));
             return false;
         } else if (this.point.getPlacement() instanceof MousePlacement) {
-            this.point = this.replacePoint(point, x, y);
+            this.point.freeze();
             this.point.setShouldRender(false);
+            this.addShape(point);
         }
         return true;
     }

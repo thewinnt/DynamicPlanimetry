@@ -17,7 +17,11 @@ public class SavingContext {
 
     public long addShape(Shape shape) {
         if (!saveData.containsKey(shape.getId())) {
-            saveData.put(shape.getId(), shape.toNbt(this));
+            try {
+                saveData.put(shape.getId(), shape.toNbt(this));
+            } catch (Exception e) {
+                throw new RuntimeException("Exception saving shape: " + shape, e);
+            }
         }
         return shape.getId();
     }

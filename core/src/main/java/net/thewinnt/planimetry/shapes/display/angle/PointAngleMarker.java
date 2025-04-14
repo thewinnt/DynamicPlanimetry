@@ -48,7 +48,7 @@ public class PointAngleMarker extends AngleMarker {
 
     @Override
     public String getTypeName() {
-        return this.getPropertyName("point");
+        return "shape.dynamic_planimetry.angle_marker.point";
     }
 
     @Override

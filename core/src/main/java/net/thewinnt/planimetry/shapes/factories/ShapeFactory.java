@@ -7,6 +7,7 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
+import net.thewinnt.planimetry.definition.point.placement.MousePlacement;
 import net.thewinnt.planimetry.definition.point.placement.StaticPlacement;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -109,7 +110,7 @@ public abstract class ShapeFactory {
     }
 
     protected PointProvider replacePoint(PointProvider point, double x, double y) {
-        PointProvider neo = (PointProvider) board.getHoveredShape(Gdx.input.getX(), Gdx.input.getY(), shape -> shape instanceof PointProvider);
+        PointProvider neo = (PointProvider) board.getHoveredShape(Gdx.input.getX(), Gdx.input.getY(), shape -> shape instanceof PointProvider p && !(p.getPlacement() instanceof MousePlacement));
         if (neo != null) {
             this.replaceShape(point, neo);
             return neo;

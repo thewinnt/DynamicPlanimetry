@@ -47,6 +47,7 @@ public class PointProvider extends Shape {
     private Vec2 lastBestPlace;
     private Vec2 lastPos;
     private double lastSpace;
+    private double lastScale;
 
     public PointProvider(Drawing drawing, PointPlacement placement) {
         super(drawing);
@@ -183,6 +184,7 @@ public class PointProvider extends Shape {
             this.fallback = fallback;
         }
         this.placement = placement;
+        this.placement.setSource(this);
     }
 
     public void addMovementListener(Consumer<Vec2> listener) {
@@ -259,7 +261,7 @@ public class PointProvider extends Shape {
         if (position == null) {
             position = Objects.requireNonNullElse(fallback, Vec2.ZERO);
         }
-        if (!board.hasShape(this)) {
+        if (!isFallback && (!board.hasShape(this) || !shouldRender())) {
             drawer.setColor(switch (selection) {
                 case HOVERED -> Theme.current().utilityPointHovered();
                 case SELECTED -> Theme.current().utilityPointSelected();
@@ -291,7 +293,7 @@ public class PointProvider extends Shape {
                 lastPos = position;
                 return;
             }
-            if (position.equals(lastPos) && lastBestPlace != null && board.getFreeSpace(lastBestPlace.x, lastBestPlace.y) >= lastSpace - 1) {
+            if (lastScale == board.getScale() && position.equals(lastPos) && lastBestPlace != null && board.getFreeSpace(lastBestPlace.x, lastBestPlace.y) >= lastSpace - 1) {
                 name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), board.bx(lastBestPlace.x), (float)(board.by(lastBestPlace.y) + neededSpace.y / 2));
                 lastPos = position;
                 return;
@@ -334,6 +336,7 @@ public class PointProvider extends Shape {
                 bestPos = MathHelper.continueFromAngle(position, 90, -minRadius);
             lastBestPlace = bestPos;
             lastSpace = bestSpace;
+            lastScale = board.getScale();
             name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), board.bx(bestPos.x), (float) (board.by(bestPos.y) + neededSpace.y / 2));
         }
         if (!position.equals(lastPos)) drawing.update();

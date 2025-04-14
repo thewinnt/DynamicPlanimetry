@@ -146,8 +146,8 @@ public class EditorScreen extends FlatUIScreen {
         goSettings.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                app.settingsScreen.setFrom(EditorScreen.this);
                 app.setScreen(DynamicPlanimetry.SETTINGS_SCREEN);
+                app.settingsScreen.setFrom(EditorScreen.this);
             }
         });
 
@@ -318,6 +318,7 @@ public class EditorScreen extends FlatUIScreen {
             cancel.setStyle(styles.getButtonStyle(Size.SMALL, true));
             nameLabel.setStyle(styles.getLabelStyle(Size.SMALL));
         });
+        saveDialog.setPosition((Gdx.graphics.getWidth() - saveDialog.getWidth()) / 2, (Gdx.graphics.getHeight() - saveDialog.getHeight()) / 2);
         return saveDialog;
     }
 }

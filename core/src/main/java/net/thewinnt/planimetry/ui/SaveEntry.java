@@ -30,9 +30,13 @@ public class SaveEntry extends Button {
         this.nameLabel = new Label(name, styles.getLabelStyle(Size.MEDIUM));
         ComponentLabel creationTimeLabel = new ComponentLabel(Component.translatable("ui.load_file.entry.creation_time", TIME_FORMAT.format(new Date(creationTime))), DynamicPlanimetry.getInstance()::getFont, Size.SMALL);
         ComponentLabel editTimeLabel = new ComponentLabel(Component.translatable("ui.load_file.entry.edit_time", TIME_FORMAT.format(new Date(editTime))), DynamicPlanimetry.getInstance()::getFont, Size.SMALL);
-        Label filenameLabel = new Label("(" + filename + ")", styles.getLabelStyle(Size.SMALL));
-        this.add(nameLabel).padLeft(5).padRight(10);
-        this.add(filenameLabel).padRight(5).expand().fill().row();
+        if (filename != null) {
+            this.add(nameLabel).padLeft(5).padRight(10);
+            Label filenameLabel = new Label("(" + filename + ")", styles.getLabelStyle(Size.SMALL));
+            this.add(filenameLabel).padRight(5).expand().fill().row();
+        } else {
+            this.add(nameLabel).padLeft(5).padRight(10).expand().fill().row();
+        }
         this.add(creationTimeLabel).padLeft(5).padRight(5).colspan(2).align(Align.left).row();
         this.add(editTimeLabel).padLeft(5).padRight(5).colspan(2).align(Align.left).row();
     }
