@@ -1,5 +1,7 @@
 package net.thewinnt.planimetry.definition.line.infinite;
 
+import net.thewinnt.planimetry.shapes.data.ExportedParameter;
+import net.thewinnt.planimetry.shapes.data.ExportedParameterType;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 import net.querz.nbt.tag.CompoundTag;
@@ -18,6 +20,7 @@ import net.thewinnt.planimetry.ui.properties.PropertySupplier;
 import net.thewinnt.planimetry.ui.text.Component;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public abstract class InfiniteLineDefinition implements PropertySupplier {
     private InfiniteLine source;
@@ -33,6 +36,9 @@ public abstract class InfiniteLineDefinition implements PropertySupplier {
     public abstract Ray asRay(Drawing drawing);
     public abstract PointProvider getBasePoint();
     public abstract List<Shape> dependencies();
+    public abstract void registerParameters(BiConsumer<ExportedParameterType, ExportedParameter<?>> consumer);
+    public abstract void onParameterUnlock(ExportedParameterType type);
+    public abstract void onParameterLock(ExportedParameterType type);
 
     public void move(Vec2 delta) {
         this.move(delta.x, delta.y);

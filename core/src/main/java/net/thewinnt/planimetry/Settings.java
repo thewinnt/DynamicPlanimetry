@@ -16,6 +16,7 @@ import net.thewinnt.planimetry.ui.StyleSet;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.Property;
+import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
 import net.thewinnt.planimetry.ui.properties.layout.CustomLayout;
 import net.thewinnt.planimetry.ui.properties.types.ActionProperty;
@@ -181,6 +182,10 @@ public class Settings {
             properties.add(isDebug);
             if (isDebug()) {
                 properties.add(reloadLanguages);
+                properties.add(PropertyHelper.setter(
+                    new NumberProperty(Component.translatable("settings.math_precision"), mathPrecision).requireWholeNumbers(true).withMin(0).withMax(52),
+                    d -> mathPrecision = d.byteValue()
+                ));
             }
         }
         return new PropertyLayout(properties, styles, null, Size.MEDIUM, true);
@@ -231,7 +236,7 @@ public class Settings {
             this.displayPresicion.setValueSilent((double)NbtUtil.getOptionalByte(nbt, "display_precision", (byte)3));
             this.angleUnits.setValueSilent(AngleType.valueOf(NbtUtil.getOptionalString(nbt, "angle_units", "degrees").toUpperCase()));
             this.moveShapes.setValueSilent(ShapeMovementPredicate.valueOf(NbtUtil.getOptionalString(nbt, "shape_movement_predicate", "only_points").toUpperCase()));
-            this.mathPrecision = NbtUtil.getOptionalByte(nbt, "math_precision", (byte)-23);
+            this.mathPrecision = NbtUtil.getOptionalByte(nbt, "math_precision", (byte)3);
             this.showGrid.setValueSilent(NbtUtil.getOptionalBoolean(nbt, "show_grid", true));
             this.lastSortingType = SortingType.valueOf(NbtUtil.getOptionalString(nbt, "last_sorting_type", "by_editing_time").toUpperCase());
             this.lastSortingOrder = NbtUtil.getOptionalBoolean(nbt, "is_reverse_sort", true);

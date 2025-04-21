@@ -21,6 +21,7 @@ import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.data.ExportedParameterType;
 import net.thewinnt.planimetry.shapes.factories.CircleTangentFactory;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
@@ -30,7 +31,6 @@ import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.types.NumberProperty;
 import net.thewinnt.planimetry.ui.text.Component;
-import net.thewinnt.planimetry.ui.text.NameComponent;
 import net.thewinnt.planimetry.util.FontProvider;
 import net.thewinnt.planimetry.value.type.AngleValue;
 

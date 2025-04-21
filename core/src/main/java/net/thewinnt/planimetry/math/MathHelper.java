@@ -10,13 +10,32 @@ public class MathHelper {
     public static final double DOUBLE_PI = Math.PI * 2;
     public static final double RADIANS_TO_GRADIANS = 200 / Math.PI;
     public static final double GRADIANS_TO_RADIANS = Math.PI / 200;
+    public static final long MANTISSA_MASK = 0x000f_ffff_ffff_ffffL;
 
+    /**
+     * Checks whether two double values are roughly equal to each other, trying to mitigate floating-point imprecision.
+     * <p>
+     * This method exists to mitigate imprecision on math operations, and it does so by finding the difference between
+     * the two numbers, leaving out only the mantissa bits and checking if all except the last few bits are zero.
+     * The amount of the ignored bits is controlled by {@link Settings#mathPrecision} which can be changed through NBT
+     * editing.
+     * @param a the first number to compare
+     * @param b the second number to compare
+     * @return whether the numbers are roughly equal to each other
+     */
     public static boolean roughlyEquals(double a, double b) {
         long mask = -1L << DynamicPlanimetry.SETTINGS.getMathPrecision();
-        return (Double.doubleToRawLongBits(Math.abs(a - b)) & mask) == 0;
+        mask &= MANTISSA_MASK;
+        return (Double.doubleToRawLongBits(a - b) & mask) == 0;
         // return Math.abs(a - b) < Math.pow(2, DynamicPlanimetry.SETTINGS.getMathPrecision());
     }
 
+    /**
+     * Checks whether two numbers are visibly equal to each other, as defined by {@link Settings#displayPresicion}.
+     * @param a the first number to compare
+     * @param b the second number to compare
+     * @return whether the visual representations of the given numbers are equal to each other
+     */
     public static boolean veryRoughlyEquals(double a, double b) {
         double factor = Math.pow(10, -Settings.get().getDisplayPresicion());
         return Math.abs(a - b) < factor;

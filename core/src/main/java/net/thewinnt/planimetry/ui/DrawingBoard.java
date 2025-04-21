@@ -111,7 +111,7 @@ public class DrawingBoard extends Actor {
                     selectionEndB = new Vec2(xb(mx), yb(my));
                     AABB range = new AABB(panStartB, selectionEndB);
                     selection.clear();
-                    selection.addAll(drawing.points.stream().filter(t -> t.intersects(range)).toList());
+                    selection.addAll(drawing.getPoints().stream().filter(t -> t.intersects(range)).toList());
                 }
                 event.handle();
             }
@@ -124,9 +124,11 @@ public class DrawingBoard extends Actor {
                     Shape hovered = getHoveredShape(mx, my);
                     if (hovered != null) {
                         if (Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT)) {
-                            addSelection(getHoveredShape(mx, my));
+                            addSelection(hovered);
+                        } else if (selection.size() == 1 && selection.get(0) == hovered && hovered.isChild()) {
+                            setSelection(hovered.getParent());
                         } else {
-                            setSelection(List.of(getHoveredShape(mx, my)));
+                            setSelection(hovered);
                         }
                     } else {
                         clearSelection();
@@ -305,7 +307,6 @@ public class DrawingBoard extends Actor {
                             alignYH = Align.right;
                         } else if (hintY <= getX() + 10) {
                             hintY = getX() + 10;
-                            alignYH = Align.left;
                         }
                         font.getFont(fontSize, Theme.current().gridHint()).draw(batch, String.valueOf((long)i), hintY, by(i) + 10, 0, alignYH, false);
                     } else {
@@ -322,7 +323,6 @@ public class DrawingBoard extends Actor {
                             alignYH = Align.right;
                         } else if (hintY <= getX() + length + 10) {
                             hintY = getX() + 10;
-                            alignYH = Align.left;
                         }
                         font.getFont(fontSize, Theme.current().gridHint()).draw(batch, string, hintY, by(i), 0, alignYH, false);
                     }
@@ -335,20 +335,24 @@ public class DrawingBoard extends Actor {
         if (creatingShape != null) creatingShape.onRender(xb(mx), yb(my));
         Stream<Shape> nonPointSelected = selection.stream().filter(shape -> !(shape instanceof PointProvider));
         Stream<Shape> pointSelected = selection.stream().filter(shape -> shape instanceof PointProvider);
+        List<Shape> parents = selection.stream().map(Shape::getParent).filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
         Shape hovered = getHoveredShape(mx, my, shape -> !(shape instanceof PointProvider point && point.getPlacement().is(PointPlacementType.MOUSE_POINTER)));
-        for (Shape i : this.drawing.shapes) {
-            if (i.shouldRender()) i.render(drawer, SelectionStatus.NONE, font, this);
-        }
+        if (hovered != null && hovered.isChild()) parents.add(hovered.getParent());
+        this.drawing.getShapes().stream()
+            .filter(shape -> !parents.contains(shape))
+            .filter(Shape::shouldRender).forEach(i -> i.render(drawer, SelectionStatus.NONE, font, this));
+        parents.forEach(i -> i.render(drawer, SelectionStatus.HOVERED_PARENT, font, this));
         for (Shape i : nonPointSelected.toList()) {
             i.render(drawer, SelectionStatus.SELECTED, font, this);
         }
         if (hovered != null && !(hovered instanceof PointProvider)) {
             hovered.render(drawer, hovered == selection ? SelectionStatus.SELECTED : SelectionStatus.HOVERED, font, this);
         }
-        for (PointProvider i : this.drawing.points) {
-            if (selection == i || hovered == i || !i.shouldRender()) continue;
-            i.render(drawer, SelectionStatus.NONE, font, this);
-        }
+        this.drawing.getPoints().stream()
+            .filter(PointProvider::shouldRender)
+            .filter(point -> point != selection && point != hovered)
+            .filter(shape -> !parents.contains(shape))
+            .forEach(i -> i.render(drawer, SelectionStatus.NONE, font, this));
         for (Shape i : pointSelected.toList()) i.render(drawer, SelectionStatus.SELECTED, font, this);
         if (hovered instanceof PointProvider) hovered.render(drawer, hovered == selection ? SelectionStatus.SELECTED : SelectionStatus.HOVERED, font, this);
         if (panStart != null && selectionEnd != null) {
@@ -366,32 +370,34 @@ public class DrawingBoard extends Actor {
             }
         }
         if (DebugFlag.MOUSE_INFO.get()) {
-            BitmapFont font1 = font.getFont(fontSize, Color.FIREBRICK);
-            font1.draw(batch, "scale: " + scale, x(5), y(getHeight() - 5));
-            font1.draw(batch, "offx: " + offset.x, x(5), y(getHeight() - 30));
-            font1.draw(batch, "offy: " + offset.y, x(5), y(getHeight() - 55));
-            font1.draw(batch, "mx: " + mx, x(5), y(getHeight() - 80));
-            font1.draw(batch, "my: " + my, x(5), y(getHeight() - 105));
-            font1.draw(batch, "mxb: " + xb(mx), x(5), y(getHeight() - 130));
-            font1.draw(batch, "mxy: " + yb(my), x(5), y(getHeight() - 155));
-            font1.draw(batch, "min x: " + minX(), x(5), y(getHeight() - 180));
-            font1.draw(batch, "max x: " + maxX(), x(5), y(getHeight() - 205));
-            font1.draw(batch, "min y: " + minY(), x(5), y(getHeight() - 230));
-            font1.draw(batch, "max y: " + maxY(), x(5), y(getHeight() - 255));
-            BitmapFont font2 = font.getFont(40, Color.MAROON);
+            BitmapFont font = this.font.getFont(fontSize, Color.FIREBRICK);
+            font.draw(batch, "scale: " + scale, x(5), y(getHeight() - 5));
+            font.draw(batch, "offx: " + offset.x, x(5), y(getHeight() - 30));
+            font.draw(batch, "offy: " + offset.y, x(5), y(getHeight() - 55));
+            font.draw(batch, "mx: " + mx, x(5), y(getHeight() - 80));
+            font.draw(batch, "my: " + my, x(5), y(getHeight() - 105));
+            font.draw(batch, "mxb: " + xb(mx), x(5), y(getHeight() - 130));
+            font.draw(batch, "mxy: " + yb(my), x(5), y(getHeight() - 155));
+            font.draw(batch, "min x: " + minX(), x(5), y(getHeight() - 180));
+            font.draw(batch, "max x: " + maxX(), x(5), y(getHeight() - 205));
+            font.draw(batch, "min y: " + minY(), x(5), y(getHeight() - 230));
+            font.draw(batch, "max y: " + maxY(), x(5), y(getHeight() - 255));
+        }
+        if (DebugFlag.SELECTION_INFO.get()) {
+            BitmapFont font = this.font.getFont(40, Color.MAROON);
             if (!selection.isEmpty()) {
                 if (selection.size() == 1) {
-                    font2.draw(batch, "keyboard focus: " + this.getStage().getKeyboardFocus(), x(5), y(235));
+                    font.draw(batch, "keyboard focus: " + this.getStage().getKeyboardFocus(), x(5), y(235));
                 } else {
-                    font2.draw(batch, "keyboard focus: " + this.getStage().getKeyboardFocus(), x(5), y(155));
+                    font.draw(batch, "keyboard focus: " + this.getStage().getKeyboardFocus(), x(5), y(155));
                 }
             }
             if (selection.size() == 1) {
-                font2.draw(batch, "selected: " + selection, x(5), y(195));
-                font2.draw(batch, "dependencies: " + selection.get(0).getDependencies(), x(5), y(155));
-                font2.draw(batch, "dependenents: " + selection.get(0).getDependingShapes(), x(5), y(115));
+                font.draw(batch, "selected: " + selection, x(5), y(195));
+                font.draw(batch, "dependencies: " + selection.get(0).getDependencies(), x(5), y(155));
+                font.draw(batch, "dependenents: " + selection.get(0).getDependingShapes(), x(5), y(115));
             } else {
-                font2.draw(batch, "selected: " + selection, x(5), y(115));
+                font.draw(batch, "selected: " + selection, x(5), y(115));
             }
         }
         if (creatingShape != null) {
@@ -444,7 +450,7 @@ public class DrawingBoard extends Actor {
     }
 
     public Collection<Shape> getShapes() {
-        return Stream.concat(this.drawing.points.stream(), this.drawing.shapes.stream()).toList();
+        return Stream.concat(this.drawing.getPoints().stream(), this.drawing.getShapes().stream()).toList();
     }
 
     public Shape getHoveredShape(double mx, double my) {
@@ -457,7 +463,7 @@ public class DrawingBoard extends Actor {
         } else {
             ignore = List.of();
         }
-        for (PointProvider i : this.drawing.points) {
+        for (PointProvider i : this.drawing.getPoints()) {
             if (ignore.contains(i)) continue;
             double distance = i.distanceToMouse(xb(mx), yb(my), this);
             if (distance <= minDistance) {
@@ -466,10 +472,10 @@ public class DrawingBoard extends Actor {
             }
         }
         if (hovered != null) return hovered;
-        for (Shape i : this.drawing.shapes) {
+        for (Shape i : this.drawing.getShapesAndChildren().toList()) {
             if (ignore.contains(i)) continue;
             double distance = i.distanceToMouse(xb(mx), yb(my), this);
-            if (distance <= minDistance) {
+            if (distance < minDistance) {
                 hovered = i;
                 minDistance = distance;
             }
@@ -489,7 +495,7 @@ public class DrawingBoard extends Actor {
             ignore = List.of();
             whitelist = List.of();
         }
-        for (PointProvider i : this.drawing.points) {
+        for (PointProvider i : this.drawing.getPoints()) {
             if (ignore.contains(i) && !whitelist.contains(i)) continue;
             if (!predicate.test(i)) continue;
             double distance = i.distanceToMouse(xb(mx), yb(my), this);
@@ -499,11 +505,11 @@ public class DrawingBoard extends Actor {
             }
         }
         if (hovered != null) return hovered;
-        for (Shape i : this.drawing.shapes) {
+        for (Shape i : this.drawing.getShapesAndChildren().toList()) {
             if (ignore.contains(i)) continue;
             if (!predicate.test(i)) continue;
             double distance = i.distanceToMouse(xb(mx), yb(my), this);
-            if (distance <= minDistance) {
+            if (distance < minDistance) {
                 hovered = i;
                 minDistance = distance;
             }
@@ -514,7 +520,7 @@ public class DrawingBoard extends Actor {
     public PointProvider getNearestPoint(double mx, double my) {
         PointProvider hovered = null;
         double minDistance = Double.MAX_VALUE;
-        for (Shape i : this.drawing.points) {
+        for (Shape i : this.drawing.getPoints()) {
             if (i instanceof PointProvider point) {
                 double distance = point.distanceToMouse(xb(mx), yb(my), this);
                 if (distance <= minDistance) {
@@ -528,10 +534,10 @@ public class DrawingBoard extends Actor {
 
     public double getFreeSpace(double bx, double by) {
         double minDistance = Double.MAX_VALUE;
-        for (Shape i : this.drawing.shapes) {
+        for (Shape i : this.drawing.getShapes()) {
             minDistance = Math.min(minDistance, i.distanceToMouse(bx, by, this));
         }
-        for (Shape i : this.drawing.points) {
+        for (Shape i : this.drawing.getPoints()) {
             minDistance = Math.min(minDistance, i.distanceToMouse(bx, by, this));
         }
         minDistance *= scale;
@@ -582,6 +588,10 @@ public class DrawingBoard extends Actor {
         }
     }
 
+    public void setSelection(Shape shape) {
+        this.setSelection(List.of(shape));
+    }
+
     public void clearSelection() {
         selection.clear();
         for (Consumer<List<Shape>> i : this.selectionListeners) {
@@ -624,5 +634,9 @@ public class DrawingBoard extends Actor {
 
     public Drawing getDrawing() {
         return drawing;
+    }
+
+    public static DrawingBoard getInstance() {
+        return DynamicPlanimetry.getInstance().editorScreen.getBoard();
     }
 }

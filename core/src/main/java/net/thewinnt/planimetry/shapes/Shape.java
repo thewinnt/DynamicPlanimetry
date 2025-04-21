@@ -1,11 +1,6 @@
 package net.thewinnt.planimetry.shapes;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.badlogic.gdx.graphics.Color;
 
@@ -20,6 +15,8 @@ import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
+import net.thewinnt.planimetry.shapes.data.ExportedParameter;
+import net.thewinnt.planimetry.shapes.data.ExportedParameterType;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
@@ -38,10 +35,12 @@ public abstract class Shape implements ComponentRepresentable {
     /** A list of shapes that depend on this shape */
     protected final Set<Shape> dependents = new HashSet<>();
     protected final Drawing drawing;
+    protected final List<Property<?>> properties = new ArrayList<>();
+    protected final Map<ExportedParameterType, ExportedParameter<?>> parameters = new HashMap<>();
     private long id;
     protected Component nameOverride;
     protected Color colorOverride;
-    protected final List<Property<?>> properties = new ArrayList<>();
+    protected Shape parent;
 
     public Shape(Drawing drawing) {
         this.drawing = drawing;
@@ -83,7 +82,39 @@ public abstract class Shape implements ComponentRepresentable {
      * Represents this shape as a collection of line segments, in hopes that they can be used for intersections.
      * @return a list of {@link SegmentLike} objects representing this shape, or an empty collection if that is impossible
      */
-    public abstract Collection<SegmentLike> asSegments();
+    public abstract Collection<? extends SegmentLike> asSegments();
+
+    /**
+     * Returns a list of shapes that are smaller parts of this shape.
+     * @return the list of this shape's children
+     */
+    public Collection<? extends Shape> children() {
+        return List.of();
+    }
+
+    public boolean isChild() {
+        return parent != null;
+    }
+
+    public Collection<ExportedParameterType> exports() {
+        return parameters.keySet();
+    }
+
+    public boolean exports(ExportedParameterType parameter) {
+        return parameters.containsKey(parameter);
+    }
+
+    public ExportedParameter<?> getParameter(ExportedParameterType type) {
+        return parameters.get(type);
+    }
+
+    public boolean unlockParameter(ExportedParameterType type) {
+        return false;
+    }
+
+    public boolean lockParameter(ExportedParameterType type) {
+        return false;
+    }
 
     /**
      * Renders the shape
@@ -99,10 +130,15 @@ public abstract class Shape implements ComponentRepresentable {
     }
 
     public void rebuildProperties() {}
+    public void registerParameters() {}
 
     public Collection<Function<?>> getFunctions() {
         ArrayList<Function<?>> output = new ArrayList<>();
-        output.add(new BasicNamedFunction<>(drawing, this, shape -> shape.delete(defaultIgnoreDependencies(), false), Component.translatable("function.generic.delete"), Component.translatable("function.generic.delete.action")));
+        if (this.isChild()) {
+            output.add(new BasicNamedFunction<>(drawing, this, shape -> DrawingBoard.getInstance().setSelection(parent), Component.translatable("function.generic.go_to_parent"), Component.translatable("function.generic.go_to_parent.action")));
+        } else {
+            output.add(new BasicNamedFunction<>(drawing, this, shape -> shape.delete(defaultIgnoreDependencies(), false), Component.translatable("function.generic.delete"), Component.translatable("function.generic.delete.action")));
+        }
         return output;
     }
 
@@ -154,7 +190,8 @@ public abstract class Shape implements ComponentRepresentable {
 
     public void onAdded() {
         rebuildProperties();
-    };
+        registerParameters();
+    }
 
     public void onRemoved() {}
 
@@ -182,7 +219,7 @@ public abstract class Shape implements ComponentRepresentable {
         }
         DrawingBoard board = DynamicPlanimetry.getInstance().editorScreen.getBoard();
         if (board != null) {
-            board.setSelection(null);
+            board.clearSelection();
         }
         return true;
     }
@@ -241,12 +278,23 @@ public abstract class Shape implements ComponentRepresentable {
         return switch (selectionStatus) {
             case NONE -> Theme.current().shape();
             case HOVERED -> Theme.current().shapeHovered();
+            case HOVERED_PARENT -> Theme.current().shapeHoveredParent();
             case SELECTED -> Theme.current().shapeSelected();
         };
     }
 
     public void setColorOverride(Color colorOverride) {
         this.colorOverride = colorOverride;
+    }
+
+    public Shape getParent() {
+        return parent;
+    }
+
+    public final void setParent(Shape parent) {
+        if (parent != this) {
+            this.parent = parent;
+        }
     }
 
     public static Shape fromNbt(CompoundTag nbt, LoadingContext context) {
@@ -279,6 +327,7 @@ public abstract class Shape implements ComponentRepresentable {
     public enum SelectionStatus {
         NONE,
         HOVERED,
+        HOVERED_PARENT,
         SELECTED
     }
 

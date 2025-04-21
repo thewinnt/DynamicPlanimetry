@@ -89,7 +89,7 @@ public class DirectionBasedRay extends RayDefinition {
     @Override
     public LineSegment asLineSegment(Drawing drawing) {
         Vec2 a = start.getPosition();
-        Optional<PointProvider> b = drawing.points.stream()
+        Optional<PointProvider> b = drawing.getPoints().stream()
                                         .min(Comparator.comparingDouble(
                                             value -> Math.abs(MathHelper.angleTo(a, value.getPosition()) - direction))
                                         );

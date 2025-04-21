@@ -4,13 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.badlogic.gdx.Gdx;
@@ -32,9 +30,9 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 public class Drawing {
     public final List<BiConsumer<Shape, Shape>> swapListeners = new ArrayList<>();
     public final Long2ObjectMap<Shape> shapeIds = new Long2ObjectOpenHashMap<>();
-    public final List<Shape> allShapes;
-    public final List<Shape> shapes;
-    public final List<PointProvider> points;
+    private final List<Shape> allShapes;
+    private final List<Shape> shapes;
+    private final List<PointProvider> points;
     private long shapeIdCounter;
     private int pointNameCounter;
     private long minIdUponLoad;
@@ -120,16 +118,12 @@ public class Drawing {
     }
 
     public boolean hasShape(Shape shape) {
-        for (Shape i : this.shapes) {
-            if (i == shape) {
-                return true;
-            }
-        }
         if (shape instanceof PointProvider) {
-            for (Shape i : this.points) {
-                if (i == shape) {
-                    return true;
-                }
+            return this.points.contains(shape);
+        } else {
+            for (Shape i : this.shapes) {
+                if (i == shape) return true;
+                if (i.children().contains(shape)) return true;
             }
         }
         return false;
@@ -198,6 +192,42 @@ public class Drawing {
             } while (this.shapeIds.containsKey(shapeIdCounter));
             return shapeIdCounter;
         }
+    }
+
+    public Stream<Shape> getShapesAndChildren() {
+        return this.shapes.stream()
+            .mapMulti((shape, consumer) -> {
+                shape.children().forEach(consumer);
+                consumer.accept(shape);
+            });
+    }
+
+    public List<Shape> getShapes() {
+        return shapes;
+    }
+
+    public Stream<Shape> getPointsAndChildren() {
+        return this.points.stream()
+            .mapMulti((shape, consumer) -> {
+                shape.children().forEach(consumer);
+                consumer.accept(shape);
+            });
+    }
+
+    public List<PointProvider> getPoints() {
+        return points;
+    }
+
+    public Stream<Shape> getAllShapesAndChildren() {
+        return this.allShapes.stream()
+            .mapMulti((shape, consumer) -> {
+                shape.children().forEach(consumer);
+                consumer.accept(shape);
+            });
+    }
+
+    public List<Shape> getAllShapes() {
+        return allShapes;
     }
 
     public NameComponent generateName(boolean useDashesNotDigits) {

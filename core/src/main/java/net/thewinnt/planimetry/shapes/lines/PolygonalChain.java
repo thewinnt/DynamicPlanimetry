@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import com.badlogic.gdx.graphics.Color;
@@ -16,7 +17,6 @@ import net.thewinnt.planimetry.data.LoadingContext;
 import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.MathHelper;
-import net.thewinnt.planimetry.math.Segment;
 import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
@@ -31,7 +31,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class PolygonalChain extends Shape {
     public final List<PointProvider> points;
-    private List<SegmentLike> segmentCache;
+    private List<LineSegment> segmentCache;
 
     public PolygonalChain(Drawing drawing, PointProvider... points) {
         super(drawing);
@@ -132,7 +132,7 @@ public class PolygonalChain extends Shape {
         Color lineColor = this.getColor(selection);
         if (selection == SelectionStatus.SELECTED) {
             for (PointProvider i : points) {
-                if (!board.getShapes().contains(i)) {
+                if (!board.getShapes().contains(i) || !i.shouldRender()) {
                     i.render(drawer, SelectionStatus.NONE, font, board);
                 }
             }
@@ -222,19 +222,22 @@ public class PolygonalChain extends Shape {
     }
 
     @Override
-    public Collection<SegmentLike> asSegments() {
+    public Collection<LineSegment> asSegments() {
         if (segmentCache == null) {
             if (this instanceof Polygon) {
                 segmentCache = new ArrayList<>(this.points.size());
-                segmentCache.set(0, new Segment(points.get(0).getPosition(), points.get(points.size()).getPosition()));
-                for (int i = 1; i < segmentCache.size(); i++) {
-                    segmentCache.set(i, new Segment(points.get(i - 1).getPosition(), points.get(i).getPosition()));
+                segmentCache.add(new LineSegment(this.drawing, points.get(0), points.get(points.size() - 1)));
+                for (int i = 1; i < this.points.size(); i++) {
+                    segmentCache.add(new LineSegment(this.drawing, points.get(i - 1), points.get(i)));
                 }
             } else {
                 segmentCache = new ArrayList<>(this.points.size() - 1);
-                for (int i = 1; i < segmentCache.size(); i++) {
-                    segmentCache.set(i - 1, new Segment(points.get(i - 1).getPosition(), points.get(i).getPosition()));
+                for (int i = 1; i < this.points.size() - 1; i++) {
+                    segmentCache.add(new LineSegment(this.drawing, points.get(i - 1), points.get(i)));
                 }
+            }
+            for (LineSegment i : segmentCache) {
+                i.setParent(this);
             }
         }
         return segmentCache;
@@ -258,7 +261,7 @@ public class PolygonalChain extends Shape {
                 line.intersect(i).ifPresent(output::add);
             }
         } else {
-            Collection<SegmentLike> segments = other.asSegments();
+            Collection<? extends SegmentLike> segments = other.asSegments();
             if (segments.isEmpty()) {
                 for (SegmentLike i : this.asSegments()) {
                     output.addAll(other.intersections(i));
@@ -276,7 +279,15 @@ public class PolygonalChain extends Shape {
 
     @Override
     public Collection<Vec2> intersections(SegmentLike other) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.segmentCache.stream()
+            .map(i -> i.intersection(other))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .toList();
+    }
+
+    @Override
+    public Collection<? extends Shape> children() {
+        return this.asSegments();
     }
 }

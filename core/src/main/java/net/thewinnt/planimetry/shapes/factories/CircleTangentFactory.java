@@ -22,7 +22,7 @@ import net.thewinnt.planimetry.value.type.PointDirectionValue;
 
 public class CircleTangentFactory extends ShapeFactory {
     private final Circle circle;
-    private PointProvider point;
+    private final PointProvider point;
     private boolean isDone;
 
     public CircleTangentFactory(DrawingBoard board, Circle circle) {

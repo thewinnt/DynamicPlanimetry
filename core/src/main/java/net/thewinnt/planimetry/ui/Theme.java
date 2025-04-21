@@ -22,6 +22,7 @@ public record Theme(
     Color board,
     Color shape,
     Color shapeHovered,
+    Color shapeHoveredParent,
     Color shapeSelected,
     Color point,
     Color pointHovered,

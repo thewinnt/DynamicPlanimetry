@@ -41,7 +41,7 @@ public class TwoPointRayType implements RayDefinitionType<TwoPointRay> {
     public TwoPointRay convert(RayDefinition other, Drawing drawing) {
         Vec2 a = other.start();
         double direction = other.direction();
-        Optional<PointProvider> b = drawing.points.stream()
+        Optional<PointProvider> b = drawing.getPoints().stream()
             .min(Comparator.comparingDouble(
                 value -> Math.abs(MathHelper.angleTo(a, value.getPosition()) - direction))
             );

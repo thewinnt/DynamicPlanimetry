@@ -2,6 +2,7 @@ package net.thewinnt.planimetry.definition.line.infinite.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.planimetry.data.Drawing;
@@ -11,6 +12,8 @@ import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineDefinition;
 import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineType;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.shapes.data.ExportedParameter;
+import net.thewinnt.planimetry.shapes.data.ExportedParameterType;
 import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.lines.Ray;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
@@ -110,5 +113,20 @@ public class TwoPointInfiniteLine extends InfiniteLineDefinition {
     @Override
     public List<Shape> dependencies() {
         return List.of(a, b);
+    }
+
+    @Override
+    public void registerParameters(BiConsumer<ExportedParameterType, ExportedParameter<?>> consumer) {
+
+    }
+
+    @Override
+    public void onParameterUnlock(ExportedParameterType type) {
+
+    }
+
+    @Override
+    public void onParameterLock(ExportedParameterType type) {
+
     }
 }

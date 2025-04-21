@@ -85,6 +85,7 @@ public class DynamicPlanimetry extends Game {
         new Color(0xFFFFFFFF), // board
         new Color(0x000000FF), // shape
         new Color(0x00C0FFFF), // shape hovered
+        new Color(0x00E0FFFF), // shape hovered (parent)
         new Color(0x0080FFFF), // shape selected
         new Color(0xFF8000FF), // point
         new Color(0xFFC84CFF), // point hovered
@@ -123,6 +124,7 @@ public class DynamicPlanimetry extends Game {
         new Color(0x1F1F1FFF), // board
         new Color(0xEEEEEEFF), // shape
         new Color(0x00C0FFFF), // shape hovered
+        new Color(0x00E0FFFF), // shape hovered (parent)
         new Color(0x0080FFFF), // shape selected
         new Color(0xFF8000FF), // point
         new Color(0xFFC84CFF), // point hovered

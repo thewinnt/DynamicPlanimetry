@@ -9,6 +9,8 @@ import net.thewinnt.planimetry.definition.line.ray.impl.DirectionBasedRay;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.shapes.data.ExportedParameter;
+import net.thewinnt.planimetry.shapes.data.ExportedParameterType;
 import net.thewinnt.planimetry.shapes.lines.Line;
 import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.lines.Ray;
@@ -23,6 +25,7 @@ import net.thewinnt.planimetry.value.DynamicValue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public class RelativeAngleLineDefinition extends InfiniteLineDefinition {
     protected Line line;
@@ -119,5 +122,20 @@ public class RelativeAngleLineDefinition extends InfiniteLineDefinition {
     @Override
     public List<Shape> dependencies() {
         return List.of(point);
+    }
+
+    @Override
+    public void registerParameters(BiConsumer<ExportedParameterType, ExportedParameter<?>> consumer) {
+
+    }
+
+    @Override
+    public void onParameterUnlock(ExportedParameterType type) {
+
+    }
+
+    @Override
+    public void onParameterLock(ExportedParameterType type) {
+
     }
 }

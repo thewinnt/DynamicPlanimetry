@@ -62,7 +62,7 @@ public class CirclePlacement extends PointPlacement {
 
     @Override
     public PointPlacementType<?> type() {
-        return CirclePlacementType.INSTANCE; // TODO circle placement
+        return CirclePlacementType.INSTANCE;
     }
 
     public Circle getCircle() {

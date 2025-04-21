@@ -100,7 +100,7 @@ public abstract class Line extends Shape {
         if (other instanceof Line line) {
             return intersectInf(line).filter(line::contains).map(List::of).orElse(List.of());
         } else {
-            Collection<SegmentLike> segments = other.asSegments();
+            Collection<? extends SegmentLike> segments = other.asSegments();
             if (!segments.isEmpty()) {
                 return segments.stream()
                                .map(this::intersect)

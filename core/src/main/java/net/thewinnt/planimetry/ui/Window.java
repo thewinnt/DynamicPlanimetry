@@ -36,22 +36,14 @@ public class Window extends WidgetGroup {
         this.name = name;
         this.nameSize = name == null ? new Vector2(0, Size.MEDIUM.lines(1)) : name.getSize(styles.font, Size.MEDIUM).withY(Size.MEDIUM.lines(1)).toVector2f();
         this.minimize = new Button(styles.getMinimizeStyle(Size.MEDIUM, true));
-        this.minimize.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                setOpen(!open);
-                if (dockListener != null) dockListener.accept(Window.this);
-            }
-        });
+        this.minimize.addListener(new GuiHelper.ButtonListener(() -> {
+            setOpen(!open);
+            if (dockListener != null) dockListener.accept(Window.this);
+        }));
 
         if (closeable) {
             this.close = new Button(styles.getCloseStyle(Size.MEDIUM, true));
-            this.close.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    Window.this.remove();
-                }
-            });
+            this.close.addListener(new GuiHelper.ButtonListener(this::remove));
         } else {
             this.close = null;
         }
@@ -104,7 +96,7 @@ public class Window extends WidgetGroup {
                 } else if (dragging == DragAction.RESIZE && resizeDirection != null) {
                     Gdx.app.log("Window", String.format("Resizing window to %s: %s / %s", resizeDirection, deltaX, deltaY));
                     setSize(getWidth() + deltaX * resizeDirection.x, getHeight() + deltaY * resizeDirection.y);
-                    moveBy(deltaX * ((-resizeDirection.x + 1) / 2), deltaY * ((-resizeDirection.y + 1) / 2));
+                    moveBy(deltaX * ((-resizeDirection.x + 1) / 2f), deltaY * ((-resizeDirection.y + 1) / 2f));
                     event.stop();
                 }
             }

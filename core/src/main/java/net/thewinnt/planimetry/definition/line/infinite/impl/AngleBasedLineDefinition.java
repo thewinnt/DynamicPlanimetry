@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineDefinition;
@@ -13,6 +14,8 @@ import net.thewinnt.planimetry.definition.line.ray.impl.TwoPointRay;
 import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.shapes.data.ExportedParameter;
+import net.thewinnt.planimetry.shapes.data.ExportedParameterType;
 import net.thewinnt.planimetry.shapes.lines.LineSegment;
 import net.thewinnt.planimetry.shapes.lines.Ray;
 import net.thewinnt.planimetry.definition.line.infinite.type.AngleLineType;
@@ -94,7 +97,7 @@ public class AngleBasedLineDefinition extends InfiniteLineDefinition {
     public LineSegment asLineSegment(Drawing drawing) {
         Vec2 a = point.getPosition();
         double angle = this.angle.get();
-        Optional<PointProvider> b = drawing.points.stream()
+        Optional<PointProvider> b = drawing.getPoints().stream()
                                         .min(Comparator.comparingDouble(
                                             value -> Math.abs(MathHelper.angleTo(a, value.getPosition()) - angle))
                                         );
@@ -127,5 +130,20 @@ public class AngleBasedLineDefinition extends InfiniteLineDefinition {
     @Override
     public List<Shape> dependencies() {
         return List.of(point);
+    }
+
+    @Override
+    public void registerParameters(BiConsumer<ExportedParameterType, ExportedParameter<?>> consumer) {
+
+    }
+
+    @Override
+    public void onParameterUnlock(ExportedParameterType type) {
+
+    }
+
+    @Override
+    public void onParameterLock(ExportedParameterType type) {
+
     }
 }

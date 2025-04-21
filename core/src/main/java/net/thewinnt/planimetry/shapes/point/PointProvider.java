@@ -24,6 +24,7 @@ import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.shapes.data.ExportedParameterType;
 import net.thewinnt.planimetry.ui.DrawingBoard;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.properties.PropertyHelper;
@@ -52,7 +53,7 @@ public class PointProvider extends Shape {
     public PointProvider(Drawing drawing, PointPlacement placement) {
         super(drawing);
         this.placement = placement;
-        this.placement.setSource(this);
+        if (this.placement != null) this.placement.setSource(this);
         this.name = drawing.generateName(drawing.shouldUseDashesForNaming());
         this.nameProperty = PropertyHelper.setter(new NameComponentProperty(Component.translatable(getPropertyName("name")), name), this::setName);
         this.dependencies.clear();
@@ -63,7 +64,7 @@ public class PointProvider extends Shape {
     public PointProvider(Drawing drawing, PointPlacement placement, NameComponent name) {
         super(drawing);
         this.placement = placement;
-        this.placement.setSource(this);
+        if (this.placement != null) this.placement.setSource(this);
         this.name = name;
         this.nameProperty = PropertyHelper.setter(new NameComponentProperty(Component.translatable(getPropertyName("name")), name), this::setName);
         this.dependencies.clear();
@@ -82,7 +83,7 @@ public class PointProvider extends Shape {
         type.addValueChangeListener(t -> {
             try {
                 this.placement = t.convert(this.placement, drawing);
-                this.placement.setSource(this);
+                if (this.placement != null) this.placement.setSource(this);
                 this.dependencies.clear();
                 this.dependencies.addAll(this.placement.dependencies());
                 this.dependencies.forEach(shape -> shape.addDepending(this));
@@ -184,7 +185,7 @@ public class PointProvider extends Shape {
             this.fallback = fallback;
         }
         this.placement = placement;
-        this.placement.setSource(this);
+        if (this.placement != null) this.placement.setSource(this);
     }
 
     public void addMovementListener(Consumer<Vec2> listener) {

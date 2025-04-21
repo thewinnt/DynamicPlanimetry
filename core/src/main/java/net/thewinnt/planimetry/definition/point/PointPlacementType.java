@@ -1,8 +1,5 @@
 package net.thewinnt.planimetry.definition.point;
 
-import net.querz.nbt.tag.CompoundTag;
-import net.thewinnt.planimetry.data.LoadingContext;
-import net.thewinnt.planimetry.data.SavingContext;
 import net.thewinnt.planimetry.data.registry.Identifier;
 import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.data.registry.Registry;

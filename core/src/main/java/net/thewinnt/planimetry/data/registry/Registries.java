@@ -10,6 +10,7 @@ import net.thewinnt.planimetry.definition.point.PointPlacementType;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineType;
 import net.thewinnt.planimetry.definition.line.ray.RayDefinitionType;
+import net.thewinnt.planimetry.shapes.data.ExportedParameterType;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.ui.text.Components;
 import net.thewinnt.planimetry.value.DynamicValueType;
@@ -24,6 +25,7 @@ public class Registries {
     public static final Registry<InfiniteLineType<?>> INFINITE_LINE_DEFINITION_TYPE = registerMapped(new Identifier("infinite_line_definition_type"), t -> InfiniteLineType.init());
     public static final Registry<RayDefinitionType<?>> RAY_DEFITINION_TYPE = registerMapped(new Identifier("ray_definition_type"), t -> RayDefinitionType.init());
     public static final Registry<PointPlacementType<?>> POINT_PLACEMENT_TYPE = registerMapped(new Identifier("point_placement_type"), t -> PointPlacementType.init());
+    public static final Registry<ExportedParameterType> SHAPE_PARAMETERS = registerMapped(new Identifier("shape_parameters"), t -> ExportedParameterType.init());
 
     public static <T> Registry<T> registerMapped(Identifier id, RegistryBootstrap bootstrap) {
         return registerRegistry(new MappedRegistry<>(id), id, bootstrap);

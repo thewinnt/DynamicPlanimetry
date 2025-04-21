@@ -34,7 +34,7 @@ public class ShapeProperty extends Property<Shape> {
     public void setConnectionPredicate(Predicate<Shape> predicate) {
         this.predicate = predicate;
     }
-    
+
     @Override
     public boolean filterValue(Shape value) {
         return this.predicate.test(value);
@@ -43,7 +43,7 @@ public class ShapeProperty extends Property<Shape> {
     @Override
     public WidgetGroup getActorSetup(StyleSet styles, Size size) {
         Table output = new Table();
-        Collection<Shape> shapes = this.drawing.allShapes.stream().filter(predicate).toList();
+        Collection<Shape> shapes = this.drawing.getAllShapes().stream().filter(predicate).toList();
         SelectBox<Shape> selector = new ComponentSelectBox<>(styles.getListStyle(size), shapes, Shape::getName, size);
         selector.setSelected(value);
         selector.addListener(new ChangeListener() {
