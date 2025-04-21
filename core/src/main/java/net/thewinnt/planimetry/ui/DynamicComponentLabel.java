@@ -17,7 +17,7 @@ public class DynamicComponentLabel extends Widget {
         this.component = component;
         this.font = font;
         this.size = size;
-        this.setColor(Theme.current().textButton());
+        this.setColor(GuiTheme.current().textButton());
     }
 
     @Override
@@ -32,6 +32,6 @@ public class DynamicComponentLabel extends Widget {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        component.get().draw(batch, font, size, Theme.current().textUI(), getX(), getY() + getHeight() * 3 / 4);
+        component.get().draw(batch, font, size, GuiTheme.current().textUI(), getX(), getY() + getHeight() * 3 / 4);
     }
 }

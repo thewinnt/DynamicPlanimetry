@@ -67,7 +67,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
         if (getBackgroundDrawable() != null) {
             getBackgroundDrawable().draw(batch, getX(), getY(), getWidth(), getHeight());
         }
-        DynamicIcon.drawer.setColor(Theme.current().outline());
+        DynamicIcon.drawer.setColor(GuiTheme.current().outline());
         if (iconSizeOverride == 0) {
             if (this.open) {
                 DynamicIcon.DOWN_TRIANGLE.draw(batch, getX(), getY() + 2, getHeight() - 4, getHeight() - 4);
@@ -76,7 +76,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
             }
             T selection = getSelected();
             if (selection != null) {
-                textGetter.apply(selection).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, this.size, Theme.current().textButton(), getX() + getHeight(), getY() + getHeight() * 3 / 4);
+                textGetter.apply(selection).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, this.size, GuiTheme.current().textButton(), getX() + getHeight(), getY() + getHeight() * 3 / 4);
             }
         } else {
             if (this.open) {
@@ -84,7 +84,7 @@ public class ComponentSelectBox<T> extends SelectBox<T> {
             } else {
                 DynamicIcon.RIGHT_TRIANGLE.draw(batch, getX(), getY() + getHeight() / 2 - iconSizeOverride / 2, iconSizeOverride, iconSizeOverride);
             }
-            textGetter.apply(getSelected()).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, this.size, Theme.current().textButton(), getX() + iconSizeOverride, getY() + getHeight() * 3 / 4);
+            textGetter.apply(getSelected()).draw(batch, DynamicPlanimetry.getInstance()::getBoldFont, this.size, GuiTheme.current().textButton(), getX() + iconSizeOverride, getY() + getHeight() * 3 / 4);
         }
     }
 

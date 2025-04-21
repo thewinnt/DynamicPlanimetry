@@ -17,8 +17,9 @@ import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.data.ExportedParameter;
 import net.thewinnt.planimetry.shapes.data.ExportedParameterType;
+import net.thewinnt.planimetry.ui.BoardTheme;
 import net.thewinnt.planimetry.ui.DrawingBoard;
-import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.GuiTheme;
 import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.Property;
@@ -276,10 +277,10 @@ public abstract class Shape implements ComponentRepresentable {
     public Color getColor(SelectionStatus selectionStatus) {
         if (colorOverride != null) return colorOverride;
         return switch (selectionStatus) {
-            case NONE -> Theme.current().shape();
-            case HOVERED -> Theme.current().shapeHovered();
-            case HOVERED_PARENT -> Theme.current().shapeHoveredParent();
-            case SELECTED -> Theme.current().shapeSelected();
+            case NONE -> BoardTheme.current().shape();
+            case HOVERED -> BoardTheme.current().shapeHovered();
+            case HOVERED_PARENT -> BoardTheme.current().shapeHoveredParent();
+            case SELECTED -> BoardTheme.current().shapeSelected();
         };
     }
 

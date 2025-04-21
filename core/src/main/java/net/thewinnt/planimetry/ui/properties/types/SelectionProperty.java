@@ -26,7 +26,7 @@ public class SelectionProperty<T> extends Property<T> {
 
     public SelectionProperty(Component name, T[] options) {
         super(name);
-        this.options = List.of(options);
+        this.options = List.of(options).reversed();
     }
 
     public SelectionProperty(T selected, Component name, T[] options) {
@@ -36,7 +36,7 @@ public class SelectionProperty<T> extends Property<T> {
 
     public SelectionProperty(Component name, Collection<T> options) {
         super(name);
-        this.options = options.stream().toList();
+        this.options = options.stream().toList().reversed();
     }
 
     public SelectionProperty(T selected, Component name, Collection<T> options) {

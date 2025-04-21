@@ -10,10 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Layout;
 
-import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.ui.text.Component;
 
 import java.util.function.Consumer;
@@ -267,7 +265,7 @@ public class Window extends WidgetGroup {
         }
         styles.pressed.draw(batch, this.getX(), this.getY() + this.getHeight() - nameSize.y, this.getWidth(), nameSize.y);
         if (name != null) {
-            name.draw(batch, styles.font, Size.MEDIUM, Theme.current().textUI(), this.getX() + 2, this.getY() + this.getHeight() - 3);
+            name.draw(batch, styles.font, Size.MEDIUM, GuiTheme.current().textUI(), this.getX() + 2, this.getY() + this.getHeight() - 3);
         }
         super.draw(batch, parentAlpha);
         // TODO window manager

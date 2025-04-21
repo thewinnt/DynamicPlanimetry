@@ -15,11 +15,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import net.thewinnt.planimetry.DynamicPlanimetry;
-import net.thewinnt.planimetry.ui.Notifications;
-import net.thewinnt.planimetry.ui.ScrollManager;
-import net.thewinnt.planimetry.ui.Size;
-import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.*;
+import net.thewinnt.planimetry.ui.GuiTheme;
 import net.thewinnt.planimetry.ui.drawable.DynamicIcon;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -106,7 +103,7 @@ public abstract class FlatUIScreen implements Screen {
     public void render(float dt) {
         if (Gdx.graphics.getHeight() == 0) return;
 
-        Color color = Theme.current().main();
+        Color color = GuiTheme.current().main();
         ScreenUtils.clear(color.r, color.g, color.b, color.a, false, true);
         customRender();
         if (DynamicPlanimetry.isDebug()) {
@@ -152,7 +149,7 @@ public abstract class FlatUIScreen implements Screen {
     }
 
     public Color getFpsColor() {
-        return Theme.current().textButton();
+        return GuiTheme.current().textButton();
     }
 
     public void repositionFps(float x, float y) {

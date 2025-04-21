@@ -27,7 +27,6 @@ import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.data.Drawing;
-import net.thewinnt.planimetry.data.registry.Registries;
 import net.thewinnt.planimetry.definition.point.PointPlacementType;
 import net.thewinnt.planimetry.math.AABB;
 import net.thewinnt.planimetry.math.SegmentLike;
@@ -247,6 +246,7 @@ public class DrawingBoard extends Actor {
         int my = Gdx.input.getY();
         int fontSize = (int)(Gdx.graphics.getHeight() / Size.MEDIUM.getFactor());
 
+        drawer.filledRectangle(this.getX(), this.getY(), this.getWidth(), this.getHeight(), BoardTheme.current().board());
         if (DynamicPlanimetry.SETTINGS.shouldShowGrid()) {
             double step = Math.abs(Math.max(getHeight(), getWidth()) / scale / 12); // detect full width
             int j = 0;
@@ -282,24 +282,24 @@ public class DrawingBoard extends Actor {
                     hintX = getY() + 30;
                 }
                 for (double i = xb(getX()) - xb(getX()) % step; i < xb(getX() + getWidth()); i += step) {
-                    drawer.line(bx(i), getY(), bx(i), getY() + getHeight(), Theme.current().gridLine(), 1);
+                    drawer.line(bx(i), getY(), bx(i), getY() + getHeight(), BoardTheme.current().gridLine(), 1);
                     if (i == 0) continue;
                     if (Math.abs(i) % 1 == 0) {
-                        font.getFont(fontSize, Theme.current().gridHint()).draw(batch, String.valueOf((long)i), bx(i), hintX, 0, Align.center, false);
+                        font.getFont(fontSize, BoardTheme.current().gridHint()).draw(batch, String.valueOf((long)i), bx(i), hintX, 0, Align.center, false);
                     } else {
                         String string = String.format("%.8f", i);
                         int k = string.length() - 1;
                         while (string.charAt(k) == '0') k--;
                         string = string.substring(0, k + 1);
                         if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
-                        font.getFont(fontSize, Theme.current().gridHint()).draw(batch, string, bx(i), hintX, 0, Align.center, false);
+                        font.getFont(fontSize, BoardTheme.current().gridHint()).draw(batch, string, bx(i), hintX, 0, Align.center, false);
                     }
                 }
                 for (double i = yb(getY() + getHeight()) - yb(getY() + getHeight()) % step; i < yb(getY()); i += step) {
-                    drawer.line(getX(), by(i), getX() + getWidth(), by(i), Theme.current().gridLine(), 1);
+                    drawer.line(getX(), by(i), getX() + getWidth(), by(i), BoardTheme.current().gridLine(), 1);
                     if (Math.abs(i) < Math.pow(2, -16)) continue;
                     if (Math.abs(i) % 1 == 0) {
-                        float length = FontUtils.getTextLength(font.getFont(fontSize, Theme.current().gridHint()), String.valueOf((long)i));
+                        float length = FontUtils.getTextLength(font.getFont(fontSize, BoardTheme.current().gridHint()), String.valueOf((long)i));
                         float hintY = bx(0) + 5;
                         int alignYH = Align.left;
                         if (hintY >= getX() + getWidth() - length - 10) {
@@ -308,14 +308,14 @@ public class DrawingBoard extends Actor {
                         } else if (hintY <= getX() + 10) {
                             hintY = getX() + 10;
                         }
-                        font.getFont(fontSize, Theme.current().gridHint()).draw(batch, String.valueOf((long)i), hintY, by(i) + 10, 0, alignYH, false);
+                        font.getFont(fontSize, BoardTheme.current().gridHint()).draw(batch, String.valueOf((long)i), hintY, by(i) + 10, 0, alignYH, false);
                     } else {
                         String string = String.format("%.8f", i);
                         int k = string.length() - 1;
                         while (string.charAt(k) == '0') k--;
                         string = string.substring(0, k + 1);
                         if (string.endsWith(",")) string = string.substring(0, string.length() - 1);
-                        float length = FontUtils.getTextLength(font.getFont(fontSize, Theme.current().gridHint()), string);
+                        float length = FontUtils.getTextLength(font.getFont(fontSize, BoardTheme.current().gridHint()), string);
                         float hintY = bx(0) + 5;
                         int alignYH = Align.left;
                         if (hintY >= getX() + getWidth() - length - 10) {
@@ -324,11 +324,11 @@ public class DrawingBoard extends Actor {
                         } else if (hintY <= getX() + length + 10) {
                             hintY = getX() + 10;
                         }
-                        font.getFont(fontSize, Theme.current().gridHint()).draw(batch, string, hintY, by(i), 0, alignYH, false);
+                        font.getFont(fontSize, BoardTheme.current().gridHint()).draw(batch, string, hintY, by(i), 0, alignYH, false);
                     }
                 }
             }
-            drawer.setColor(Theme.current().gridCenter());
+            drawer.setColor(BoardTheme.current().gridCenter());
             drawer.line(getX(), by(0), getX() + getWidth(), by(0), 2);
             drawer.line(bx(0), getY(), bx(0), getY() + getHeight(), 2);
         }
@@ -358,14 +358,14 @@ public class DrawingBoard extends Actor {
         if (panStart != null && selectionEnd != null) {
             AABB aabb = new AABB(panStart, selectionEnd);
             Rectangle rect = aabb.toGdxRect();
-            drawer.rectangle(rect, Theme.current().selectionOutline(), 1);
-            drawer.filledRectangle(rect, Theme.current().selectionFill());
+            drawer.rectangle(rect, GuiTheme.current().selectionOutline(), 1);
+            drawer.filledRectangle(rect, GuiTheme.current().selectionFill());
             if (DynamicPlanimetry.isDebug()) {
                 AABB range = new AABB(panStartB, selectionEndB);
                 font.getFont(fontSize, Color.FIREBRICK).draw(batch, "selb_a: " + range.min, x(5), y(getHeight() - 180));
                 font.getFont(fontSize, Color.FIREBRICK).draw(batch, "selb_b: " + range.max, x(5), y(getHeight() - 205));
                 for (SegmentLike i : range.asLineSegments()) {
-                    drawer.line(i.point1().toBoardCoords(this), i.point2().toBoardCoords(this), Theme.current().shapeHovered(), 3);
+                    drawer.line(i.point1().toBoardCoords(this), i.point2().toBoardCoords(this), BoardTheme.current().shapeHovered(), 3);
                 }
             }
         }
@@ -402,12 +402,12 @@ public class DrawingBoard extends Actor {
         }
         if (creatingShape != null) {
             final float lineHeight = font.getFont((int)(Gdx.graphics.getHeight() / Size.MEDIUM.getFactor()), Color.BLACK).getLineHeight();
-            Component.translatable("ui.edit.board.creating_shape", creatingShape.getName()).draw(batch, font, Size.MEDIUM, Theme.current().textUI(), x(5), y(getHeight() - 5));
-            Component.translatable("ui.edit.board.creating_shape.cancel_hint").draw(batch, font, Size.MEDIUM, Theme.current().textUI(), x(5), y(getHeight() - 5 - lineHeight));
+            Component.translatable("ui.edit.board.creating_shape", creatingShape.getName()).draw(batch, font, Size.MEDIUM, GuiTheme.current().textUI(), x(5), y(getHeight() - 5));
+            Component.translatable("ui.edit.board.creating_shape.cancel_hint").draw(batch, font, Size.MEDIUM, GuiTheme.current().textUI(), x(5), y(getHeight() - 5 - lineHeight));
             float y = y(getHeight() - 5 - lineHeight);
             for (Component i : creatingShape.getActionHint()) {
                 y -= lineHeight;
-                i.draw(batch, font, Size.MEDIUM, Theme.current().textUI(), x(5), y);
+                i.draw(batch, font, Size.MEDIUM, GuiTheme.current().textUI(), x(5), y);
             }
         }
     }

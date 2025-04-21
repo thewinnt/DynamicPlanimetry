@@ -15,7 +15,7 @@ import net.thewinnt.planimetry.ui.ComponentLabel;
 import net.thewinnt.planimetry.ui.GuiHelper;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.GuiTheme;
 import net.thewinnt.planimetry.ui.Window;
 import net.thewinnt.planimetry.ui.text.Component;
 
@@ -48,7 +48,7 @@ public class MainMenuScreen extends FlatUIScreen {
         title = new Label("Dynamic Planimetry", styles.getLabelStyle(Size.EXTREMELY_LARGE));
         version = new Label(Component.literal(DynamicPlanimetry.APP_VERSION), styles.getLabelStyle(Size.MEDIUM));
 
-        TextButtonStyle buttonStyle = new TextButtonStyle(styles.normal, styles.pressed, styles.normal, app.getFont(styles.getHeight() / Size.VERY_LARGE.getFactor(), Theme.current().textButton()));
+        TextButtonStyle buttonStyle = new TextButtonStyle(styles.normal, styles.pressed, styles.normal, app.getFont(styles.getHeight() / Size.VERY_LARGE.getFactor(), GuiTheme.current().textButton()));
         buttonStyle.over = styles.over;
         buttonStyle.checkedOver = styles.over;
         create = new TextButton(app.getDrawing() == null ? CREATE_DRAWING.toString() : NEW_DRAWING.toString(), buttonStyle);
@@ -138,7 +138,7 @@ public class MainMenuScreen extends FlatUIScreen {
         version.setStyle(styles.getLabelStyle(Size.MEDIUM));
         version.setSize(version.getPrefWidth(), version.getPrefHeight());
 
-        TextButtonStyle buttonStyle = new TextButtonStyle(styles.normal, styles.pressed, styles.normal, app.getFont(styles.getHeight() / Size.VERY_LARGE.getFactor(), Theme.current().textButton()));
+        TextButtonStyle buttonStyle = new TextButtonStyle(styles.normal, styles.pressed, styles.normal, app.getFont(styles.getHeight() / Size.VERY_LARGE.getFactor(), GuiTheme.current().textButton()));
         buttonStyle.over = styles.over;
         buttonStyle.checkedOver = styles.over;
 

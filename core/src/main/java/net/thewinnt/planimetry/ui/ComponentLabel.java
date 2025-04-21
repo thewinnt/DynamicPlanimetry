@@ -16,11 +16,11 @@ public class ComponentLabel extends Widget {
     public ComponentLabel(Component component, FontProvider font, Size size) {
         this.component = component;
         if (component.canCache()) {
-            this.cache = component.createCache(font, size, Theme.current().textUI());
+            this.cache = component.createCache(font, size, GuiTheme.current().textUI());
         }
         this.font = font;
         this.size = size;
-        this.setColor(Theme.current().textButton());
+        this.setColor(GuiTheme.current().textButton());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ComponentLabel extends Widget {
             cache.setPosition(getX(), getY() + getHeight() * 3/4);
             cache.draw(batch);
         } else {
-            component.draw(batch, font, size, Theme.current().textUI(), getX(), getY() + getHeight() * 3 / 4);
+            component.draw(batch, font, size, GuiTheme.current().textUI(), getX(), getY() + getHeight() * 3 / 4);
         }
     }
 }

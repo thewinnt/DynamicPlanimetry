@@ -13,9 +13,10 @@ import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
+import net.thewinnt.planimetry.ui.BoardTheme;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.GuiTheme;
 import net.thewinnt.planimetry.ui.Size;
-import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -131,7 +132,7 @@ public abstract class AngleMarker extends Shape {
                 yMul = 0;
             }
             Vec2 pos2 = pos.add(size.x * xMul, size.y * yMul);
-            marker.draw(drawer.getBatch(), font, Size.SMALL, Theme.current().textAngleMarker(), (float)pos2.x, (float)pos2.y);
+            marker.draw(drawer.getBatch(), font, Size.SMALL, BoardTheme.current().textAngleMarker(), (float)pos2.x, (float)pos2.y);
 
             // debug data
             if (DynamicPlanimetry.isDebug()) {

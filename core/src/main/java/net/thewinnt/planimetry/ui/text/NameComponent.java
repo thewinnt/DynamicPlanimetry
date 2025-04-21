@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.math.Vec2;
-import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.GuiTheme;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.util.FontProvider;
 
@@ -58,8 +58,8 @@ public record NameComponent(byte letter, int index, short dashes) implements Com
 
     @Override
     public Vec2 getSize(FontProvider font, Size size) {
-        BitmapFont fontMain = font.getFont((int)(size.lines(1)), Theme.current().textButton());
-        BitmapFont fontAdditional = font.getFont(size.lines(1) / 2, Theme.current().textButton());
+        BitmapFont fontMain = font.getFont((int)(size.lines(1)), GuiTheme.current().textButton());
+        BitmapFont fontAdditional = font.getFont(size.lines(1) / 2, GuiTheme.current().textButton());
         float w1 = FontUtils.getTextLength(fontMain, ALLOWED_NAMES[letter]) + 2;
         float w2;
         if (index != 0) {

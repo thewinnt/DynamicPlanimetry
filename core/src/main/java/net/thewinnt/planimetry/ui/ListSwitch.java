@@ -23,7 +23,7 @@ public class ListSwitch extends Button {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        drawer.setColor(Theme.current().outline());
+        drawer.setColor(GuiTheme.current().outline());
         if (isChecked()) {
             DynamicIcon.DOWN_TRIANGLE.drawShapes(drawer, getX(), getY(), getHeight(), getHeight());
         } else {

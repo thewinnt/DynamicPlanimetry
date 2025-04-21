@@ -1,6 +1,6 @@
 package net.thewinnt.planimetry.ui.drawable;
 
-import net.thewinnt.planimetry.ui.Theme;
+import net.thewinnt.planimetry.ui.GuiTheme;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -13,7 +13,7 @@ public class CheckboxDrawable extends RectangleDrawable {
     public void drawShapes(ShapeDrawer drawer, float x, float y, float width, float height) {
         super.drawShapes(drawer, x, y, width, height);
         float oldColor = drawer.getPackedColor();
-        drawer.setColor(Theme.current().outline());
+        drawer.setColor(GuiTheme.current().outline());
         drawer.path(new float[]{x + width / 4, y + height * 3/7, x + width / 2, y + height / 6, x + width * 5/7, y + height * 5/6}, lineWidth, JoinType.SMOOTH, true);
         drawer.setColor(oldColor);
     }

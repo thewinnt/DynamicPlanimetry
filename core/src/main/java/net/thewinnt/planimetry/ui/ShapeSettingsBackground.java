@@ -19,9 +19,9 @@ public class ShapeSettingsBackground extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        drawer.filledRectangle(getX(), getY(), getWidth(), getHeight(), Theme.current().button());
-        drawer.line(getX(), creation.getY() - 5, getX() + getWidth(), creation.getY() - 5, Theme.current().delimiter());
-        drawer.line(getX(), properties.getY() - 5, getX() + getWidth(), properties.getY() - 5, Theme.current().delimiter());
-        drawer.line(getX(), getY(), getX(), getY() + getHeight(), Theme.current().outline(), 2);
+        drawer.filledRectangle(getX(), getY(), getWidth(), getHeight(), GuiTheme.current().button());
+        drawer.line(getX(), creation.getY() - 5, getX() + getWidth(), creation.getY() - 5, GuiTheme.current().delimiter());
+        drawer.line(getX(), properties.getY() - 5, getX() + getWidth(), properties.getY() - 5, GuiTheme.current().delimiter());
+        drawer.line(getX(), getY(), getX(), getY() + getHeight(), GuiTheme.current().outline(), 2);
     }
 }

@@ -3,7 +3,6 @@ package net.thewinnt.planimetry;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -17,6 +16,7 @@ import com.google.gson.JsonObject;
 
 import it.unimi.dsi.fastutil.Pair;
 import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.NumberTag;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.Language;
 import net.thewinnt.planimetry.data.registry.Identifier;
@@ -30,10 +30,10 @@ import net.thewinnt.planimetry.screen.FileSelectionScreen;
 import net.thewinnt.planimetry.screen.FlatUIScreen;
 import net.thewinnt.planimetry.screen.MainMenuScreen;
 import net.thewinnt.planimetry.screen.SettingsScreen;
+import net.thewinnt.planimetry.ui.BoardTheme;
+import net.thewinnt.planimetry.ui.GuiTheme;
 import net.thewinnt.planimetry.ui.Notifications;
 import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.Theme;
-import net.thewinnt.planimetry.ui.text.Component;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -47,9 +47,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.MissingFormatArgumentException;
 import java.util.Random;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.zip.Deflater;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -69,85 +67,9 @@ public class DynamicPlanimetry extends Game {
     public static final int DEBUG_SETTINGS_SCREEN = 4;
     public static final Gson GSON = new GsonBuilder().create();
     public static final Random RANDOM = new Random();
-    public static final Theme THEME_LIGHT = new Theme(
-        Component.translatable("theme.builtin.light"),
-        new Color(0xFFFFFFFF), // main
-        new Color(0xDCDCDCFF), // pressed
-        new Color(0xF0F0F0FF), // button
-        new Color(0x000000FF), // outlines
-        new Color(0x000000FF), // text (button)
-        new Color(0x000000FF), // text (ui)
-        new Color(0x2D2D2DFF), // inactive text
-        new Color(0xFFFFFFFF), // text field
-        new Color(0x0060FFB0), // selection background
-        new Color(0xC0C0C0FF), // delimiter
-        new Color(0x2D2D2DFF), // inactive
-        new Color(0xFFFFFFFF), // board
-        new Color(0x000000FF), // shape
-        new Color(0x00C0FFFF), // shape hovered
-        new Color(0x00E0FFFF), // shape hovered (parent)
-        new Color(0x0080FFFF), // shape selected
-        new Color(0xFF8000FF), // point
-        new Color(0xFFC84CFF), // point hovered
-        new Color(0xCC5500FF), // point selected
-        new Color(0x0080FFFF), // utility point
-        new Color(0x00C4FFFF), // utility point hovered
-        new Color(0x0055CCFF), // utility point selected
-        new Color(0xA00000FF), // undefined point
-        new Color(0xFF0000FF), // undefined point hovered
-        new Color(0x800000FF), // undefined point selected
-        new Color(0xDDDDDDFF), // grid line
-        new Color(0xAAAAAAFF), // grid hint
-        new Color(0x808080FF), // grid center
-        new Color(0x202020FF), // angle marker
-        new Color(0x202020FF), // angle marker text
-        new Color(0x00C0FFFF), // selection box outline
-        new Color(0x00C0FF40), // selection box fill
-        new Color(0xD86C6CFF), // close button
-        new Color(0xFF7F7FFF), // close button (hovered)
-        new Color(0xB25959FF)  // close button (pressed)
-    );
 
-    public static final Theme THEME_DARK = new Theme(
-        Component.translatable("theme.builtin.dark"),
-        new Color(0x1F1F1FFF), // main
-        new Color(0x000000FF), // pressed
-        new Color(0x0F0F0FFF), // button
-        new Color(0xA0A0A0FF), // outlines
-        new Color(0xD0D0D0FF), // text (button)
-        new Color(0xEEEEEEFF), // text (ui)
-        new Color(0x2D2D2DFF), // inactive text
-        new Color(0x000000FF), // text field
-        new Color(0x0060FFB0), // selection background
-        new Color(0x303030FF), // delimiter
-        new Color(0x2D2D2DFF), // inactive
-        new Color(0x1F1F1FFF), // board
-        new Color(0xEEEEEEFF), // shape
-        new Color(0x00C0FFFF), // shape hovered
-        new Color(0x00E0FFFF), // shape hovered (parent)
-        new Color(0x0080FFFF), // shape selected
-        new Color(0xFF8000FF), // point
-        new Color(0xFFC84CFF), // point hovered
-        new Color(0xCC5500FF), // point selected
-        new Color(0x0080FFFF), // utility point
-        new Color(0x00C4FFFF), // utility point hovered
-        new Color(0x0055CCFF), // utility point selected
-        new Color(0xA00000FF), // undefined point
-        new Color(0xFF0000FF), // undefined point hovered
-        new Color(0x800000FF), // undefined point selected
-        new Color(0x404040FF), // grid line
-        new Color(0x505050FF), // grid hint
-        new Color(0x000000FF), // grid center
-        new Color(0xE0E0E0FF), // angle marker
-        new Color(0xF0F0F0FF), // angle marker text
-        new Color(0x00C0FFFF), // selection box outline
-        new Color(0x00C0FF40), // selection box fill
-        new Color(0xB25959FF), // close button
-        new Color(0xCC6666FF), // close button (hovered)
-        new Color(0x994C4CFF)  // close button (pressed)
-    );
-
-    public static final Theme[] BUILT_IN_THEMES = new Theme[]{THEME_LIGHT, THEME_DARK};
+    public static final GuiTheme[] LEGACY_GUI_THEMES = new GuiTheme[]{GuiTheme.THEME_GUI_LIGHT, GuiTheme.THEME_GUI_DARK};
+    public static final BoardTheme[] LEGACY_BOARD_THEMES = new BoardTheme[]{BoardTheme.THEME_BOARD_WHITE, BoardTheme.THEME_BOARD_GREEN, BoardTheme.THEME_BOARD_BLACK};
 
     // general stuff
     private static DynamicPlanimetry INSTANCE;
@@ -189,8 +111,8 @@ public class DynamicPlanimetry extends Game {
     }
 
     // more font stuff
-    public static final FontType BUTTON_ACTIVE = new FontType(85, THEME_LIGHT.textButton());
-    public static final FontType BUTTON_INACTIVE = new FontType(85, THEME_LIGHT.textInactive());
+    public static final FontType BUTTON_ACTIVE = new FontType(85, GuiTheme.THEME_GUI_LIGHT.textButton());
+    public static final FontType BUTTON_INACTIVE = new FontType(85, GuiTheme.THEME_GUI_LIGHT.textInactive());
     public static final FontType FPS = new FontType(50, Color.WHITE);
 
     public static record FontType(int size, Color color) {}
@@ -451,6 +373,17 @@ public class DynamicPlanimetry extends Game {
 
     /* package-private */ static void setDisplayScaling(float displayScaling) {
         DynamicPlanimetry.DISPLAY_SCALING = displayScaling;
+    }
+
+    public static GuiTheme guiThemeFromNbt(CompoundTag nbt, String name) {
+        if (nbt.get(name) instanceof NumberTag<?>) {
+            return nbt.getInt(name) == 0 ? GuiTheme.THEME_GUI_LIGHT : GuiTheme.THEME_GUI_DARK;
+        }
+        return GuiTheme.byId(nbt.getString(name));
+    }
+
+    public static BoardTheme boardThemeFromNbt(CompoundTag nbt, String name) {
+        return BoardTheme.byId(nbt.getString(name));
     }
 
     private class ScreenInstance<T extends FlatUIScreen> {

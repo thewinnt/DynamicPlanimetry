@@ -24,12 +24,12 @@ import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
-import net.thewinnt.planimetry.shapes.data.ExportedParameterType;
+import net.thewinnt.planimetry.ui.BoardTheme;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.GuiTheme;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.types.BooleanProperty;
-import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.types.NameComponentProperty;
 import net.thewinnt.planimetry.ui.properties.types.RegistryElementProperty;
 import net.thewinnt.planimetry.ui.text.Component;
@@ -84,8 +84,11 @@ public class PointProvider extends Shape {
             try {
                 this.placement = t.convert(this.placement, drawing);
                 if (this.placement != null) this.placement.setSource(this);
+                List<Shape> placementDeps = this.placement.dependencies();
+                List<Shape> nonPlacementDeps = this.dependencies.stream().filter(i -> !placementDeps.contains(i)).toList();
                 this.dependencies.clear();
                 this.dependencies.addAll(this.placement.dependencies());
+                this.dependencies.addAll(nonPlacementDeps);
                 this.dependencies.forEach(shape -> shape.addDepending(this));
                 rebuildProperties();
                 DynamicPlanimetry.getInstance().editorScreen.show();
@@ -264,23 +267,23 @@ public class PointProvider extends Shape {
         }
         if (!isFallback && (!board.hasShape(this) || !shouldRender())) {
             drawer.setColor(switch (selection) {
-                case HOVERED -> Theme.current().utilityPointHovered();
-                case SELECTED -> Theme.current().utilityPointSelected();
-                default -> Theme.current().utilityPoint();
+                case HOVERED -> BoardTheme.current().utilityPointHovered();
+                case SELECTED -> BoardTheme.current().utilityPointSelected();
+                default -> BoardTheme.current().utilityPoint();
             });
             drawer.circle(board.bx(position.x), board.by(position.y), this.getThickness(board.getScale()) * 2, 2);
         } else if (isFallback) {
             drawer.setColor(switch (selection) {
-                case HOVERED -> Theme.current().undefinedPointHovered();
-                case SELECTED -> Theme.current().undefinedPointSelected();
-                default -> Theme.current().undefinedPoint();
+                case HOVERED -> BoardTheme.current().undefinedPointHovered();
+                case SELECTED -> BoardTheme.current().undefinedPointSelected();
+                default -> BoardTheme.current().undefinedPoint();
             });
             drawer.circle(board.bx(position.x), board.by(position.y), this.getThickness(board.getScale()) * 2, 2);
         } else {
             Color color = switch (selection) {
-                case HOVERED -> Theme.current().pointHovered();
-                case SELECTED -> Theme.current().pointSelected();
-                default -> Theme.current().point();
+                case HOVERED -> BoardTheme.current().pointHovered();
+                case SELECTED -> BoardTheme.current().pointSelected();
+                default -> BoardTheme.current().point();
             };
             drawer.filledCircle(board.boardToGlobal(position).toVector2f(), this.getThickness(board.getScale()) * 2, color);
         }
@@ -295,7 +298,7 @@ public class PointProvider extends Shape {
                 return;
             }
             if (lastScale == board.getScale() && position.equals(lastPos) && lastBestPlace != null && board.getFreeSpace(lastBestPlace.x, lastBestPlace.y) >= lastSpace - 1) {
-                name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), board.bx(lastBestPlace.x), (float)(board.by(lastBestPlace.y) + neededSpace.y / 2));
+                name.draw(drawer.getBatch(), font, Size.MEDIUM, GuiTheme.current().textUI(), board.bx(lastBestPlace.x), (float)(board.by(lastBestPlace.y) + neededSpace.y / 2));
                 lastPos = position;
                 return;
             }
@@ -338,7 +341,7 @@ public class PointProvider extends Shape {
             lastBestPlace = bestPos;
             lastSpace = bestSpace;
             lastScale = board.getScale();
-            name.draw(drawer.getBatch(), font, Size.MEDIUM, Theme.current().textUI(), board.bx(bestPos.x), (float) (board.by(bestPos.y) + neededSpace.y / 2));
+            name.draw(drawer.getBatch(), font, Size.MEDIUM, GuiTheme.current().textUI(), board.bx(bestPos.x), (float) (board.by(bestPos.y) + neededSpace.y / 2));
         }
         if (!position.equals(lastPos)) drawing.update();
         lastPos = position;

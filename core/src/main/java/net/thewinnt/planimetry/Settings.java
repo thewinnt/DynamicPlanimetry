@@ -4,17 +4,15 @@ import com.badlogic.gdx.Gdx;
 
 import net.querz.nbt.io.NBTUtil;
 import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.LongTag;
 import net.thewinnt.planimetry.data.Language;
 import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.settings.AngleType;
 import net.thewinnt.planimetry.settings.AntialiasingType;
 import net.thewinnt.planimetry.settings.ShapeMovementPredicate;
 import net.thewinnt.planimetry.shapes.Shape;
-import net.thewinnt.planimetry.ui.Notifications;
+import net.thewinnt.planimetry.ui.*;
 import net.thewinnt.planimetry.ui.SaveEntry.SortingType;
-import net.thewinnt.planimetry.ui.StyleSet;
-import net.thewinnt.planimetry.ui.Size;
-import net.thewinnt.planimetry.ui.Theme;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.PropertyHelper;
 import net.thewinnt.planimetry.ui.properties.PropertyLayout;
@@ -33,8 +31,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Settings {
-    public static final CustomLayout PROPERTY_LAYOUT = (actor, entry) -> actor.setBounds((Gdx.graphics.getWidth() - 20) * 3 / 4, 2, (Gdx.graphics.getWidth() - 20) / 4 - 10, entry.getHeight() - 4);
-    private final SelectionProperty<Theme> theme = new SelectionProperty<>(DynamicPlanimetry.THEME_LIGHT, Component.translatable("settings.theme"), DynamicPlanimetry.BUILT_IN_THEMES);
+    public static final CustomLayout PROPERTY_LAYOUT = (actor, entry) -> actor.setBounds((Gdx.graphics.getWidth() - 20) * 3f / 4, 2, (Gdx.graphics.getWidth() - 20) / 4f - 10, entry.getHeight() - 4);
+    private final SelectionProperty<GuiTheme> guiTheme = new SelectionProperty<>(GuiTheme.THEME_GUI_LIGHT, Component.translatable("settings.theme.gui"), GuiTheme.ORDERED_LIST);
+    private final SelectionProperty<BoardTheme> boardTheme = new SelectionProperty<>(BoardTheme.THEME_BOARD_WHITE, Component.translatable("settings.theme.board"), BoardTheme.ORDERED_LIST);
     private final NumberProperty displayPresicion = new NumberProperty(Component.translatable("settings.display_precision"), 3).withMin(1).withMax(127).requireWholeNumbers(true);
     private final SelectionProperty<AngleType> angleUnits = new SelectionProperty<>(AngleType.DEGREES, Component.translatable("settings.angle_unit"), AngleType.values());
     private final SelectionProperty<ShapeMovementPredicate> moveShapes = new SelectionProperty<>(ShapeMovementPredicate.ONLY_POINTS, Component.translatable("settings.move_without_selection"), ShapeMovementPredicate.values());
@@ -61,7 +60,8 @@ public class Settings {
     private boolean showFilenames = true;
 
     public Settings() {
-        theme.layoutOverride = PROPERTY_LAYOUT;
+        guiTheme.layoutOverride = PROPERTY_LAYOUT;
+        boardTheme.layoutOverride = PROPERTY_LAYOUT;
         displayPresicion.layoutOverride = PROPERTY_LAYOUT;
         angleUnits.layoutOverride = PROPERTY_LAYOUT;
         moveShapes.layoutOverride = PROPERTY_LAYOUT;
@@ -69,7 +69,7 @@ public class Settings {
         displayScaling.layoutOverride = PROPERTY_LAYOUT;
         editPanelScale.layoutOverride = PROPERTY_LAYOUT;
         antialiasing.layoutOverride = PROPERTY_LAYOUT;
-        theme.addValueChangeListener(theme -> {
+        guiTheme.addValueChangeListener(theme -> {
             if (Gdx.app != null) {
                 DynamicPlanimetry app = DynamicPlanimetry.getInstance();
                 if (!app.screenByIds.isEmpty()) {
@@ -94,12 +94,16 @@ public class Settings {
         antialiasing.addValueChangeListener(t -> Notifications.addNotification(DynamicPlanimetry.translate("settings.restart_needed"), 2000));
     }
 
-    public Theme getTheme() {
-        return theme.getValue();
+    public GuiTheme getGuiTheme() {
+        return guiTheme.getValue();
     }
 
-    public void setTheme(Theme theme) {
-        this.theme.setValue(theme);
+    public void setGuiTheme(GuiTheme guiTheme) {
+        this.guiTheme.setValue(guiTheme);
+    }
+
+    public BoardTheme getBoardTheme() {
+        return boardTheme.getValue();
     }
 
     public byte getDisplayPresicion() {
@@ -177,15 +181,17 @@ public class Settings {
     }
 
     public PropertyLayout getLayout(StyleSet styles) {
-        ArrayList<Property<?>> properties = new ArrayList<>(List.of(theme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen, language, displayScaling, editPanelScale, antialiasing));
+        ArrayList<Property<?>> properties = new ArrayList<>(List.of(guiTheme, boardTheme, displayPresicion, angleUnits, moveShapes, showGrid, fullscreen, language, displayScaling, editPanelScale, antialiasing));
         if (isDebug() || DynamicPlanimetry.platform().forceShowDebug()) {
             properties.add(isDebug);
             if (isDebug()) {
                 properties.add(reloadLanguages);
-                properties.add(PropertyHelper.setter(
-                    new NumberProperty(Component.translatable("settings.math_precision"), mathPrecision).requireWholeNumbers(true).withMin(0).withMax(52),
-                    d -> mathPrecision = d.byteValue()
-                ));
+                NumberProperty mathPrecision = PropertyHelper.setter(
+                    new NumberProperty(Component.translatable("settings.math_precision"), this.mathPrecision).requireWholeNumbers(true).withMin(0).withMax(52),
+                    d -> this.mathPrecision = d.byteValue()
+                );
+                mathPrecision.layoutOverride = PROPERTY_LAYOUT;
+                properties.add(mathPrecision);
             }
         }
         return new PropertyLayout(properties, styles, null, Size.MEDIUM, true);
@@ -232,7 +238,8 @@ public class Settings {
     public void fromNbt(CompoundTag nbt) {
         if (nbt == null) nbt = new CompoundTag(); // needed to load defaults
         try {
-            this.theme.setValueSilent(NbtUtil.getOptionalInt(nbt, "theme", 0) == 1 ? DynamicPlanimetry.THEME_DARK : DynamicPlanimetry.THEME_LIGHT);
+            this.guiTheme.setValueSilent(DynamicPlanimetry.guiThemeFromNbt(nbt, "theme"));
+            this.boardTheme.setValueSilent(DynamicPlanimetry.boardThemeFromNbt(nbt, "theme_board"));
             this.displayPresicion.setValueSilent((double)NbtUtil.getOptionalByte(nbt, "display_precision", (byte)3));
             this.angleUnits.setValueSilent(AngleType.valueOf(NbtUtil.getOptionalString(nbt, "angle_units", "degrees").toUpperCase()));
             this.moveShapes.setValueSilent(ShapeMovementPredicate.valueOf(NbtUtil.getOptionalString(nbt, "shape_movement_predicate", "only_points").toUpperCase()));
@@ -256,7 +263,8 @@ public class Settings {
 
     public void toNbt(File file) {
         CompoundTag nbt = new CompoundTag();
-        nbt.putInt("theme", this.theme.getValue() == DynamicPlanimetry.THEME_DARK ? 1 : 0);
+        nbt.putString("theme", this.guiTheme.getValue().id().toString());
+        nbt.putString("theme_board", this.guiTheme.getValue().id().toString());
         nbt.putByte("display_precision", displayPresicion.getValue().byteValue());
         nbt.putString("angle_units", angleUnits.getValue().name().toLowerCase());
         nbt.putString("shape_movement_predicate", moveShapes.getValue().name().toLowerCase());
