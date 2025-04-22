@@ -17,6 +17,7 @@ import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.factories.LineFactory.LineType;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.functions.BasicNamedFunction;
 import net.thewinnt.planimetry.ui.functions.Function;
 import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
 import net.thewinnt.planimetry.ui.properties.types.PropertyGroup;
@@ -151,12 +152,12 @@ public class LineSegment extends Line implements SegmentLike {
     @Override
     public Collection<Function<?>> getFunctions() {
         Collection<Function<?>> output = super.getFunctions();
-        // output.add(new BasicNamedFunction<>(drawing, this, s -> {
-        //     LineSegmentCenter center = new LineSegmentCenter(drawing, s);
-        //     center.setShouldRender(false);
-        //     drawing.addShape(center);
-        //     drawing.addShape(new AngledInfiniteLine(drawing, this, center, MathHelper.HALF_PI));
-        // }, Component.translatable("function.line_segment.create_perpendicular_bisector"), Component.translatable("function.line_segment.create_perpendicular_bisector.action")));
+//         output.add(new BasicNamedFunction<>(drawing, this, s -> {
+//             LineSegmentCenter center = new LineSegmentCenter(drawing, s);
+//             center.setShouldRender(false);
+//             drawing.addShape(center);
+//             drawing.addShape(new AngledInfiniteLine(drawing, this, center, MathHelper.HALF_PI));
+//         }, Component.translatable("function.line_segment.create_perpendicular_bisector"), Component.translatable("function.line_segment.create_perpendicular_bisector.action")));
         return output;
     }
 

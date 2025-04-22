@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -29,12 +30,14 @@ import net.thewinnt.planimetry.Settings;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.definition.point.PointPlacementType;
 import net.thewinnt.planimetry.math.AABB;
+import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.SegmentLike;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.settings.DebugFlag;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.Shape.SelectionStatus;
 import net.thewinnt.planimetry.shapes.factories.ShapeFactory;
+import net.thewinnt.planimetry.shapes.lines.Line;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
 import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.util.FontProvider;
@@ -382,6 +385,17 @@ public class DrawingBoard extends Actor {
             font.draw(batch, "max x: " + maxX(), x(5), y(getHeight() - 205));
             font.draw(batch, "min y: " + minY(), x(5), y(getHeight() - 230));
             font.draw(batch, "max y: " + maxY(), x(5), y(getHeight() - 255));
+            // debug line projection
+            Optional<Shape> match = this.drawing.getShapesAndChildren().filter(i -> i instanceof Line).findFirst();
+            if (match.isPresent() && match.get() instanceof Line line) {
+                Vec2 mouse = new Vec2(xb(mx), yb(my));
+                Vec2 projection = MathHelper.project(mouse, line.point1(), line.point2());
+                if (line.contains(projection)) {
+                    drawer.line(mx, getHeight() - my, bx(projection.x), by(projection.y), Color.FOREST, 4);
+                } else {
+                    drawer.line(mx, getHeight() - my, bx(projection.x), by(projection.y), Color.SCARLET, 4);
+                }
+            }
         }
         if (DebugFlag.SELECTION_INFO.get()) {
             BitmapFont font = this.font.getFont(40, Color.MAROON);

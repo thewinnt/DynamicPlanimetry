@@ -43,12 +43,19 @@ public class InfiniteLine extends Line {
 
     @Override
     public boolean contains(Vec2 point) {
-        return point1().distanceTo(point) + point2().distanceTo(point) - point1().distanceTo(point2()) <= Math.pow(2, Settings.get().getMathPrecision());
+        boolean between = MathHelper.roughlyEquals(point1().distanceTo(point) + point2().distanceTo(point), point1().distanceTo(point2()));
+        if (between) return true;
+        return MathHelper.roughlyEquals(point1().distanceTo(point2()) + point.distanceTo(point2()), point1().distanceTo(point)) ||
+            MathHelper.roughlyEquals(point1().distanceTo(point2()) + point.distanceTo(point1()), point2().distanceTo(point));
     }
 
     @Override
     public boolean contains(double x, double y) {
-        return point1().distanceTo(x, y) + point2().distanceTo(x, y) - point1().distanceTo(point2()) <= Math.pow(2, Settings.get().getMathPrecision());
+        boolean between = MathHelper.roughlyEquals(point1().distanceTo(x, y) + point2().distanceTo(x, y), point1().distanceTo(point2()));
+        if (between) return true;
+        Vec2 point = new Vec2(x, y);
+        return MathHelper.roughlyEquals(point1().distanceTo(point2()) + point.distanceTo(point2()), point1().distanceTo(point)) ||
+            MathHelper.roughlyEquals(point1().distanceTo(point2()) + point.distanceTo(point1()), point2().distanceTo(point));
     }
 
     @Override

@@ -160,6 +160,7 @@ public class PolygonalChain extends Shape {
         for (int i = 0; i < points.size(); i++) {
             if (points.get(i) == old) {
                 points.set(i, (PointProvider)neo);
+                segmentCache.forEach(j -> j.delete(false, true));
                 segmentCache = null;
                 break;
             }

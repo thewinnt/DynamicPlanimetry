@@ -54,7 +54,8 @@ public class Settings {
     });
     public final OptionProperty ctrlSelection = new OptionProperty(Component.translatable("settings.use_ctrl_for_selection"), true).setOnTrue(Component.translatable("settings.use_ctrl_for_selection.true")).setOnFalse(Component.translatable("settings.use_ctrl_for_selection.false"));
     private String currentLanguage;
-    private byte mathPrecision = 4;
+    private double mathPrecision = 12;
+    private double epsilon = Math.pow(10, -mathPrecision);
     private SortingType lastSortingType = SortingType.BY_EDITING_TIME;
     private boolean lastSortingOrder = true;
     private boolean showFilenames = true;
@@ -154,13 +155,18 @@ public class Settings {
         this.displayPresicion.setValue((double)displayPresicion);
     }
 
-    public byte getMathPrecision() {
+    public double getMathPrecision() {
         return mathPrecision;
     }
 
-    public void setMathPrecision(byte mathPrecision) {
+    public double getEpsilon() {
+        return epsilon;
+    }
+
+    public void setMathPrecision(double mathPrecision) {
         if (mathPrecision > 0) {
             this.mathPrecision = mathPrecision;
+            this.epsilon = Math.pow(10, -mathPrecision);
         }
     }
 
@@ -186,10 +192,7 @@ public class Settings {
             properties.add(isDebug);
             if (isDebug()) {
                 properties.add(reloadLanguages);
-                NumberProperty mathPrecision = PropertyHelper.setter(
-                    new NumberProperty(Component.translatable("settings.math_precision"), this.mathPrecision).requireWholeNumbers(true).withMin(0).withMax(52),
-                    d -> this.mathPrecision = d.byteValue()
-                );
+                NumberProperty mathPrecision = PropertyHelper.setter(new NumberProperty(Component.translatable("settings.math_precision"), this.mathPrecision), this::setMathPrecision);
                 mathPrecision.layoutOverride = PROPERTY_LAYOUT;
                 properties.add(mathPrecision);
             }
@@ -243,7 +246,7 @@ public class Settings {
             this.displayPresicion.setValueSilent((double)NbtUtil.getOptionalByte(nbt, "display_precision", (byte)3));
             this.angleUnits.setValueSilent(AngleType.valueOf(NbtUtil.getOptionalString(nbt, "angle_units", "degrees").toUpperCase()));
             this.moveShapes.setValueSilent(ShapeMovementPredicate.valueOf(NbtUtil.getOptionalString(nbt, "shape_movement_predicate", "only_points").toUpperCase()));
-            this.mathPrecision = NbtUtil.getOptionalByte(nbt, "math_precision", (byte)3);
+            this.setMathPrecision(NbtUtil.getOptionalDouble(nbt, "math_precision", 12));
             this.showGrid.setValueSilent(NbtUtil.getOptionalBoolean(nbt, "show_grid", true));
             this.lastSortingType = SortingType.valueOf(NbtUtil.getOptionalString(nbt, "last_sorting_type", "by_editing_time").toUpperCase());
             this.lastSortingOrder = NbtUtil.getOptionalBoolean(nbt, "is_reverse_sort", true);
@@ -264,11 +267,11 @@ public class Settings {
     public void toNbt(File file) {
         CompoundTag nbt = new CompoundTag();
         nbt.putString("theme", this.guiTheme.getValue().id().toString());
-        nbt.putString("theme_board", this.guiTheme.getValue().id().toString());
+        nbt.putString("theme_board", this.boardTheme.getValue().id().toString());
         nbt.putByte("display_precision", displayPresicion.getValue().byteValue());
         nbt.putString("angle_units", angleUnits.getValue().name().toLowerCase());
         nbt.putString("shape_movement_predicate", moveShapes.getValue().name().toLowerCase());
-        nbt.putByte("math_precision", mathPrecision);
+        nbt.putDouble("math_precision", mathPrecision);
         NbtUtil.writeBoolean(nbt, "show_grid", showGrid.getValue());
         nbt.putString("last_sorting_type", lastSortingType.name().toLowerCase());
         NbtUtil.writeBoolean(nbt, "is_reverse_sort", lastSortingOrder);

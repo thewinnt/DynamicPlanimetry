@@ -23,7 +23,7 @@ public class NbtUtil {
 
     public static double getOptionalDouble(CompoundTag tag, String name, double fallback) {
         if (!tag.containsKey(name)) return fallback;
-        return tag.getDouble(name);
+        return tag.getNumber(name).doubleValue();
     }
 
     public static int getOptionalInt(CompoundTag tag, String name, int fallback) {

@@ -295,6 +295,10 @@ public abstract class Shape implements ComponentRepresentable {
     public final void setParent(Shape parent) {
         if (parent != this) {
             this.parent = parent;
+            for (Shape i : this.dependencies) {
+                i.removeDepending(this);
+            }
+            this.dependencies.clear();
         }
     }
 

@@ -14,21 +14,18 @@ public class MathHelper {
 
     /**
      * Checks whether two double values are roughly equal to each other, trying to mitigate floating-point imprecision.
-     * <p>
-     * This method exists to mitigate imprecision on math operations, and it does so by finding the difference between
-     * the two numbers, leaving out only the mantissa bits and checking if all except the last few bits are zero.
-     * The amount of the ignored bits is controlled by {@link Settings#mathPrecision} which can be changed through NBT
-     * editing.
+     * Uses the algorithm from <a href="https://stackoverflow.com/a/32334103">here</a>.
      * @param a the first number to compare
      * @param b the second number to compare
      * @return whether the numbers are roughly equal to each other
      */
     public static boolean roughlyEquals(double a, double b) {
-        long mask = -1L << DynamicPlanimetry.SETTINGS.getMathPrecision();
-        mask &= MANTISSA_MASK;
-        return (Double.doubleToRawLongBits(a - b) & mask) == 0;
-        // return Math.abs(a - b) < Math.pow(2, DynamicPlanimetry.SETTINGS.getMathPrecision());
-    }
+        if (a == b) return true;
+        double epsilon = DynamicPlanimetry.SETTINGS.getEpsilon();
+        final double diff = Math.abs(a - b);
+        final double norm = Math.min(Math.abs(a) + Math.abs(b), Float.MAX_VALUE);
+        return diff < Math.max(Float.MIN_NORMAL, epsilon * norm);
+}
 
     /**
      * Checks whether two numbers are visibly equal to each other, as defined by {@link Settings#displayPresicion}.
@@ -122,5 +119,10 @@ public class MathHelper {
         if (a < 0 && b < 0) return min < test && test < max;
         if (max - min < Math.PI) return min < test && test < max; // 0 arc
         return test > max || test < min; // pi arc
+    }
+
+    public static Vec2 project(Vec2 point, Vec2 a, Vec2 b) {
+        double distance = distanceToLineSigned(a, b, point);
+        return continueFromAngle(point, angleTo(a, b) + HALF_PI, distance);
     }
 }

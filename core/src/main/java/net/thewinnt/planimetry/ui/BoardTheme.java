@@ -63,11 +63,11 @@ public record BoardTheme(
     public static final BoardTheme THEME_BOARD_GREEN = new BoardTheme(
         Component.translatable("theme.board.builtin.green"),
         new Identifier("green"),
-        new Color(0x1b4038FF), // board
+        new Color(0x0f352dFF), // board
         new Color(0xa4cdc2FF), // shape
-        new Color(0xc1ebdfFF), // shape hovered
-        new Color(0xb3dcd0FF), // shape hovered (parent)
-        new Color(0x90b9adFF), // shape selected
+        new Color(0x90fff2FF), // shape hovered
+        new Color(0xa8eeddFF), // shape hovered (parent)
+        new Color(0x579b8bFF), // shape selected
         new Color(0xbac9c5FF), // point
         new Color(0xd6e5e1FF), // point hovered
         new Color(0x9faea9FF), // point selected
@@ -77,9 +77,9 @@ public record BoardTheme(
         new Color(0xf3b4c7FF), // undefined point
         new Color(0xe691acFF), // undefined point hovered
         new Color(0xc97691FF), // undefined point selected
-        new Color(0x5f6b67FF), // grid line
-        new Color(0x778581FF), // grid hint
-        new Color(0xacbab5FF), // grid center
+        new Color(0x535f5bFF), // grid line
+        new Color(0x6b7773FF), // grid hint
+        new Color(0x919f9aFF), // grid center
         new Color(0xE0E0E0FF), // angle marker
         new Color(0xF0F0F0FF)  // angle marker text
     );

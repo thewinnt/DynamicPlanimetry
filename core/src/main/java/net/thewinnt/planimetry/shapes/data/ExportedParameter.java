@@ -45,6 +45,4 @@ public final class ExportedParameter<T extends Shape> {
         locked = false;
 
     }
-
-
 }
