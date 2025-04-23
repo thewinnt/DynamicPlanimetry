@@ -25,6 +25,8 @@ public record GuiTheme(
     Color textInactive,
     Color textField,
     Color textSelectionBg,
+    Color textWarning,
+    Color textError,
     Color delimiter,
     Color inactive,
     Color selectionOutline,
@@ -48,6 +50,8 @@ public record GuiTheme(
         new Color(0x2D2D2DFF), // inactive text
         new Color(0xFFFFFFFF), // text field
         new Color(0x0060FFB0), // selection background
+        new Color(0xFFAA00FF), // warning
+        new Color(0xFF0000FF), // error
         new Color(0xC0C0C0FF), // delimiter
         new Color(0x2D2D2DFF), // inactive
         new Color(0x00C0FFFF), // selection box outline
@@ -68,6 +72,8 @@ public record GuiTheme(
         new Color(0x2D2D2DFF), // inactive text
         new Color(0x000000FF), // text field
         new Color(0x0060FFB0), // selection background
+        new Color(0xDD9900FF), // warning
+        new Color(0xDD0000FF), // error
         new Color(0x303030FF), // delimiter
         new Color(0x2D2D2DFF), // inactive
         new Color(0x00C0FFFF), // selection box outline

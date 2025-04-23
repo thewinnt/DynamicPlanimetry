@@ -3,6 +3,7 @@ package net.thewinnt.planimetry.definition.point.placement;
 import net.thewinnt.planimetry.definition.point.PointPlacement;
 import net.thewinnt.planimetry.definition.point.PointPlacementType;
 import net.thewinnt.planimetry.definition.point.type.OffsetPlacementType;
+import net.thewinnt.planimetry.math.MathHelper;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.shapes.point.PointProvider;
@@ -15,33 +16,35 @@ import net.thewinnt.planimetry.value.DynamicValue;
 import java.util.Collection;
 import java.util.List;
 
-public class OffsetPlacement extends PointPlacement {
+public class AngleOffsetPlacement extends PointPlacement {
     private PointProvider point;
-    private DynamicValue offsetX;
-    private DynamicValue offsetY;
+    private DynamicValue angle;
+    private DynamicValue offset;
 
-    public OffsetPlacement(PointProvider point, DynamicValue offsetX, DynamicValue offsetY) {
+    public AngleOffsetPlacement(PointProvider point, DynamicValue angle, DynamicValue offset) {
         this.point = point;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
+        this.angle = angle;
+        this.offset = offset;
     }
 
     @Override
     public Vec2 get() {
         if (point == getSource()) return null;
-        return point.getPosition().add(offsetX.get(), offsetY.get());
+        return MathHelper.continueFromAngle(point.getPosition(), angle.get(), offset.get());
     }
 
     @Override
     public void move(Vec2 delta) {
-        this.offsetX = offsetX.add(delta.x);
-        this.offsetY = offsetY.add(delta.y);
+        Vec2 vec2 = get();
+        if (vec2 == null) return;
+        Vec2 newPos = vec2.add(delta);
+        double newAngle = MathHelper.angleTo(point.getPosition(), newPos);
+        this.angle = angle.add(newAngle - angle.get());
     }
 
     @Override
     public void move(double dx, double dy) {
-        this.offsetX = offsetX.add(dx);
-        this.offsetY = offsetY.add(dy);
+        move(new Vec2(dx, dy));
     }
 
     @Override
@@ -53,8 +56,8 @@ public class OffsetPlacement extends PointPlacement {
     public Collection<Property<?>> properties() {
         return List.of(
             PropertyHelper.swappablePoint(point, t -> point = t, List.of(getSource()), false, "shape.generic.point"),
-            PropertyHelper.dynamicValue(offsetX, t -> offsetX = t, point.getPropertyName("offset_x")),
-            PropertyHelper.dynamicValue(offsetY, t -> offsetY = t, point.getPropertyName("offset_y")),
+            PropertyHelper.dynamicValue(angle, t -> angle = t, point.getPropertyName("direction")),
+            PropertyHelper.dynamicValue(offset, t -> offset = t, point.getPropertyName("angle")),
             new DisplayProperty(Component.translatable(source.getPropertyName("coordinates")), () -> get().toComponent())
         );
     }
@@ -73,11 +76,11 @@ public class OffsetPlacement extends PointPlacement {
         return point;
     }
 
-    public DynamicValue getOffsetX() {
-        return offsetX;
+    public DynamicValue getAngle() {
+        return angle;
     }
 
-    public DynamicValue getOffsetY() {
-        return offsetY;
+    public DynamicValue getOffset() {
+        return offset;
     }
 }

@@ -12,8 +12,13 @@ import net.thewinnt.planimetry.DynamicPlanimetry;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.util.FontProvider;
+import org.jetbrains.annotations.Nullable;
 
-public record SimpleTranslatableComponent(String key) implements Component, CharSequence {
+public record SimpleTranslatableComponent(String key, Formatting formatting) implements Component, CharSequence {
+    public SimpleTranslatableComponent(String key) {
+        this(key, Formatting.EMPTY);
+    }
+
     @Override
     public int length() {
         return toString().length();

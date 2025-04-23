@@ -6,14 +6,20 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
+import com.badlogic.gdx.utils.Null;
 import net.querz.nbt.tag.CompoundTag;
 import net.thewinnt.gdxutils.FontUtils;
 import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.ui.Size;
 import net.thewinnt.planimetry.util.FontProvider;
+import org.jetbrains.annotations.Nullable;
 
-public record LiteralComponent(String text) implements Component, CharSequence {
+public record LiteralComponent(String text, Formatting formatting) implements Component, CharSequence {
     public static final LiteralComponent EMPTY = new LiteralComponent("");
+
+    public LiteralComponent(String text) {
+        this(text, Formatting.EMPTY);
+    }
 
     @Override
     public int length() {

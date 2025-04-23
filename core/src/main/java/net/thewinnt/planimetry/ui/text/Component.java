@@ -57,6 +57,10 @@ public interface Component extends ComponentRepresentable {
         return value == null ? LiteralComponent.EMPTY : new LiteralComponent(value);
     }
 
+    static LiteralComponent literal(String value, Formatting formatting) {
+        return value == null ? LiteralComponent.EMPTY : new LiteralComponent(value, formatting);
+    }
+
     static LiteralComponent number(double value) {
         return new LiteralComponent(DynamicPlanimetry.formatNumber(value));
     }
@@ -75,6 +79,10 @@ public interface Component extends ComponentRepresentable {
 
     static SimpleTranslatableComponent translatable(String key) {
         return new SimpleTranslatableComponent(key);
+    }
+
+    static SimpleTranslatableComponent translatable(String key, Formatting formatting) {
+        return new SimpleTranslatableComponent(key, formatting);
     }
 
     static Component translatable(String key, Object... args) {

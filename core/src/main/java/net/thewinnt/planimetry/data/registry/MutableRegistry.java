@@ -8,4 +8,5 @@ public interface MutableRegistry<T> extends Registry<T> {
     void freeze();
     boolean isFrozen();
     void reloadTags(Map<TagKey<?>, List<Identifier>> tags);
+    void appendTag(TagKey<T> tag, List<Identifier> elements);
 }

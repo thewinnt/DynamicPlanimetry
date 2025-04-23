@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 
 import net.querz.nbt.io.NBTUtil;
 import net.querz.nbt.tag.CompoundTag;
-import net.querz.nbt.tag.LongTag;
 import net.thewinnt.planimetry.data.Language;
 import net.thewinnt.planimetry.data.NbtUtil;
 import net.thewinnt.planimetry.settings.AngleType;
@@ -55,7 +54,8 @@ public class Settings {
     public final OptionProperty ctrlSelection = new OptionProperty(Component.translatable("settings.use_ctrl_for_selection"), true).setOnTrue(Component.translatable("settings.use_ctrl_for_selection.true")).setOnFalse(Component.translatable("settings.use_ctrl_for_selection.false"));
     private String currentLanguage;
     private double mathPrecision = 12;
-    private double epsilon = Math.pow(10, -mathPrecision);
+    private double lowerBound = 1 - Math.pow(10, -mathPrecision);
+    private double upperBound = 1 + Math.pow(10, -mathPrecision);
     private SortingType lastSortingType = SortingType.BY_EDITING_TIME;
     private boolean lastSortingOrder = true;
     private boolean showFilenames = true;
@@ -159,14 +159,19 @@ public class Settings {
         return mathPrecision;
     }
 
-    public double getEpsilon() {
-        return epsilon;
+    public double getUpperBound() {
+        return upperBound;
+    }
+
+    public double getLowerBound() {
+        return lowerBound;
     }
 
     public void setMathPrecision(double mathPrecision) {
         if (mathPrecision > 0) {
             this.mathPrecision = mathPrecision;
-            this.epsilon = Math.pow(10, -mathPrecision);
+            this.upperBound = 1 + Math.pow(10, -mathPrecision);
+            this.lowerBound = 1 - Math.pow(10, -mathPrecision);
         }
     }
 

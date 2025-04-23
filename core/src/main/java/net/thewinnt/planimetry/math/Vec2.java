@@ -3,9 +3,11 @@ package net.thewinnt.planimetry.math;
 import com.badlogic.gdx.math.Vector2;
 
 import net.thewinnt.planimetry.ui.DrawingBoard;
+import net.thewinnt.planimetry.ui.text.Component;
+import net.thewinnt.planimetry.ui.text.ComponentRepresentable;
 
 /** An immutable 2D vector */
-public class Vec2 {
+public class Vec2 implements ComponentRepresentable {
     public static final Vec2 ZERO = new Vec2(0, 0);
 
     public final double x;
@@ -130,5 +132,16 @@ public class Vec2 {
     @Override
     public String toString() {
         return "(" + x + ", " + y + ")";
+    }
+
+    @Override
+    public Component toComponent() {
+        return Component.of(
+            Component.literal("("),
+            Component.number(x),
+            Component.literal(", "),
+            Component.number(y),
+            Component.literal(")")
+        );
     }
 }

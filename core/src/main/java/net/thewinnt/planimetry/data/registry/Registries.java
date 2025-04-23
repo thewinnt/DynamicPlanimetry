@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import net.thewinnt.planimetry.ShapeData;
+import net.thewinnt.planimetry.data.DefaultTags;
 import net.thewinnt.planimetry.definition.point.PointPlacementType;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.definition.line.infinite.InfiniteLineType;
@@ -52,6 +53,15 @@ public class Registries {
         for (Registry<?> i : REGISTRY.elements()) {
             ((MutableRegistry<?>)i).reloadTags(tags);
         }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static void appendTag(TagKey<?> tag, List<Identifier> elements) {
+        ((MutableRegistry) REGISTRY.get(tag.registry())).appendTag(tag, elements);
+    }
+
+    public static void appendTag(DefaultTags tag) {
+        appendTag(tag.tag(), tag.elements());
     }
 
     public interface RegistryBootstrap {

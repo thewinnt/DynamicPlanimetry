@@ -367,9 +367,13 @@ public class FileSelectionScreen extends FlatUIScreen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (System.currentTimeMillis() - lastClickTime < 300 && selection == i) {
-                    app.setDrawing(i, true);
-                    if (app.editorScreen != null) app.editorScreen.hide();
-                    app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
+                    Drawing current = app.getDrawing();
+                    if (current != null && current.isUnsaved()) {
+                        stage.addActor(MainMenuScreen.createSaveWindow(styles, stage));
+                    } else {
+                        app.setDrawing(i, true);
+                        app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
+                    }
                     return;
                 }
                 selection = i;

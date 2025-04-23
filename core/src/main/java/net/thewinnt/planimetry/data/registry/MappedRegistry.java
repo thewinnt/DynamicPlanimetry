@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -137,6 +136,7 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
         return id;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void reloadTags(Map<TagKey<?>, List<Identifier>> tags) {
         this.tags.clear();
@@ -152,5 +152,16 @@ public class MappedRegistry<T> implements MutableRegistry<T> {
             }
             this.tags.put((TagKey<T>) i.getKey(), elements);
         }
+    }
+
+    @Override
+    public void appendTag(TagKey<T> tag, List<Identifier> elements) {
+        if (!tag.registry().equals(this.id)) return;
+        List<T> objects = this.tags.computeIfAbsent(tag, r -> new ArrayList<>());
+        for (Identifier id : elements) {
+            this.getHolder(id).addTag(tag);
+            objects.add(this.get(id));
+        }
+        this.tags.put(tag, objects);
     }
 }

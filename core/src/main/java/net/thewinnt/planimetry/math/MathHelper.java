@@ -14,17 +14,19 @@ public class MathHelper {
 
     /**
      * Checks whether two double values are roughly equal to each other, trying to mitigate floating-point imprecision.
-     * Uses the algorithm from <a href="https://stackoverflow.com/a/32334103">here</a>.
      * @param a the first number to compare
      * @param b the second number to compare
      * @return whether the numbers are roughly equal to each other
      */
     public static boolean roughlyEquals(double a, double b) {
         if (a == b) return true;
-        double epsilon = DynamicPlanimetry.SETTINGS.getEpsilon();
-        final double diff = Math.abs(a - b);
-        final double norm = Math.min(Math.abs(a) + Math.abs(b), Float.MAX_VALUE);
-        return diff < Math.max(Float.MIN_NORMAL, epsilon * norm);
+        double diff = a / b;
+        // check lower bound first for sign differences
+        return !(diff < DynamicPlanimetry.SETTINGS.getLowerBound() || diff > DynamicPlanimetry.SETTINGS.getUpperBound());
+//        double epsilon = DynamicPlanimetry.SETTINGS.getEpsilon();
+//        final double diff = Math.abs(a - b);
+//        final double norm = Math.min(Math.abs(a) + Math.abs(b), Float.MAX_VALUE);
+//        return diff < Math.max(Float.MIN_NORMAL, epsilon * norm);
 }
 
     /**

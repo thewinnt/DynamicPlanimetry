@@ -156,7 +156,7 @@ public class MainMenuScreen extends FlatUIScreen {
     @Override public void addActorsAboveFps() {}
 
     public static Window createSaveWindow(StyleSet styles, Stage stage) {
-        return createSaveWindow(styles, stage, () -> {});
+        return createSaveWindow(styles, stage, () -> DynamicPlanimetry.getInstance().setScreen(DynamicPlanimetry.EDITOR_SCREEN));
     }
 
     public static Window createSaveWindow(StyleSet styles, Stage stage, Runnable postAction) {
@@ -175,7 +175,6 @@ public class MainMenuScreen extends FlatUIScreen {
         TextButton noSave = GuiHelper.createTextButton("ui.save_or_exit.nosave", styles, Size.MEDIUM, () -> {
             window.remove();
             app.setDrawing(null, false);
-            app.setScreen(DynamicPlanimetry.EDITOR_SCREEN);
             postAction.run();
         });
 

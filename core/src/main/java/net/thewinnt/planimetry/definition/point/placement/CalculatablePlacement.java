@@ -7,6 +7,8 @@ import net.thewinnt.planimetry.math.Vec2;
 import net.thewinnt.planimetry.shapes.Shape;
 import net.thewinnt.planimetry.ui.properties.Property;
 import net.thewinnt.planimetry.ui.properties.PropertyHelper;
+import net.thewinnt.planimetry.ui.properties.types.DisplayProperty;
+import net.thewinnt.planimetry.ui.text.Component;
 import net.thewinnt.planimetry.value.DynamicValue;
 
 import java.util.Collection;
@@ -47,7 +49,8 @@ public class CalculatablePlacement extends PointPlacement {
     public Collection<Property<?>> properties() {
         return List.of(
             PropertyHelper.dynamicValue(x, t -> x = t, source.getPropertyName("x")),
-            PropertyHelper.dynamicValue(y, t -> y = t, source.getPropertyName("y"))
+            PropertyHelper.dynamicValue(y, t -> y = t, source.getPropertyName("y")),
+            new DisplayProperty(Component.translatable(source.getPropertyName("coordinates")), () -> get().toComponent())
         );
     }
 

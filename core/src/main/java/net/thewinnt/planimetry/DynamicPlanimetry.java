@@ -17,6 +17,7 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.Pair;
 import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.NumberTag;
+import net.thewinnt.planimetry.data.DefaultTags;
 import net.thewinnt.planimetry.data.Drawing;
 import net.thewinnt.planimetry.data.Language;
 import net.thewinnt.planimetry.data.registry.Identifier;
@@ -210,6 +211,9 @@ public class DynamicPlanimetry extends Game {
             }
             Registries.reloadTags(tags);
         }
+        // hardcoded tags - needed for native image
+        Registries.appendTag(DefaultTags.SELECTABLE_LINES);
+        Registries.appendTag(DefaultTags.SELECTABLE_POINTS);
     }
 
     @Override

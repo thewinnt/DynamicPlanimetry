@@ -82,8 +82,13 @@ public class PointProvider extends Shape {
         properties.add(nameProperty);
         type.addValueChangeListener(t -> {
             try {
-                this.placement = t.convert(this.placement, drawing);
-                if (this.placement != null) this.placement.setSource(this);
+                PointPlacement placement = t.convert(this.placement, drawing);
+                if (placement == null) {
+                    type.setValueSilent(this.placement.type());
+                    return;
+                }
+                this.placement = placement;
+                this.placement.setSource(this);
                 List<Shape> placementDeps = this.placement.dependencies();
                 List<Shape> nonPlacementDeps = this.dependencies.stream().filter(i -> !placementDeps.contains(i)).toList();
                 this.dependencies.clear();

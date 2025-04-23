@@ -22,26 +22,31 @@ public class NbtUtil {
     }
 
     public static double getOptionalDouble(CompoundTag tag, String name, double fallback) {
+        if (tag == null) return fallback;
         if (!tag.containsKey(name)) return fallback;
         return tag.getNumber(name).doubleValue();
     }
 
     public static int getOptionalInt(CompoundTag tag, String name, int fallback) {
+        if (tag == null) return fallback;
         if (!tag.containsKey(name)) return fallback;
         return tag.getInt(name);
     }
 
     public static byte getOptionalByte(CompoundTag tag, String name, byte fallback) {
+        if (tag == null) return fallback;
         if (!tag.containsKey(name)) return fallback;
         return tag.getByte(name);
     }
 
     public static String getOptionalString(CompoundTag tag, String name, String fallback) {
+        if (tag == null) return fallback;
         if (!tag.containsKey(name)) return fallback;
         return tag.getString(name);
     }
 
     public static boolean getOptionalBoolean(CompoundTag tag, String name, boolean fallback) {
+        if (tag == null) return fallback;
         if (!tag.containsKey(name)) return fallback;
         return tag.getByte(name) != 0;
     }

@@ -21,7 +21,7 @@ public class Util {
 
     public static <T> void shuffle(List<T> list, Random random) {
         for (int i = 0; i < list.size(); i++) {
-            int index2 = random.nextInt(i);
+            int index2 = random.nextInt(list.size());
             T object1 = list.get(i);
             list.set(i, list.get(index2));
             list.set(index2, object1);
@@ -30,7 +30,7 @@ public class Util {
 
     public static <T> void shuffle(T[] list, Random random) {
         for (int i = 0; i < list.length; i++) {
-            int index2 = random.nextInt(i);
+            int index2 = random.nextInt(list.length);
             T object1 = list[i];
             list[i] = list[index2];
             list[index2] = object1;
